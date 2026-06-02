@@ -453,7 +453,7 @@
 
     .fade-in { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease, transform 0.6s ease; }
     .fade-in.visible { opacity: 1; transform: translateY(0); }
-
+.hero__robot { display: none; }
     /* RESPONSIVE */
     @media(max-width:900px) {
       .nav { display: none; }
@@ -464,7 +464,68 @@
       .faqGrid { grid-template-columns: 1fr; }
       .modal__body { grid-template-columns: 1fr; }
     }
-    @media(max-width:600px) {
+    @me@media(max-width:600px) {
+  .wrap { padding: 0 16px; }
+  .section { padding: 70px 0; }
+  .contactBig { font-size: clamp(2.4rem,12vw,3.5rem); }
+  footer { text-align: center; }
+  .footer__inner { flex-direction: column; }
+  .topbar__cta .btn:not(.btn--primary) { display: none; }
+
+  /* HERO MOBILE */
+  .hero {
+    background-image: none !important;
+    background-color: #0a0a0f !important;
+    min-height: 100svh;
+    padding: 0;
+    display: flex;
+    align-items: flex-start;
+  }
+  .hero::before { display: none !important; }
+  .hero .wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding-top: 32px;
+    padding-bottom: 0;
+    width: 100%;
+  }
+  .hero__copy {
+    max-width: 100% !important;
+    margin: 0 0 20px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .hero__badge { margin-bottom: 0.75rem; }
+  .hero__copy h1 {
+    font-size: clamp(1.8rem, 9vw, 2.4rem);
+    margin-bottom: 0.75rem;
+  }
+  .hero__copy p {
+    font-size: 0.88rem;
+    margin-bottom: 1.25rem;
+  }
+  .hero__actions {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 0;
+    justify-content: center;
+  }
+  .hero__stats { display: none; }
+
+  /* ROBOT IMAGE */
+  .hero__robot {
+    display: block !important;
+    width: 80%;
+    max-width: 320px;
+    margin: 16px auto 0;
+    object-fit: contain;
+    filter: drop-shadow(0 0 20px rgba(0,180,255,0.4)) drop-shadow(0 0 40px rgba(139,92,246,0.2));
+  }
+}dia(max-width:600px) {
       .wrap { padding: 0 16px; }
       .section { padding: 70px 0; }
       .contactBig { font-size: clamp(2.4rem,12vw,3.5rem); }
@@ -536,6 +597,14 @@
         <div class="hero__stat"><strong>$0</strong><span>Mensualidad</span></div>
       </div>
     </div>
+
+    <img
+      class="hero__robot"
+      src="https://fhxcumwhgtfirznnznjx.supabase.co/storage/v1/object/public/Imagenes/555f60b0-d894-4d9a-8bc6-3c701e96bb5e%20(1).png"
+      alt="Ciborg 347"
+      style="display:none"
+    />
+
   </div>
 </section>
 
