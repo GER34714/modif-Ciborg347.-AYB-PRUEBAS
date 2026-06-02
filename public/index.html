@@ -5,16 +5,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Ciborg 347 — Desarrollo Web y Soluciones Digitales</title>
   <meta name="description" content="Desarrollador web independiente. Tiendas online, paneles admin, apps a medida. Sin mensualidad. Sin plantillas." />
+  <!-- FIX SEO: og:image y canonical agregados -->
   <meta property="og:title" content="Ciborg 347 — Desarrollo Web" />
   <meta property="og:description" content="Construimos herramientas digitales que trabajan para tu negocio las 24 horas." />
+  <meta property="og:image" content="https://iili.io/fETkPEv.md.png" />
+  <meta property="og:type" content="website" />
   <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:image" content="https://iili.io/fETkPEv.md.png" />
+  <link rel="canonical" href="https://ciborg347.com/" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 
   <style>
-    /* ===== VARIABLES — paleta de tu styles.css + identidad nueva ===== */
     :root {
       --bg:        #0a0a0f;
       --bg2:       #0f0f1a;
@@ -58,7 +62,6 @@
         radial-gradient(circle at 85% 75%, rgba(139,92,246,0.04), transparent 45%);
     }
 
-    /* grain */
     body::after {
       content: '';
       position: fixed; inset: 0; z-index: 999; pointer-events: none;
@@ -77,7 +80,7 @@
 
     .wrap { max-width: var(--max); margin: 0 auto; padding: 0 24px; }
 
-    /* ===== NAV ===== */
+    /* NAV */
     .topbar {
       position: sticky; top: 0; z-index: 100;
       background: rgba(10,10,15,0.82);
@@ -132,7 +135,6 @@
     .burger:hover { border-color: var(--border-h); }
     .burger span { width: 16px; height: 2px; background: var(--text); border-radius: 2px; transition: var(--t-fast); }
 
-    /* mobile menu */
     .mobileMenu {
       display: none; flex-direction: column;
       position: fixed; top: 68px; left: 0; right: 0;
@@ -148,7 +150,7 @@
     }
     .mobileMenu a:hover { color: var(--cyan); }
 
-    /* ===== HERO ===== */
+    /* HERO */
     .hero {
       position: relative; padding: 110px 0 80px;
       min-height: 88vh; display: flex; align-items: center;
@@ -200,13 +202,13 @@
     .hero__stat strong { font-family: var(--display); font-size: 1.8rem; background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
     .hero__stat span { display: block; font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text2); margin-top: 2px; }
 
-    /* ===== MARQUEE STRIP ===== */
+    /* MARQUEE STRIP */
     .strip { background: var(--bg2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 0.85rem 0; overflow: hidden; }
     .strip__inner { display: flex; gap: 3rem; animation: marquee 24s linear infinite; white-space: nowrap; }
     .strip__item { font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text2); flex-shrink: 0; }
     .strip__item span { color: var(--cyan); margin-right: 6px; }
 
-    /* ===== SECTIONS ===== */
+    /* SECTIONS */
     .section { padding: 90px 0; position: relative; }
     .section--alt { background: var(--bg2); }
     .section--dark { background: var(--bg3); }
@@ -225,9 +227,7 @@
     .section__head p { font-size: 1rem; color: var(--text2); max-width: 540px; font-weight: 300; line-height: 1.7; }
     .section__head.center p { margin: 0 auto; }
 
-    /* ===== FEATURED ===== */
-    #featured { display: none; } /* se muestra si hay datos */
-
+    /* FEATURED */
     .featuredGrid {
       display: grid; grid-template-columns: repeat(auto-fill, minmax(300px,1fr)); gap: 1.5px;
       background: var(--border);
@@ -236,21 +236,16 @@
       background: var(--bg3); overflow: hidden; cursor: pointer;
       position: relative; aspect-ratio: 16/10; transition: var(--t-norm);
     }
+    /* FIX SEO: width/height en imágenes para evitar CLS */
     .featuredCard img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.7); transition: var(--t-norm); }
     .featuredCard:hover img { transform: scale(1.06); filter: brightness(0.5); }
     .featuredCard__overlay {
       position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: flex-end;
       padding: 1.5rem; background: linear-gradient(to top, rgba(10,10,15,0.95) 0%, transparent 60%);
     }
-    .featuredCard__badge {
-      font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
-      color: var(--cyan); margin-bottom: 4px;
-    }
+    .featuredCard__badge { font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--cyan); margin-bottom: 4px; }
     .featuredCard__title { font-family: var(--display); font-size: 1.4rem; color: var(--white); }
-    .featuredCard__desc {
-      font-size: 13px; color: var(--text2); margin-top: 4px; line-height: 1.4;
-      max-height: 0; overflow: hidden; transition: max-height 0.4s ease;
-    }
+    .featuredCard__desc { font-size: 13px; color: var(--text2); margin-top: 4px; line-height: 1.4; max-height: 0; overflow: hidden; transition: max-height 0.4s ease; }
     .featuredCard:hover .featuredCard__desc { max-height: 60px; }
     .featuredCard__link {
       position: absolute; top: 1rem; right: 1rem;
@@ -268,7 +263,7 @@
       padding: 3px 10px; border-radius: 100px; font-weight: 600;
     }
 
-    /* ===== PORTFOLIO ===== */
+    /* PORTFOLIO */
     .filters { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 2.5rem; }
     .filter-btn {
       font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
@@ -307,7 +302,7 @@
 
     .moreWrap { text-align: center; margin-top: 2.5rem; }
 
-    /* ===== SERVICES ===== */
+    /* SERVICES */
     .servicesGrid {
       display: grid; grid-template-columns: repeat(auto-fill, minmax(260px,1fr));
       gap: 1px; background: var(--border);
@@ -323,7 +318,7 @@
     .serviceCard__title { font-family: var(--display); font-size: 1.3rem; color: var(--white); margin-bottom: 0.6rem; }
     .serviceCard__desc { font-size: 14px; color: var(--text2); line-height: 1.65; font-weight: 300; }
 
-    /* ===== WHY ===== */
+    /* WHY */
     .whyGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
     .statsGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); }
     .statCard { background: var(--bg3); padding: 1.75rem; }
@@ -334,7 +329,7 @@
     .techTags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 1.5rem; }
     .techTag { font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; padding: 5px 12px; border: 1px solid var(--border); border-radius: 4px; color: var(--text2); background: rgba(0,212,255,0.04); }
 
-    /* ===== FAQ ===== */
+    /* FAQ */
     .faqGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); margin-top: 3rem; }
     .faqItem { background: var(--bg); padding: 1.75rem 2rem; cursor: pointer; transition: background var(--t-fast); }
     .faqItem:hover { background: var(--bg2); }
@@ -344,7 +339,7 @@
     .faqA { font-size: 14px; color: var(--text2); max-height: 0; overflow: hidden; transition: max-height 0.4s ease, padding 0.3s; font-weight: 300; line-height: 1.7; }
     .faqItem.open .faqA { max-height: 300px; padding-top: 1rem; }
 
-    /* ===== CONTACT ===== */
+    /* CONTACT */
     .contactInner { max-width: 620px; margin: 0 auto; text-align: center; }
     .contactBig { font-family: var(--display); font-size: clamp(2.8rem, 8vw, 5.5rem); color: var(--white); line-height: 0.95; margin: 1rem 0 2.5rem; }
     .contactBig em { font-style: normal; background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
@@ -358,7 +353,7 @@
     .contactLink:hover { border-color: var(--cyan); color: var(--cyan); background: rgba(0,212,255,0.06); }
     .contactLink svg { width: 15px; height: 15px; flex-shrink: 0; }
 
-    /* ===== WA FLOAT ===== */
+    /* WA FLOAT */
     .waFloat {
       position: fixed; bottom: 24px; right: 24px; z-index: 500;
       width: 56px; height: 56px; border-radius: 50%;
@@ -370,7 +365,7 @@
     .waFloat:hover { transform: scale(1.1); box-shadow: 0 8px 28px rgba(37,211,102,0.5); }
     .waFloat svg { width: 26px; height: 26px; fill: white; }
 
-    /* ===== FOOTER ===== */
+    /* FOOTER */
     footer {
       background: var(--bg2); border-top: 1px solid var(--border);
       padding: 2.5rem 0;
@@ -385,7 +380,7 @@
     .footer__links a:hover { color: var(--cyan); }
     .footer__copy { font-family: var(--mono); font-size: 10px; color: var(--text2); letter-spacing: 0.08em; }
 
-    /* ===== MODAL ===== */
+    /* MODAL */
     .modal {
       position: fixed; inset: 0; display: none; align-items: center; justify-content: center;
       padding: 20px; z-index: 200; background: rgba(0,0,0,0.88); backdrop-filter: blur(10px);
@@ -397,6 +392,8 @@
       border: 1px solid var(--border); border-radius: var(--radius);
       background: var(--bg2); overflow: hidden; display: flex; flex-direction: column;
       animation: fadeUp 0.3s ease;
+      /* FIX accesibilidad: outline para focus */
+      outline: none;
     }
     .modal__header {
       padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border);
@@ -414,26 +411,19 @@
     .modal__full { font-size: 13px; color: var(--text2); line-height: 1.7; font-weight: 300; }
     .modal__actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: auto; }
 
-    /* ===== STATE BOX ===== */
+    /* STATE BOX */
     .stateBox {
       display: none; text-align: center; padding: 3rem;
       font-family: var(--mono); font-size: 13px; color: var(--text2); letter-spacing: 0.08em;
     }
 
-    /* ===== TAGS ===== */
-    .tag {
-      display: inline-block; padding: 4px 12px; border-radius: 100px;
-      background: var(--grad); color: white;
-      font-family: var(--mono); font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
-    }
-
-    /* ===== SKELETON ===== */
+    /* SKELETON */
     .skeleton {
       background: linear-gradient(90deg, var(--bg3) 25%, var(--bg2) 50%, var(--bg3) 75%);
       background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: var(--radius);
     }
 
-    /* ===== ANIMATIONS ===== */
+    /* ANIMATIONS */
     @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.35} }
     @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
     @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
@@ -442,7 +432,7 @@
     .fade-in { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease, transform 0.6s ease; }
     .fade-in.visible { opacity: 1; transform: translateY(0); }
 
-    /* ===== RESPONSIVE ===== */
+    /* RESPONSIVE */
     @media(max-width:900px) {
       .nav { display: none; }
       .burger { display: flex; }
@@ -467,13 +457,13 @@
 <header class="topbar">
   <div class="wrap topbar__inner">
     <a href="#" class="brand">
-      <img class="brand__logo" id="brandLogo" src="https://iili.io/fETkPEv.md.png" alt="Logo Ciborg 347" />
+      <img class="brand__logo" id="brandLogo" src="https://iili.io/fETkPEv.md.png" alt="Logo Ciborg 347" width="44" height="44" />
       <div class="brand__text">
         <strong id="brandTitle">CIBORG 347</strong>
         <span id="brandTagline">Desarrollo Web</span>
       </div>
     </a>
-    <nav class="nav">
+    <nav class="nav" aria-label="Navegación principal">
       <a href="#destacados">Destacados</a>
       <a href="#portfolio">Portfolio</a>
       <a href="#servicios">Servicios</a>
@@ -481,25 +471,25 @@
       <a href="#faq">FAQ</a>
     </nav>
     <div class="topbar__cta">
-      <a href="#" class="btn btn--ghost btn--sm" id="topWhatsAppBtn" target="_blank" rel="noopener">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      <a href="#" class="btn btn--ghost btn--sm" id="topWhatsAppBtn" target="_blank" rel="noopener noreferrer">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
         WhatsApp
       </a>
       <a href="#contacto" class="btn btn--primary btn--sm">Contacto</a>
-      <button class="burger" id="burgerBtn" aria-label="Menú" aria-expanded="false">
+      <button class="burger" id="burgerBtn" aria-label="Abrir menú" aria-expanded="false" aria-controls="mobileMenu">
         <span></span><span></span><span></span>
       </button>
     </div>
   </div>
 </header>
 
-<nav class="mobileMenu" id="mobileMenu" aria-hidden="true">
+<nav class="mobileMenu" id="mobileMenu" aria-hidden="true" aria-label="Menú móvil">
   <a href="#destacados">Destacados</a>
   <a href="#portfolio">Portfolio</a>
   <a href="#servicios">Servicios</a>
   <a href="#nosotros">Nosotros</a>
   <a href="#faq">FAQ</a>
-  <a href="#contacto" class="btn btn--primary" style="border-radius:8px;margin-top:8px" id="mobileWhatsAppBtn">WhatsApp</a>
+  <a href="#" class="btn btn--wa" style="border-radius:8px;margin-top:8px" id="mobileWhatsAppBtn" target="_blank" rel="noopener noreferrer">WhatsApp</a>
 </nav>
 
 <!-- HERO -->
@@ -512,15 +502,15 @@
         <p id="heroSubtitle">No diseñamos páginas genéricas. Construimos sistemas a medida que trabajan para tu negocio las 24 horas: atraen clientes, muestran productos y generan consultas por WhatsApp de forma automática.</p>
         <div class="hero__actions">
           <a href="#portfolio" class="btn btn--primary">Ver proyectos →</a>
-          <a href="#" class="btn btn--wa" id="heroWhatsAppBtn" target="_blank" rel="noopener">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          <a href="#" class="btn btn--wa" id="heroWhatsAppBtn" target="_blank" rel="noopener noreferrer">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
             Consultar gratis
           </a>
         </div>
       </div>
       <div class="hero__card fade-in" style="animation-delay:0.2s">
         <div class="hero__logoWrap">
-          <img id="heroLogo" src="https://iili.io/fETkPEv.md.png" alt="Ciborg 347" />
+          <img id="heroLogo" src="https://iili.io/fETkPEv.md.png" alt="Ciborg 347" width="180" height="180" />
         </div>
         <div class="hero__cardStats">
           <div class="hero__stat"><strong id="statProjects">8+</strong><span>Proyectos</span></div>
@@ -534,7 +524,7 @@
 </section>
 
 <!-- STRIP -->
-<div class="strip">
+<div class="strip" aria-hidden="true">
   <div class="strip__inner">
     <span class="strip__item"><span>▸</span>HTML5 · CSS3 · JS</span>
     <span class="strip__item"><span>▸</span>React</span>
@@ -545,7 +535,6 @@
     <span class="strip__item"><span>▸</span>SEO Técnico</span>
     <span class="strip__item"><span>▸</span>Render · SSL</span>
     <span class="strip__item"><span>▸</span>Paneles Admin</span>
-    <!-- loop -->
     <span class="strip__item"><span>▸</span>HTML5 · CSS3 · JS</span>
     <span class="strip__item"><span>▸</span>React</span>
     <span class="strip__item"><span>▸</span>Supabase · PostgreSQL</span>
@@ -578,10 +567,10 @@
       <h2>Todos los <em>proyectos</em></h2>
       <p>Cada uno construido a medida. Sin plantillas, sin límites.</p>
     </div>
-    <div class="filters" id="filters">
-      <button class="filter-btn active" data-cat="all">Todos</button>
+    <div class="filters" id="filters" role="group" aria-label="Filtrar proyectos">
+      <button class="filter-btn active" data-cat="all" aria-pressed="true">Todos</button>
     </div>
-    <div id="stateBox" class="stateBox">Cargando proyectos...</div>
+    <div id="stateBox" class="stateBox" role="status" aria-live="polite">Cargando proyectos...</div>
     <div class="projectsGrid" id="projectsGrid"></div>
     <div class="moreWrap" id="moreWrap" style="display:none">
       <button class="btn btn--ghost" id="moreBtn">Cargar más proyectos</button>
@@ -598,15 +587,15 @@
       <p>No una página, una herramienta digital con lógica de negocio real.</p>
     </div>
     <div class="servicesGrid fade-in">
-      <div class="serviceCard"><span class="serviceCard__icon">🛒</span><div class="serviceCard__title">Tiendas Online</div><div class="serviceCard__desc">Carrito, stock, ofertas, cupones y pedidos por WhatsApp. Integración con Mercado Pago y Stripe.</div></div>
-      <div class="serviceCard"><span class="serviceCard__icon">📦</span><div class="serviceCard__title">Sistemas de Pedidos</div><div class="serviceCard__desc">Flujo guiado con selección de zona, cálculo de costos y mensaje de WhatsApp listo para confirmar.</div></div>
-      <div class="serviceCard"><span class="serviceCard__icon">📄</span><div class="serviceCard__title">Presupuestos en PDF</div><div class="serviceCard__desc">Generá, descargá y compartí presupuestos formales desde el celular en segundos.</div></div>
-      <div class="serviceCard"><span class="serviceCard__icon">⚙️</span><div class="serviceCard__title">Panel Admin Completo</div><div class="serviceCard__desc">El dueño gestiona productos, ofertas, cupones, leads y usuarios desde el celular, sin depender de nadie.</div></div>
-      <div class="serviceCard"><span class="serviceCard__icon">📻</span><div class="serviceCard__title">Radios Online</div><div class="serviceCard__desc">Streaming en vivo, diseño de marca completo, widget de reproducción y PWA instalable.</div></div>
-      <div class="serviceCard"><span class="serviceCard__icon">🎯</span><div class="serviceCard__title">Landings de Conversión</div><div class="serviceCard__desc">Diseñadas para convertir visitas en consultas. Cada sección pensada para que el visitante tome acción.</div></div>
-      <div class="serviceCard"><span class="serviceCard__icon">🏢</span><div class="serviceCard__title">Webs Institucionales</div><div class="serviceCard__desc">Galería de trabajos, servicios, reservas por WhatsApp, mapa y SEO completo.</div></div>
-      <div class="serviceCard"><span class="serviceCard__icon">🎉</span><div class="serviceCard__title">Eventos y Entretenimiento</div><div class="serviceCard__desc">Alto impacto visual para bailantas, eventos musicales y espacios de entretenimiento.</div></div>
-      <div class="serviceCard"><span class="serviceCard__icon">📋</span><div class="serviceCard__title">Catálogos Digitales</div><div class="serviceCard__desc">Vitrina profesional 24hs con productos por categoría, fotos, precios y botón de consulta directa.</div></div>
+      <div class="serviceCard"><span class="serviceCard__icon" aria-hidden="true">🛒</span><div class="serviceCard__title">Tiendas Online</div><div class="serviceCard__desc">Carrito, stock, ofertas, cupones y pedidos por WhatsApp. Integración con Mercado Pago y Stripe.</div></div>
+      <div class="serviceCard"><span class="serviceCard__icon" aria-hidden="true">📦</span><div class="serviceCard__title">Sistemas de Pedidos</div><div class="serviceCard__desc">Flujo guiado con selección de zona, cálculo de costos y mensaje de WhatsApp listo para confirmar.</div></div>
+      <div class="serviceCard"><span class="serviceCard__icon" aria-hidden="true">📄</span><div class="serviceCard__title">Presupuestos en PDF</div><div class="serviceCard__desc">Generá, descargá y compartí presupuestos formales desde el celular en segundos.</div></div>
+      <div class="serviceCard"><span class="serviceCard__icon" aria-hidden="true">⚙️</span><div class="serviceCard__title">Panel Admin Completo</div><div class="serviceCard__desc">El dueño gestiona productos, ofertas, cupones, leads y usuarios desde el celular, sin depender de nadie.</div></div>
+      <div class="serviceCard"><span class="serviceCard__icon" aria-hidden="true">📻</span><div class="serviceCard__title">Radios Online</div><div class="serviceCard__desc">Streaming en vivo, diseño de marca completo, widget de reproducción y PWA instalable.</div></div>
+      <div class="serviceCard"><span class="serviceCard__icon" aria-hidden="true">🎯</span><div class="serviceCard__title">Landings de Conversión</div><div class="serviceCard__desc">Diseñadas para convertir visitas en consultas. Cada sección pensada para que el visitante tome acción.</div></div>
+      <div class="serviceCard"><span class="serviceCard__icon" aria-hidden="true">🏢</span><div class="serviceCard__title">Webs Institucionales</div><div class="serviceCard__desc">Galería de trabajos, servicios, reservas por WhatsApp, mapa y SEO completo.</div></div>
+      <div class="serviceCard"><span class="serviceCard__icon" aria-hidden="true">🎉</span><div class="serviceCard__title">Eventos y Entretenimiento</div><div class="serviceCard__desc">Alto impacto visual para bailantas, eventos musicales y espacios de entretenimiento.</div></div>
+      <div class="serviceCard"><span class="serviceCard__icon" aria-hidden="true">📋</span><div class="serviceCard__title">Catálogos Digitales</div><div class="serviceCard__desc">Vitrina profesional 24hs con productos por categoría, fotos, precios y botón de consulta directa.</div></div>
     </div>
   </div>
 </section>
@@ -659,16 +648,16 @@
       <span class="section__label">Contacto</span>
       <div class="contactBig">Hablemos de<br>tu <em>proyecto</em></div>
       <div class="contactLinks">
-        <a href="#" class="contactLink" id="finalWhatsAppBtn" target="_blank" rel="noopener">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        <a href="#" class="contactLink" id="finalWhatsAppBtn" target="_blank" rel="noopener noreferrer">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
           WhatsApp
         </a>
-        <a href="https://instagram.com/ciborg347" class="contactLink" id="linkInstagram" target="_blank" rel="noopener">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+        <a href="https://instagram.com/ciborg347" class="contactLink" id="linkInstagram" target="_blank" rel="noopener noreferrer">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
           Instagram
         </a>
         <a href="mailto:" class="contactLink" id="emailContactBtn">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 7l-10 7L2 7"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 7l-10 7L2 7"/></svg>
           Email
         </a>
       </div>
@@ -681,7 +670,7 @@
   <div class="wrap">
     <div class="footer__inner">
       <div class="footer__brand">
-        <img id="footerLogo" src="https://iili.io/fETkPEv.md.png" alt="Logo" />
+        <img id="footerLogo" src="https://iili.io/fETkPEv.md.png" alt="Logo Ciborg 347" width="38" height="38" />
         <div>
           <strong id="footerTitle">CIBORG 347</strong>
           <span id="footerTagline">Desarrollo Web</span>
@@ -698,29 +687,30 @@
 </footer>
 
 <!-- WA FLOAT -->
-<a href="#" class="waFloat" id="waFloat" target="_blank" rel="noopener" aria-label="WhatsApp">
-  <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+<a href="#" class="waFloat" id="waFloat" target="_blank" rel="noopener noreferrer" aria-label="Contactar por WhatsApp">
+  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
 </a>
 
 <!-- MODAL -->
-<div class="modal" id="projectModal" aria-hidden="true" role="dialog">
-  <div class="modal__panel">
+<!-- FIX accesibilidad: tabindex="-1" para focus trap, role=dialog, aria-modal -->
+<div class="modal" id="projectModal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal__panel" tabindex="-1" id="modalPanel">
     <div class="modal__header">
       <h3 id="modalTitle"></h3>
-      <button class="modal__close" id="modalClose" aria-label="Cerrar">×</button>
+      <button class="modal__close" id="modalClose" aria-label="Cerrar modal">×</button>
     </div>
     <div class="modal__body">
       <div class="modal__imageWrap">
-        <img id="modalImage" src="" alt="" />
+        <img id="modalImage" src="" alt="" width="400" height="250" />
       </div>
       <div class="modal__info">
         <div class="modal__cat" id="modalCat"></div>
         <p class="modal__short" id="modalShort"></p>
         <p class="modal__full" id="modalFull"></p>
         <div class="modal__actions">
-          <a href="#" class="btn btn--primary" id="modalDemoBtn" target="_blank" rel="noopener">Ver demo →</a>
-          <a href="#" class="btn btn--wa" id="modalWhatsAppBtn" target="_blank" rel="noopener">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          <a href="#" class="btn btn--primary" id="modalDemoBtn" target="_blank" rel="noopener noreferrer">Ver demo →</a>
+          <a href="#" class="btn btn--wa" id="modalWhatsAppBtn" target="_blank" rel="noopener noreferrer">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
             Quiero algo así
           </a>
         </div>
@@ -732,17 +722,18 @@
 <script>
 // ===== CONFIG =====
 const SUPABASE_URL = "https://fhxcumwhgtfirznnznjx.supabase.co";
-const SUPABASE_KEY  = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZoeGN1bXdoZ3RmaXJ6bm56bmp4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc5OTYyNzEsImV4cCI6MjA4MzU3MjI3MX0.7z1B099L4yrA9k1JxwvYGCABzqiqYtkUClI3E8wQ2zA";
-const DEFAULT_WA    = "5491164499481";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZoeGN1bXdoZ3RmaXJ6bm56bmp4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc5OTYyNzEsImV4cCI6MjA4MzU3MjI3MX0.7z1B099L4yrA9k1JxwvYGCABzqiqYtkUClI3E8wQ2zA";
+const DEFAULT_WA   = "5491164499481";
 
 const sb = window.supabase?.createClient(SUPABASE_URL, SUPABASE_KEY) ?? null;
 
 // ===== STATE =====
-let projectsData   = [];
-let siteSettings   = null;
-let allCategories  = [];
-let visibleCount   = 6;
-let activeFilter   = "all";
+let projectsData  = [];
+let siteSettings  = null;
+let allCategories = [];
+let visibleCount  = 6;
+let activeFilter  = "all";
+let initDone      = false;
 
 // ===== UTILS =====
 function esc(s){ return String(s??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;"); }
@@ -751,8 +742,11 @@ function waUrl(msg){ return `https://wa.me/${getWA()}?text=${encodeURIComponent(
 const DEFAULT_MSG = "Hola CIBORG 347, vi tus demos y quiero consultar por una web para mi marca.";
 
 function setWaLinks(){
-  const links = ["topWhatsAppBtn","heroWhatsAppBtn","finalWhatsAppBtn","waFloat","mobileWhatsAppBtn"];
-  links.forEach(id=>{ const el=document.getElementById(id); if(el){ el.href=waUrl(DEFAULT_MSG); el.target="_blank"; el.rel="noopener"; }});
+  const ids = ["topWhatsAppBtn","heroWhatsAppBtn","finalWhatsAppBtn","waFloat","mobileWhatsAppBtn"];
+  ids.forEach(id => {
+    const el = document.getElementById(id);
+    if(el){ el.href = waUrl(DEFAULT_MSG); }
+  });
   const emailBtn = document.getElementById("emailContactBtn");
   if(emailBtn && siteSettings?.email_contact) emailBtn.href = `mailto:${siteSettings.email_contact}`;
 }
@@ -763,29 +757,33 @@ function hideState(){ const el=document.getElementById("stateBox"); if(el){el.st
 // ===== SITE SETTINGS =====
 async function loadSettings(){
   if(!sb) return;
-  const { data } = await sb.from("site_settings").select("*").eq("id","global").maybeSingle();
-  if(!data) return;
-  siteSettings = data;
+  try {
+    const { data } = await sb.from("site_settings").select("*").eq("id","global").maybeSingle();
+    if(!data) return;
+    siteSettings = data;
 
-  const setTxt = (id,v)=>{ const el=document.getElementById(id); if(el&&v) el.textContent=v; };
-  const setSrc = (id,v)=>{ const el=document.getElementById(id); if(el&&v) el.src=v; };
+    const setTxt = (id,v) => { const el=document.getElementById(id); if(el&&v) el.textContent=v; };
+    const setSrc = (id,v) => { const el=document.getElementById(id); if(el&&v) el.src=v; };
 
-  const logo = data.logo_url || "https://iili.io/fETkPEv.md.png";
-  setSrc("brandLogo", logo);
-  setSrc("footerLogo", data.footer_logo_url || logo);
-  setSrc("heroLogo",   data.hero_logo_url   || logo);
-  setTxt("brandTitle",   data.site_title);
-  setTxt("brandTagline", data.site_tagline);
-  setTxt("footerTitle",  data.site_title);
-  setTxt("footerTagline",data.site_tagline);
-  setTxt("heroTitle",    data.hero_title);
-  setTxt("heroSubtitle", data.hero_subtitle);
-  if(data.hero_badge) document.getElementById("heroBadge").textContent = data.hero_badge;
-  if(data.instagram_url){ const el=document.getElementById("linkInstagram"); if(el) el.href=data.instagram_url; }
-  if(data.site_title) document.title = data.site_title + " — Desarrollo Web";
-  if(data.favicon_url){ const l=document.createElement("link"); l.rel="icon"; l.href=data.favicon_url; document.head.appendChild(l); }
+    const logo = data.logo_url || "https://iili.io/fETkPEv.md.png";
+    setSrc("brandLogo",  logo);
+    setSrc("footerLogo", data.footer_logo_url || logo);
+    setSrc("heroLogo",   data.hero_logo_url   || logo);
+    setTxt("brandTitle",   data.site_title);
+    setTxt("brandTagline", data.site_tagline);
+    setTxt("footerTitle",  data.site_title);
+    setTxt("footerTagline",data.site_tagline);
+    setTxt("heroTitle",    data.hero_title);
+    setTxt("heroSubtitle", data.hero_subtitle);
+    if(data.hero_badge){ const el=document.getElementById("heroBadge"); if(el) el.textContent=data.hero_badge; }
+    if(data.instagram_url){ const el=document.getElementById("linkInstagram"); if(el) el.href=data.instagram_url; }
+    if(data.site_title) document.title = data.site_title + " — Desarrollo Web";
+    if(data.favicon_url){ const l=document.createElement("link"); l.rel="icon"; l.href=data.favicon_url; document.head.appendChild(l); }
 
-  setWaLinks();
+    setWaLinks();
+  } catch(e) {
+    console.warn("Settings load error:", e);
+  }
 }
 
 // ===== PROJECTS =====
@@ -793,47 +791,78 @@ async function loadProjects(){
   if(!sb){ showState("Sin conexión a Supabase."); return; }
   showState("Cargando proyectos...");
 
-  const { data: projects, error: e1 } = await sb.from("projects")
-    .select("*, categories(name,slug), project_tags(tags(name,color,slug))")
-    .eq("active", true)
-    .is("deleted_at", null)
-    .neq("status", "archived")
-    .order("order_index",{ascending:true})
-    .order("created_at",{ascending:false});
+  // FIX: timeout fallback de 8s
+  const timeout = new Promise((_,rej) => setTimeout(() => rej(new Error("timeout")), 8000));
 
-  const { data: cats } = await sb.from("categories").select("*").eq("active",true).order("order_index",{ascending:true});
+  try {
+    const [{ data: projects, error: e1 }, { data: cats }] = await Promise.race([
+      Promise.all([
+        sb.from("projects")
+          .select("*, categories(name,slug), project_tags(tags(name,color,slug))")
+          .eq("active", true)
+          .is("deleted_at", null)
+          .neq("status", "archived")
+          .order("order_index",{ascending:true})
+          .order("created_at",{ascending:false}),
+        sb.from("categories").select("*").eq("active",true).order("order_index",{ascending:true})
+      ]),
+      timeout.then(() => { throw new Error("timeout"); })
+    ]);
 
-  if(e1){ showState("No se pudieron cargar los proyectos."); return; }
+    if(e1) throw e1;
 
-  projectsData  = projects || [];
-  allCategories = cats     || [];
+    projectsData  = projects || [];
+    allCategories = cats     || [];
 
-  // stat counts
-  const statEls = ["statProjects","statCount"];
-  statEls.forEach(id=>{ const el=document.getElementById(id); if(el&&projectsData.length) el.textContent=projectsData.length+"+"; });
+    // FIX stat count: solo actualizar si hay proyectos
+    if(projectsData.length > 0){
+      ["statProjects","statCount"].forEach(id => {
+        const el = document.getElementById(id);
+        if(el) el.textContent = projectsData.length + "+";
+      });
+    }
 
-  buildFilters();
-  renderFeatured();
-  renderProjects();
+    buildFilters();
+    renderFeatured();
+    renderProjects();
+    // FIX fade-in: re-observar después de render dinámico
+    setupFade();
 
-  if(!projectsData.length) showState("Todavía no hay proyectos para mostrar.");
-  else hideState();
+    if(!projectsData.length) showState("Todavía no hay proyectos para mostrar.");
+    else hideState();
+
+  } catch(err) {
+    console.warn("Projects load error:", err);
+    showState("No se pudieron cargar los proyectos.");
+  }
 }
 
 function buildFilters(){
   const container = document.getElementById("filters");
-  container.innerHTML = '<button class="filter-btn active" data-cat="all">Todos</button>';
+  container.innerHTML = '<button class="filter-btn active" data-cat="all" aria-pressed="true">Todos</button>';
   const usedCats = new Set(projectsData.map(p=>p.category_id).filter(Boolean));
-  allCategories.filter(c=>usedCats.has(c.id)).forEach(cat=>{
+  allCategories.filter(c=>usedCats.has(c.id)).forEach(cat => {
     const btn = document.createElement("button");
-    btn.className="filter-btn"; btn.dataset.cat=cat.id; btn.textContent=cat.name;
+    btn.className = "filter-btn";
+    btn.dataset.cat = cat.id;
+    btn.textContent = cat.name;
+    // FIX accesibilidad: aria-pressed
+    btn.setAttribute("aria-pressed","false");
     container.appendChild(btn);
   });
-  container.addEventListener("click", e=>{
-    const btn=e.target.closest(".filter-btn"); if(!btn) return;
-    container.querySelectorAll(".filter-btn").forEach(b=>b.classList.remove("active"));
+
+  container.addEventListener("click", e => {
+    const btn = e.target.closest(".filter-btn");
+    if(!btn) return;
+    // FIX aria-pressed en filtros
+    container.querySelectorAll(".filter-btn").forEach(b => {
+      b.classList.remove("active");
+      b.setAttribute("aria-pressed","false");
+    });
     btn.classList.add("active");
-    activeFilter=btn.dataset.cat; visibleCount=6;
+    btn.setAttribute("aria-pressed","true");
+    activeFilter = btn.dataset.cat;
+    visibleCount = 6;
     renderProjects();
   });
 }
@@ -843,16 +872,16 @@ function renderFeatured(){
   const grid    = document.getElementById("featuredGrid");
   const list    = projectsData.filter(p=>p.featured_home).slice(0,6);
   if(!list.length){ section.style.display="none"; return; }
-  section.style.display="block";
+  section.style.display = "block";
 
-  grid.innerHTML = list.map(p=>{
+  grid.innerHTML = list.map(p => {
     const cat = p.categories?.name || p.solution_type || "";
     return `
-      <div class="featuredCard" data-open-project="${p.id}">
-        ${p.image_url?`<img src="${esc(p.image_url)}" alt="${esc(p.title)}" loading="lazy"/>`:""}
-        ${p.highlight?'<div class="highlight-badge">★ Destacado</div>':""}
-        <a class="featuredCard__link" href="${esc(p.demo_url)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">
-          <svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      <div class="featuredCard" data-open-project="${p.id}" role="button" tabindex="0" aria-label="Ver proyecto ${esc(p.title)}">
+        ${p.image_url ? `<img src="${esc(p.image_url)}" alt="${esc(p.title)}" loading="lazy" width="300" height="188"/>` : ""}
+        ${p.highlight ? '<div class="highlight-badge" aria-hidden="true">★ Destacado</div>' : ""}
+        <a class="featuredCard__link" href="${esc(p.demo_url)}" target="_blank" rel="noopener noreferrer" aria-label="Ver demo de ${esc(p.title)}" onclick="event.stopPropagation()">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
         </a>
         <div class="featuredCard__overlay">
           <div class="featuredCard__badge">${esc(cat)}</div>
@@ -865,24 +894,24 @@ function renderFeatured(){
 }
 
 function renderProjects(){
-  const grid = document.getElementById("projectsGrid");
+  const grid     = document.getElementById("projectsGrid");
   const moreWrap = document.getElementById("moreWrap");
-  const filtered = projectsData.filter(p=> activeFilter==="all" ? true : p.category_id===activeFilter);
+  const filtered = projectsData.filter(p => activeFilter === "all" ? true : p.category_id === activeFilter);
   const slice    = filtered.slice(0, visibleCount);
 
   if(!slice.length){
-    grid.innerHTML = '<div class="stateBox" style="display:block">No hay proyectos en esta categoría.</div>';
-    moreWrap.style.display="none";
+    grid.innerHTML = '<div class="stateBox" style="display:block" role="status">No hay proyectos en esta categoría.</div>';
+    moreWrap.style.display = "none";
     return;
   }
 
-  grid.innerHTML = slice.map(p=>{
+  grid.innerHTML = slice.map(p => {
     const cat = p.categories?.name || p.solution_type || "";
     return `
-      <div class="projectCard" data-open-project="${p.id}">
-        ${p.image_url?`<img src="${esc(p.image_url)}" alt="${esc(p.title)}" loading="lazy"/>`:""}
-        <a class="projectCard__link" href="${esc(p.demo_url)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">
-          <svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      <div class="projectCard" data-open-project="${p.id}" role="button" tabindex="0" aria-label="Ver proyecto ${esc(p.title)}">
+        ${p.image_url ? `<img src="${esc(p.image_url)}" alt="${esc(p.title)}" loading="lazy" width="300" height="188"/>` : ""}
+        <a class="projectCard__link" href="${esc(p.demo_url)}" target="_blank" rel="noopener noreferrer" aria-label="Ver demo de ${esc(p.title)}" onclick="event.stopPropagation()">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
         </a>
         <div class="projectCard__overlay">
           <div class="projectCard__cat">${esc(cat)}</div>
@@ -897,19 +926,31 @@ function renderProjects(){
 }
 
 function bindOpeners(root){
-  root.querySelectorAll("[data-open-project]").forEach(card=>{
-    card.addEventListener("click",()=>{
-      const id=card.getAttribute("data-open-project");
-      const p=projectsData.find(x=>String(x.id)===String(id));
+  root.querySelectorAll("[data-open-project]").forEach(card => {
+    card.addEventListener("click", () => {
+      const id = card.getAttribute("data-open-project");
+      const p  = projectsData.find(x => String(x.id) === String(id));
       if(p) openModal(p);
+    });
+    // FIX accesibilidad: abrir con Enter/Space en elementos con role=button
+    card.addEventListener("keydown", e => {
+      if(e.key === "Enter" || e.key === " "){
+        e.preventDefault();
+        card.click();
+      }
     });
   });
 }
 
 // ===== MODAL =====
+// FIX: focus trap completo
+const FOCUSABLE = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+let lastFocused = null;
+
 function openModal(p){
-  const modal=document.getElementById("projectModal");
-  const cat=p.categories?.name || p.solution_type || "";
+  // FIX: usar getWA() después de que loadSettings ya terminó (init() usa await)
+  const modal = document.getElementById("projectModal");
+  const cat   = p.categories?.name || p.solution_type || "";
   document.getElementById("modalTitle").textContent  = p.title;
   document.getElementById("modalImage").src          = p.image_url || "";
   document.getElementById("modalImage").alt          = p.title;
@@ -918,24 +959,56 @@ function openModal(p){
   document.getElementById("modalFull").textContent   = p.full_description  || "";
   document.getElementById("modalDemoBtn").href       = p.demo_url || "#";
   document.getElementById("modalWhatsAppBtn").href   = waUrl(`Hola CIBORG 347, vi la demo "${p.title}" y quiero algo así para mi marca.`);
+
+  lastFocused = document.activeElement;
   modal.classList.add("isOpen");
   modal.setAttribute("aria-hidden","false");
   document.body.classList.add("bodyLock");
+
+  // FIX accesibilidad: mover foco al panel del modal
+  const panel = document.getElementById("modalPanel");
+  setTimeout(() => panel.focus(), 50);
 }
 
 function closeModal(){
-  const modal=document.getElementById("projectModal");
+  const modal = document.getElementById("projectModal");
   modal.classList.remove("isOpen");
   modal.setAttribute("aria-hidden","true");
   document.body.classList.remove("bodyLock");
+  // FIX: devolver foco al elemento que abrió el modal
+  if(lastFocused) lastFocused.focus();
 }
+
+// FIX accesibilidad: focus trap dentro del modal
+document.getElementById("projectModal").addEventListener("keydown", e => {
+  if(!document.getElementById("projectModal").classList.contains("isOpen")) return;
+  const panel     = document.getElementById("modalPanel");
+  const focusable = Array.from(panel.querySelectorAll(FOCUSABLE)).filter(el => !el.disabled);
+  const first     = focusable[0];
+  const last      = focusable[focusable.length - 1];
+
+  if(e.key === "Tab"){
+    if(e.shiftKey){
+      if(document.activeElement === first){ e.preventDefault(); last.focus(); }
+    } else {
+      if(document.activeElement === last){ e.preventDefault(); first.focus(); }
+    }
+  }
+});
 
 // ===== FAQ =====
 async function loadFaqs(){
   let faqs = [];
+  // FIX: timeout fallback de 5s para el skeleton
   if(sb){
-    const { data } = await sb.from("faqs").select("*").eq("active",true).order("order_index",{ascending:true});
-    faqs = data || [];
+    try {
+      const timeout = new Promise(resolve => setTimeout(() => resolve(null), 5000));
+      const query   = sb.from("faqs").select("*").eq("active",true).order("order_index",{ascending:true});
+      const result  = await Promise.race([query, timeout]);
+      faqs = result?.data || [];
+    } catch(e) {
+      console.warn("FAQ load error:", e);
+    }
   }
   if(!faqs.length) faqs = defaultFaqs();
   renderFaqs(faqs);
@@ -953,52 +1026,79 @@ function defaultFaqs(){
 }
 
 function renderFaqs(faqs){
-  const grid=document.getElementById("faqGrid");
-  grid.innerHTML=faqs.map(f=>`
+  const grid = document.getElementById("faqGrid");
+  grid.innerHTML = faqs.map(f => `
     <div class="faqItem">
       <div class="faqQ">${esc(f.question)}</div>
       <div class="faqA">${esc(f.answer)}</div>
     </div>`).join("");
-  grid.querySelectorAll(".faqItem").forEach(item=>{
-    item.addEventListener("click",()=>{
-      const isOpen=item.classList.contains("open");
-      grid.querySelectorAll(".faqItem").forEach(i=>i.classList.remove("open"));
+  grid.querySelectorAll(".faqItem").forEach(item => {
+    item.addEventListener("click", () => {
+      const isOpen = item.classList.contains("open");
+      grid.querySelectorAll(".faqItem").forEach(i => i.classList.remove("open"));
       if(!isOpen) item.classList.add("open");
     });
   });
 }
 
 // ===== NAV =====
-document.getElementById("burgerBtn").addEventListener("click",()=>{
-  const m=document.getElementById("mobileMenu");
-  const open=!m.classList.contains("isOpen");
-  m.classList.toggle("isOpen",open);
-  m.setAttribute("aria-hidden",open?"false":"true");
-  document.getElementById("burgerBtn").setAttribute("aria-expanded",open?"true":"false");
+const burgerBtn  = document.getElementById("burgerBtn");
+const mobileMenu = document.getElementById("mobileMenu");
+
+burgerBtn.addEventListener("click", () => {
+  const open = !mobileMenu.classList.contains("isOpen");
+  mobileMenu.classList.toggle("isOpen", open);
+  mobileMenu.setAttribute("aria-hidden", open ? "false" : "true");
+  burgerBtn.setAttribute("aria-expanded", open ? "true" : "false");
 });
-document.querySelectorAll(".mobileMenu a").forEach(a=>a.addEventListener("click",()=>{
-  document.getElementById("mobileMenu").classList.remove("isOpen");
+
+// FIX UX: cerrar menú mobile al clickear fuera
+document.addEventListener("click", e => {
+  if(mobileMenu.classList.contains("isOpen") &&
+     !mobileMenu.contains(e.target) &&
+     !burgerBtn.contains(e.target)){
+    mobileMenu.classList.remove("isOpen");
+    mobileMenu.setAttribute("aria-hidden","true");
+    burgerBtn.setAttribute("aria-expanded","false");
+  }
+});
+
+document.querySelectorAll(".mobileMenu a").forEach(a => a.addEventListener("click", () => {
+  mobileMenu.classList.remove("isOpen");
+  mobileMenu.setAttribute("aria-hidden","true");
+  burgerBtn.setAttribute("aria-expanded","false");
 }));
 
 // ===== MODAL EVENTS =====
-document.getElementById("modalClose").addEventListener("click",closeModal);
-document.getElementById("projectModal").addEventListener("click",e=>{ if(e.target===e.currentTarget) closeModal(); });
-window.addEventListener("keydown",e=>{ if(e.key==="Escape") closeModal(); });
-document.getElementById("moreBtn").addEventListener("click",()=>{ visibleCount+=6; renderProjects(); });
+document.getElementById("modalClose").addEventListener("click", closeModal);
+document.getElementById("projectModal").addEventListener("click", e => { if(e.target === e.currentTarget) closeModal(); });
+window.addEventListener("keydown", e => { if(e.key === "Escape") closeModal(); });
+document.getElementById("moreBtn").addEventListener("click", () => { visibleCount += 6; renderProjects(); });
 
 // ===== FADE IN =====
+// FIX: función reutilizable para re-observar elementos dinámicos
 function setupFade(){
-  const obs=new IntersectionObserver(entries=>{
-    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add("visible"); obs.unobserve(e.target); } });
-  },{threshold:0.1});
-  document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if(e.isIntersecting){
+        e.target.classList.add("visible");
+        obs.unobserve(e.target);
+      }
+    });
+  }, {threshold: 0.1});
+  document.querySelectorAll(".fade-in:not(.visible)").forEach(el => obs.observe(el));
 }
 
 // ===== SMOOTH SCROLL =====
-document.querySelectorAll('a[href^="#"]').forEach(a=>{
-  a.addEventListener("click",e=>{
-    const t=document.querySelector(a.getAttribute("href")); if(!t) return;
-    e.preventDefault(); t.scrollIntoView({behavior:"smooth",block:"start"});
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener("click", e => {
+    const href = a.getAttribute("href");
+    if(!href || href === "#") return;
+    // FIX smooth scroll: guard antes del preventDefault
+    const t = document.querySelector(href);
+    if(!t) return;
+    e.preventDefault();
+    t.scrollIntoView({behavior:"smooth", block:"start"});
   });
 });
 
@@ -1006,10 +1106,13 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>{
 async function init(){
   setupFade();
   setWaLinks();
-  await Promise.all([loadSettings(), loadProjects(), loadFaqs()]);
+  // FIX: await loadSettings() primero para que getWA() tenga el número correcto antes de abrir modales
+  await loadSettings();
+  await Promise.all([loadProjects(), loadFaqs()]);
+  initDone = true;
 }
 
-if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",init);
+if(document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
 else init();
 
 window.CIBORG347 = { openModal, minimal: false };
