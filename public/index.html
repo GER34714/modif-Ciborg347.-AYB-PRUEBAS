@@ -177,7 +177,7 @@
       background-clip: text;
     }
 
-    /* STATS BAR */
+    /* STATS BAR - COLUMNA (número arriba, etiqueta abajo) */
     .hero__stats {
       display: flex;
       justify-content: space-evenly;
@@ -556,7 +556,7 @@
     .footer__links a { font-size: 12px; color: var(--text2); transition: color 0.2s; }
     .footer__links a:hover { color: var(--cyan); }
 
-    /* WHATSAPP FLOAT */
+    /* WHATSAPP FLOAT - con ocultamiento al llegar al footer */
     .waFloat {
       position: fixed;
       bottom: 24px;
@@ -606,6 +606,7 @@
     }
     @media (max-width: 600px) {
       .section { padding: 60px 0; }
+      .hero__stats { display: flex; } /* Se mantiene visible en móvil */
       .projectsGrid { gap: 20px; }
     }
 
@@ -654,8 +655,9 @@
         <a href="#" class="btn btn--wa" id="heroWhatsAppBtn">Consultar gratis</a>
       </div>
       
+      <!-- STATS BAR EN COLUMNA -->
       <div class="hero__stats">
-        <div class="hero__stat"><strong>52+</strong><span>Proyectos</span></div>
+        <div class="hero__stat"><strong id="statProjects">52+</strong><span>Proyectos</span></div>
         <div class="hero__stat"><strong>24hs</strong><span>Online</span></div>
         <div class="hero__stat"><strong>100%</strong><span>Código propio</span></div>
         <div class="hero__stat"><strong>$0</strong><span>Mensualidad</span></div>
@@ -818,7 +820,7 @@ themeToggle.addEventListener("click", () => {
   themeToggle.textContent = newTheme === "dark" ? "☀️" : "🌙";
 });
 
-// ===== TYPEWRITER CORREGIDO (cursor solo mientras escribe) =====
+// ===== TYPEWRITER CORREGIDO (cursor solo mientras escribe, desaparece al terminar) =====
 const phrases = ["Tu web.", "Tu negocio.", "Sin límites."];
 let phraseIndex = 0, charIndex = 0;
 let isDeleting = false;
@@ -827,26 +829,20 @@ const typewriterEl = document.getElementById("typewriterTitle");
 
 function typeWriter() {
   if (!typewriterEl) return;
-  
-  // Si ya completó todo el ciclo, salir
   if (isComplete) return;
   
   const currentPhrase = phrases[phraseIndex];
   
   if (!isDeleting && charIndex <= currentPhrase.length) {
-    // Escribiendo
     typewriterEl.textContent = currentPhrase.substring(0, charIndex);
     charIndex++;
     
     if (charIndex > currentPhrase.length) {
-      // Terminó de escribir la frase actual
       if (phraseIndex === phrases.length - 1) {
-        // Es la última frase, terminar efecto
         isComplete = true;
-        typewriterEl.style.borderRight = "none"; // Ocultar cursor definitivamente
+        typewriterEl.style.borderRight = "none";
         return;
       }
-      // Esperar 1.5 segundos antes de borrar
       isDeleting = true;
       setTimeout(typeWriter, 1500);
       return;
@@ -854,12 +850,10 @@ function typeWriter() {
     setTimeout(typeWriter, 100);
   } 
   else if (isDeleting && charIndex >= 0) {
-    // Borrando
     typewriterEl.textContent = currentPhrase.substring(0, charIndex);
     charIndex--;
     
     if (charIndex < 0) {
-      // Terminó de borrar, pasar a la siguiente frase
       isDeleting = false;
       phraseIndex++;
       charIndex = 0;
@@ -870,7 +864,6 @@ function typeWriter() {
   }
 }
 
-// Iniciar el efecto cuando el DOM esté listo
 setTimeout(typeWriter, 500);
 
 // ===== MODAL =====
@@ -904,26 +897,52 @@ window.closeModal = function() {
   document.body.style.overflow = "";
 }
 
-// ===== CARGAR PROYECTOS =====
+// ===== CARGAR PROYECTOS DESDE SUPABASE =====
 async function loadProjects() {
-  if (!sb) return;
+  if (!sb) {
+    console.warn("Supabase no disponible");
+    return;
+  }
   const skeleton = document.getElementById("skeletonContainer");
   const projectsGrid = document.getElementById("projectsGrid");
   skeleton.style.display = "grid";
   projectsGrid.style.display = "none";
   
   try {
-    const { data: projects } = await sb.from("projects").select("*, categories(name,slug)").eq("active", true).order("created_at", { ascending: false });
+    // Cargar proyectos activos
+    const { data: projects, error: projectsError } = await sb
+      .from("projects")
+      .select("*, categories(name,slug)")
+      .eq("active", true)
+      .order("created_at", { ascending: false });
+    
+    if (projectsError) throw projectsError;
     if (projects) projectsData = projects;
-    const { data: cats } = await sb.from("categories").select("*").eq("active", true);
+    
+    // Cargar categorías activas
+    const { data: cats, error: catsError } = await sb
+      .from("categories")
+      .select("*")
+      .eq("active", true)
+      .order("order_index", { ascending: true });
+    
+    if (catsError) throw catsError;
     if (cats) allCategories = cats;
     
-    document.getElementById("statProjects").textContent = projectsData.length + "+";
+    // Actualizar contador de proyectos
+    const statSpan = document.getElementById("statProjects");
+    if (statSpan && projectsData.length) statSpan.textContent = projectsData.length + "+";
+    
     buildFilters();
     renderProjects();
     skeleton.style.display = "none";
     projectsGrid.style.display = "grid";
-  } catch(e) { console.error(e); skeleton.style.display = "none"; }
+  } catch(e) {
+    console.error("Error cargando proyectos:", e);
+    skeleton.style.display = "none";
+    projectsGrid.innerHTML = '<div style="padding:2rem; text-align:center; color:var(--text2);">⚠️ Error al cargar proyectos. Verifica tu conexión a Supabase.</div>';
+    projectsGrid.style.display = "grid";
+  }
 }
 
 function buildFilters() {
@@ -950,8 +969,11 @@ function buildFilters() {
 function renderProjects() {
   let filtered = projectsData.filter(p => activeFilter === "all" ? true : p.category_id === activeFilter);
   if (currentSearch) {
-    filtered = filtered.filter(p => p.title.toLowerCase().includes(currentSearch.toLowerCase()) || 
-                                   (p.short_description || "").toLowerCase().includes(currentSearch.toLowerCase()));
+    const searchLower = currentSearch.toLowerCase();
+    filtered = filtered.filter(p => 
+      p.title.toLowerCase().includes(searchLower) || 
+      (p.short_description || "").toLowerCase().includes(searchLower)
+    );
   }
   
   if (currentSort === "az") filtered.sort((a,b) => a.title.localeCompare(b.title));
@@ -959,7 +981,10 @@ function renderProjects() {
   else filtered.sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
   
   const grid = document.getElementById("projectsGrid");
-  if (!filtered.length) { grid.innerHTML = '<div style="padding:2rem; text-align:center;">No hay proyectos.</div>'; return; }
+  if (!filtered.length) { 
+    grid.innerHTML = '<div style="padding:2rem; text-align:center; color:var(--text2);">No hay proyectos en esta categoría.</div>'; 
+    return; 
+  }
   
   const sevenDaysAgo = new Date();
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
@@ -997,14 +1022,16 @@ function shareProject(id, title) {
 async function loadFaqs() {
   let faqs = [];
   if (sb) {
-    const { data } = await sb.from("faqs").select("*").eq("active", true);
-    if (data) faqs = data;
+    try {
+      const { data, error } = await sb.from("faqs").select("*").eq("active", true).order("order_index", { ascending: true });
+      if (!error && data) faqs = data;
+    } catch(e) { console.warn("Error cargando FAQs:", e); }
   }
   if (!faqs.length) faqs = [
-    { question: "¿Cuánto tarda un proyecto?", answer: "Depende de la complejidad, pero presento una propuesta visual antes de comprometerse." },
-    { question: "¿Hay mensualidad obligatoria?", answer: "No. El sitio es tuyo para siempre. Sin pagos recurrentes." },
-    { question: "¿Puedo administrar el contenido yo mismo?", answer: "Sí. Los proyectos incluyen panel de administración propio." },
-    { question: "¿La web funciona en celular?", answer: "Siempre. Todos los desarrollos son Mobile First." }
+    { question: "¿Cuánto tarda un proyecto?", answer: "Depende de la complejidad, pero presento una propuesta visual antes de comprometerse. Una vez aprobada, el desarrollo arranca de inmediato." },
+    { question: "¿Hay mensualidad obligatoria?", answer: "No. El sitio es tuyo para siempre. Sin dependencia de plataformas externas ni pagos recurrentes obligatorios." },
+    { question: "¿Puedo administrar el contenido yo mismo?", answer: "Sí. Los proyectos incluyen panel de administración propio para gestionar productos, precios e imágenes desde el celular." },
+    { question: "¿La web funciona en celular?", answer: "Siempre. Todos los desarrollos son Mobile First, optimizados para celular, tablet y computadora." }
   ];
   const grid = document.getElementById("faqGrid");
   grid.innerHTML = faqs.map(f => `
