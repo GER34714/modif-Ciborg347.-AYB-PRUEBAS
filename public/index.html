@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Ciborg 347 — Desarrollo Web y Soluciones Digitales</title>
   <meta name="description" content="Desarrollador web independiente. Tiendas online, paneles admin, apps a medida. Sin mensualidad. Sin plantillas." />
   <meta property="og:title" content="Ciborg 347 — Desarrollo Web" />
@@ -69,7 +69,6 @@
 
     .wrap { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
 
-    /* HEADER */
     .topbar {
       position: sticky; top: 0; z-index: 100;
       background: rgba(10,10,15,0.82);
@@ -142,7 +141,6 @@
       color: var(--text2); padding: 0.6rem 0; border-bottom: 1px solid var(--border);
     }
 
-    /* HERO */
     .hero {
       position: relative;
       min-height: 88vh; display: flex; align-items: center;
@@ -230,6 +228,24 @@
       .hero__stat span { font-size: 0.6rem; }
       .hero__stats { padding: 12px 0; }
       .typewriter { font-size: clamp(1.5rem, 6vw, 2.2rem); }
+      
+      /* HERO OVERLAY MÁS TRANSPARENTE EN MÓVIL - IMAGEN MÁS NÍTIDA */
+      .hero::before {
+        background: linear-gradient(
+          to right,
+          rgba(10, 10, 15, 0.4) 0%,
+          rgba(10, 10, 15, 0.2) 50%,
+          rgba(10, 10, 15, 0) 100%
+        ) !important;
+      }
+      [data-theme="light"] .hero::before {
+        background: linear-gradient(
+          to right,
+          rgba(240, 244, 248, 0.5) 0%,
+          rgba(240, 244, 248, 0.2) 50%,
+          rgba(240, 244, 248, 0) 100%
+        ) !important;
+      }
     }
 
     .section { padding: 90px 0; position: relative; }
@@ -426,7 +442,6 @@
     .modal-actions { display: flex; gap: 12px; margin-top: 1.5rem; flex-wrap: wrap; }
     .modal-actions .btn { flex: 1; justify-content: center; }
 
-    /* SERVICES - CORREGIDO: ocultar cards vacías o sin título */
     .servicesGrid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -450,14 +465,6 @@
       margin-bottom: 0.6rem;
     }
     .serviceCard__desc { font-size: 14px; color: var(--text2); line-height: 1.65; }
-    
-    /* Ocultar cards vacías o sin contenido - SOLUCIÓN DEFINITIVA */
-    .servicesGrid .serviceCard:empty,
-    .servicesGrid div:empty,
-    .servicesGrid .serviceCard:has(.serviceCard__title:empty),
-    .servicesGrid .serviceCard:not(:has(.serviceCard__title)) {
-      display: none !important;
-    }
 
     .faqGrid {
       display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border);
@@ -556,10 +563,20 @@
       .faqGrid { grid-template-columns: 1fr; }
       .controls-bar { flex-direction: column; align-items: stretch; }
     }
+    @media (max-width: 700px) {
+      .servicesGrid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
     @media (max-width: 600px) {
       .section { padding: 60px 0; }
       .hero__stats { display: flex; }
       .projectsGrid { gap: 20px; }
+    }
+    @media (max-width: 480px) {
+      .servicesGrid {
+        grid-template-columns: 1fr;
+      }
     }
 
     .fade-in { opacity: 0; transform: translateY(20px); transition: opacity 0.6s, transform 0.6s; }
@@ -596,7 +613,6 @@
   <a href="#" class="btn btn--wa" id="mobileWhatsAppBtn">WhatsApp</a>
 </nav>
 
-<!-- HERO -->
 <section class="hero">
   <div class="wrap">
     <div class="hero__copy fade-in">
@@ -617,7 +633,6 @@
   </div>
 </section>
 
-<!-- PORTFOLIO -->
 <section class="section section--alt" id="portfolio">
   <div class="wrap">
     <div class="section__head fade-in">
@@ -651,18 +666,23 @@
   </div>
 </section>
 
-<!-- SERVICIOS -->
 <section class="section" id="servicios">
   <div class="wrap">
     <div class="section__head fade-in">
       <span class="section__label">Qué construimos</span>
       <h2>Soluciones <em>a medida</em></h2>
     </div>
-    <div class="servicesGrid" id="servicesGrid"></div>
+    <div class="servicesGrid">
+      <div class="serviceCard"><span class="serviceCard__icon">🛒</span><div class="serviceCard__title">Tiendas Online</div><div class="serviceCard__desc">Carrito, stock, ofertas y pedidos por WhatsApp.</div></div>
+      <div class="serviceCard"><span class="serviceCard__icon">📦</span><div class="serviceCard__title">Sistemas de Pedidos</div><div class="serviceCard__desc">Flujo guiado con cálculo de costos.</div></div>
+      <div class="serviceCard"><span class="serviceCard__icon">⚙️</span><div class="serviceCard__title">Panel Admin</div><div class="serviceCard__desc">Gestioná productos desde el celular.</div></div>
+      <div class="serviceCard"><span class="serviceCard__icon">🎯</span><div class="serviceCard__title">Landings de Conversión</div><div class="serviceCard__desc">Diseñadas para convertir visitas.</div></div>
+      <div class="serviceCard"><span class="serviceCard__icon">🏢</span><div class="serviceCard__title">Webs Institucionales</div><div class="serviceCard__desc">Galería, servicios y SEO completo.</div></div>
+      <div class="serviceCard"><span class="serviceCard__icon">📋</span><div class="serviceCard__title">Catálogos Digitales</div><div class="serviceCard__desc">Vitrina profesional con botón de consulta.</div></div>
+    </div>
   </div>
 </section>
 
-<!-- FAQ -->
 <section class="section section--alt" id="faq">
   <div class="wrap">
     <div class="section__head center fade-in">
@@ -673,7 +693,6 @@
   </div>
 </section>
 
-<!-- CONTACTO -->
 <section class="section" id="contacto">
   <div class="wrap">
     <div class="section__head center fade-in">
@@ -708,6 +727,7 @@
       <div class="footer__links">
         <a href="#portfolio">Proyectos</a>
         <a href="#servicios">Servicios</a>
+        <a href="#faq">FAQ</a>
         <a href="#contacto">Contacto</a>
       </div>
       <div class="footer__copy">© 2025 Ciborg 347 — Diseñamos hoy, impulsamos tu futuro.</div>
@@ -751,7 +771,6 @@ function showToast(msg) {
   setTimeout(() => toast.classList.remove("show"), 2500);
 }
 
-// ===== TEMA CLARO/OSCURO =====
 const themeToggle = document.getElementById("themeToggle");
 const savedTheme = localStorage.getItem("theme") || "dark";
 document.documentElement.setAttribute("data-theme", savedTheme);
@@ -764,7 +783,7 @@ themeToggle.addEventListener("click", () => {
   themeToggle.textContent = newTheme === "dark" ? "☀️" : "🌙";
 });
 
-// ===== TYPEWRITER =====
+// TYPEWRITER
 const phrases = ["Tu web.", "Tu negocio.", "Sin límites."];
 let phraseIndex = 0, charIndex = 0;
 let isDeleting = false;
@@ -772,15 +791,12 @@ let isComplete = false;
 const typewriterEl = document.getElementById("typewriterTitle");
 
 function typeWriter() {
-  if (!typewriterEl) return;
-  if (isComplete) return;
-  
+  if (!typewriterEl || isComplete) return;
   const currentPhrase = phrases[phraseIndex];
   
   if (!isDeleting && charIndex <= currentPhrase.length) {
     typewriterEl.textContent = currentPhrase.substring(0, charIndex);
     charIndex++;
-    
     if (charIndex > currentPhrase.length) {
       if (phraseIndex === phrases.length - 1) {
         isComplete = true;
@@ -792,11 +808,9 @@ function typeWriter() {
       return;
     }
     setTimeout(typeWriter, 100);
-  } 
-  else if (isDeleting && charIndex >= 0) {
+  } else if (isDeleting && charIndex >= 0) {
     typewriterEl.textContent = currentPhrase.substring(0, charIndex);
     charIndex--;
-    
     if (charIndex < 0) {
       isDeleting = false;
       phraseIndex++;
@@ -807,10 +821,8 @@ function typeWriter() {
     setTimeout(typeWriter, 50);
   }
 }
-
 setTimeout(typeWriter, 500);
 
-// ===== MODAL =====
 function openModal(project) {
   const modalHTML = `
     <div class="modal-overlay" id="modalOverlay">
@@ -841,30 +853,6 @@ window.closeModal = function() {
   document.body.style.overflow = "";
 }
 
-// ===== SERVICIOS FIJOS (estáticos, no vienen de Supabase) =====
-const servicesData = [
-  { icon: "🛒", title: "Tiendas Online", desc: "Carrito, stock, ofertas y pedidos por WhatsApp." },
-  { icon: "📦", title: "Sistemas de Pedidos", desc: "Flujo guiado con cálculo de costos." },
-  { icon: "⚙️", title: "Panel Admin", desc: "Gestioná productos desde el celular." },
-  { icon: "🎯", title: "Landings de Conversión", desc: "Diseñadas para convertir visitas." },
-  { icon: "🏢", title: "Webs Institucionales", desc: "Galería, servicios y SEO completo." },
-  { icon: "📋", title: "Catálogos Digitales", desc: "Vitrina profesional con botón de consulta." }
-];
-
-function renderServices() {
-  const servicesGrid = document.getElementById("servicesGrid");
-  if (!servicesGrid) return;
-  
-  servicesGrid.innerHTML = servicesData.map(service => `
-    <div class="serviceCard">
-      <span class="serviceCard__icon">${service.icon}</span>
-      <div class="serviceCard__title">${esc(service.title)}</div>
-      <div class="serviceCard__desc">${esc(service.desc)}</div>
-    </div>
-  `).join("");
-}
-
-// ===== CARGAR PROYECTOS =====
 async function loadProjects() {
   if (!sb) return;
   const skeleton = document.getElementById("skeletonContainer");
@@ -911,12 +899,8 @@ function renderProjects() {
   let filtered = projectsData.filter(p => activeFilter === "all" ? true : p.category_id === activeFilter);
   if (currentSearch) {
     const searchLower = currentSearch.toLowerCase();
-    filtered = filtered.filter(p => 
-      p.title.toLowerCase().includes(searchLower) || 
-      (p.short_description || "").toLowerCase().includes(searchLower)
-    );
+    filtered = filtered.filter(p => p.title.toLowerCase().includes(searchLower) || (p.short_description || "").toLowerCase().includes(searchLower));
   }
-  
   if (currentSort === "az") filtered.sort((a,b) => a.title.localeCompare(b.title));
   else if (currentSort === "za") filtered.sort((a,b) => b.title.localeCompare(a.title));
   else filtered.sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
@@ -946,9 +930,7 @@ function renderProjects() {
   document.querySelectorAll(".projectCard").forEach(card => {
     const project = JSON.parse(card.getAttribute("data-project"));
     card.addEventListener("click", (e) => {
-      if (!e.target.closest(".share-btn")) {
-        openModal(project);
-      }
+      if (!e.target.closest(".share-btn")) openModal(project);
     });
   });
 }
@@ -959,7 +941,6 @@ function shareProject(id, title) {
   showToast(`"${title}" - Enlace copiado`);
 }
 
-// ===== FAQ =====
 async function loadFaqs() {
   let faqs = [];
   if (sb) {
@@ -973,12 +954,7 @@ async function loadFaqs() {
     { question: "¿La web funciona en celular?", answer: "Siempre. Todos los desarrollos son Mobile First." }
   ];
   const grid = document.getElementById("faqGrid");
-  grid.innerHTML = faqs.map(f => `
-    <div class="faqItem">
-      <div class="faqQ">${esc(f.question)}</div>
-      <div class="faqA">${esc(f.answer)}</div>
-    </div>
-  `).join("");
+  grid.innerHTML = faqs.map(f => `<div class="faqItem"><div class="faqQ">${esc(f.question)}</div><div class="faqA">${esc(f.answer)}</div></div>`).join("");
   document.querySelectorAll(".faqItem").forEach(item => {
     const q = item.querySelector(".faqQ");
     const a = item.querySelector(".faqA");
@@ -990,49 +966,29 @@ async function loadFaqs() {
   });
 }
 
-// ===== OCULTAR WHATSAPP AL LLEGAR AL FOOTER =====
 const waFloat = document.getElementById("waFloat");
 const footer = document.querySelector("footer");
 
 function checkWaFloatVisibility() {
   if (!waFloat || !footer) return;
   const footerRect = footer.getBoundingClientRect();
-  const viewportHeight = window.innerHeight;
-  
-  if (footerRect.top < viewportHeight - 50) {
-    waFloat.classList.add("hidden");
-  } else {
-    waFloat.classList.remove("hidden");
-  }
+  if (footerRect.top < window.innerHeight - 50) waFloat.classList.add("hidden");
+  else waFloat.classList.remove("hidden");
 }
-
 window.addEventListener("scroll", checkWaFloatVisibility);
 window.addEventListener("resize", checkWaFloatVisibility);
 setTimeout(checkWaFloatVisibility, 100);
 
-// ===== BUSCADOR Y ORDEN =====
-document.getElementById("searchInput")?.addEventListener("input", e => {
-  currentSearch = e.target.value;
-  renderProjects();
-});
-document.getElementById("sortSelect")?.addEventListener("change", e => {
-  currentSort = e.target.value;
-  renderProjects();
-});
+document.getElementById("searchInput")?.addEventListener("input", e => { currentSearch = e.target.value; renderProjects(); });
+document.getElementById("sortSelect")?.addEventListener("change", e => { currentSort = e.target.value; renderProjects(); });
 
-// ===== SCROLL REVEAL =====
-const observer = new IntersectionObserver(entries => {
-  entries.forEach(e => { if(e.isIntersecting) { e.target.classList.add("visible"); observer.unobserve(e.target); } });
-}, { threshold: 0.1 });
+const observer = new IntersectionObserver(entries => { entries.forEach(e => { if(e.isIntersecting) { e.target.classList.add("visible"); observer.unobserve(e.target); } }); }, { threshold: 0.1 });
 document.querySelectorAll(".fade-in").forEach(el => observer.observe(el));
 
-// ===== MENÚ MÓVIL =====
 document.getElementById("burgerBtn")?.addEventListener("click", () => document.getElementById("mobileMenu").classList.toggle("isOpen"));
 document.querySelectorAll(".mobileMenu a").forEach(a => a.addEventListener("click", () => document.getElementById("mobileMenu").classList.remove("isOpen")));
 
-// ===== INIT =====
 setWaLinks();
-renderServices();  // Cargar servicios fijos (NO de Supabase)
 loadProjects();
 loadFaqs();
 </script>
