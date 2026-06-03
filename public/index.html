@@ -59,6 +59,11 @@
       transition: background 0.3s, color 0.2s;
     }
 
+    /* Eliminar cualquier barra derecha magenta */
+    body::after, body::before {
+      display: none;
+    }
+
     img { max-width: 100%; display: block; }
     a { text-decoration: none; color: inherit; }
     button { cursor: pointer; font-family: inherit; }
@@ -162,7 +167,7 @@
     .hero .wrap { position: relative; z-index: 1; width: 100%; padding: 80px 24px; }
     .hero__copy { max-width: 460px; margin-right: auto; }
 
-    /* Typewriter - solo el borde, la animación se maneja desde JS */
+    /* Typewriter */
     .typewriter {
       overflow: hidden;
       border-right: 2px solid var(--cyan);
@@ -177,7 +182,7 @@
       background-clip: text;
     }
 
-    /* STATS BAR - COLUMNA (número arriba, etiqueta abajo) */
+    /* STATS BAR - COLUMNA */
     .hero__stats {
       display: flex;
       justify-content: space-evenly;
@@ -469,19 +474,43 @@
       justify-content: center;
     }
 
-    /* SERVICES */
+    /* SERVICES - CORREGIDO: eliminado el div vacío */
     .servicesGrid {
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 1px; background: var(--border);
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1px;
+      background: var(--border);
     }
     .serviceCard {
-      background: var(--bg2); padding: 2rem;
+      background: var(--bg2);
+      padding: 2rem;
       transition: all 0.3s;
     }
-    .serviceCard:hover { background: var(--bg3); transform: translateY(-4px); }
-    .serviceCard__icon { font-size: 2rem; margin-bottom: 1rem; display: block; }
-    .serviceCard__title { font-family: 'Syne', sans-serif; font-size: 1.3rem; color: var(--white); margin-bottom: 0.6rem; }
-    .serviceCard__desc { font-size: 14px; color: var(--text2); line-height: 1.65; }
+    .serviceCard:hover {
+      background: var(--bg3);
+      transform: translateY(-4px);
+    }
+    .serviceCard__icon {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      display: block;
+    }
+    .serviceCard__title {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.3rem;
+      color: var(--white);
+      margin-bottom: 0.6rem;
+    }
+    .serviceCard__desc {
+      font-size: 14px;
+      color: var(--text2);
+      line-height: 1.65;
+    }
+
+    /* Eliminar cualquier div vacío dentro de servicesGrid */
+    .servicesGrid > div:empty {
+      display: none;
+    }
 
     /* FAQ */
     .faqGrid {
@@ -556,7 +585,7 @@
     .footer__links a { font-size: 12px; color: var(--text2); transition: color 0.2s; }
     .footer__links a:hover { color: var(--cyan); }
 
-    /* WHATSAPP FLOAT - con ocultamiento al llegar al footer */
+    /* WHATSAPP FLOAT */
     .waFloat {
       position: fixed;
       bottom: 24px;
@@ -606,7 +635,7 @@
     }
     @media (max-width: 600px) {
       .section { padding: 60px 0; }
-      .hero__stats { display: flex; } /* Se mantiene visible en móvil */
+      .hero__stats { display: flex; }
       .projectsGrid { gap: 20px; }
     }
 
@@ -655,7 +684,6 @@
         <a href="#" class="btn btn--wa" id="heroWhatsAppBtn">Consultar gratis</a>
       </div>
       
-      <!-- STATS BAR EN COLUMNA -->
       <div class="hero__stats">
         <div class="hero__stat"><strong id="statProjects">52+</strong><span>Proyectos</span></div>
         <div class="hero__stat"><strong>24hs</strong><span>Online</span></div>
@@ -700,7 +728,7 @@
   </div>
 </section>
 
-<!-- SERVICIOS -->
+<!-- SERVICIOS - CORREGIDO: eliminado el div vacío -->
 <section class="section" id="servicios">
   <div class="wrap">
     <div class="section__head fade-in">
@@ -820,7 +848,7 @@ themeToggle.addEventListener("click", () => {
   themeToggle.textContent = newTheme === "dark" ? "☀️" : "🌙";
 });
 
-// ===== TYPEWRITER CORREGIDO (cursor solo mientras escribe, desaparece al terminar) =====
+// ===== TYPEWRITER =====
 const phrases = ["Tu web.", "Tu negocio.", "Sin límites."];
 let phraseIndex = 0, charIndex = 0;
 let isDeleting = false;
@@ -897,52 +925,26 @@ window.closeModal = function() {
   document.body.style.overflow = "";
 }
 
-// ===== CARGAR PROYECTOS DESDE SUPABASE =====
+// ===== CARGAR PROYECTOS =====
 async function loadProjects() {
-  if (!sb) {
-    console.warn("Supabase no disponible");
-    return;
-  }
+  if (!sb) return;
   const skeleton = document.getElementById("skeletonContainer");
   const projectsGrid = document.getElementById("projectsGrid");
   skeleton.style.display = "grid";
   projectsGrid.style.display = "none";
   
   try {
-    // Cargar proyectos activos
-    const { data: projects, error: projectsError } = await sb
-      .from("projects")
-      .select("*, categories(name,slug)")
-      .eq("active", true)
-      .order("created_at", { ascending: false });
-    
-    if (projectsError) throw projectsError;
+    const { data: projects } = await sb.from("projects").select("*, categories(name,slug)").eq("active", true).order("created_at", { ascending: false });
     if (projects) projectsData = projects;
-    
-    // Cargar categorías activas
-    const { data: cats, error: catsError } = await sb
-      .from("categories")
-      .select("*")
-      .eq("active", true)
-      .order("order_index", { ascending: true });
-    
-    if (catsError) throw catsError;
+    const { data: cats } = await sb.from("categories").select("*").eq("active", true);
     if (cats) allCategories = cats;
     
-    // Actualizar contador de proyectos
-    const statSpan = document.getElementById("statProjects");
-    if (statSpan && projectsData.length) statSpan.textContent = projectsData.length + "+";
-    
+    document.getElementById("statProjects").textContent = projectsData.length + "+";
     buildFilters();
     renderProjects();
     skeleton.style.display = "none";
     projectsGrid.style.display = "grid";
-  } catch(e) {
-    console.error("Error cargando proyectos:", e);
-    skeleton.style.display = "none";
-    projectsGrid.innerHTML = '<div style="padding:2rem; text-align:center; color:var(--text2);">⚠️ Error al cargar proyectos. Verifica tu conexión a Supabase.</div>';
-    projectsGrid.style.display = "grid";
-  }
+  } catch(e) { console.error(e); skeleton.style.display = "none"; }
 }
 
 function buildFilters() {
@@ -1022,16 +1024,14 @@ function shareProject(id, title) {
 async function loadFaqs() {
   let faqs = [];
   if (sb) {
-    try {
-      const { data, error } = await sb.from("faqs").select("*").eq("active", true).order("order_index", { ascending: true });
-      if (!error && data) faqs = data;
-    } catch(e) { console.warn("Error cargando FAQs:", e); }
+    const { data } = await sb.from("faqs").select("*").eq("active", true);
+    if (data) faqs = data;
   }
   if (!faqs.length) faqs = [
-    { question: "¿Cuánto tarda un proyecto?", answer: "Depende de la complejidad, pero presento una propuesta visual antes de comprometerse. Una vez aprobada, el desarrollo arranca de inmediato." },
-    { question: "¿Hay mensualidad obligatoria?", answer: "No. El sitio es tuyo para siempre. Sin dependencia de plataformas externas ni pagos recurrentes obligatorios." },
-    { question: "¿Puedo administrar el contenido yo mismo?", answer: "Sí. Los proyectos incluyen panel de administración propio para gestionar productos, precios e imágenes desde el celular." },
-    { question: "¿La web funciona en celular?", answer: "Siempre. Todos los desarrollos son Mobile First, optimizados para celular, tablet y computadora." }
+    { question: "¿Cuánto tarda un proyecto?", answer: "Depende de la complejidad, pero presento una propuesta visual antes de comprometerse." },
+    { question: "¿Hay mensualidad obligatoria?", answer: "No. El sitio es tuyo para siempre. Sin pagos recurrentes." },
+    { question: "¿Puedo administrar el contenido yo mismo?", answer: "Sí. Los proyectos incluyen panel de administración propio." },
+    { question: "¿La web funciona en celular?", answer: "Siempre. Todos los desarrollos son Mobile First." }
   ];
   const grid = document.getElementById("faqGrid");
   grid.innerHTML = faqs.map(f => `
