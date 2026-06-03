@@ -16,6 +16,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 
   <style>
+    /* ========== TUS ESTILOS ORIGINALES (sin cambios) ========== */
     :root {
       --bg: #0a0a0f;
       --bg2: #0f0f1a;
@@ -229,7 +230,6 @@
       .hero__stats { padding: 12px 0; }
       .typewriter { font-size: clamp(1.5rem, 6vw, 2.2rem); }
       
-      /* HERO OVERLAY MÁS TRANSPARENTE EN MÓVIL - IMAGEN MÁS NÍTIDA */
       .hero::before {
         background: linear-gradient(
           to right,
@@ -442,11 +442,12 @@
     .modal-actions { display: flex; gap: 12px; margin-top: 1.5rem; flex-wrap: wrap; }
     .modal-actions .btn { flex: 1; justify-content: center; }
 
+    /* ========== SERVICIOS - MODIFICADO SEGÚN PEDIDO ========== */
     .servicesGrid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 1px;
-      background: var(--border);
+      grid-template-columns: repeat(3, 1fr);  /* ← cambio 1: 3 columnas exactas */
+      gap: 1px;                               /* mantengo tu gap original */
+      /* background: var(--border);           ← cambio 2: eliminado */
     }
     .serviceCard {
       background: var(--bg2);
@@ -466,6 +467,39 @@
     }
     .serviceCard__desc { font-size: 14px; color: var(--text2); line-height: 1.65; }
 
+    /* Botón "Ver más" (nuevo, no afecta al resto) */
+    .serviceCard__btn {
+      display: inline-block;
+      margin-top: 1rem;
+      background: transparent;
+      border: 1px solid var(--cyan);
+      color: var(--cyan);
+      padding: 6px 12px;
+      border-radius: 30px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      transition: all 0.2s;
+      text-align: center;
+      text-decoration: none;
+    }
+    .serviceCard__btn:hover {
+      background: var(--cyan);
+      color: var(--white);
+    }
+
+    /* Responsive para móvil (manteniendo tu estructura) */
+    @media (max-width: 700px) {
+      .servicesGrid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    @media (max-width: 480px) {
+      .servicesGrid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* El resto de tus estilos (FAQ, contacto, footer, etc.) siguen exactamente igual */
     .faqGrid {
       display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border);
     }
@@ -563,20 +597,10 @@
       .faqGrid { grid-template-columns: 1fr; }
       .controls-bar { flex-direction: column; align-items: stretch; }
     }
-    @media (max-width: 700px) {
-      .servicesGrid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
     @media (max-width: 600px) {
       .section { padding: 60px 0; }
       .hero__stats { display: flex; }
       .projectsGrid { gap: 20px; }
-    }
-    @media (max-width: 480px) {
-      .servicesGrid {
-        grid-template-columns: 1fr;
-      }
     }
 
     .fade-in { opacity: 0; transform: translateY(20px); transition: opacity 0.6s, transform 0.6s; }
@@ -666,6 +690,7 @@
   </div>
 </section>
 
+<!-- SERVICIOS (con botones "Ver más →" añadidos) -->
 <section class="section" id="servicios">
   <div class="wrap">
     <div class="section__head fade-in">
@@ -673,12 +698,42 @@
       <h2>Soluciones <em>a medida</em></h2>
     </div>
     <div class="servicesGrid">
-      <div class="serviceCard"><span class="serviceCard__icon">🛒</span><div class="serviceCard__title">Tiendas Online</div><div class="serviceCard__desc">Carrito, stock, ofertas y pedidos por WhatsApp.</div></div>
-      <div class="serviceCard"><span class="serviceCard__icon">📦</span><div class="serviceCard__title">Sistemas de Pedidos</div><div class="serviceCard__desc">Flujo guiado con cálculo de costos.</div></div>
-      <div class="serviceCard"><span class="serviceCard__icon">⚙️</span><div class="serviceCard__title">Panel Admin</div><div class="serviceCard__desc">Gestioná productos desde el celular.</div></div>
-      <div class="serviceCard"><span class="serviceCard__icon">🎯</span><div class="serviceCard__title">Landings de Conversión</div><div class="serviceCard__desc">Diseñadas para convertir visitas.</div></div>
-      <div class="serviceCard"><span class="serviceCard__icon">🏢</span><div class="serviceCard__title">Webs Institucionales</div><div class="serviceCard__desc">Galería, servicios y SEO completo.</div></div>
-      <div class="serviceCard"><span class="serviceCard__icon">📋</span><div class="serviceCard__title">Catálogos Digitales</div><div class="serviceCard__desc">Vitrina profesional con botón de consulta.</div></div>
+      <div class="serviceCard">
+        <span class="serviceCard__icon">🛒</span>
+        <div class="serviceCard__title">Tiendas Online</div>
+        <div class="serviceCard__desc">Carrito, stock, ofertas y pedidos por WhatsApp.</div>
+        <a href="servicio.html?tipo=tienda" class="serviceCard__btn">Ver más →</a>
+      </div>
+      <div class="serviceCard">
+        <span class="serviceCard__icon">📦</span>
+        <div class="serviceCard__title">Sistemas de Pedidos</div>
+        <div class="serviceCard__desc">Flujo guiado con cálculo de costos.</div>
+        <a href="servicio.html?tipo=pedidos" class="serviceCard__btn">Ver más →</a>
+      </div>
+      <div class="serviceCard">
+        <span class="serviceCard__icon">⚙️</span>
+        <div class="serviceCard__title">Panel Admin</div>
+        <div class="serviceCard__desc">Gestioná productos desde el celular.</div>
+        <a href="servicio.html?tipo=admin" class="serviceCard__btn">Ver más →</a>
+      </div>
+      <div class="serviceCard">
+        <span class="serviceCard__icon">🎯</span>
+        <div class="serviceCard__title">Landings de Conversión</div>
+        <div class="serviceCard__desc">Diseñadas para convertir visitas.</div>
+        <a href="servicio.html?tipo=landing" class="serviceCard__btn">Ver más →</a>
+      </div>
+      <div class="serviceCard">
+        <span class="serviceCard__icon">🏢</span>
+        <div class="serviceCard__title">Webs Institucionales</div>
+        <div class="serviceCard__desc">Galería, servicios y SEO completo.</div>
+        <a href="servicio.html?tipo=institucional" class="serviceCard__btn">Ver más →</a>
+      </div>
+      <div class="serviceCard">
+        <span class="serviceCard__icon">📋</span>
+        <div class="serviceCard__title">Catálogos Digitales</div>
+        <div class="serviceCard__desc">Vitrina profesional con botón de consulta.</div>
+        <a href="servicio.html?tipo=catalogo" class="serviceCard__btn">Ver más →</a>
+      </div>
     </div>
   </div>
 </section>
@@ -740,7 +795,7 @@
 <div class="toast" id="toast">Enlace copiado</div>
 
 <script>
-// ===== CONFIGURACIÓN =====
+// ===== CONFIGURACIÓN (exactamente tu código original) =====
 const SUPABASE_URL = "https://fhxcumwhgtfirznnznjx.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZoeGN1bXdoZ3RmaXJ6bm56bmp4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc5OTYyNzEsImV4cCI6MjA4MzU3MjI3MX0.7z1B099L4yrA9k1JxwvYGCABzqiqYtkUClI3E8wQ2zA";
 const DEFAULT_WA = "5491164499481";
@@ -789,11 +844,9 @@ let phraseIndex = 0, charIndex = 0;
 let isDeleting = false;
 let isComplete = false;
 const typewriterEl = document.getElementById("typewriterTitle");
-
 function typeWriter() {
   if (!typewriterEl || isComplete) return;
   const currentPhrase = phrases[phraseIndex];
-  
   if (!isDeleting && charIndex <= currentPhrase.length) {
     typewriterEl.textContent = currentPhrase.substring(0, charIndex);
     charIndex++;
@@ -859,13 +912,11 @@ async function loadProjects() {
   const projectsGrid = document.getElementById("projectsGrid");
   skeleton.style.display = "grid";
   projectsGrid.style.display = "none";
-  
   try {
     const { data: projects } = await sb.from("projects").select("*, categories(name,slug)").eq("active", true).order("created_at", { ascending: false });
     if (projects) projectsData = projects;
     const { data: cats } = await sb.from("categories").select("*").eq("active", true);
     if (cats) allCategories = cats;
-    
     document.getElementById("statProjects").textContent = projectsData.length + "+";
     buildFilters();
     renderProjects();
@@ -904,16 +955,13 @@ function renderProjects() {
   if (currentSort === "az") filtered.sort((a,b) => a.title.localeCompare(b.title));
   else if (currentSort === "za") filtered.sort((a,b) => b.title.localeCompare(a.title));
   else filtered.sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
-  
   const grid = document.getElementById("projectsGrid");
   if (!filtered.length) { 
     grid.innerHTML = '<div style="padding:2rem; text-align:center; color:var(--text2);">No hay proyectos en esta categoría.</div>'; 
     return; 
   }
-  
   const sevenDaysAgo = new Date();
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-  
   grid.innerHTML = filtered.map(p => `
     <div class="projectCard" data-project='${JSON.stringify(p)}'>
       <img class="projectCard__image" src="${esc(p.image_url)}" alt="${esc(p.title)}" loading="lazy" />
@@ -926,7 +974,6 @@ function renderProjects() {
       </div>
     </div>
   `).join("");
-  
   document.querySelectorAll(".projectCard").forEach(card => {
     const project = JSON.parse(card.getAttribute("data-project"));
     card.addEventListener("click", (e) => {
@@ -968,7 +1015,6 @@ async function loadFaqs() {
 
 const waFloat = document.getElementById("waFloat");
 const footer = document.querySelector("footer");
-
 function checkWaFloatVisibility() {
   if (!waFloat || !footer) return;
   const footerRect = footer.getBoundingClientRect();
