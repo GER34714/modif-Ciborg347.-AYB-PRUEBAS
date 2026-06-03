@@ -247,7 +247,6 @@
     }
     .section__head h2 em { background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
-    /* CONTROLES */
     .controls-bar {
       display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center;
       gap: 1rem; margin-bottom: 2rem;
@@ -278,7 +277,6 @@
       font-size: 12px; cursor: pointer;
     }
 
-    /* CARDS */
     .projectsGrid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -356,7 +354,6 @@
     }
     .share-btn:hover { background: var(--cyan); color: white; border-color: var(--cyan); }
 
-    /* SKELETON */
     .skeleton-grid {
       display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 32px;
     }
@@ -370,7 +367,6 @@
     }
     @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 
-    /* MODAL */
     .modal-overlay {
       position: fixed;
       inset: 0;
@@ -430,7 +426,7 @@
     .modal-actions { display: flex; gap: 12px; margin-top: 1.5rem; flex-wrap: wrap; }
     .modal-actions .btn { flex: 1; justify-content: center; }
 
-    /* SERVICES - CORREGIDO: ocultar divs vacíos */
+    /* SERVICES - CORREGIDO: ocultar cards vacías o sin título */
     .servicesGrid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -455,12 +451,14 @@
     }
     .serviceCard__desc { font-size: 14px; color: var(--text2); line-height: 1.65; }
     
-    /* Eliminar cualquier div vacío dentro de servicesGrid */
-    .servicesGrid > div:empty {
-      display: none;
+    /* Ocultar cards vacías o sin contenido - SOLUCIÓN DEFINITIVA */
+    .servicesGrid .serviceCard:empty,
+    .servicesGrid div:empty,
+    .servicesGrid .serviceCard:has(.serviceCard__title:empty),
+    .servicesGrid .serviceCard:not(:has(.serviceCard__title)) {
+      display: none !important;
     }
 
-    /* FAQ */
     .faqGrid {
       display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border);
     }
@@ -476,7 +474,6 @@
     .faqQ::after { content: '+'; color: var(--cyan); font-size: 1.4rem; }
     .faqA { font-size: 14px; color: var(--text2); display: none; padding-top: 1rem; }
 
-    /* CONTACTO */
     .contact-form-section {
       background: var(--bg2);
       border-radius: 24px;
@@ -497,7 +494,6 @@
     .contact-form input:focus, .contact-form textarea:focus { outline: none; border-color: var(--cyan); }
     .contactLinks { display: flex; gap: 10px; justify-content: center; margin-top: 2rem; flex-wrap: wrap; }
 
-    /* FOOTER */
     footer {
       background: var(--bg2);
       border-top: 1px solid var(--border);
@@ -516,7 +512,6 @@
     .footer__links a { font-size: 12px; color: var(--text2); transition: color 0.2s; }
     .footer__links a:hover { color: var(--cyan); }
 
-    /* WHATSAPP FLOAT */
     .waFloat {
       position: fixed;
       bottom: 24px;
@@ -656,21 +651,14 @@
   </div>
 </section>
 
-<!-- SERVICIOS - CORREGIDO: sin div vacío -->
+<!-- SERVICIOS -->
 <section class="section" id="servicios">
   <div class="wrap">
     <div class="section__head fade-in">
       <span class="section__label">Qué construimos</span>
       <h2>Soluciones <em>a medida</em></h2>
     </div>
-    <div class="servicesGrid">
-      <div class="serviceCard"><span class="serviceCard__icon">🛒</span><div class="serviceCard__title">Tiendas Online</div><div class="serviceCard__desc">Carrito, stock, ofertas y pedidos por WhatsApp.</div></div>
-      <div class="serviceCard"><span class="serviceCard__icon">📦</span><div class="serviceCard__title">Sistemas de Pedidos</div><div class="serviceCard__desc">Flujo guiado con cálculo de costos.</div></div>
-      <div class="serviceCard"><span class="serviceCard__icon">⚙️</span><div class="serviceCard__title">Panel Admin</div><div class="serviceCard__desc">Gestioná productos desde el celular.</div></div>
-      <div class="serviceCard"><span class="serviceCard__icon">🎯</span><div class="serviceCard__title">Landings de Conversión</div><div class="serviceCard__desc">Diseñadas para convertir visitas.</div></div>
-      <div class="serviceCard"><span class="serviceCard__icon">🏢</span><div class="serviceCard__title">Webs Institucionales</div><div class="serviceCard__desc">Galería, servicios y SEO completo.</div></div>
-      <div class="serviceCard"><span class="serviceCard__icon">📋</span><div class="serviceCard__title">Catálogos Digitales</div><div class="serviceCard__desc">Vitrina profesional con botón de consulta.</div></div>
-    </div>
+    <div class="servicesGrid" id="servicesGrid"></div>
   </div>
 </section>
 
@@ -853,6 +841,29 @@ window.closeModal = function() {
   document.body.style.overflow = "";
 }
 
+// ===== SERVICIOS FIJOS (estáticos, no vienen de Supabase) =====
+const servicesData = [
+  { icon: "🛒", title: "Tiendas Online", desc: "Carrito, stock, ofertas y pedidos por WhatsApp." },
+  { icon: "📦", title: "Sistemas de Pedidos", desc: "Flujo guiado con cálculo de costos." },
+  { icon: "⚙️", title: "Panel Admin", desc: "Gestioná productos desde el celular." },
+  { icon: "🎯", title: "Landings de Conversión", desc: "Diseñadas para convertir visitas." },
+  { icon: "🏢", title: "Webs Institucionales", desc: "Galería, servicios y SEO completo." },
+  { icon: "📋", title: "Catálogos Digitales", desc: "Vitrina profesional con botón de consulta." }
+];
+
+function renderServices() {
+  const servicesGrid = document.getElementById("servicesGrid");
+  if (!servicesGrid) return;
+  
+  servicesGrid.innerHTML = servicesData.map(service => `
+    <div class="serviceCard">
+      <span class="serviceCard__icon">${service.icon}</span>
+      <div class="serviceCard__title">${esc(service.title)}</div>
+      <div class="serviceCard__desc">${esc(service.desc)}</div>
+    </div>
+  `).join("");
+}
+
 // ===== CARGAR PROYECTOS =====
 async function loadProjects() {
   if (!sb) return;
@@ -1021,6 +1032,7 @@ document.querySelectorAll(".mobileMenu a").forEach(a => a.addEventListener("clic
 
 // ===== INIT =====
 setWaLinks();
+renderServices();  // Cargar servicios fijos (NO de Supabase)
 loadProjects();
 loadFaqs();
 </script>
