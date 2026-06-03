@@ -5,15 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Ciborg 347 — Detalle de Servicio</title>
   <meta name="description" content="Conocé en detalle nuestros servicios de desarrollo web." />
+  <meta property="og:title" content="Ciborg 347 — Desarrollo Web" />
+  <meta property="og:description" content="Construimos herramientas digitales que trabajan para tu negocio las 24 horas." />
+  <meta property="og:image" content="https://iili.io/fETkPEv.md.png" />
+  <meta property="og:type" content="website" />
   <link rel="canonical" href="https://ciborg347.com/servicio" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
 
   <style>
-    /* ===== COPIAR EXACTAMENTE TODOS TUS ESTILOS DESDE INDEX.HTML ===== */
-    /* (Para no alargar, aquí iría todo tu CSS. En la entrega final irá completo) */
-    /* Pero para que veas la estructura, pondré un resumen; en el archivo real estará todo. */
+    /* ===== TODOS TUS ESTILOS (exactamente los mismos que en index.html) ===== */
     :root {
       --bg: #0a0a0f;
       --bg2: #0f0f1a;
@@ -56,6 +58,7 @@
       overflow-x: hidden;
       transition: background 0.3s, color 0.2s;
     }
+
     img { max-width: 100%; display: block; }
     a { text-decoration: none; color: inherit; }
     button { cursor: pointer; font-family: inherit; }
@@ -66,13 +69,99 @@
 
     .wrap { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
 
-    /* Header, nav, etc. (copiado exactamente de tu index) */
-    .topbar { /* ... */ }
-    .topbar__inner { /* ... */ }
-    .brand { /* ... */ }
-    /* ... (todo tu CSS) ... */
+    .topbar {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(10,10,15,0.82);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+    }
+    .topbar__inner {
+      min-height: 68px;
+      display: flex; align-items: center; justify-content: space-between; gap: 20px;
+    }
+    .brand { display: flex; align-items: center; gap: 12px; transition: transform 0.2s; }
+    .brand:hover { transform: translateY(-1px); }
+    .brand__logo { width: 44px; height: 44px; object-fit: contain; border-radius: 10px; }
+    .brand__text strong { font-family: 'Syne', sans-serif; font-size: 17px; color: var(--white); }
+    .brand__text span { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text2); text-transform: uppercase; }
 
-    /* Estilos específicos para la página de detalle (sin afectar al resto) */
+    .theme-toggle {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: 40px;
+      width: 40px; height: 40px;
+      display: flex;
+      align-items: center; justify-content: center;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .theme-toggle:hover { border-color: var(--cyan); transform: scale(1.05); }
+
+    .nav { display: flex; align-items: center; gap: 4px; }
+    .nav a {
+      padding: 7px 14px; border-radius: 8px;
+      font-family: 'JetBrains Mono', monospace; font-size: 12px;
+      color: var(--text2); transition: all 0.15s;
+    }
+    .nav a:hover { color: var(--white); background: var(--glass); }
+
+    .topbar__cta { display: flex; align-items: center; gap: 10px; }
+
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 10px 20px; border: none; border-radius: 10px;
+      font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 600;
+      text-transform: uppercase; transition: all 0.25s;
+    }
+    .btn--primary { background: var(--grad); color: white; }
+    .btn--primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,212,255,0.3); }
+    .btn--ghost { background: transparent; color: var(--text); border: 1px solid var(--border); }
+    .btn--ghost:hover { background: var(--glass); transform: translateY(-1px); }
+    .btn--wa { background: linear-gradient(135deg,#25d366,#128c7e); color: white; }
+
+    .burger {
+      display: none; width: 40px; height: 40px;
+      border: 1px solid var(--border); border-radius: 10px;
+      background: var(--glass);
+      flex-direction: column; align-items: center; justify-content: center;
+      gap: 5px;
+    }
+    .burger span { width: 16px; height: 2px; background: var(--text); border-radius: 2px; }
+
+    .mobileMenu {
+      display: none; flex-direction: column;
+      position: fixed; top: 68px; left: 0; right: 0;
+      background: rgba(10,10,15,0.97); backdrop-filter: blur(16px);
+      padding: 1.5rem 24px; gap: 0.75rem; z-index: 99;
+    }
+    .mobileMenu.isOpen { display: flex; }
+    .mobileMenu a {
+      font-family: 'JetBrains Mono', monospace; font-size: 13px;
+      color: var(--text2); padding: 0.6rem 0; border-bottom: 1px solid var(--border);
+    }
+
+    /* No usaremos .hero en esta página, pero lo dejamos por consistencia */
+    .hero {
+      position: relative;
+      min-height: 88vh; display: flex; align-items: center;
+      background-image: url('https://fhxcumwhgtfirznnznjx.supabase.co/storage/v1/object/public/Imagenes/710478090_921107700943207_8371047012180220047_n.jpg');
+      background-size: cover;
+      background-position: center right;
+      background-attachment: fixed;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(to right, var(--bg) 0%, rgba(10,10,15,0.95) 35%, rgba(10,10,15,0.6) 52%, transparent 100%);
+    }
+    [data-theme="light"] .hero::before {
+      background: linear-gradient(to right, #f0f4f8 0%, rgba(240,244,248,0.95) 40%, rgba(240,244,248,0.5) 70%, transparent 100%);
+    }
+    .hero .wrap { position: relative; z-index: 1; width: 100%; padding: 80px 24px; }
+    .hero__copy { max-width: 460px; margin-right: auto; }
+
+    /* ===== ESTILOS PROPIOS PARA LA PÁGINA DE DETALLE ===== */
     .service-detail {
       padding: 100px 0 80px;
     }
@@ -141,7 +230,7 @@
       color: var(--cyan);
     }
 
-    /* Footer igual que en index */
+    /* Footer */
     footer {
       background: var(--bg2);
       border-top: 1px solid var(--border);
@@ -161,6 +250,7 @@
     .footer__links a { font-size: 12px; color: var(--text2); transition: color 0.2s; }
     .footer__links a:hover { color: var(--cyan); }
 
+    /* Responsive */
     @media (max-width: 900px) {
       .nav { display: none; }
       .burger { display: flex; }
@@ -168,13 +258,14 @@
     @media (max-width: 600px) {
       .service-detail { padding: 60px 0; }
     }
+
     .fade-in { opacity: 0; transform: translateY(20px); transition: opacity 0.6s, transform 0.6s; }
     .fade-in.visible { opacity: 1; transform: translateY(0); }
   </style>
 </head>
 <body>
 
-<!-- ===== HEADER (EXACTAMENTE IGUAL AL DE INDEX) ===== -->
+<!-- ===== HEADER (exactamente igual al de index.html) ===== -->
 <header class="topbar">
   <div class="wrap topbar__inner">
     <a href="index.html" class="brand">
@@ -205,11 +296,11 @@
 
 <main>
   <div class="wrap service-detail fade-in" id="serviceContent">
-    <!-- Contenido cargado dinámicamente según el parámetro tipo -->
+    <!-- El contenido se cargará dinámicamente según el parámetro tipo -->
   </div>
 </main>
 
-<!-- ===== FOOTER (EXACTAMENTE IGUAL AL DE INDEX) ===== -->
+<!-- ===== FOOTER (exactamente igual al de index.html) ===== -->
 <footer>
   <div class="wrap">
     <div class="footer__inner">
@@ -229,7 +320,7 @@
 </footer>
 
 <script>
-  // ===== TEMA CLARO/OSCURO (mismo código que en index) =====
+  // ===== TEMA CLARO/OSCURO (mismo código que en index.html) =====
   const themeToggle = document.getElementById("themeToggle");
   const savedTheme = localStorage.getItem("theme") || "dark";
   document.documentElement.setAttribute("data-theme", savedTheme);
@@ -242,7 +333,7 @@
     themeToggle.textContent = newTheme === "dark" ? "☀️" : "🌙";
   });
 
-  // ===== DATOS DE SERVICIOS (hardcodeados) =====
+  // ===== DATOS DE SERVICIOS =====
   const serviciosData = {
     tienda: {
       titulo: "Tiendas Online",
@@ -331,22 +422,22 @@
     }
   };
 
-  // ===== LECTURA DE PARÁMETRO URL =====
+  // ===== LEER PARÁMETRO URL =====
   const urlParams = new URLSearchParams(window.location.search);
   let tipo = urlParams.get('tipo');
   if (!tipo || !serviciosData[tipo]) {
-    tipo = 'tienda'; // fallback seguro
+    tipo = 'tienda';
   }
   const data = serviciosData[tipo];
 
-  // ===== ACTUALIZAR TÍTULO Y META DESCRIPTION =====
+  // ===== ACTUALIZAR TÍTULO =====
   document.title = `Ciborg 347 — ${data.titulo}`;
   const metaDesc = document.querySelector('meta[name="description"]');
   if (metaDesc) metaDesc.setAttribute('content', data.descripcionLarga.slice(0, 150));
 
   // ===== RENDERIZAR CONTENIDO =====
   const container = document.getElementById('serviceContent');
-  const waNumber = "5491164499481";  // mismo número que en index
+  const waNumber = "5491164499481";
   const waUrl = (msg) => `https://wa.me/${waNumber}?text=${encodeURIComponent(msg)}`;
 
   container.innerHTML = `
@@ -367,7 +458,7 @@
     </div>
   `;
 
-  // ===== MENÚ MÓVIL (igual que en index) =====
+  // ===== MENÚ MÓVIL =====
   const burgerBtn = document.getElementById("burgerBtn");
   const mobileMenu = document.getElementById("mobileMenu");
   burgerBtn?.addEventListener("click", () => mobileMenu.classList.toggle("isOpen"));
