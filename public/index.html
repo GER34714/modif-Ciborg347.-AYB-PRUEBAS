@@ -5,13 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Ciborg 347 — Desarrollo Web y Soluciones Digitales</title>
   <meta name="description" content="Desarrollador web independiente. Tiendas online, paneles admin, apps a medida. Sin mensualidad. Sin plantillas." />
-  <!-- FIX SEO: og:image y canonical agregados -->
   <meta property="og:title" content="Ciborg 347 — Desarrollo Web" />
   <meta property="og:description" content="Construimos herramientas digitales que trabajan para tu negocio las 24 horas." />
   <meta property="og:image" content="https://iili.io/fETkPEv.md.png" />
   <meta property="og:type" content="website" />
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:image" content="https://iili.io/fETkPEv.md.png" />
   <link rel="canonical" href="https://ciborg347.com/" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -20,54 +17,46 @@
 
   <style>
     :root {
-      --bg:        #0a0a0f;
-      --bg2:       #0f0f1a;
-      --bg3:       #1a1a2e;
-      --glass:     rgba(26,26,46,0.55);
-      --border:    rgba(0,212,255,0.13);
-      --border-h:  rgba(0,212,255,0.28);
-      --cyan:      #00d4ff;
-      --violet:    #8b5cf6;
-      --magenta:   #ff47d1;
-      --grad:      linear-gradient(135deg, var(--cyan), var(--violet));
-      --grad2:     linear-gradient(135deg, var(--violet), var(--magenta));
-      --text:      #e0e6ff;
-      --text2:     #9ca3ff;
-      --white:     #ffffff;
-      --radius:    14px;
-      --max:       1200px;
-      --mono:      'JetBrains Mono', monospace;
-      --display:   'Syne', sans-serif;
-      --body:      'Outfit', sans-serif;
-      --t-fast:    0.15s ease;
-      --t-norm:    0.28s ease;
+      --bg: #0a0a0f;
+      --bg2: #0f0f1a;
+      --bg3: #1a1a2e;
+      --glass: rgba(26, 26, 46, 0.55);
+      --border: rgba(0, 212, 255, 0.13);
+      --border-h: rgba(0, 212, 255, 0.28);
+      --cyan: #00d4ff;
+      --violet: #8b5cf6;
+      --magenta: #ff47d1;
+      --grad: linear-gradient(135deg, var(--cyan), var(--violet));
+      --text: #e0e6ff;
+      --text2: #9ca3ff;
+      --white: #ffffff;
+      --card-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
     }
 
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
+    [data-theme="light"] {
+      --bg: #f0f4f8;
+      --bg2: #ffffff;
+      --bg3: #e8edf5;
+      --border: rgba(0, 0, 0, 0.08);
+      --cyan: #0066cc;
+      --violet: #7c3aed;
+      --magenta: #db2777;
+      --grad: linear-gradient(135deg, #0066cc, #7c3aed);
+      --text: #1e293b;
+      --text2: #475569;
+      --white: #0f172a;
+      --card-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
 
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
     body {
-      font-family: var(--body);
+      font-family: 'Outfit', sans-serif;
       background: var(--bg);
       color: var(--text);
       line-height: 1.6;
       overflow-x: hidden;
-    }
-
-    body::before {
-      content: '';
-      position: fixed; inset: 0; z-index: -1; pointer-events: none;
-      background:
-        radial-gradient(circle at 15% 20%, rgba(0,212,255,0.04), transparent 45%),
-        radial-gradient(circle at 85% 75%, rgba(139,92,246,0.04), transparent 45%);
-    }
-
-    body::after {
-      content: '';
-      position: fixed; inset: 0; z-index: 999; pointer-events: none;
-      opacity: 0.35;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
-      background-size: 160px;
+      transition: background 0.3s, color 0.2s;
     }
 
     img { max-width: 100%; display: block; }
@@ -78,9 +67,9 @@
     ::-webkit-scrollbar-track { background: var(--bg); }
     ::-webkit-scrollbar-thumb { background: var(--cyan); border-radius: 2px; }
 
-    .wrap { max-width: var(--max); margin: 0 auto; padding: 0 24px; }
+    .wrap { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
 
-    /* NAV */
+    /* HEADER */
     .topbar {
       position: sticky; top: 0; z-index: 100;
       background: rgba(10,10,15,0.82);
@@ -91,64 +80,67 @@
       min-height: 68px;
       display: flex; align-items: center; justify-content: space-between; gap: 20px;
     }
-    .brand { display: flex; align-items: center; gap: 12px; transition: var(--t-norm); }
+    .brand { display: flex; align-items: center; gap: 12px; transition: transform 0.2s; }
     .brand:hover { transform: translateY(-1px); }
-    .brand__logo {
-      width: 44px; height: 44px; object-fit: contain;
-      transition: var(--t-norm);
-      border-radius: 10px;
+    .brand__logo { width: 44px; height: 44px; object-fit: contain; border-radius: 10px; }
+    .brand__text strong { font-family: 'Syne', sans-serif; font-size: 17px; color: var(--white); }
+    .brand__text span { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text2); text-transform: uppercase; }
+
+    .theme-toggle {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: 40px;
+      width: 40px; height: 40px;
+      display: flex;
+      align-items: center; justify-content: center;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: all 0.2s;
     }
-    .brand:hover .brand__logo { filter: drop-shadow(0 0 8px rgba(0,212,255,0.35)); }
-    .brand__text strong { font-family: var(--display); font-size: 17px; color: var(--white); letter-spacing: 0.03em; }
-    .brand__text span { display: block; font-family: var(--mono); font-size: 10px; color: var(--text2); letter-spacing: 0.12em; text-transform: uppercase; }
+    .theme-toggle:hover { border-color: var(--cyan); transform: scale(1.05); }
 
     .nav { display: flex; align-items: center; gap: 4px; }
     .nav a {
       padding: 7px 14px; border-radius: 8px;
-      font-family: var(--mono); font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase;
-      color: var(--text2); transition: var(--t-fast);
+      font-family: 'JetBrains Mono', monospace; font-size: 12px;
+      color: var(--text2); transition: all 0.15s;
     }
-    .nav a:hover { color: var(--white); background: var(--glass); border: 1px solid var(--border-h); }
+    .nav a:hover { color: var(--white); background: var(--glass); }
 
     .topbar__cta { display: flex; align-items: center; gap: 10px; }
 
     .btn {
       display: inline-flex; align-items: center; gap: 8px;
       padding: 10px 20px; border: none; border-radius: 10px;
-      font-family: var(--mono); font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
-      transition: var(--t-norm); position: relative; overflow: hidden;
+      font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 600;
+      text-transform: uppercase; transition: all 0.25s;
     }
-    .btn--primary { background: var(--grad); color: var(--white); box-shadow: 0 4px 16px rgba(0,212,255,0.18); }
+    .btn--primary { background: var(--grad); color: white; }
     .btn--primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,212,255,0.3); }
     .btn--ghost { background: transparent; color: var(--text); border: 1px solid var(--border); }
-    .btn--ghost:hover { background: var(--glass); border-color: var(--border-h); transform: translateY(-1px); }
-    .btn--sm { padding: 7px 14px; font-size: 11px; }
-    .btn--wa { background: linear-gradient(135deg,#25d366,#128c7e); color: white; box-shadow: 0 4px 16px rgba(37,211,102,0.2); }
-    .btn--wa:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(37,211,102,0.35); }
+    .btn--ghost:hover { background: var(--glass); transform: translateY(-1px); }
+    .btn--wa { background: linear-gradient(135deg,#25d366,#128c7e); color: white; }
 
     .burger {
       display: none; width: 40px; height: 40px;
       border: 1px solid var(--border); border-radius: 10px;
-      background: var(--glass); align-items: center; justify-content: center;
-      flex-direction: column; gap: 5px; transition: var(--t-fast);
+      background: var(--glass);
+      flex-direction: column; align-items: center; justify-content: center;
+      gap: 5px;
     }
-    .burger:hover { border-color: var(--border-h); }
-    .burger span { width: 16px; height: 2px; background: var(--text); border-radius: 2px; transition: var(--t-fast); }
+    .burger span { width: 16px; height: 2px; background: var(--text); border-radius: 2px; }
 
     .mobileMenu {
       display: none; flex-direction: column;
       position: fixed; top: 68px; left: 0; right: 0;
       background: rgba(10,10,15,0.97); backdrop-filter: blur(16px);
-      border-bottom: 1px solid var(--border);
       padding: 1.5rem 24px; gap: 0.75rem; z-index: 99;
     }
     .mobileMenu.isOpen { display: flex; }
     .mobileMenu a {
-      font-family: var(--mono); font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase;
+      font-family: 'JetBrains Mono', monospace; font-size: 13px;
       color: var(--text2); padding: 0.6rem 0; border-bottom: 1px solid var(--border);
-      transition: var(--t-fast);
     }
-    .mobileMenu a:hover { color: var(--cyan); }
 
     /* HERO */
     .hero {
@@ -157,465 +149,518 @@
       background-image: url('https://fhxcumwhgtfirznnznjx.supabase.co/storage/v1/object/public/Imagenes/710478090_921107700943207_8371047012180220047_n.jpg');
       background-size: cover;
       background-position: center right;
-      background-repeat: no-repeat;
+      background-attachment: fixed;
     }
-    /* gradiente solo a la izquierda para proteger legibilidad del texto */
     .hero::before {
       content: '';
-      position: absolute; inset: 0; z-index: 0; pointer-events: none;
-      background: linear-gradient(
-        to right,
-        rgba(10,10,15,0.97) 0%,
-        rgba(10,10,15,0.95) 35%,
-        rgba(10,10,15,0.6)  52%,
-        rgba(10,10,15,0.1)  70%,
-        rgba(10,10,15,0)    100%
-      );
+      position: absolute; inset: 0;
+      background: linear-gradient(to right, var(--bg) 0%, rgba(10,10,15,0.95) 35%, rgba(10,10,15,0.6) 52%, transparent 100%);
     }
-    .hero .wrap { position: relative; z-index: 1; width: 100%; display: flex; align-items: center; padding-top: 80px; padding-bottom: 80px; }
-
+    [data-theme="light"] .hero::before {
+      background: linear-gradient(to right, #f0f4f8 0%, rgba(240,244,248,0.95) 40%, rgba(240,244,248,0.5) 70%, transparent 100%);
+    }
+    .hero .wrap { position: relative; z-index: 1; width: 100%; padding: 80px 24px; }
     .hero__copy { max-width: 460px; margin-right: auto; }
 
-    .hero__badge {
-      display: inline-flex; align-items: center; gap: 8px;
-      font-family: var(--mono); font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase;
-      color: var(--cyan); border: 1px solid var(--border);
-      padding: 6px 14px; border-radius: 100px; margin-bottom: 1.5rem;
-      background: rgba(0,212,255,0.05);
-    }
-    .hero__badge::before {
-      content: ''; width: 6px; height: 6px; border-radius: 50%;
-      background: var(--cyan); box-shadow: 0 0 8px var(--cyan);
-      animation: pulse 2s infinite;
-    }
-
-    .hero__copy h1 {
-      font-family: var(--display);
+    /* Typewriter - solo el borde, la animación se maneja desde JS */
+    .typewriter {
+      overflow: hidden;
+      border-right: 2px solid var(--cyan);
+      white-space: nowrap;
+      font-family: 'Syne', sans-serif;
       font-size: clamp(2rem, 3.8vw, 3.2rem);
-      line-height: 1.05; font-weight: 800;
-      margin-bottom: 1.25rem;
+      line-height: 1.05;
+      font-weight: 800;
       background: var(--grad);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
-    .hero__copy p {
-      font-size: 1.05rem; color: var(--text2); margin-bottom: 2rem;
-      max-width: 480px; font-weight: 300; line-height: 1.7;
-    }
-    .hero__actions { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 2.5rem; }
 
-    /* Stats en fila debajo de los botones */
+    /* STATS BAR */
     .hero__stats {
-      display: flex; gap: 0; flex-wrap: wrap;
-      border: 1px solid var(--border); border-radius: 12px; overflow: hidden;
-      max-width: 480px; background: rgba(10,10,15,0.5); backdrop-filter: blur(8px);
+      display: flex;
+      justify-content: space-evenly;
+      align-items: center;
+      gap: 0;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      max-width: 100%;
+      background: rgba(10, 10, 15, 0.5);
+      backdrop-filter: blur(8px);
+      margin-top: 2rem;
+      padding: 16px 0;
     }
+
     .hero__stat {
-      flex: 1; min-width: 100px; padding: 14px 10px; text-align: center;
+      flex: 1;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
       border-right: 1px solid var(--border);
     }
-    .hero__stat:last-child { border-right: none; }
-    .hero__stat strong {
-      display: block; font-family: var(--display); font-size: 1.6rem;
-      background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-      line-height: 1;
-    }
-    .hero__stat span {
-      display: block; font-family: var(--mono); font-size: 9px;
-      letter-spacing: 0.1em; text-transform: uppercase; color: var(--text2); margin-top: 4px;
+
+    .hero__stat:last-child {
+      border-right: none;
     }
 
-    /* MARQUEE STRIP */
-    .strip { background: var(--bg2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 0.85rem 0; overflow: hidden; }
-    .strip__inner { display: flex; gap: 3rem; animation: marquee 24s linear infinite; white-space: nowrap; }
-    .strip__item { font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text2); flex-shrink: 0; }
-    .strip__item span { color: var(--cyan); margin-right: 6px; }
+    .hero__stat strong {
+      display: block;
+      font-family: 'Syne', sans-serif;
+      font-size: 1.8rem;
+      font-weight: 800;
+      background: var(--grad);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1.2;
+    }
+
+    .hero__stat span {
+      display: block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--text2);
+    }
+
+    @media (max-width: 640px) {
+      .hero__stat strong {
+        font-size: 1.3rem;
+      }
+      .hero__stat span {
+        font-size: 0.6rem;
+      }
+      .hero__stats {
+        padding: 12px 0;
+      }
+      .typewriter {
+        font-size: clamp(1.5rem, 6vw, 2.2rem);
+      }
+    }
 
     /* SECTIONS */
     .section { padding: 90px 0; position: relative; }
     .section--alt { background: var(--bg2); }
-    .section--dark { background: var(--bg3); }
-
-    .section__head { margin-bottom: 3.5rem; }
+    .section__head { margin-bottom: 3rem; }
     .section__head.center { text-align: center; }
     .section__label {
-      font-family: var(--mono); font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
+      font-family: 'JetBrains Mono', monospace; font-size: 11px;
       color: var(--cyan); margin-bottom: 0.6rem; display: inline-block;
+      text-transform: uppercase;
     }
     .section__head h2 {
-      font-family: var(--display); font-size: clamp(2rem, 4.5vw, 3.2rem);
-      font-weight: 800; color: var(--white); line-height: 1.05; margin-bottom: 0.8rem;
+      font-family: 'Syne', sans-serif; font-size: clamp(2rem, 4.5vw, 3.2rem);
+      font-weight: 800; color: var(--white);
     }
-    .section__head h2 em { font-style: normal; background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-    .section__head p { font-size: 1rem; color: var(--text2); max-width: 540px; font-weight: 300; line-height: 1.7; }
-    .section__head.center p { margin: 0 auto; }
+    .section__head h2 em { background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
-    /* FEATURED */
-    .featuredGrid {
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(300px,1fr)); gap: 1.5px;
-      background: var(--border);
+    /* CONTROLES */
+    .controls-bar {
+      display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center;
+      gap: 1rem; margin-bottom: 2rem;
     }
-    .featuredCard {
-      background: var(--bg3); overflow: hidden; cursor: pointer;
-      position: relative; aspect-ratio: 16/10; transition: var(--t-norm);
-    }
-    /* FIX SEO: width/height en imágenes para evitar CLS */
-    .featuredCard img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.7); transition: var(--t-norm); }
-    .featuredCard:hover img { transform: scale(1.06); filter: brightness(0.5); }
-    .featuredCard__overlay {
-      position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: flex-end;
-      padding: 1.5rem; background: linear-gradient(to top, rgba(10,10,15,0.95) 0%, transparent 60%);
-    }
-    .featuredCard__badge { font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--cyan); margin-bottom: 4px; }
-    .featuredCard__title { font-family: var(--display); font-size: 1.4rem; color: var(--white); }
-    .featuredCard__desc { font-size: 13px; color: var(--text2); margin-top: 4px; line-height: 1.4; max-height: 0; overflow: hidden; transition: max-height 0.4s ease; }
-    .featuredCard:hover .featuredCard__desc { max-height: 60px; }
-    .featuredCard__link {
-      position: absolute; top: 1rem; right: 1rem;
-      width: 34px; height: 34px; border-radius: 50%;
-      background: rgba(0,212,255,0.12); border: 1px solid var(--cyan);
-      display: flex; align-items: center; justify-content: center;
-      opacity: 0; transform: scale(0.8); transition: var(--t-norm);
-    }
-    .featuredCard:hover .featuredCard__link { opacity: 1; transform: scale(1); }
-    .featuredCard__link svg { width: 13px; height: 13px; stroke: var(--cyan); fill: none; stroke-width: 2; }
-    .highlight-badge {
-      position: absolute; top: 1rem; left: 1rem;
-      font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
-      background: linear-gradient(135deg,var(--magenta),var(--violet)); color: white;
-      padding: 3px 10px; border-radius: 100px; font-weight: 600;
-    }
-
-    /* PORTFOLIO */
-    .filters { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 2.5rem; }
+    .filters { display: flex; gap: 8px; flex-wrap: wrap; }
     .filter-btn {
-      font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+      font-family: 'JetBrains Mono', monospace; font-size: 11px;
       padding: 7px 16px; border: 1px solid var(--border); background: transparent;
-      color: var(--text2); border-radius: 100px; cursor: pointer; transition: var(--t-fast);
+      color: var(--text2); border-radius: 100px; cursor: pointer;
+      transition: all 0.2s;
     }
     .filter-btn:hover, .filter-btn.active { border-color: var(--cyan); color: var(--cyan); background: rgba(0,212,255,0.07); }
+    
+    .search-sort {
+      display: flex; gap: 10px; flex-wrap: wrap;
+    }
+    .search-box {
+      display: flex; align-items: center; gap: 8px;
+      background: var(--bg3); border: 1px solid var(--border); border-radius: 40px;
+      padding: 5px 15px;
+    }
+    .search-box input {
+      background: none; border: none; padding: 8px 0; color: var(--text);
+      font-family: inherit; outline: none; width: 180px;
+    }
+    .search-box input::placeholder { color: var(--text2); }
+    .sort-select {
+      background: var(--bg3); border: 1px solid var(--border); border-radius: 40px;
+      padding: 5px 15px; color: var(--text); font-family: 'JetBrains Mono', monospace;
+      font-size: 12px; cursor: pointer;
+    }
 
+    /* CARDS */
     .projectsGrid {
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(300px,1fr)); gap: 1.5px;
-      background: var(--border);
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 32px;
     }
     .projectCard {
-      background: var(--bg2); overflow: hidden; cursor: pointer;
-      position: relative; aspect-ratio: 16/10; transition: var(--t-norm);
+      background: var(--bg2);
+      border-radius: 20px;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      border: 1px solid var(--border);
     }
-    .projectCard img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.7); transition: var(--t-norm); }
-    .projectCard:hover img { transform: scale(1.06); filter: brightness(0.5); }
-    .projectCard__overlay {
-      position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: flex-end;
-      padding: 1.5rem; background: linear-gradient(to top, rgba(10,10,15,0.95) 0%, transparent 60%);
+    .projectCard:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--card-shadow);
+      border-color: var(--cyan);
     }
-    .projectCard__cat { font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--cyan); margin-bottom: 4px; }
-    .projectCard__title { font-family: var(--display); font-size: 1.3rem; color: var(--white); }
-    .projectCard__desc { font-size: 13px; color: var(--text2); margin-top: 4px; line-height: 1.4; max-height: 0; overflow: hidden; transition: max-height 0.4s ease; }
-    .projectCard:hover .projectCard__desc { max-height: 60px; }
-    .projectCard__link {
-      position: absolute; top: 1rem; right: 1rem;
-      width: 34px; height: 34px; border-radius: 50%;
-      background: rgba(0,212,255,0.12); border: 1px solid var(--cyan);
-      display: flex; align-items: center; justify-content: center;
-      opacity: 0; transform: scale(0.8); transition: var(--t-norm);
+    .projectCard__image {
+      width: 100%;
+      aspect-ratio: 16/10;
+      object-fit: cover;
+      display: block;
     }
-    .projectCard:hover .projectCard__link { opacity: 1; transform: scale(1); }
-    .projectCard__link svg { width: 13px; height: 13px; stroke: var(--cyan); fill: none; stroke-width: 2; }
-
-    .moreWrap { text-align: center; margin-top: 2.5rem; }
-
-    /* SERVICES */
-    .servicesGrid {
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(260px,1fr));
-      gap: 1px; background: var(--border);
+    .projectCard__content {
+      padding: 1.25rem 1.25rem 1.5rem 1.25rem;
     }
-    .serviceCard {
-      background: var(--bg2); padding: 2rem; position: relative;
-      overflow: hidden; transition: var(--t-norm);
+    .projectCard__cat {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: var(--cyan);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 0.5rem;
     }
-    .serviceCard::before { content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 0; background: var(--grad); transition: height 0.4s ease; }
-    .serviceCard:hover::before { height: 100%; }
-    .serviceCard:hover { background: var(--bg3); }
-    .serviceCard__icon { font-size: 2rem; margin-bottom: 1rem; display: block; }
-    .serviceCard__title { font-family: var(--display); font-size: 1.3rem; color: var(--white); margin-bottom: 0.6rem; }
-    .serviceCard__desc { font-size: 14px; color: var(--text2); line-height: 1.65; font-weight: 300; }
-
-    /* WHY */
-    .whyGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
-    .statsGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); }
-    .statCard { background: var(--bg3); padding: 1.75rem; }
-    .statCard strong { font-family: var(--display); font-size: 2.8rem; background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1; }
-    .statCard span { display: block; font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text2); margin-top: 4px; }
-    .whyText h3 { font-family: var(--display); font-size: 1.9rem; color: var(--white); margin-bottom: 1rem; line-height: 1.1; }
-    .whyText p { font-size: 14px; color: var(--text2); line-height: 1.75; margin-bottom: 1rem; font-weight: 300; }
-    .techTags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 1.5rem; }
-    .techTag { font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; padding: 5px 12px; border: 1px solid var(--border); border-radius: 4px; color: var(--text2); background: rgba(0,212,255,0.04); }
-
-    /* FAQ */
-    .faqGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); margin-top: 3rem; }
-    .faqItem { background: var(--bg); padding: 1.75rem 2rem; cursor: pointer; transition: background var(--t-fast); }
-    .faqItem:hover { background: var(--bg2); }
-    .faqQ { font-size: 15px; font-weight: 500; color: var(--white); display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; }
-    .faqQ::after { content: '+'; color: var(--cyan); font-size: 1.4rem; line-height: 1; flex-shrink: 0; transition: transform var(--t-norm); }
-    .faqItem.open .faqQ::after { transform: rotate(45deg); }
-    .faqA { font-size: 14px; color: var(--text2); max-height: 0; overflow: hidden; transition: max-height 0.4s ease, padding 0.3s; font-weight: 300; line-height: 1.7; }
-    .faqItem.open .faqA { max-height: 300px; padding-top: 1rem; }
-
-    /* CONTACT */
-    .contactInner { max-width: 620px; margin: 0 auto; text-align: center; }
-    .contactBig { font-family: var(--display); font-size: clamp(2.8rem, 8vw, 5.5rem); color: var(--white); line-height: 0.95; margin: 1rem 0 2.5rem; }
-    .contactBig em { font-style: normal; background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-    .contactLinks { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 3rem; }
-    .contactLink {
-      display: inline-flex; align-items: center; gap: 8px;
-      font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
-      color: var(--text2); border: 1px solid var(--border);
-      padding: 10px 20px; border-radius: 8px; transition: var(--t-fast);
+    .projectCard__title {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 0.5rem;
+      line-height: 1.3;
     }
-
-    .contactLink:hover { border-color: var(--cyan); color: var(--cyan); background: rgba(0,212,255,0.06); }
-    .contactLink svg { width: 15px; height: 15px; flex-shrink: 0; }
-
-    /* WA FLOAT */
-    .waFloat {
-      position: fixed; bottom: 24px; right: 24px; z-index: 500;
-      width: 56px; height: 56px; border-radius: 50%;
-      background: linear-gradient(135deg,#25d366,#128c7e);
-      display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 4px 20px rgba(37,211,102,0.35);
-      transition: var(--t-norm);
+    .projectCard__desc {
+      font-size: 0.85rem;
+      color: var(--text2);
+      line-height: 1.5;
+      margin-bottom: 1rem;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
     }
-    .waFloat:hover { transform: scale(1.1); box-shadow: 0 8px 28px rgba(37,211,102,0.5); }
-    .waFloat svg { width: 26px; height: 26px; fill: white; }
-
-    /* FOOTER */
-    footer {
-      background: var(--bg2); border-top: 1px solid var(--border);
-      padding: 2.5rem 0;
+    .new-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--magenta), var(--violet));
+      color: white;
+      font-size: 9px;
+      font-family: 'JetBrains Mono', monospace;
+      padding: 3px 8px;
+      border-radius: 100px;
+      margin-bottom: 0.5rem;
     }
-    .footer__inner { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1.5rem; }
-    .footer__brand { display: flex; align-items: center; gap: 12px; }
-    .footer__brand img { width: 38px; height: 38px; object-fit: contain; border-radius: 8px; }
-    .footer__brand strong { font-family: var(--display); font-size: 16px; color: var(--white); }
-    .footer__brand span { display: block; font-family: var(--mono); font-size: 10px; color: var(--text2); letter-spacing: 0.1em; text-transform: uppercase; }
-    .footer__links { display: flex; gap: 1.25rem; }
-    .footer__links a { font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text2); transition: var(--t-fast); }
-    .footer__links a:hover { color: var(--cyan); }
-    .footer__copy { font-family: var(--mono); font-size: 10px; color: var(--text2); letter-spacing: 0.08em; }
-
-    /* MODAL */
-    .modal {
-      position: fixed; inset: 0; display: none; align-items: center; justify-content: center;
-      padding: 20px; z-index: 200; background: rgba(0,0,0,0.88); backdrop-filter: blur(10px);
+    .share-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 30px;
+      padding: 6px 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      cursor: pointer;
+      color: var(--text2);
+      transition: all 0.2s;
+      font-family: 'JetBrains Mono', monospace;
     }
-    .modal.isOpen { display: flex; }
-    .bodyLock { overflow: hidden; }
-    .modal__panel {
-      width: min(860px, 100%); max-height: 90vh;
-      border: 1px solid var(--border); border-radius: var(--radius);
-      background: var(--bg2); overflow: hidden; display: flex; flex-direction: column;
-      animation: fadeUp 0.3s ease;
-      /* FIX accesibilidad: outline para focus */
-      outline: none;
-    }
-    .modal__header {
-      padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border);
-      display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-shrink: 0;
-    }
-    .modal__header h3 { font-family: var(--display); font-size: 1.6rem; color: var(--white); }
-    .modal__close { background: none; border: none; color: var(--text2); font-size: 1.6rem; line-height: 1; transition: color var(--t-fast); }
-    .modal__close:hover { color: var(--cyan); }
-    .modal__body { display: grid; grid-template-columns: 1fr 1fr; overflow: auto; flex: 1; }
-    .modal__imageWrap { background: var(--bg3); display: flex; align-items: center; justify-content: center; padding: 1.5rem; }
-    .modal__imageWrap img { width: 100%; object-fit: contain; border-radius: 8px; }
-    .modal__info { padding: 1.5rem; overflow-y: auto; display: flex; flex-direction: column; gap: 1rem; }
-    .modal__cat { font-family: var(--mono); font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--cyan); }
-    .modal__short { font-size: 14px; color: var(--text); line-height: 1.6; }
-    .modal__full { font-size: 13px; color: var(--text2); line-height: 1.7; font-weight: 300; }
-    .modal__actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: auto; }
-
-    /* STATE BOX */
-    .stateBox {
-      display: none; text-align: center; padding: 3rem;
-      font-family: var(--mono); font-size: 13px; color: var(--text2); letter-spacing: 0.08em;
+    .share-btn:hover {
+      background: var(--cyan);
+      color: white;
+      border-color: var(--cyan);
     }
 
     /* SKELETON */
-    .skeleton {
+    .skeleton-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 32px;
+    }
+    .skeleton-card {
+      background: var(--bg3);
+      border-radius: 20px;
+      height: 380px;
       background: linear-gradient(90deg, var(--bg3) 25%, var(--bg2) 50%, var(--bg3) 75%);
-      background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: var(--radius);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+    }
+    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+    /* MODAL */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.92);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20px;
+    }
+    .modal-container {
+      background: var(--bg2);
+      border-radius: 24px;
+      max-width: 550px;
+      width: 100%;
+      max-height: 85vh;
+      overflow: auto;
+      border: 1px solid var(--border);
+      animation: modalFade 0.25s ease;
+    }
+    @keyframes modalFade {
+      from { opacity: 0; transform: scale(0.96); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .modal-header {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .modal-header h3 {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.3rem;
+      color: var(--white);
+    }
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 1.8rem;
+      cursor: pointer;
+      color: var(--text2);
+      transition: color 0.2s;
+    }
+    .modal-close:hover { color: var(--cyan); }
+    .modal-body {
+      padding: 1.5rem;
+    }
+    .modal-img {
+      width: 100%;
+      border-radius: 16px;
+      margin-bottom: 1rem;
+    }
+    .modal-cat {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: var(--cyan);
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+    .modal-desc {
+      color: var(--text2);
+      line-height: 1.7;
+      margin: 1rem 0;
+    }
+    .modal-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .modal-actions .btn {
+      flex: 1;
+      justify-content: center;
     }
 
-    /* ANIMATIONS */
-    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.35} }
-    @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
-    @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
-    @keyframes marquee { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+    /* SERVICES */
+    .servicesGrid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1px; background: var(--border);
+    }
+    .serviceCard {
+      background: var(--bg2); padding: 2rem;
+      transition: all 0.3s;
+    }
+    .serviceCard:hover { background: var(--bg3); transform: translateY(-4px); }
+    .serviceCard__icon { font-size: 2rem; margin-bottom: 1rem; display: block; }
+    .serviceCard__title { font-family: 'Syne', sans-serif; font-size: 1.3rem; color: var(--white); margin-bottom: 0.6rem; }
+    .serviceCard__desc { font-size: 14px; color: var(--text2); line-height: 1.65; }
 
-    .fade-in { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease, transform 0.6s ease; }
-    .fade-in.visible { opacity: 1; transform: translateY(0); }
-.hero__robot { display: none; }
-    /* RESPONSIVE */
-    @media(max-width:900px) {
+    /* FAQ */
+    .faqGrid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border);
+    }
+    .faqItem {
+      background: var(--bg); padding: 1.75rem 2rem; cursor: pointer;
+      transition: all 0.25s;
+    }
+    .faqItem:hover { background: var(--bg2); }
+    .faqQ {
+      font-size: 15px; font-weight: 500; color: var(--white);
+      display: flex; justify-content: space-between;
+    }
+    .faqQ::after { content: '+'; color: var(--cyan); font-size: 1.4rem; }
+    .faqA { font-size: 14px; color: var(--text2); display: none; padding-top: 1rem; }
+
+    /* CONTACTO */
+    .contact-form-section {
+      background: var(--bg2);
+      border-radius: 24px;
+      padding: 2rem;
+      margin-top: 2rem;
+      border: 1px solid var(--border);
+    }
+    .contact-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .contact-form input, .contact-form textarea {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 16px;
+      color: var(--text);
+      font-family: inherit;
+      transition: all 0.2s;
+    }
+    .contact-form input:focus, .contact-form textarea:focus {
+      outline: none;
+      border-color: var(--cyan);
+    }
+    .contactLinks {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-top: 2rem;
+      flex-wrap: wrap;
+    }
+
+    /* FOOTER */
+    footer {
+      background: var(--bg2);
+      border-top: 1px solid var(--border);
+      padding: 2.5rem 0;
+    }
+    .footer__inner {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      align-items: center;
+    }
+    .footer__brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .footer__brand img { width: 38px; border-radius: 8px; }
+    .footer__links { display: flex; gap: 1.5rem; }
+    .footer__links a { font-size: 12px; color: var(--text2); transition: color 0.2s; }
+    .footer__links a:hover { color: var(--cyan); }
+
+    /* WHATSAPP FLOAT */
+    .waFloat {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #25d366, #128c7e);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 500;
+      transition: opacity 0.3s, transform 0.2s, visibility 0.3s;
+      opacity: 1;
+      visibility: visible;
+    }
+    .waFloat.hidden {
+      opacity: 0;
+      visibility: hidden;
+    }
+    .waFloat:hover { transform: scale(1.08); }
+
+    .toast {
+      position: fixed;
+      bottom: 100px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--bg3);
+      color: var(--cyan);
+      padding: 10px 20px;
+      border-radius: 40px;
+      border: 1px solid var(--cyan);
+      z-index: 1000;
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+    .toast.show { opacity: 1; }
+
+    @media (max-width: 900px) {
       .nav { display: none; }
       .burger { display: flex; }
-      .hero__stats { max-width: 100%; }
-      .hero__copy { max-width: 100%; }
-      .whyGrid { grid-template-columns: 1fr; gap: 2.5rem; }
       .faqGrid { grid-template-columns: 1fr; }
-      .modal__body { grid-template-columns: 1fr; }
+      .controls-bar { flex-direction: column; align-items: stretch; }
     }
-   @media(max-width:600px) {
-  .wrap { padding: 0 16px; }
-  .section { padding: 70px 0; }
-  .contactBig { font-size: clamp(2.4rem,12vw,3.5rem); }
-  footer { text-align: center; }
-  .footer__inner { flex-direction: column; }
-  .topbar__cta .btn:not(.btn--primary) { display: none; }
+    @media (max-width: 600px) {
+      .section { padding: 60px 0; }
+      .projectsGrid { gap: 20px; }
+    }
 
-  /* HERO MOBILE — robot como fondo, texto encima */
-  .hero {
-    background-image: url('https://fhxcumwhgtfirznnznjx.supabase.co/storage/v1/object/public/Imagenes/555f60b0-d894-4d9a-8bc6-3c701e96bb5e%20(1).png') !important;
-    background-size: 95% auto !important;
-    background-position: 105% 5% !important;
-    background-repeat: no-repeat !important;
-    background-color: #0a0a0f !important;
-    min-height: 100svh;
-  }
-  .hero::before {
-    background: linear-gradient(
-      to right,
-      rgba(10,10,15,1)    0%,
-      rgba(10,10,15,0.92) 40%,
-      rgba(10,10,15,0.4)  70%,
-      rgba(10,10,15,0.1)  100%
-    ) !important;
-  }
-  .hero .wrap {
-    padding-top: 40px;
-    padding-bottom: 40px;
-    align-items: flex-start;
-  }
-  .hero__copy {
-    max-width: 75% !important;
-    text-align: left;
-  }
-  .hero__copy h1 { font-size: clamp(1.4rem, 6.5vw, 2rem); }
-  .hero__copy p { font-size: 0.85rem; }
-  .hero__actions { flex-direction: column; gap: 10px; }
-  .hero__stats { display: none; }
-  .hero__robot { display: none !important; }
-}
-    
+    .fade-in { opacity: 0; transform: translateY(20px); transition: opacity 0.6s, transform 0.6s; }
+    .fade-in.visible { opacity: 1; transform: translateY(0); }
   </style>
 </head>
 <body>
 
-<!-- NAV -->
 <header class="topbar">
   <div class="wrap topbar__inner">
     <a href="#" class="brand">
-      <img class="brand__logo" id="brandLogo" src="https://iili.io/fETkPEv.md.png" alt="Logo Ciborg 347" width="44" height="44" />
-      <div class="brand__text">
-        <strong id="brandTitle">CIBORG 347</strong>
-        <span id="brandTagline">Desarrollo Web</span>
-      </div>
+      <img class="brand__logo" id="brandLogo" src="https://iili.io/fETkPEv.md.png" alt="Logo" />
+      <div class="brand__text"><strong>CIBORG 347</strong><span>Desarrollo Web</span></div>
     </a>
-    <nav class="nav" aria-label="Navegación principal">
-      <a href="#destacados">Destacados</a>
+    <nav class="nav">
       <a href="#portfolio">Portfolio</a>
       <a href="#servicios">Servicios</a>
-      <a href="#nosotros">Nosotros</a>
       <a href="#faq">FAQ</a>
+      <a href="#contacto">Contacto</a>
     </nav>
     <div class="topbar__cta">
-      <a href="#" class="btn btn--ghost btn--sm" id="topWhatsAppBtn" target="_blank" rel="noopener noreferrer">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-        WhatsApp
-      </a>
+      <button class="theme-toggle" id="themeToggle">🌙</button>
       <a href="#contacto" class="btn btn--primary btn--sm">Contacto</a>
-      <button class="burger" id="burgerBtn" aria-label="Abrir menú" aria-expanded="false" aria-controls="mobileMenu">
-        <span></span><span></span><span></span>
-      </button>
+      <button class="burger" id="burgerBtn"><span></span><span></span><span></span></button>
     </div>
   </div>
 </header>
 
-<nav class="mobileMenu" id="mobileMenu" aria-hidden="true" aria-label="Menú móvil">
-  <a href="#destacados">Destacados</a>
+<nav class="mobileMenu" id="mobileMenu">
   <a href="#portfolio">Portfolio</a>
   <a href="#servicios">Servicios</a>
-  <a href="#nosotros">Nosotros</a>
   <a href="#faq">FAQ</a>
-  <a href="#" class="btn btn--wa" style="border-radius:8px;margin-top:8px" id="mobileWhatsAppBtn" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+  <a href="#contacto">Contacto</a>
+  <a href="#" class="btn btn--wa" id="mobileWhatsAppBtn">WhatsApp</a>
 </nav>
 
 <!-- HERO -->
 <section class="hero">
   <div class="wrap">
     <div class="hero__copy fade-in">
-      <h1 id="heroTitle">Tu web. Tu negocio. </h1>
-      <p id="heroSubtitle">No diseñamos páginas genéricas. Construimos sistemas a medida que trabajan para tu negocio las 24 horas: atraen clientes, muestran productos y generan consultas por WhatsApp de forma automática.</p>
-  </p>
-    
+      <h1 class="typewriter" id="typewriterTitle"></h1>
+      <p style="margin-top: 1rem;">No diseñamos páginas genéricas. Construimos sistemas a medida que trabajan para tu negocio las 24 horas.</p>
       <div class="hero__actions">
         <a href="#portfolio" class="btn btn--primary">Ver proyectos →</a>
-        <a href="#" class="btn btn--wa" id="heroWhatsAppBtn" target="_blank" rel="noopener noreferrer">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-          Consultar gratis
-        </a>
+        <a href="#" class="btn btn--wa" id="heroWhatsAppBtn">Consultar gratis</a>
       </div>
+      
       <div class="hero__stats">
-        <div class="hero__stat"><strong id="statProjects">8+</strong><span>Proyectos</span></div>
+        <div class="hero__stat"><strong>52+</strong><span>Proyectos</span></div>
         <div class="hero__stat"><strong>24hs</strong><span>Online</span></div>
         <div class="hero__stat"><strong>100%</strong><span>Código propio</span></div>
         <div class="hero__stat"><strong>$0</strong><span>Mensualidad</span></div>
       </div>
     </div>
-
-    <img
-      class="hero__robot"
-      src="https://fhxcumwhgtfirznnznjx.supabase.co/storage/v1/object/public/Imagenes/555f60b0-d894-4d9a-8bc6-3c701e96bb5e%20(1).png"
-      alt="Ciborg 347"
-      style="display:none"
-    />
-
-  </div>
-</section>
-
-<!-- STRIP -->
-<div class="strip" aria-hidden="true">
-  <div class="strip__inner">
-    <span class="strip__item"><span>▸</span>HTML5 · CSS3 · JS</span>
-    <span class="strip__item"><span>▸</span>React</span>
-    <span class="strip__item"><span>▸</span>Supabase · PostgreSQL</span>
-    <span class="strip__item"><span>▸</span>Mercado Pago · Stripe</span>
-    <span class="strip__item"><span>▸</span>PWA · Mobile First</span>
-    <span class="strip__item"><span>▸</span>WhatsApp API</span>
-    <span class="strip__item"><span>▸</span>SEO Técnico</span>
-    <span class="strip__item"><span>▸</span>Render · SSL</span>
-    <span class="strip__item"><span>▸</span>Paneles Admin</span>
-    <span class="strip__item"><span>▸</span>HTML5 · CSS3 · JS</span>
-    <span class="strip__item"><span>▸</span>React</span>
-    <span class="strip__item"><span>▸</span>Supabase · PostgreSQL</span>
-    <span class="strip__item"><span>▸</span>Mercado Pago · Stripe</span>
-    <span class="strip__item"><span>▸</span>PWA · Mobile First</span>
-    <span class="strip__item"><span>▸</span>WhatsApp API</span>
-    <span class="strip__item"><span>▸</span>SEO Técnico</span>
-    <span class="strip__item"><span>▸</span>Render · SSL</span>
-    <span class="strip__item"><span>▸</span>Paneles Admin</span>
-  </div>
-</div>
-
-<!-- DESTACADOS -->
-<section class="section" id="destacados" style="display:none">
-  <div class="wrap">
-    <div class="section__head fade-in">
-      <span class="section__label">Destacados</span>
-      <h2>Lo mejor del <em>portafolio</em></h2>
-      <p>Proyectos seleccionados por impacto visual y complejidad técnica.</p>
-    </div>
-    <div class="featuredGrid" id="featuredGrid"></div>
   </div>
 </section>
 
@@ -627,60 +672,46 @@
       <h2>Todos los <em>proyectos</em></h2>
       <p>Cada uno construido a medida. Sin plantillas, sin límites.</p>
     </div>
-    <div class="filters" id="filters" role="group" aria-label="Filtrar proyectos">
-      <button class="filter-btn active" data-cat="all" aria-pressed="true">Todos</button>
+    
+    <div class="controls-bar">
+      <div class="filters" id="filters">
+        <button class="filter-btn active" data-cat="all">Todos</button>
+      </div>
+      <div class="search-sort">
+        <div class="search-box">
+          <span>🔍</span>
+          <input type="text" id="searchInput" placeholder="Buscar proyecto..." />
+        </div>
+        <select id="sortSelect" class="sort-select">
+          <option value="recent">Más recientes</option>
+          <option value="az">A → Z</option>
+          <option value="za">Z → A</option>
+        </select>
+      </div>
     </div>
-    <div id="stateBox" class="stateBox" role="status" aria-live="polite">Cargando proyectos...</div>
-    <div class="projectsGrid" id="projectsGrid"></div>
-    <div class="moreWrap" id="moreWrap" style="display:none">
-      <button class="btn btn--ghost" id="moreBtn">Cargar más proyectos</button>
+
+    <div id="skeletonContainer" class="skeleton-grid">
+      <div class="skeleton-card"></div><div class="skeleton-card"></div><div class="skeleton-card"></div>
     </div>
+    
+    <div class="projectsGrid" id="projectsGrid" style="display: none;"></div>
   </div>
 </section>
 
 <!-- SERVICIOS -->
-<section class="section section--dark" id="servicios">
+<section class="section" id="servicios">
   <div class="wrap">
     <div class="section__head fade-in">
       <span class="section__label">Qué construimos</span>
       <h2>Soluciones <em>a medida</em></h2>
-      <p>No una página, una herramienta digital con lógica de negocio real.</p>
     </div>
-    <div class="servicesGrid fade-in">
-      <div class="serviceCard"><span class="serviceCard__icon" aria-hidden="true">🛒</span><div class="serviceCard__title">Tiendas Online</div><div class="serviceCard__desc">Carrito, stock, ofertas, cupones y pedidos por WhatsApp. Integración con Mercado Pago y Stripe.</div></div>
-      <div class="serviceCard"><span class="serviceCard__icon" aria-hidden="true">📦</span><div class="serviceCard__title">Sistemas de Pedidos</div><div class="serviceCard__desc">Flujo guiado con selección de zona, cálculo de costos y mensaje de WhatsApp listo para confirmar.</div></div>
-      <div class="serviceCard"><span class="serviceCard__icon" aria-hidden="true">📄</span><div class="serviceCard__title">Presupuestos en PDF</div><div class="serviceCard__desc">Generá, descargá y compartí presupuestos formales desde el celular en segundos.</div></div>
-      <div class="serviceCard"><span class="serviceCard__icon" aria-hidden="true">⚙️</span><div class="serviceCard__title">Panel Admin Completo</div><div class="serviceCard__desc">El dueño gestiona productos, ofertas, cupones, leads y usuarios desde el celular, sin depender de nadie.</div></div>
-      <div class="serviceCard"><span class="serviceCard__icon" aria-hidden="true">📻</span><div class="serviceCard__title">Radios Online</div><div class="serviceCard__desc">Streaming en vivo, diseño de marca completo, widget de reproducción y PWA instalable.</div></div>
-      <div class="serviceCard"><span class="serviceCard__icon" aria-hidden="true">🎯</span><div class="serviceCard__title">Landings de Conversión</div><div class="serviceCard__desc">Diseñadas para convertir visitas en consultas. Cada sección pensada para que el visitante tome acción.</div></div>
-      <div class="serviceCard"><span class="serviceCard__icon" aria-hidden="true">🏢</span><div class="serviceCard__title">Webs Institucionales</div><div class="serviceCard__desc">Galería de trabajos, servicios, reservas por WhatsApp, mapa y SEO completo.</div></div>
-      <div class="serviceCard"><span class="serviceCard__icon" aria-hidden="true">🎉</span><div class="serviceCard__title">Eventos y Entretenimiento</div><div class="serviceCard__desc">Alto impacto visual para bailantas, eventos musicales y espacios de entretenimiento.</div></div>
-      <div class="serviceCard"><span class="serviceCard__icon" aria-hidden="true">📋</span><div class="serviceCard__title">Catálogos Digitales</div><div class="serviceCard__desc">Vitrina profesional 24hs con productos por categoría, fotos, precios y botón de consulta directa.</div></div>
-    </div>
-  </div>
-</section>
-
-<!-- NOSOTROS -->
-<section class="section" id="nosotros">
-  <div class="wrap">
-    <div class="whyGrid">
-      <div class="statsGrid fade-in">
-        <div class="statCard"><strong id="statCount">8+</strong><span>Proyectos entregados</span></div>
-        <div class="statCard"><strong>24hs</strong><span>Disponibilidad del sistema</span></div>
-        <div class="statCard"><strong>100%</strong><span>Código propio del cliente</span></div>
-        <div class="statCard"><strong>$0</strong><span>Mensualidad obligatoria</span></div>
-      </div>
-      <div class="whyText fade-in">
-        <span class="section__label">Por qué Ciborg 347</span>
-        <h3>Desarrollo a medida,<br>no plantillas</h3>
-        <p>Trabajo con inteligencia artificial como parte del proceso, lo que me permite entregar proyectos de alto nivel técnico con tiempos y costos que un estudio tradicional no puede igualar.</p>
-        <p>Sin mensualidad obligatoria. Sin límite de productos impuesto por un plan. Sin depender de que otra empresa mantenga tu negocio online. La web es tuya para siempre.</p>
-        <div class="techTags">
-          <span class="techTag">React</span><span class="techTag">Supabase</span><span class="techTag">PostgreSQL</span>
-          <span class="techTag">RLS</span><span class="techTag">Render</span><span class="techTag">PWA</span>
-          <span class="techTag">WhatsApp API</span><span class="techTag">Mercado Pago</span><span class="techTag">Stripe</span><span class="techTag">SEO</span>
-        </div>
-      </div>
+    <div class="servicesGrid">
+      <div class="serviceCard"><span class="serviceCard__icon">🛒</span><div class="serviceCard__title">Tiendas Online</div><div class="serviceCard__desc">Carrito, stock, ofertas y pedidos por WhatsApp.</div></div>
+      <div class="serviceCard"><span class="serviceCard__icon">📦</span><div class="serviceCard__title">Sistemas de Pedidos</div><div class="serviceCard__desc">Flujo guiado con cálculo de costos.</div></div>
+      <div class="serviceCard"><span class="serviceCard__icon">⚙️</span><div class="serviceCard__title">Panel Admin</div><div class="serviceCard__desc">Gestioná productos desde el celular.</div></div>
+      <div class="serviceCard"><span class="serviceCard__icon">🎯</span><div class="serviceCard__title">Landings de Conversión</div><div class="serviceCard__desc">Diseñadas para convertir visitas.</div></div>
+      <div class="serviceCard"><span class="serviceCard__icon">🏢</span><div class="serviceCard__title">Webs Institucionales</div><div class="serviceCard__desc">Galería, servicios y SEO completo.</div></div>
+      <div class="serviceCard"><span class="serviceCard__icon">📋</span><div class="serviceCard__title">Catálogos Digitales</div><div class="serviceCard__desc">Vitrina profesional con botón de consulta.</div></div>
     </div>
   </div>
 </section>
@@ -692,49 +723,41 @@
       <span class="section__label">FAQ</span>
       <h2>Preguntas <em>frecuentes</em></h2>
     </div>
-    <div class="faqGrid" id="faqGrid">
-      <div class="skeleton" style="height:80px"></div>
-      <div class="skeleton" style="height:80px"></div>
-      <div class="skeleton" style="height:80px"></div>
-      <div class="skeleton" style="height:80px"></div>
-    </div>
+    <div class="faqGrid" id="faqGrid"></div>
   </div>
 </section>
 
 <!-- CONTACTO -->
 <section class="section" id="contacto">
   <div class="wrap">
-    <div class="contactInner">
+    <div class="section__head center fade-in">
       <span class="section__label">Contacto</span>
-      <div class="contactBig">Hablemos de<br>tu <em>proyecto</em></div>
-      <div class="contactLinks">
-        <a href="#" class="contactLink" id="finalWhatsAppBtn" target="_blank" rel="noopener noreferrer">
-          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-          WhatsApp
-        </a>
-        <a href="https://instagram.com/ciborg347" class="contactLink" id="linkInstagram" target="_blank" rel="noopener noreferrer">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
-          Instagram
-        </a>
-        <a href="mailto:" class="contactLink" id="emailContactBtn">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 7l-10 7L2 7"/></svg>
-          Email
-        </a>
-      </div>
+      <h2>Hablemos de <em>tu proyecto</em></h2>
+    </div>
+    <div class="contact-form-section">
+      <form class="contact-form" id="contactForm" action="https://formsubmit.co/ciborg347@gmail.com" method="POST">
+        <input type="hidden" name="_subject" value="Nuevo lead desde Ciborg 347">
+        <input type="hidden" name="_captcha" value="false">
+        <input type="text" name="nombre" placeholder="Tu nombre *" required>
+        <input type="email" name="email" placeholder="Tu email *" required>
+        <input type="tel" name="telefono" placeholder="Tu WhatsApp (opcional)">
+        <textarea name="mensaje" rows="3" placeholder="Contame sobre tu proyecto..." required></textarea>
+        <button type="submit" class="btn btn--primary">Enviar mensaje →</button>
+      </form>
+    </div>
+    <div class="contactLinks">
+      <a href="#" class="btn btn--wa" id="finalWhatsAppBtn">WhatsApp</a>
+      <a href="https://instagram.com/ciborg347" class="btn btn--ghost" target="_blank">Instagram</a>
     </div>
   </div>
 </section>
 
-<!-- FOOTER -->
 <footer>
   <div class="wrap">
     <div class="footer__inner">
       <div class="footer__brand">
-        <img id="footerLogo" src="https://iili.io/fETkPEv.md.png" alt="Logo Ciborg 347" width="38" height="38" />
-        <div>
-          <strong id="footerTitle">CIBORG 347</strong>
-          <span id="footerTagline">Desarrollo Web</span>
-        </div>
+        <img id="footerLogo" src="https://iili.io/fETkPEv.md.png" alt="Logo" />
+        <div><strong>CIBORG 347</strong><span style="display: block; font-size: 10px;">Desarrollo Web</span></div>
       </div>
       <div class="footer__links">
         <a href="#portfolio">Proyectos</a>
@@ -746,436 +769,305 @@
   </div>
 </footer>
 
-<!-- WA FLOAT -->
-<a href="#" class="waFloat" id="waFloat" target="_blank" rel="noopener noreferrer" aria-label="Contactar por WhatsApp">
-  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-</a>
+<a href="#" class="waFloat" id="waFloat" target="_blank"><svg width="26" height="26" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg></a>
 
-<!-- MODAL -->
-<!-- FIX accesibilidad: tabindex="-1" para focus trap, role=dialog, aria-modal -->
-<div class="modal" id="projectModal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-  <div class="modal__panel" tabindex="-1" id="modalPanel">
-    <div class="modal__header">
-      <h3 id="modalTitle"></h3>
-      <button class="modal__close" id="modalClose" aria-label="Cerrar modal">×</button>
-    </div>
-    <div class="modal__body">
-      <div class="modal__imageWrap">
-        <img id="modalImage" src="" alt="" width="400" height="250" />
-      </div>
-      <div class="modal__info">
-        <div class="modal__cat" id="modalCat"></div>
-        <p class="modal__short" id="modalShort"></p>
-        <p class="modal__full" id="modalFull"></p>
-        <div class="modal__actions">
-          <a href="#" class="btn btn--primary" id="modalDemoBtn" target="_blank" rel="noopener noreferrer">Ver demo →</a>
-          <a href="#" class="btn btn--wa" id="modalWhatsAppBtn" target="_blank" rel="noopener noreferrer">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-            Quiero algo así
-          </a>
+<div class="toast" id="toast">Enlace copiado</div>
+
+<script>
+// ===== CONFIGURACIÓN =====
+const SUPABASE_URL = "https://fhxcumwhgtfirznnznjx.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZoeGN1bXdoZ3RmaXJ6bm56bmp4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc5OTYyNzEsImV4cCI6MjA4MzU3MjI3MX0.7z1B099L4yrA9k1JxwvYGCABzqiqYtkUClI3E8wQ2zA";
+const DEFAULT_WA = "5491164499481";
+const sb = window.supabase?.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+let projectsData = [];
+let allCategories = [];
+let activeFilter = "all";
+let currentSearch = "";
+let currentSort = "recent";
+
+function esc(s) { return String(s ?? "").replace(/[&<>]/g, function(m) { return m === '&' ? '&amp;' : m === '<' ? '&lt;' : '&gt;'; }); }
+function getWA() { return DEFAULT_WA; }
+function waUrl(msg) { return `https://wa.me/${getWA()}?text=${encodeURIComponent(msg)}`; }
+const DEFAULT_MSG = "Hola CIBORG 347, vi tus demos y quiero consultar por una web.";
+
+function setWaLinks() {
+  ["heroWhatsAppBtn", "finalWhatsAppBtn", "waFloat", "mobileWhatsAppBtn"].forEach(id => {
+    const el = document.getElementById(id);
+    if(el) el.href = waUrl(DEFAULT_MSG);
+  });
+}
+
+function showToast(msg) {
+  const toast = document.getElementById("toast");
+  toast.textContent = msg;
+  toast.classList.add("show");
+  setTimeout(() => toast.classList.remove("show"), 2500);
+}
+
+// ===== TEMA CLARO/OSCURO =====
+const themeToggle = document.getElementById("themeToggle");
+const savedTheme = localStorage.getItem("theme") || "dark";
+document.documentElement.setAttribute("data-theme", savedTheme);
+themeToggle.textContent = savedTheme === "dark" ? "☀️" : "🌙";
+themeToggle.addEventListener("click", () => {
+  const current = document.documentElement.getAttribute("data-theme");
+  const newTheme = current === "dark" ? "light" : "dark";
+  document.documentElement.setAttribute("data-theme", newTheme);
+  localStorage.setItem("theme", newTheme);
+  themeToggle.textContent = newTheme === "dark" ? "☀️" : "🌙";
+});
+
+// ===== TYPEWRITER CORREGIDO (cursor solo mientras escribe) =====
+const phrases = ["Tu web.", "Tu negocio.", "Sin límites."];
+let phraseIndex = 0, charIndex = 0;
+let isDeleting = false;
+let isComplete = false;
+const typewriterEl = document.getElementById("typewriterTitle");
+
+function typeWriter() {
+  if (!typewriterEl) return;
+  
+  // Si ya completó todo el ciclo, salir
+  if (isComplete) return;
+  
+  const currentPhrase = phrases[phraseIndex];
+  
+  if (!isDeleting && charIndex <= currentPhrase.length) {
+    // Escribiendo
+    typewriterEl.textContent = currentPhrase.substring(0, charIndex);
+    charIndex++;
+    
+    if (charIndex > currentPhrase.length) {
+      // Terminó de escribir la frase actual
+      if (phraseIndex === phrases.length - 1) {
+        // Es la última frase, terminar efecto
+        isComplete = true;
+        typewriterEl.style.borderRight = "none"; // Ocultar cursor definitivamente
+        return;
+      }
+      // Esperar 1.5 segundos antes de borrar
+      isDeleting = true;
+      setTimeout(typeWriter, 1500);
+      return;
+    }
+    setTimeout(typeWriter, 100);
+  } 
+  else if (isDeleting && charIndex >= 0) {
+    // Borrando
+    typewriterEl.textContent = currentPhrase.substring(0, charIndex);
+    charIndex--;
+    
+    if (charIndex < 0) {
+      // Terminó de borrar, pasar a la siguiente frase
+      isDeleting = false;
+      phraseIndex++;
+      charIndex = 0;
+      setTimeout(typeWriter, 200);
+      return;
+    }
+    setTimeout(typeWriter, 50);
+  }
+}
+
+// Iniciar el efecto cuando el DOM esté listo
+setTimeout(typeWriter, 500);
+
+// ===== MODAL =====
+function openModal(project) {
+  const modalHTML = `
+    <div class="modal-overlay" id="modalOverlay">
+      <div class="modal-container">
+        <div class="modal-header">
+          <h3>${esc(project.title)}</h3>
+          <button class="modal-close" onclick="closeModal()">×</button>
+        </div>
+        <div class="modal-body">
+          ${project.image_url ? `<img src="${esc(project.image_url)}" alt="${esc(project.title)}" class="modal-img" />` : ''}
+          <div class="modal-cat">${esc(project.categories?.name || "Proyecto")}</div>
+          <div class="modal-desc">${esc(project.full_description || project.short_description || "Sin descripción adicional.")}</div>
+          <div class="modal-actions">
+            <a href="${esc(project.demo_url || "#")}" target="_blank" class="btn btn--primary">Ver demo →</a>
+            <a href="${waUrl(`Hola, vi la demo "${project.title}" y quiero algo así.`)}" class="btn btn--wa">Consultar por WhatsApp</a>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-</div>
-
-<script>
-// ===== CONFIG =====
-const SUPABASE_URL = "https://fhxcumwhgtfirznnznjx.supabase.co";
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZoeGN1bXdoZ3RmaXJ6bm56bmp4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc5OTYyNzEsImV4cCI6MjA4MzU3MjI3MX0.7z1B099L4yrA9k1JxwvYGCABzqiqYtkUClI3E8wQ2zA";
-const DEFAULT_WA   = "5491164499481";
-
-const sb = window.supabase?.createClient(SUPABASE_URL, SUPABASE_KEY) ?? null;
-
-// ===== STATE =====
-let projectsData  = [];
-let siteSettings  = null;
-let allCategories = [];
-let visibleCount  = 6;
-let activeFilter  = "all";
-let initDone      = false;
-
-// ===== UTILS =====
-function esc(s){ return String(s??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;"); }
-function getWA(){ return siteSettings?.whatsapp_number || DEFAULT_WA; }
-function waUrl(msg){ return `https://wa.me/${getWA()}?text=${encodeURIComponent(msg)}`; }
-const DEFAULT_MSG = "Hola CIBORG 347, vi tus demos y quiero consultar por una web para mi marca.";
-
-function setWaLinks(){
-  const ids = ["topWhatsAppBtn","heroWhatsAppBtn","finalWhatsAppBtn","waFloat","mobileWhatsAppBtn"];
-  ids.forEach(id => {
-    const el = document.getElementById(id);
-    if(el){ el.href = waUrl(DEFAULT_MSG); }
-  });
-  const emailBtn = document.getElementById("emailContactBtn");
-  if(emailBtn && siteSettings?.email_contact) emailBtn.href = `mailto:${siteSettings.email_contact}`;
+  `;
+  document.body.insertAdjacentHTML("beforeend", modalHTML);
+  document.body.style.overflow = "hidden";
 }
 
-function showState(msg){ const el=document.getElementById("stateBox"); if(el){el.style.display="block";el.textContent=msg;} }
-function hideState(){ const el=document.getElementById("stateBox"); if(el){el.style.display="none";el.textContent="";} }
-
-// ===== SITE SETTINGS =====
-async function loadSettings(){
-  if(!sb) return;
-  try {
-    const { data } = await sb.from("site_settings").select("*").eq("id","global").maybeSingle();
-    if(!data) return;
-    siteSettings = data;
-
-    const setTxt = (id,v) => { const el=document.getElementById(id); if(el&&v) el.textContent=v; };
-    const setSrc = (id,v) => { const el=document.getElementById(id); if(el&&v) el.src=v; };
-
-    const logo = data.logo_url || "https://iili.io/fETkPEv.md.png";
-    setSrc("brandLogo",  logo);
-    setSrc("footerLogo", data.footer_logo_url || logo);
-    setSrc("heroLogo",   data.hero_logo_url   || logo);
-    setTxt("brandTitle",   data.site_title);
-    setTxt("brandTagline", data.site_tagline);
-    setTxt("footerTitle",  data.site_title);
-    setTxt("footerTagline",data.site_tagline);
-    setTxt("heroTitle",    data.hero_title);
-    setTxt("heroSubtitle", data.hero_subtitle);
-    if(data.hero_badge){ const el=document.getElementById("heroBadge"); if(el) el.textContent=data.hero_badge; }
-    if(data.instagram_url){ const el=document.getElementById("linkInstagram"); if(el) el.href=data.instagram_url; }
-    if(data.site_title) document.title = data.site_title + " — Desarrollo Web";
-    if(data.favicon_url){ const l=document.createElement("link"); l.rel="icon"; l.href=data.favicon_url; document.head.appendChild(l); }
-
-    setWaLinks();
-  } catch(e) {
-    console.warn("Settings load error:", e);
-  }
+window.closeModal = function() {
+  const modal = document.getElementById("modalOverlay");
+  if (modal) modal.remove();
+  document.body.style.overflow = "";
 }
 
-// ===== PROJECTS =====
-async function loadProjects(){
-  if(!sb){ showState("Sin conexión a Supabase."); return; }
-  showState("Cargando proyectos...");
-
-  // FIX: timeout fallback de 8s
-  const timeout = new Promise((_,rej) => setTimeout(() => rej(new Error("timeout")), 8000));
-
+// ===== CARGAR PROYECTOS =====
+async function loadProjects() {
+  if (!sb) return;
+  const skeleton = document.getElementById("skeletonContainer");
+  const projectsGrid = document.getElementById("projectsGrid");
+  skeleton.style.display = "grid";
+  projectsGrid.style.display = "none";
+  
   try {
-    const [{ data: projects, error: e1 }, { data: cats }] = await Promise.race([
-      Promise.all([
-        sb.from("projects")
-          .select("*, categories(name,slug), project_tags(tags(name,color,slug))")
-          .eq("active", true)
-          .is("deleted_at", null)
-          .neq("status", "archived")
-          .order("order_index",{ascending:true})
-          .order("created_at",{ascending:false}),
-        sb.from("categories").select("*").eq("active",true).order("order_index",{ascending:true})
-      ]),
-      timeout.then(() => { throw new Error("timeout"); })
-    ]);
-
-    if(e1) throw e1;
-
-    projectsData  = projects || [];
-    allCategories = cats     || [];
-
-    // FIX stat count: solo actualizar si hay proyectos
-    if(projectsData.length > 0){
-      ["statProjects","statCount"].forEach(id => {
-        const el = document.getElementById(id);
-        if(el) el.textContent = projectsData.length + "+";
-      });
-    }
-
+    const { data: projects } = await sb.from("projects").select("*, categories(name,slug)").eq("active", true).order("created_at", { ascending: false });
+    if (projects) projectsData = projects;
+    const { data: cats } = await sb.from("categories").select("*").eq("active", true);
+    if (cats) allCategories = cats;
+    
+    document.getElementById("statProjects").textContent = projectsData.length + "+";
     buildFilters();
-    renderFeatured();
     renderProjects();
-    // FIX fade-in: re-observar después de render dinámico
-    setupFade();
-
-    if(!projectsData.length) showState("Todavía no hay proyectos para mostrar.");
-    else hideState();
-
-  } catch(err) {
-    console.warn("Projects load error:", err);
-    showState("No se pudieron cargar los proyectos.");
-  }
+    skeleton.style.display = "none";
+    projectsGrid.style.display = "grid";
+  } catch(e) { console.error(e); skeleton.style.display = "none"; }
 }
 
-function buildFilters(){
+function buildFilters() {
   const container = document.getElementById("filters");
-  container.innerHTML = '<button class="filter-btn active" data-cat="all" aria-pressed="true">Todos</button>';
-  const usedCats = new Set(projectsData.map(p=>p.category_id).filter(Boolean));
-  allCategories.filter(c=>usedCats.has(c.id)).forEach(cat => {
+  container.innerHTML = '<button class="filter-btn active" data-cat="all">Todos</button>';
+  const usedCats = new Set(projectsData.map(p => p.category_id).filter(Boolean));
+  allCategories.filter(c => usedCats.has(c.id)).forEach(cat => {
     const btn = document.createElement("button");
     btn.className = "filter-btn";
     btn.dataset.cat = cat.id;
     btn.textContent = cat.name;
-    // FIX accesibilidad: aria-pressed
-    btn.setAttribute("aria-pressed","false");
     container.appendChild(btn);
   });
-
   container.addEventListener("click", e => {
     const btn = e.target.closest(".filter-btn");
-    if(!btn) return;
-    // FIX aria-pressed en filtros
-    container.querySelectorAll(".filter-btn").forEach(b => {
-      b.classList.remove("active");
-      b.setAttribute("aria-pressed","false");
-    });
+    if (!btn) return;
+    document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
     btn.classList.add("active");
-    btn.setAttribute("aria-pressed","true");
     activeFilter = btn.dataset.cat;
-    visibleCount = 6;
     renderProjects();
   });
 }
 
-function renderFeatured(){
-  const section = document.getElementById("destacados");
-  const grid    = document.getElementById("featuredGrid");
-  const list    = projectsData.filter(p=>p.featured_home).slice(0,6);
-  if(!list.length){ section.style.display="none"; return; }
-  section.style.display = "block";
-
-  grid.innerHTML = list.map(p => {
-    const cat = p.categories?.name || p.solution_type || "";
-    return `
-      <div class="featuredCard" data-open-project="${p.id}" role="button" tabindex="0" aria-label="Ver proyecto ${esc(p.title)}">
-        ${p.image_url ? `<img src="${esc(p.image_url)}" alt="${esc(p.title)}" loading="lazy" width="300" height="188"/>` : ""}
-        ${p.highlight ? '<div class="highlight-badge" aria-hidden="true">★ Destacado</div>' : ""}
-        <a class="featuredCard__link" href="${esc(p.demo_url)}" target="_blank" rel="noopener noreferrer" aria-label="Ver demo de ${esc(p.title)}" onclick="event.stopPropagation()">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-        </a>
-        <div class="featuredCard__overlay">
-          <div class="featuredCard__badge">${esc(cat)}</div>
-          <div class="featuredCard__title">${esc(p.title)}</div>
-          <div class="featuredCard__desc">${esc(p.short_description||"")}</div>
-        </div>
-      </div>`;
-  }).join("");
-  bindOpeners(grid);
-}
-
-function renderProjects(){
-  const grid     = document.getElementById("projectsGrid");
-  const moreWrap = document.getElementById("moreWrap");
-  const filtered = projectsData.filter(p => activeFilter === "all" ? true : p.category_id === activeFilter);
-  const slice    = filtered.slice(0, visibleCount);
-
-  if(!slice.length){
-    grid.innerHTML = '<div class="stateBox" style="display:block" role="status">No hay proyectos en esta categoría.</div>';
-    moreWrap.style.display = "none";
-    return;
+function renderProjects() {
+  let filtered = projectsData.filter(p => activeFilter === "all" ? true : p.category_id === activeFilter);
+  if (currentSearch) {
+    filtered = filtered.filter(p => p.title.toLowerCase().includes(currentSearch.toLowerCase()) || 
+                                   (p.short_description || "").toLowerCase().includes(currentSearch.toLowerCase()));
   }
-
-  grid.innerHTML = slice.map(p => {
-    const cat = p.categories?.name || p.solution_type || "";
-    return `
-      <div class="projectCard" data-open-project="${p.id}" role="button" tabindex="0" aria-label="Ver proyecto ${esc(p.title)}">
-        ${p.image_url ? `<img src="${esc(p.image_url)}" alt="${esc(p.title)}" loading="lazy" width="300" height="188"/>` : ""}
-        <a class="projectCard__link" href="${esc(p.demo_url)}" target="_blank" rel="noopener noreferrer" aria-label="Ver demo de ${esc(p.title)}" onclick="event.stopPropagation()">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-        </a>
-        <div class="projectCard__overlay">
-          <div class="projectCard__cat">${esc(cat)}</div>
-          <div class="projectCard__title">${esc(p.title)}</div>
-          <div class="projectCard__desc">${esc(p.short_description||"")}</div>
-        </div>
-      </div>`;
-  }).join("");
-
-  moreWrap.style.display = filtered.length > visibleCount ? "block" : "none";
-  bindOpeners(grid);
-}
-
-function bindOpeners(root){
-  root.querySelectorAll("[data-open-project]").forEach(card => {
-    card.addEventListener("click", () => {
-      const id = card.getAttribute("data-open-project");
-      const p  = projectsData.find(x => String(x.id) === String(id));
-      if(p) openModal(p);
-    });
-    // FIX accesibilidad: abrir con Enter/Space en elementos con role=button
-    card.addEventListener("keydown", e => {
-      if(e.key === "Enter" || e.key === " "){
-        e.preventDefault();
-        card.click();
+  
+  if (currentSort === "az") filtered.sort((a,b) => a.title.localeCompare(b.title));
+  else if (currentSort === "za") filtered.sort((a,b) => b.title.localeCompare(a.title));
+  else filtered.sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
+  
+  const grid = document.getElementById("projectsGrid");
+  if (!filtered.length) { grid.innerHTML = '<div style="padding:2rem; text-align:center;">No hay proyectos.</div>'; return; }
+  
+  const sevenDaysAgo = new Date();
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+  
+  grid.innerHTML = filtered.map(p => `
+    <div class="projectCard" data-project='${JSON.stringify(p)}'>
+      <img class="projectCard__image" src="${esc(p.image_url)}" alt="${esc(p.title)}" loading="lazy" />
+      <div class="projectCard__content">
+        ${new Date(p.created_at) > sevenDaysAgo ? '<div class="new-badge">NUEVO</div>' : ''}
+        <div class="projectCard__cat">${esc(p.categories?.name || "Proyecto")}</div>
+        <div class="projectCard__title">${esc(p.title)}</div>
+        <div class="projectCard__desc">${esc(p.short_description || "")}</div>
+        <button class="share-btn" onclick="event.stopPropagation(); shareProject('${p.id}', '${esc(p.title)}')">📤 Compartir</button>
+      </div>
+    </div>
+  `).join("");
+  
+  document.querySelectorAll(".projectCard").forEach(card => {
+    const project = JSON.parse(card.getAttribute("data-project"));
+    card.addEventListener("click", (e) => {
+      if (!e.target.closest(".share-btn")) {
+        openModal(project);
       }
     });
   });
 }
 
-// ===== MODAL =====
-// FIX: focus trap completo
-const FOCUSABLE = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
-let lastFocused = null;
-
-function openModal(p){
-  // FIX: usar getWA() después de que loadSettings ya terminó (init() usa await)
-  const modal = document.getElementById("projectModal");
-  const cat   = p.categories?.name || p.solution_type || "";
-  document.getElementById("modalTitle").textContent  = p.title;
-  document.getElementById("modalImage").src          = p.image_url || "";
-  document.getElementById("modalImage").alt          = p.title;
-  document.getElementById("modalCat").textContent    = cat;
-  document.getElementById("modalShort").textContent  = p.short_description || "";
-  document.getElementById("modalFull").textContent   = p.full_description  || "";
-  document.getElementById("modalDemoBtn").href       = p.demo_url || "#";
-  document.getElementById("modalWhatsAppBtn").href   = waUrl(`Hola CIBORG 347, vi la demo "${p.title}" y quiero algo así para mi marca.`);
-
-  lastFocused = document.activeElement;
-  modal.classList.add("isOpen");
-  modal.setAttribute("aria-hidden","false");
-  document.body.classList.add("bodyLock");
-
-  // FIX accesibilidad: mover foco al panel del modal
-  const panel = document.getElementById("modalPanel");
-  setTimeout(() => panel.focus(), 50);
+function shareProject(id, title) {
+  const url = `${window.location.origin}${window.location.pathname}#portfolio`;
+  navigator.clipboard.writeText(url);
+  showToast(`"${title}" - Enlace copiado`);
 }
-
-function closeModal(){
-  const modal = document.getElementById("projectModal");
-  modal.classList.remove("isOpen");
-  modal.setAttribute("aria-hidden","true");
-  document.body.classList.remove("bodyLock");
-  // FIX: devolver foco al elemento que abrió el modal
-  if(lastFocused) lastFocused.focus();
-}
-
-// FIX accesibilidad: focus trap dentro del modal
-document.getElementById("projectModal").addEventListener("keydown", e => {
-  if(!document.getElementById("projectModal").classList.contains("isOpen")) return;
-  const panel     = document.getElementById("modalPanel");
-  const focusable = Array.from(panel.querySelectorAll(FOCUSABLE)).filter(el => !el.disabled);
-  const first     = focusable[0];
-  const last      = focusable[focusable.length - 1];
-
-  if(e.key === "Tab"){
-    if(e.shiftKey){
-      if(document.activeElement === first){ e.preventDefault(); last.focus(); }
-    } else {
-      if(document.activeElement === last){ e.preventDefault(); first.focus(); }
-    }
-  }
-});
 
 // ===== FAQ =====
-async function loadFaqs(){
+async function loadFaqs() {
   let faqs = [];
-  // FIX: timeout fallback de 5s para el skeleton
-  if(sb){
-    try {
-      const timeout = new Promise(resolve => setTimeout(() => resolve(null), 5000));
-      const query   = sb.from("faqs").select("*").eq("active",true).order("order_index",{ascending:true});
-      const result  = await Promise.race([query, timeout]);
-      faqs = result?.data || [];
-    } catch(e) {
-      console.warn("FAQ load error:", e);
-    }
+  if (sb) {
+    const { data } = await sb.from("faqs").select("*").eq("active", true);
+    if (data) faqs = data;
   }
-  if(!faqs.length) faqs = defaultFaqs();
-  renderFaqs(faqs);
-}
-
-function defaultFaqs(){
-  return [
-    {question:"¿Cuánto tarda un proyecto?", answer:"Depende de la complejidad, pero presento una propuesta visual antes de comprometerse. Una vez aprobada, el desarrollo arranca de inmediato."},
-    {question:"¿Hay mensualidad obligatoria?", answer:"No. El sitio es tuyo para siempre. Sin dependencia de plataformas externas ni pagos recurrentes obligatorios."},
-    {question:"¿Puedo administrar el contenido yo mismo?", answer:"Sí. Los proyectos incluyen panel de administración propio para gestionar productos, precios e imágenes desde el celular."},
-    {question:"¿Trabajan con Mercado Pago?", answer:"Sí. Se puede integrar Mercado Pago y Stripe para pagos online según la necesidad del proyecto."},
-    {question:"¿La web funciona en celular?", answer:"Siempre. Todos los desarrollos son Mobile First, optimizados para celular, tablet y computadora."},
-    {question:"¿Qué diferencia hay con TiendaNube?", answer:"Un desarrollo propio es código a medida para tu negocio: tu marca, tu lógica, sin límites de plan. A 12 meses, sale menos que una mensualidad de plataforma."},
+  if (!faqs.length) faqs = [
+    { question: "¿Cuánto tarda un proyecto?", answer: "Depende de la complejidad, pero presento una propuesta visual antes de comprometerse." },
+    { question: "¿Hay mensualidad obligatoria?", answer: "No. El sitio es tuyo para siempre. Sin pagos recurrentes." },
+    { question: "¿Puedo administrar el contenido yo mismo?", answer: "Sí. Los proyectos incluyen panel de administración propio." },
+    { question: "¿La web funciona en celular?", answer: "Siempre. Todos los desarrollos son Mobile First." }
   ];
-}
-
-function renderFaqs(faqs){
   const grid = document.getElementById("faqGrid");
   grid.innerHTML = faqs.map(f => `
     <div class="faqItem">
       <div class="faqQ">${esc(f.question)}</div>
       <div class="faqA">${esc(f.answer)}</div>
-    </div>`).join("");
-  grid.querySelectorAll(".faqItem").forEach(item => {
-    item.addEventListener("click", () => {
-      const isOpen = item.classList.contains("open");
-      grid.querySelectorAll(".faqItem").forEach(i => i.classList.remove("open"));
-      if(!isOpen) item.classList.add("open");
+    </div>
+  `).join("");
+  document.querySelectorAll(".faqItem").forEach(item => {
+    const q = item.querySelector(".faqQ");
+    const a = item.querySelector(".faqA");
+    q.addEventListener("click", () => {
+      const open = a.style.display === "block";
+      document.querySelectorAll(".faqA").forEach(aa => aa.style.display = "none");
+      a.style.display = open ? "none" : "block";
     });
   });
 }
 
-// ===== NAV =====
-const burgerBtn  = document.getElementById("burgerBtn");
-const mobileMenu = document.getElementById("mobileMenu");
+// ===== OCULTAR WHATSAPP AL LLEGAR AL FOOTER =====
+const waFloat = document.getElementById("waFloat");
+const footer = document.querySelector("footer");
 
-burgerBtn.addEventListener("click", () => {
-  const open = !mobileMenu.classList.contains("isOpen");
-  mobileMenu.classList.toggle("isOpen", open);
-  mobileMenu.setAttribute("aria-hidden", open ? "false" : "true");
-  burgerBtn.setAttribute("aria-expanded", open ? "true" : "false");
-});
-
-// FIX UX: cerrar menú mobile al clickear fuera
-document.addEventListener("click", e => {
-  if(mobileMenu.classList.contains("isOpen") &&
-     !mobileMenu.contains(e.target) &&
-     !burgerBtn.contains(e.target)){
-    mobileMenu.classList.remove("isOpen");
-    mobileMenu.setAttribute("aria-hidden","true");
-    burgerBtn.setAttribute("aria-expanded","false");
+function checkWaFloatVisibility() {
+  if (!waFloat || !footer) return;
+  const footerRect = footer.getBoundingClientRect();
+  const viewportHeight = window.innerHeight;
+  
+  if (footerRect.top < viewportHeight - 50) {
+    waFloat.classList.add("hidden");
+  } else {
+    waFloat.classList.remove("hidden");
   }
-});
-
-document.querySelectorAll(".mobileMenu a").forEach(a => a.addEventListener("click", () => {
-  mobileMenu.classList.remove("isOpen");
-  mobileMenu.setAttribute("aria-hidden","true");
-  burgerBtn.setAttribute("aria-expanded","false");
-}));
-
-// ===== MODAL EVENTS =====
-document.getElementById("modalClose").addEventListener("click", closeModal);
-document.getElementById("projectModal").addEventListener("click", e => { if(e.target === e.currentTarget) closeModal(); });
-window.addEventListener("keydown", e => { if(e.key === "Escape") closeModal(); });
-document.getElementById("moreBtn").addEventListener("click", () => { visibleCount += 6; renderProjects(); });
-
-// ===== FADE IN =====
-// FIX: función reutilizable para re-observar elementos dinámicos
-function setupFade(){
-  const obs = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if(e.isIntersecting){
-        e.target.classList.add("visible");
-        obs.unobserve(e.target);
-      }
-    });
-  }, {threshold: 0.1});
-  document.querySelectorAll(".fade-in:not(.visible)").forEach(el => obs.observe(el));
 }
 
-// ===== SMOOTH SCROLL =====
-document.querySelectorAll('a[href^="#"]').forEach(a => {
-  a.addEventListener("click", e => {
-    const href = a.getAttribute("href");
-    if(!href || href === "#") return;
-    // FIX smooth scroll: guard antes del preventDefault
-    const t = document.querySelector(href);
-    if(!t) return;
-    e.preventDefault();
-    t.scrollIntoView({behavior:"smooth", block:"start"});
-  });
+window.addEventListener("scroll", checkWaFloatVisibility);
+window.addEventListener("resize", checkWaFloatVisibility);
+setTimeout(checkWaFloatVisibility, 100);
+
+// ===== BUSCADOR Y ORDEN =====
+document.getElementById("searchInput")?.addEventListener("input", e => {
+  currentSearch = e.target.value;
+  renderProjects();
 });
+document.getElementById("sortSelect")?.addEventListener("change", e => {
+  currentSort = e.target.value;
+  renderProjects();
+});
+
+// ===== SCROLL REVEAL =====
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting) { e.target.classList.add("visible"); observer.unobserve(e.target); } });
+}, { threshold: 0.1 });
+document.querySelectorAll(".fade-in").forEach(el => observer.observe(el));
+
+// ===== MENÚ MÓVIL =====
+document.getElementById("burgerBtn")?.addEventListener("click", () => document.getElementById("mobileMenu").classList.toggle("isOpen"));
+document.querySelectorAll(".mobileMenu a").forEach(a => a.addEventListener("click", () => document.getElementById("mobileMenu").classList.remove("isOpen")));
 
 // ===== INIT =====
-async function init(){
-  setupFade();
-  setWaLinks();
-  // FIX: await loadSettings() primero para que getWA() tenga el número correcto antes de abrir modales
-  await loadSettings();
-  await Promise.all([loadProjects(), loadFaqs()]);
-  initDone = true;
-}
-
-if(document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
-else init();
-
-window.CIBORG347 = { openModal, minimal: false };
+setWaLinks();
+loadProjects();
+loadFaqs();
 </script>
 </body>
 </html>
