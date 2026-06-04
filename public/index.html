@@ -16,7 +16,6 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 
   <style>
-    /* ========== TUS ESTILOS ORIGINALES COMPLETOS ========== */
     :root {
       --bg: #0a0a0f;
       --bg2: #0f0f1a;
@@ -82,9 +81,9 @@
     }
     .brand { display: flex; align-items: center; gap: 12px; transition: transform 0.2s; }
     .brand:hover { transform: translateY(-1px); }
-    .brand__logo { width: 44px; height: 44px; object-fit: contain; border-radius: 10px; cursor: pointer; }
+    .brand__logo { width: 44px; height: 44px; object-fit: contain; border-radius: 10px; cursor: pointer; transition: all 0.3s ease; }
+    .brand__logo:hover { filter: drop-shadow(0 0 8px #00d4ff); transform: scale(1.02); }
     .brand__text strong { font-family: 'Syne', sans-serif; font-size: 17px; color: var(--white); }
-    .brand__text span { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text2); text-transform: uppercase; }
 
     .theme-toggle {
       background: var(--glass);
@@ -97,7 +96,7 @@
       cursor: pointer;
       transition: all 0.2s;
     }
-    .theme-toggle:hover { border-color: var(--cyan); transform: scale(1.05); }
+    .theme-toggle:hover { border-color: var(--cyan); transform: scale(1.05); box-shadow: 0 0 10px var(--cyan); }
 
     .nav { display: flex; align-items: center; gap: 4px; }
     .nav a {
@@ -116,10 +115,11 @@
       text-transform: uppercase; transition: all 0.25s;
     }
     .btn--primary { background: var(--grad); color: white; }
-    .btn--primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,212,255,0.3); }
+    .btn--primary:hover { transform: translateY(-2px); box-shadow: 0 0 15px var(--cyan); }
     .btn--ghost { background: transparent; color: var(--text); border: 1px solid var(--border); }
-    .btn--ghost:hover { background: var(--glass); transform: translateY(-1px); }
+    .btn--ghost:hover { background: var(--glass); transform: translateY(-1px); border-color: var(--cyan); }
     .btn--wa { background: linear-gradient(135deg,#25d366,#128c7e); color: white; }
+    .btn--wa:hover { transform: translateY(-2px); box-shadow: 0 0 15px #25d366; }
 
     .burger {
       display: none; width: 40px; height: 40px;
@@ -229,22 +229,11 @@
       .hero__stat span { font-size: 0.6rem; }
       .hero__stats { padding: 12px 0; }
       .typewriter { font-size: clamp(1.5rem, 6vw, 2.2rem); }
-      
       .hero::before {
-        background: linear-gradient(
-          to right,
-          rgba(10, 10, 15, 0.4) 0%,
-          rgba(10, 10, 15, 0.2) 50%,
-          rgba(10, 10, 15, 0) 100%
-        ) !important;
+        background: linear-gradient(to right, rgba(10,10,15,0.4) 0%, rgba(10,10,15,0.2) 50%, rgba(10,10,15,0) 100%) !important;
       }
       [data-theme="light"] .hero::before {
-        background: linear-gradient(
-          to right,
-          rgba(240, 244, 248, 0.5) 0%,
-          rgba(240, 244, 248, 0.2) 50%,
-          rgba(240, 244, 248, 0) 100%
-        ) !important;
+        background: linear-gradient(to right, rgba(240,244,248,0.5) 0%, rgba(240,244,248,0.2) 50%, rgba(240,244,248,0) 100%) !important;
       }
     }
 
@@ -263,6 +252,79 @@
     }
     .section__head h2 em { background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
+    /* ===== PROYECTOS DESTACADOS ===== */
+    .featured-section {
+      margin-bottom: 3rem;
+    }
+    .featured-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--cyan), var(--violet));
+      color: white;
+      font-size: 11px;
+      font-family: 'JetBrains Mono', monospace;
+      padding: 4px 12px;
+      border-radius: 100px;
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .featuredGrid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+    .featuredCard {
+      background: var(--bg2);
+      border-radius: 16px;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      border: 1px solid var(--border);
+    }
+    .featuredCard:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--card-shadow), 0 0 12px var(--cyan);
+      border-color: var(--cyan);
+    }
+    .featuredCard__image {
+      width: 100%;
+      aspect-ratio: 16/9;
+      object-fit: cover;
+      display: block;
+    }
+    .featuredCard__content { padding: 1rem; }
+    .featuredCard__cat {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      color: var(--cyan);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 0.3rem;
+    }
+    .featuredCard__title {
+      font-family: 'Syne', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 0.3rem;
+      line-height: 1.3;
+    }
+    .featuredCard__desc {
+      font-size: 0.75rem;
+      color: var(--text2);
+      line-height: 1.4;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    @media (max-width: 900px) {
+      .featuredGrid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 600px) {
+      .featuredGrid { grid-template-columns: 1fr; }
+    }
+
     .controls-bar {
       display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center;
       gap: 1rem; margin-bottom: 2rem;
@@ -274,7 +336,7 @@
       color: var(--text2); border-radius: 100px; cursor: pointer;
       transition: all 0.2s;
     }
-    .filter-btn:hover, .filter-btn.active { border-color: var(--cyan); color: var(--cyan); background: rgba(0,212,255,0.07); }
+    .filter-btn:hover, .filter-btn.active { border-color: var(--cyan); color: var(--cyan); background: rgba(0,212,255,0.07); box-shadow: 0 0 8px var(--cyan); }
     
     .search-sort { display: flex; gap: 10px; flex-wrap: wrap; }
     .search-box {
@@ -302,13 +364,13 @@
       background: var(--bg2);
       border-radius: 20px;
       overflow: hidden;
-      transition: all 0.3s ease;
+      transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
       cursor: pointer;
       border: 1px solid var(--border);
     }
     .projectCard:hover {
-      transform: translateY(-4px);
-      box-shadow: var(--card-shadow);
+      transform: translateY(-8px);
+      box-shadow: var(--card-shadow), 0 0 15px var(--cyan);
       border-color: var(--cyan);
     }
     .projectCard__image {
@@ -368,7 +430,7 @@
       transition: all 0.2s;
       font-family: 'JetBrains Mono', monospace;
     }
-    .share-btn:hover { background: var(--cyan); color: white; border-color: var(--cyan); }
+    .share-btn:hover { background: var(--cyan); color: white; border-color: var(--cyan); box-shadow: 0 0 10px var(--cyan); }
 
     .skeleton-grid {
       display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 32px;
@@ -442,7 +504,6 @@
     .modal-actions { display: flex; gap: 12px; margin-top: 1.5rem; flex-wrap: wrap; }
     .modal-actions .btn { flex: 1; justify-content: center; }
 
-    /* ========== SERVICIOS ========== */
     .servicesGrid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -451,13 +512,15 @@
     .serviceCard {
       background: var(--bg2);
       padding: 2rem;
-      transition: all 0.3s;
+      transition: all 0.4s ease;
     }
     .serviceCard:hover {
       background: var(--bg3);
       transform: translateY(-4px);
+      box-shadow: 0 0 15px var(--cyan);
     }
-    .serviceCard__icon { font-size: 2rem; margin-bottom: 1rem; display: block; }
+    .serviceCard__icon { font-size: 2rem; margin-bottom: 1rem; display: block; transition: transform 0.3s ease; }
+    .serviceCard:hover .serviceCard__icon { transform: scale(1.1); }
     .serviceCard__title {
       font-family: 'Syne', sans-serif;
       font-size: 1.3rem;
@@ -482,6 +545,7 @@
     .serviceCard__btn:hover {
       background: var(--cyan);
       color: var(--white);
+      box-shadow: 0 0 12px var(--cyan);
     }
     @media (max-width: 700px) {
       .servicesGrid { grid-template-columns: repeat(2, 1fr); }
@@ -497,7 +561,7 @@
       background: var(--bg); padding: 1.75rem 2rem; cursor: pointer;
       transition: all 0.25s;
     }
-    .faqItem:hover { background: var(--bg2); }
+    .faqItem:hover { background: var(--bg2); box-shadow: inset 0 0 0 1px var(--cyan); }
     .faqQ {
       font-size: 15px; font-weight: 500; color: var(--white);
       display: flex; justify-content: space-between;
@@ -511,6 +575,11 @@
       padding: 2rem;
       margin-top: 2rem;
       border: 1px solid var(--border);
+      transition: all 0.3s ease;
+    }
+    .contact-form-section:hover {
+      box-shadow: 0 0 15px var(--cyan);
+      border-color: var(--cyan);
     }
     .contact-form { display: flex; flex-direction: column; gap: 1rem; }
     .contact-form input, .contact-form textarea {
@@ -522,7 +591,7 @@
       font-family: inherit;
       transition: all 0.2s;
     }
-    .contact-form input:focus, .contact-form textarea:focus { outline: none; border-color: var(--cyan); }
+    .contact-form input:focus, .contact-form textarea:focus { outline: none; border-color: var(--cyan); box-shadow: 0 0 10px var(--cyan); }
     .contactLinks { display: flex; gap: 10px; justify-content: center; margin-top: 2rem; flex-wrap: wrap; }
 
     footer {
@@ -538,7 +607,8 @@
       align-items: center;
     }
     .footer__brand { display: flex; align-items: center; gap: 12px; }
-    .footer__brand img { width: 38px; border-radius: 8px; cursor: pointer; }
+    .footer__brand img { width: 38px; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; }
+    .footer__brand img:hover { filter: drop-shadow(0 0 8px var(--cyan)); transform: scale(1.02); }
     .footer__links { display: flex; gap: 1.5rem; }
     .footer__links a { font-size: 12px; color: var(--text2); transition: color 0.2s; }
     .footer__links a:hover { color: var(--cyan); }
@@ -555,12 +625,13 @@
       align-items: center;
       justify-content: center;
       z-index: 500;
-      transition: opacity 0.3s, transform 0.2s, visibility 0.3s;
+      transition: all 0.3s ease;
       opacity: 1;
       visibility: visible;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
     }
     .waFloat.hidden { opacity: 0; visibility: hidden; }
-    .waFloat:hover { transform: scale(1.08); }
+    .waFloat:hover { transform: scale(1.08) rotate(5deg); box-shadow: 0 0 20px #25d366; }
 
     .toast {
       position: fixed;
@@ -581,6 +652,101 @@
     }
     .toast.show { opacity: 1; }
 
+    /* Efectos de entrada lateral */
+    .fade-in-left {
+      opacity: 0;
+      transform: translateX(-40px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .fade-in-right {
+      opacity: 0;
+      transform: translateX(40px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .fade-in-up {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .fade-in-left.visible, .fade-in-right.visible, .fade-in-up.visible {
+      opacity: 1;
+      transform: translateX(0) translateY(0);
+    }
+
+    /* Paginación completa */
+    .pagination-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 3rem;
+      gap: 1rem;
+    }
+    .pagination-controls {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .pagination-btn {
+      background: transparent;
+      border: 1px solid var(--cyan);
+      color: var(--cyan);
+      padding: 10px 20px;
+      border-radius: 40px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .pagination-btn:hover:not(:disabled) {
+      background: var(--cyan);
+      color: var(--white);
+      box-shadow: 0 0 12px var(--cyan);
+      transform: scale(1.02);
+    }
+    .pagination-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      border-color: var(--text2);
+      color: var(--text2);
+    }
+    .pagination-pages {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .page-number {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text2);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .page-number:hover {
+      border-color: var(--cyan);
+      color: var(--cyan);
+      box-shadow: 0 0 8px var(--cyan);
+    }
+    .page-number.active {
+      background: var(--grad);
+      color: white;
+      border-color: transparent;
+      box-shadow: 0 0 12px var(--cyan);
+    }
+    .pagination-info {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text2);
+    }
+
     @media (max-width: 900px) {
       .nav { display: none; }
       .burger { display: flex; }
@@ -592,12 +758,9 @@
       .hero__stats { display: flex; }
       .projectsGrid { gap: 20px; }
     }
-
-    .fade-in { opacity: 0; transform: translateY(20px); transition: opacity 0.6s, transform 0.6s; }
-    .fade-in.visible { opacity: 1; transform: translateY(0); }
   </style>
 </head>
-<body>
+<body><body>
 
 <header class="topbar">
   <div class="wrap topbar__inner">
@@ -629,7 +792,7 @@
 
 <section class="hero">
   <div class="wrap">
-    <div class="hero__copy fade-in">
+    <div class="hero__copy fade-in-left">
       <h1 class="typewriter" id="typewriterTitle"></h1>
       <p style="margin-top: 1rem;">No diseñamos páginas genéricas. Construimos sistemas a medida que trabajan para tu negocio las 24 horas.</p>
       <div class="hero__actions">
@@ -649,13 +812,19 @@
 
 <section class="section section--alt" id="portfolio">
   <div class="wrap">
-    <div class="section__head fade-in">
+    <div class="section__head fade-in-right">
       <span class="section__label">Portafolio</span>
       <h2>Todos los <em>proyectos</em></h2>
       <p>Cada uno construido a medida. Sin plantillas, sin límites.</p>
     </div>
     
-    <div class="controls-bar">
+    <!-- SECCIÓN DE DESTACADOS -->
+    <div id="featuredSection" class="featured-section fade-in-up" style="display: none;">
+      <div class="featured-badge">✨ Proyectos Destacados</div>
+      <div class="featuredGrid" id="featuredGrid"></div>
+    </div>
+    
+    <div class="controls-bar fade-in-up">
       <div class="filters" id="filters">
         <button class="filter-btn active" data-cat="all">Todos</button>
       </div>
@@ -677,48 +846,57 @@
     </div>
     
     <div class="projectsGrid" id="projectsGrid" style="display: none;"></div>
+    
+    <!-- PAGINACIÓN COMPLETA -->
+    <div class="pagination-container" id="paginationContainer" style="display: none;">
+      <div class="pagination-controls">
+        <button class="pagination-btn" id="prevPageBtn" disabled>← Anterior</button>
+        <div class="pagination-pages" id="paginationPages"></div>
+        <button class="pagination-btn" id="nextPageBtn">Siguiente →</button>
+      </div>
+      <div class="pagination-info" id="paginationInfo"></div>
+    </div>
   </div>
 </section>
 
-<!-- SERVICIOS -->
 <section class="section" id="servicios">
   <div class="wrap">
-    <div class="section__head fade-in">
+    <div class="section__head fade-in-left">
       <span class="section__label">Qué construimos</span>
       <h2>Soluciones <em>a medida</em></h2>
     </div>
     <div class="servicesGrid">
-      <div class="serviceCard">
+      <div class="serviceCard fade-in-up" style="transition-delay: 0s">
         <span class="serviceCard__icon">🛒</span>
         <div class="serviceCard__title">Tiendas Online</div>
         <div class="serviceCard__desc">Carrito, stock, ofertas y pedidos por WhatsApp.</div>
         <a href="servicio.html?tipo=tienda" class="serviceCard__btn">Ver más →</a>
       </div>
-      <div class="serviceCard">
+      <div class="serviceCard fade-in-up" style="transition-delay: 0.05s">
         <span class="serviceCard__icon">📦</span>
         <div class="serviceCard__title">Sistemas de Pedidos</div>
         <div class="serviceCard__desc">Flujo guiado con cálculo de costos.</div>
         <a href="servicio.html?tipo=pedidos" class="serviceCard__btn">Ver más →</a>
       </div>
-      <div class="serviceCard">
+      <div class="serviceCard fade-in-up" style="transition-delay: 0.1s">
         <span class="serviceCard__icon">⚙️</span>
         <div class="serviceCard__title">Panel Admin</div>
         <div class="serviceCard__desc">Gestioná productos desde el celular.</div>
         <a href="servicio.html?tipo=admin" class="serviceCard__btn">Ver más →</a>
       </div>
-      <div class="serviceCard">
+      <div class="serviceCard fade-in-up" style="transition-delay: 0.15s">
         <span class="serviceCard__icon">🎯</span>
         <div class="serviceCard__title">Landings de Conversión</div>
         <div class="serviceCard__desc">Diseñadas para convertir visitas.</div>
         <a href="servicio.html?tipo=landing" class="serviceCard__btn">Ver más →</a>
       </div>
-      <div class="serviceCard">
+      <div class="serviceCard fade-in-up" style="transition-delay: 0.2s">
         <span class="serviceCard__icon">🏢</span>
         <div class="serviceCard__title">Webs Institucionales</div>
         <div class="serviceCard__desc">Galería, servicios y SEO completo.</div>
         <a href="servicio.html?tipo=institucional" class="serviceCard__btn">Ver más →</a>
       </div>
-      <div class="serviceCard">
+      <div class="serviceCard fade-in-up" style="transition-delay: 0.25s">
         <span class="serviceCard__icon">📋</span>
         <div class="serviceCard__title">Catálogos Digitales</div>
         <div class="serviceCard__desc">Vitrina profesional con botón de consulta.</div>
@@ -730,7 +908,7 @@
 
 <section class="section section--alt" id="faq">
   <div class="wrap">
-    <div class="section__head center fade-in">
+    <div class="section__head center fade-in-up">
       <span class="section__label">FAQ</span>
       <h2>Preguntas <em>frecuentes</em></h2>
     </div>
@@ -740,11 +918,11 @@
 
 <section class="section" id="contacto">
   <div class="wrap">
-    <div class="section__head center fade-in">
+    <div class="section__head center fade-in-left">
       <span class="section__label">Contacto</span>
       <h2>Hablemos de <em>tu proyecto</em></h2>
     </div>
-    <div class="contact-form-section">
+    <div class="contact-form-section fade-in-right">
       <form class="contact-form" id="contactForm" action="https://formsubmit.co/ciborg347@gmail.com" method="POST">
         <input type="hidden" name="_subject" value="Nuevo lead desde Ciborg 347">
         <input type="hidden" name="_captcha" value="false">
@@ -784,8 +962,8 @@
 
 <div class="toast" id="toast">Enlace copiado</div>
 
-<script>
-// ===== CONFIGURACIÓN =====
+<script src="config.js"></script>
+<script>// ===== CONFIGURACIÓN =====
 const SUPABASE_URL = "https://fhxcumwhgtfirznnznjx.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZoeGN1bXdoZ3RmaXJ6bm56bmp4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc5OTYyNzEsImV4cCI6MjA4MzU3MjI3MX0.7z1B099L4yrA9k1JxwvYGCABzqiqYtkUClI3E8wQ2zA";
 const DEFAULT_WA = "5491164499481";
@@ -796,6 +974,11 @@ let allCategories = [];
 let activeFilter = "all";
 let currentSearch = "";
 let currentSort = "recent";
+
+// Paginación
+let currentPage = 1;
+const PROJECTS_PER_PAGE = 6;
+let filteredProjectsCache = [];
 
 function esc(s) { return String(s ?? "").replace(/[&<>]/g, function(m) { return m === '&' ? '&amp;' : m === '<' ? '&lt;' : '&gt;'; }); }
 function getWA() { return DEFAULT_WA; }
@@ -829,7 +1012,7 @@ themeToggle.addEventListener("click", () => {
   themeToggle.textContent = newTheme === "dark" ? "☀️" : "🌙";
 });
 
-// Acceso admin con doble clic en el logo
+// Admin con doble clic en el logo
 const brandLogo = document.getElementById("brandLogo");
 const footerLogo = document.getElementById("footerLogo");
 if (brandLogo) {
@@ -883,7 +1066,7 @@ function typeWriter() {
 }
 setTimeout(typeWriter, 500);
 
-// ===== MODAL ORIGINAL (sin mockups) =====
+// Modal original
 function openModal(project) {
   const modalHTML = `
     <div class="modal-overlay" id="modalOverlay">
@@ -914,7 +1097,162 @@ window.closeModal = function() {
   document.body.style.overflow = "";
 }
 
-// ===== CARGAR PROYECTOS =====
+// Renderizar proyectos destacados
+function renderFeatured() {
+  const featuredProjects = projectsData.filter(p => p.featured === true);
+  const featuredSection = document.getElementById("featuredSection");
+  const featuredGrid = document.getElementById("featuredGrid");
+  
+  if (featuredProjects.length === 0) {
+    featuredSection.style.display = "none";
+    return;
+  }
+  
+  featuredSection.style.display = "block";
+  featuredGrid.innerHTML = featuredProjects.slice(0, 6).map(p => `
+    <div class="featuredCard" data-project='${JSON.stringify(p)}'>
+      <img class="featuredCard__image" src="${esc(p.image_url)}" alt="${esc(p.title)}" loading="lazy" />
+      <div class="featuredCard__content">
+        <div class="featuredCard__cat">${esc(p.categories?.name || "Destacado")}</div>
+        <div class="featuredCard__title">${esc(p.title)}</div>
+        <div class="featuredCard__desc">${esc(p.short_description || "").substring(0, 80)}${(p.short_description || "").length > 80 ? '...' : ''}</div>
+      </div>
+    </div>
+  `).join("");
+  
+  document.querySelectorAll(".featuredCard").forEach(card => {
+    const project = JSON.parse(card.getAttribute("data-project"));
+    card.addEventListener("click", () => openModal(project));
+    card.classList.add("fade-in-up");
+    observerElements.observe(card);
+  });
+}
+
+// Obtener proyectos filtrados (excluyendo destacados para la lista principal)
+function getFilteredAndSortedProjects(excludeFeatured = true) {
+  let filtered = projectsData.filter(p => activeFilter === "all" ? true : p.category_id === activeFilter);
+  if (excludeFeatured) {
+    filtered = filtered.filter(p => !p.featured);
+  }
+  if (currentSearch) {
+    const searchLower = currentSearch.toLowerCase();
+    filtered = filtered.filter(p => p.title.toLowerCase().includes(searchLower) || (p.short_description || "").toLowerCase().includes(searchLower));
+  }
+  if (currentSort === "az") filtered.sort((a,b) => a.title.localeCompare(b.title));
+  else if (currentSort === "za") filtered.sort((a,b) => b.title.localeCompare(a.title));
+  else filtered.sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
+  return filtered;
+}
+
+function renderProjects() {
+  const filtered = getFilteredAndSortedProjects(true);
+  filteredProjectsCache = filtered;
+  const totalPages = Math.ceil(filtered.length / PROJECTS_PER_PAGE);
+  const start = (currentPage - 1) * PROJECTS_PER_PAGE;
+  const end = start + PROJECTS_PER_PAGE;
+  const projectsToShow = filtered.slice(start, end);
+  const grid = document.getElementById("projectsGrid");
+  
+  if (!filtered.length) { 
+    grid.innerHTML = '<div style="padding:2rem; text-align:center; color:var(--text2);">No hay proyectos en esta categoría.</div>'; 
+    document.getElementById("paginationContainer").style.display = "none";
+    return; 
+  }
+  
+  const sevenDaysAgo = new Date();
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+  grid.innerHTML = projectsToShow.map(p => `
+    <div class="projectCard fade-in-up" data-project='${JSON.stringify(p)}'>
+      <img class="projectCard__image" src="${esc(p.image_url)}" alt="${esc(p.title)}" loading="lazy" />
+      <div class="projectCard__content">
+        ${new Date(p.created_at) > sevenDaysAgo ? '<div class="new-badge">NUEVO</div>' : ''}
+        <div class="projectCard__cat">${esc(p.categories?.name || "Proyecto")}</div>
+        <div class="projectCard__title">${esc(p.title)}</div>
+        <div class="projectCard__desc">${esc(p.short_description || "")}</div>
+        <button class="share-btn" onclick="event.stopPropagation(); shareProject('${p.id}', '${esc(p.title)}')">📤 Compartir</button>
+      </div>
+    </div>
+  `).join("");
+  
+  document.querySelectorAll("#projectsGrid .projectCard").forEach(card => {
+    const project = JSON.parse(card.getAttribute("data-project"));
+    card.addEventListener("click", (e) => {
+      if (!e.target.closest(".share-btn")) openModal(project);
+    });
+    card.classList.add("fade-in-up");
+    observerElements.observe(card);
+  });
+  
+  renderPagination(totalPages);
+}
+
+function renderPagination(totalPages) {
+  const container = document.getElementById("paginationContainer");
+  const prevBtn = document.getElementById("prevPageBtn");
+  const nextBtn = document.getElementById("nextPageBtn");
+  const pagesDiv = document.getElementById("paginationPages");
+  const infoDiv = document.getElementById("paginationInfo");
+  
+  if (totalPages <= 1) {
+    container.style.display = "none";
+    return;
+  }
+  
+  container.style.display = "flex";
+  
+  prevBtn.disabled = currentPage === 1;
+  nextBtn.disabled = currentPage === totalPages;
+  
+  let pagesHTML = '';
+  const maxVisible = 5;
+  let startPage = Math.max(1, currentPage - Math.floor(maxVisible / 2));
+  let endPage = Math.min(totalPages, startPage + maxVisible - 1);
+  if (endPage - startPage + 1 < maxVisible) {
+    startPage = Math.max(1, endPage - maxVisible + 1);
+  }
+  
+  for (let i = startPage; i <= endPage; i++) {
+    pagesHTML += `<button class="page-number ${i === currentPage ? 'active' : ''}" data-page="${i}">${i}</button>`;
+  }
+  pagesDiv.innerHTML = pagesHTML;
+  
+  const start = (currentPage - 1) * PROJECTS_PER_PAGE + 1;
+  const end = Math.min(currentPage * PROJECTS_PER_PAGE, filteredProjectsCache.length);
+  infoDiv.textContent = `Mostrando ${start} - ${end} de ${filteredProjectsCache.length} proyectos`;
+  
+  prevBtn.onclick = () => {
+    if (currentPage > 1) {
+      currentPage--;
+      renderProjects();
+      window.scrollTo({ top: document.getElementById("portfolio").offsetTop - 80, behavior: "smooth" });
+    }
+  };
+  
+  nextBtn.onclick = () => {
+    if (currentPage < totalPages) {
+      currentPage++;
+      renderProjects();
+      window.scrollTo({ top: document.getElementById("portfolio").offsetTop - 80, behavior: "smooth" });
+    }
+  };
+  
+  document.querySelectorAll(".page-number").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const page = parseInt(btn.dataset.page);
+      if (page !== currentPage) {
+        currentPage = page;
+        renderProjects();
+        window.scrollTo({ top: document.getElementById("portfolio").offsetTop - 80, behavior: "smooth" });
+      }
+    });
+  });
+}
+
+function resetPagination() {
+  currentPage = 1;
+  renderProjects();
+}
+
 async function loadProjects() {
   if (!sb) return;
   const skeleton = document.getElementById("skeletonContainer");
@@ -927,8 +1265,9 @@ async function loadProjects() {
     const { data: cats } = await sb.from("categories").select("*").eq("active", true);
     if (cats) allCategories = cats;
     document.getElementById("statProjects").textContent = projectsData.length + "+";
+    renderFeatured();
     buildFilters();
-    renderProjects();
+    resetPagination();
     skeleton.style.display = "none";
     projectsGrid.style.display = "grid";
   } catch(e) { console.error(e); skeleton.style.display = "none"; }
@@ -951,43 +1290,7 @@ function buildFilters() {
     document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
     btn.classList.add("active");
     activeFilter = btn.dataset.cat;
-    renderProjects();
-  });
-}
-
-function renderProjects() {
-  let filtered = projectsData.filter(p => activeFilter === "all" ? true : p.category_id === activeFilter);
-  if (currentSearch) {
-    const searchLower = currentSearch.toLowerCase();
-    filtered = filtered.filter(p => p.title.toLowerCase().includes(searchLower) || (p.short_description || "").toLowerCase().includes(searchLower));
-  }
-  if (currentSort === "az") filtered.sort((a,b) => a.title.localeCompare(b.title));
-  else if (currentSort === "za") filtered.sort((a,b) => b.title.localeCompare(a.title));
-  else filtered.sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
-  const grid = document.getElementById("projectsGrid");
-  if (!filtered.length) { 
-    grid.innerHTML = '<div style="padding:2rem; text-align:center; color:var(--text2);">No hay proyectos en esta categoría.</div>'; 
-    return; 
-  }
-  const sevenDaysAgo = new Date();
-  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-  grid.innerHTML = filtered.map(p => `
-    <div class="projectCard" data-project='${JSON.stringify(p)}'>
-      <img class="projectCard__image" src="${esc(p.image_url)}" alt="${esc(p.title)}" loading="lazy" />
-      <div class="projectCard__content">
-        ${new Date(p.created_at) > sevenDaysAgo ? '<div class="new-badge">NUEVO</div>' : ''}
-        <div class="projectCard__cat">${esc(p.categories?.name || "Proyecto")}</div>
-        <div class="projectCard__title">${esc(p.title)}</div>
-        <div class="projectCard__desc">${esc(p.short_description || "")}</div>
-        <button class="share-btn" onclick="event.stopPropagation(); shareProject('${p.id}', '${esc(p.title)}')">📤 Compartir</button>
-      </div>
-    </div>
-  `).join("");
-  document.querySelectorAll(".projectCard").forEach(card => {
-    const project = JSON.parse(card.getAttribute("data-project"));
-    card.addEventListener("click", (e) => {
-      if (!e.target.closest(".share-btn")) openModal(project);
-    });
+    resetPagination();
   });
 }
 
@@ -1000,17 +1303,23 @@ function shareProject(id, title) {
 async function loadFaqs() {
   let faqs = [];
   if (sb) {
-    const { data } = await sb.from("faqs").select("*").eq("active", true);
-    if (data) faqs = data;
+    try {
+      const { data } = await sb.from("faqs").select("*").eq("active", true);
+      if (data && data.length > 0) faqs = data;
+    } catch(e) { console.log("Error cargando FAQs desde Supabase, usando fallback"); }
   }
-  if (!faqs.length) faqs = [
-    { question: "¿Cuánto tarda un proyecto?", answer: "Depende de la complejidad, pero presento una propuesta visual antes de comprometerse." },
-    { question: "¿Hay mensualidad obligatoria?", answer: "No. El sitio es tuyo para siempre. Sin pagos recurrentes." },
-    { question: "¿Puedo administrar el contenido yo mismo?", answer: "Sí. Los proyectos incluyen panel de administración propio." },
-    { question: "¿La web funciona en celular?", answer: "Siempre. Todos los desarrollos son Mobile First." }
-  ];
+  if (!faqs.length) {
+    faqs = [
+      { question: "¿Cuánto tarda un proyecto?", answer: "Depende de la complejidad, pero presento una propuesta visual antes de comprometerse. Generalmente entre 7 y 21 días." },
+      { question: "¿Hay mensualidad obligatoria?", answer: "No. El sitio es tuyo para siempre. Sin pagos recurrentes. Solo pagás el desarrollo una sola vez." },
+      { question: "¿Puedo administrar el contenido yo mismo?", answer: "Sí. Los proyectos incluyen panel de administración propio, fácil de usar desde cualquier dispositivo." },
+      { question: "¿La web funciona en celular?", answer: "Siempre. Todos los desarrollos son Mobile First y se adaptan perfectamente a tablets y celulares." },
+      { question: "¿Qué pasa con el dominio y hosting?", answer: "Te ayudo a contratar hosting (recomiendo Hostinger o Donweb) o podés usar el que ya tengas. El dominio lo gestionás vos." },
+      { question: "¿Hacen mantenimiento?", answer: "Sí, ofrezco planes opcionales de mantenimiento y actualizaciones. Pero no es obligatorio." }
+    ];
+  }
   const grid = document.getElementById("faqGrid");
-  grid.innerHTML = faqs.map(f => `<div class="faqItem"><div class="faqQ">${esc(f.question)}</div><div class="faqA">${esc(f.answer)}</div></div>`).join("");
+  grid.innerHTML = faqs.map(f => `<div class="faqItem fade-in-up"><div class="faqQ">${esc(f.question)}</div><div class="faqA">${esc(f.answer)}</div></div>`).join("");
   document.querySelectorAll(".faqItem").forEach(item => {
     const q = item.querySelector(".faqQ");
     const a = item.querySelector(".faqA");
@@ -1020,9 +1329,13 @@ async function loadFaqs() {
       a.style.display = open ? "none" : "block";
     });
   });
+  document.querySelectorAll("#faqGrid .faqItem").forEach(el => {
+    el.classList.add("fade-in-up");
+    observerElements.observe(el);
+  });
 }
 
-// Ocultar WhatsApp flotante cuando el footer es visible
+// WhatsApp flotante
 const waFloat = document.getElementById("waFloat");
 const footer = document.querySelector("footer");
 function checkWaFloatVisibility() {
@@ -1036,12 +1349,22 @@ window.addEventListener("resize", checkWaFloatVisibility);
 setTimeout(checkWaFloatVisibility, 100);
 
 // Eventos
-document.getElementById("searchInput")?.addEventListener("input", e => { currentSearch = e.target.value; renderProjects(); });
-document.getElementById("sortSelect")?.addEventListener("change", e => { currentSort = e.target.value; renderProjects(); });
+document.getElementById("searchInput")?.addEventListener("input", e => { currentSearch = e.target.value; resetPagination(); });
+document.getElementById("sortSelect")?.addEventListener("change", e => { currentSort = e.target.value; resetPagination(); });
 
-// Observador de fade-in
-const observer = new IntersectionObserver(entries => { entries.forEach(e => { if(e.isIntersecting) { e.target.classList.add("visible"); observer.unobserve(e.target); } }); }, { threshold: 0.1 });
-document.querySelectorAll(".fade-in").forEach(el => observer.observe(el));
+// Observador para efectos de entrada
+const observerElements = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add("visible");
+      observerElements.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.1, rootMargin: "0px 0px -50px 0px" });
+
+document.querySelectorAll(".fade-in-left, .fade-in-right, .fade-in-up").forEach(el => {
+  observerElements.observe(el);
+});
 
 // Menú móvil
 document.getElementById("burgerBtn")?.addEventListener("click", () => document.getElementById("mobileMenu").classList.toggle("isOpen"));
@@ -1051,6 +1374,42 @@ document.querySelectorAll(".mobileMenu a").forEach(a => a.addEventListener("clic
 setWaLinks();
 loadProjects();
 loadFaqs();
+
+// Contador animado
+let countersStarted = false;
+const heroObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting && !countersStarted) {
+      countersStarted = true;
+      const statProjects = document.getElementById("statProjects");
+      if (statProjects) {
+        const target = parseInt(statProjects.textContent) || 52;
+        animateCounter(statProjects, target, '+');
+      }
+      animateCounter(document.getElementById("statHours"), 24, 'hs');
+      animateCounter(document.getElementById("statCode"), 100, '%');
+      animateCounter(document.getElementById("statFee"), 0, '$');
+    }
+  });
+}, { threshold: 0.3 });
+if (document.querySelector(".hero")) heroObserver.observe(document.querySelector(".hero"));
+
+function animateCounter(element, target, suffix = '') {
+  if (!element) return;
+  let start = 0;
+  const duration = 2000;
+  const increment = target / (duration / 16);
+  function updateCounter() {
+    start += increment;
+    if (start < target) {
+      element.textContent = Math.floor(start) + suffix;
+      requestAnimationFrame(updateCounter);
+    } else {
+      element.textContent = target + suffix;
+    }
+  }
+  updateCounter();
+}
 </script>
 </body>
 </html>
