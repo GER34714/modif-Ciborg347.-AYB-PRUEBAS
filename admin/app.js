@@ -1,3 +1,4 @@
+// ==================== CONFIGURACIÓN SUPABASE ====================
 const SUPABASE_URL = "https://fhxcumwhgtfirznnznjx.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJIUzI1NiIsInR5cCI6IkpXVCJ9";
 
@@ -7,7 +8,7 @@ const sb = window.supabase.createClient(
 );
 
 /* =========================
-   DOM
+   DOM ELEMENTS
 ========================= */
 const authBox = document.getElementById("authBox");
 const adminBox = document.getElementById("adminBox");
@@ -160,6 +161,11 @@ let editingProjectId = null;
 let editingCategoryId = null;
 let editingFaqId = null;
 
+// Paginadores
+let projectsPaginator = null;
+let projectHistoryPaginator = null;
+let settingsHistoryPaginator = null;
+
 /* =========================
    HELPERS
 ========================= */
@@ -218,14 +224,14 @@ function fillCategorySelects() {
     .join("");
   projectCategorySelect.innerHTML = opts;
 
-  const filterOpts = [`<option value="__all__">Todas</option>`]
+  const filterOpts = [`<option value="__all__">📁 Todas</option>`]
     .concat(activeCats.map(cat => `<option value="${cat.id}">${escapeHtml(cat.name)}</option>`))
     .join("");
   projectCategoryFilter.innerHTML = filterOpts;
 }
 
 function fillTagFilter() {
-  const filterOpts = [`<option value="__all__">Todos</option>`]
+  const filterOpts = [`<option value="__all__">🏷️ Todos</option>`]
     .concat(tagsData.filter(t => t.active).map(tag => `<option value="${tag.id}">${escapeHtml(tag.name)}</option>`))
     .join("");
   projectTagFilter.innerHTML = filterOpts;
@@ -258,7 +264,7 @@ function renderTagPreview() {
     projectTagsPreview.innerHTML = "";
     return;
   }
-  projectTagsPreview.innerHTML = raw.map(tag => `<span class="miniTag">${escapeHtml(tag)}</span>`).join("");
+  projectTagsPreview.innerHTML = raw.map(tag => `<span class="miniTag">🏷️ ${escapeHtml(tag)}</span>`).join("");
 }
 
 function parseTagInput(value) {
@@ -283,13 +289,13 @@ async function confirmAction({ message, type = "generic", double = false }) {
     const ok = window.confirm(message);
     if (!ok) return false;
     if (double || isSensitiveAction(type)) {
-      return window.confirm("Confirmación final: esta acción puede afectar contenido importante. ¿Continuar?");
+      return window.confirm("⚠️ Confirmación final: esta acción puede afectar contenido importante. ¿Continuar?");
     }
     return true;
   }
 
   if (currentSafetyMode === "fast" && isMinimalProtectedAction(type)) {
-    return window.confirm(`${message}\n\nEsta acción mantiene protección mínima obligatoria.`);
+    return window.confirm(`${message}\n\n⚡ Esta acción mantiene protección mínima obligatoria.`);
   }
 
   return true;
@@ -302,11 +308,11 @@ function setModeButtons() {
 
 function mapStatusLabel(status) {
   const map = {
-    draft: "Borrador",
-    published: "Publicado",
-    featured: "Destacado",
-    archived: "Archivado",
-    new: "Nuevo",
+    draft: "📝 Borrador",
+    published: "✅ Publicado",
+    featured: "⭐ Destacado",
+    archived: "📦 Archivado",
+    new: "🆕 Nuevo",
   };
   return map[status] || status;
 }
@@ -341,6 +347,120 @@ function buildStorageFilePath(file) {
   const stamp = Date.now();
   const random = Math.random().toString(36).slice(2, 8);
   return `projects/${titleSlug || "proyecto"}-${stamp}-${random}.${ext || "jpg"}`;
+}
+
+function showLoading(elementId, show = true) {
+  const element = document.getElementById(elementId);
+  if (!element) return;
+  
+  if (show && element.children.length === 0) {
+    element.innerHTML = '<div class="loading-skeleton"><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div></div>';
+  } else if (!show && element.querySelector(".loading-skeleton")) {
+    element.innerHTML = "";
+  }
+}
+
+/* =========================
+   PAGINATOR CLASS
+========================= */
+class Paginator {
+  constructor({
+    items = [],
+    itemsPerPage = 10,
+    currentPage = 1,
+    onPageChange = null,
+    containerId = null,
+  }) {
+    this.items = items;
+    this.itemsPerPage = itemsPerPage;
+    this.currentPage = currentPage;
+    this.onPageChange = onPageChange;
+    this.containerId = containerId;
+  }
+
+  get totalPages() {
+    return Math.ceil(this.items.length / this.itemsPerPage);
+  }
+
+  get paginatedItems() {
+    const start = (this.currentPage - 1) * this.itemsPerPage;
+    return this.items.slice(start, start + this.itemsPerPage);
+  }
+
+  setPage(page) {
+    if (page < 1 || page > this.totalPages) return;
+    this.currentPage = page;
+    if (this.onPageChange) this.onPageChange(this.paginatedItems, this.currentPage);
+    this.renderControls();
+  }
+
+  setItemsPerPage(perPage) {
+    this.itemsPerPage = perPage;
+    this.currentPage = 1;
+    if (this.onPageChange) this.onPageChange(this.paginatedItems, this.currentPage);
+    this.renderControls();
+  }
+
+  updateItems(newItems) {
+    this.items = newItems;
+    if (this.currentPage > this.totalPages) this.currentPage = Math.max(1, this.totalPages);
+    if (this.onPageChange) this.onPageChange(this.paginatedItems, this.currentPage);
+    this.renderControls();
+  }
+
+  renderControls() {
+    const container = this.containerId ? document.getElementById(this.containerId) : null;
+    if (!container) return;
+
+    if (this.totalPages <= 1) {
+      container.style.display = "none";
+      return;
+    }
+
+    container.style.display = "flex";
+    
+    let html = `
+      <button class="pagination__first" ${this.currentPage === 1 ? "disabled" : ""} data-tooltip="Primera página">«</button>
+      <button class="pagination__prev" ${this.currentPage === 1 ? "disabled" : ""} data-tooltip="Página anterior">‹</button>
+    `;
+
+    let startPage = Math.max(1, this.currentPage - 2);
+    let endPage = Math.min(this.totalPages, startPage + 4);
+    if (endPage - startPage < 4 && startPage > 1) startPage = Math.max(1, endPage - 4);
+
+    if (startPage > 1) html += `<button class="pagination__page" data-page="1">1</button>${startPage > 2 ? '<span>...</span>' : ''}`;
+    
+    for (let i = startPage; i <= endPage; i++) {
+      html += `<button class="pagination__page ${i === this.currentPage ? "active" : ""}" data-page="${i}">${i}</button>`;
+    }
+    
+    if (endPage < this.totalPages) html += `${endPage < this.totalPages - 1 ? '<span>...</span>' : ''}<button class="pagination__page" data-page="${this.totalPages}">${this.totalPages}</button>`;
+    
+    html += `
+      <button class="pagination__next" ${this.currentPage === this.totalPages ? "disabled" : ""} data-tooltip="Página siguiente">›</button>
+      <button class="pagination__last" ${this.currentPage === this.totalPages ? "disabled" : ""} data-tooltip="Última página">»</button>
+      <span class="pagination__info">📊 ${this.items.length} items · Pág ${this.currentPage} de ${this.totalPages}</span>
+      <select class="per-page-select">
+        <option value="5" ${this.itemsPerPage === 5 ? "selected" : ""}>5 por página</option>
+        <option value="10" ${this.itemsPerPage === 10 ? "selected" : ""}>10 por página</option>
+        <option value="20" ${this.itemsPerPage === 20 ? "selected" : ""}>20 por página</option>
+        <option value="50" ${this.itemsPerPage === 50 ? "selected" : ""}>50 por página</option>
+      </select>
+    `;
+
+    container.innerHTML = html;
+
+    container.querySelector(".pagination__first")?.addEventListener("click", () => this.setPage(1));
+    container.querySelector(".pagination__prev")?.addEventListener("click", () => this.setPage(this.currentPage - 1));
+    container.querySelector(".pagination__next")?.addEventListener("click", () => this.setPage(this.currentPage + 1));
+    container.querySelector(".pagination__last")?.addEventListener("click", () => this.setPage(this.totalPages));
+    container.querySelectorAll(".pagination__page").forEach(btn => {
+      btn.addEventListener("click", () => this.setPage(parseInt(btn.dataset.page)));
+    });
+    container.querySelector(".per-page-select")?.addEventListener("change", (e) => {
+      this.setItemsPerPage(parseInt(e.target.value));
+    });
+  }
 }
 
 /* =========================
@@ -482,6 +602,8 @@ async function loadTags() {
 }
 
 async function loadProjects() {
+  showLoading("projectsList", true);
+  
   const { data, error } = await sb
     .from("projects")
     .select("*")
@@ -489,12 +611,18 @@ async function loadProjects() {
     .order("order_index", { ascending: true })
     .order("created_at", { ascending: false });
 
-  if (error) return setProjectsMsg(`No se pudieron cargar proyectos: ${error.message}`);
+  if (error) {
+    setProjectsMsg(`No se pudieron cargar proyectos: ${error.message}`);
+    showLoading("projectsList", false);
+    return;
+  }
+  
   projectsData = data || [];
   await loadProjectTags();
-  renderProjectsList();
   updateDashboardStats();
   renderDashboardRecent();
+  renderProjectsList();
+  showLoading("projectsList", false);
 }
 
 async function loadProjectTags() {
@@ -548,8 +676,8 @@ async function loadSiteSettings() {
 
 async function loadHistory() {
   const [projectsRes, settingsRes] = await Promise.all([
-    sb.from("project_history").select("*").order("created_at", { ascending: false }).limit(20),
-    sb.from("site_settings_history").select("*").order("created_at", { ascending: false }).limit(10),
+    sb.from("project_history").select("*").order("created_at", { ascending: false }),
+    sb.from("site_settings_history").select("*").order("created_at", { ascending: false }),
   ]);
 
   if (!projectsRes.error) projectHistoryData = projectsRes.data || [];
@@ -572,7 +700,7 @@ async function loadAll() {
 }
 
 /* =========================
-   RENDER
+   RENDER (con paginación)
 ========================= */
 function updateDashboardStats() {
   statProjects.textContent = String(projectsData.length);
@@ -585,9 +713,9 @@ function updateDashboardStats() {
 
 function renderProjectBadges(project) {
   const tags = getProjectTags(project.id);
-  const parts = [`<span class="statusBadge statusBadge--${escapeHtml(project.status || "published")}">${escapeHtml(mapStatusLabel(project.status || "published"))}</span>`];
+  const parts = [`<span class="statusBadge statusBadge--${escapeHtml(project.status || "published")}">${mapStatusLabel(project.status || "published")}</span>`];
   tags.slice(0, 3).forEach(tag => {
-    parts.push(`<span class="miniTag">${escapeHtml(tag.name)}</span>`);
+    parts.push(`<span class="miniTag">🏷️ ${escapeHtml(tag.name)}</span>`);
   });
   return parts.join("");
 }
@@ -595,20 +723,20 @@ function renderProjectBadges(project) {
 function renderDashboardRecent() {
   const list = projectsData.slice().sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()).slice(0, 6);
   if (!list.length) {
-    dashboardRecentList.innerHTML = `<div class="emptyState">Todavía no hay proyectos cargados.</div>`;
+    dashboardRecentList.innerHTML = `<div class="emptyState">🚀 Todavía no hay proyectos cargados.</div>`;
     return;
   }
 
   dashboardRecentList.innerHTML = list.map(project => `
     <article class="listCard">
-      <div class="listCard__thumb"><img src="${escapeHtml(project.image_url || "")}" alt="${escapeHtml(project.title)}" /></div>
+      <div class="listCard__thumb"><img src="${escapeHtml(project.image_url || "")}" alt="${escapeHtml(project.title)}" loading="lazy" /></div>
       <div class="listCard__body">
         <div class="listCard__title">${escapeHtml(project.title)}</div>
-        <div class="listCard__meta">${escapeHtml(findCategoryName(project.category_id))} · ${escapeHtml(project.solution_type || "")}</div>
+        <div class="listCard__meta">📁 ${escapeHtml(findCategoryName(project.category_id))} · 🔧 ${escapeHtml(project.solution_type || "")}</div>
         <div class="listCard__badges">${renderProjectBadges(project)}</div>
       </div>
       <div class="listCard__actions">
-        <button class="btn btn--ghost btn--small" type="button" data-edit-project="${project.id}">Editar</button>
+        <button class="btn btn--ghost btn--small" type="button" data-edit-project="${project.id}" data-tooltip="Editar proyecto">✏️ Editar</button>
       </div>
     </article>
   `).join("");
@@ -648,25 +776,45 @@ function renderProjectsList() {
     return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
   });
 
-  if (!list.length) {
-    projectsList.innerHTML = `<div class="emptyState">No hay proyectos para mostrar con esos filtros.</div>`;
+  if (!projectsPaginator) {
+    projectsPaginator = new Paginator({
+      items: list,
+      itemsPerPage: 10,
+      currentPage: 1,
+      onPageChange: (paginatedItems) => {
+        renderProjectsListPage(paginatedItems);
+      },
+      containerId: "projectsPagination",
+    });
+  } else {
+    projectsPaginator.updateItems(list);
+  }
+  
+  projectsPaginator.setPage(1);
+}
+
+function renderProjectsListPage(projects) {
+  if (!projects.length) {
+    projectsList.innerHTML = `<div class="emptyState">🔍 No hay proyectos para mostrar con esos filtros.</div>`;
     return;
   }
 
-  projectsList.innerHTML = list.map(project => `
-    <article class="listCard">
-      <div class="listCard__thumb"><img src="${escapeHtml(project.image_url || "")}" alt="${escapeHtml(project.title)}" /></div>
+  projectsList.innerHTML = projects.map(project => `
+    <article class="listCard" data-tooltip="📅 Última modificación: ${formatDate(project.updated_at)}">
+      <div class="listCard__thumb">
+        <img src="${escapeHtml(project.image_url || "")}" alt="${escapeHtml(project.title)}" loading="lazy" />
+      </div>
       <div class="listCard__body">
         <div class="listCard__title">${escapeHtml(project.title)}</div>
-        <div class="listCard__meta">${escapeHtml(findCategoryName(project.category_id))} · ${escapeHtml(project.solution_type || "")}</div>
-        <div class="listCard__meta">Orden: ${project.order_index ?? 0} · ${formatDate(project.created_at)}</div>
+        <div class="listCard__meta">📁 ${escapeHtml(findCategoryName(project.category_id))} · 🔧 ${escapeHtml(project.solution_type || "")}</div>
+        <div class="listCard__meta">🔢 Orden: ${project.order_index ?? 0} · 📅 ${formatDate(project.created_at)}</div>
         <div class="listCard__badges">${renderProjectBadges(project)}</div>
       </div>
       <div class="listCard__actions">
-        <button class="btn btn--ghost btn--small" type="button" data-edit-project="${project.id}">Editar</button>
-        <button class="btn btn--ghost btn--small" type="button" data-duplicate-project="${project.id}">Duplicar</button>
-        <button class="btn btn--ghost btn--small" type="button" data-toggle-project="${project.id}">${project.active ? "Desactivar" : "Activar"}</button>
-        <button class="btn btn--danger btn--small" type="button" data-delete-project="${project.id}">Archivar</button>
+        <button class="btn btn--ghost btn--small" data-edit-project="${project.id}" data-tooltip="Editar proyecto">✏️</button>
+        <button class="btn btn--ghost btn--small" data-duplicate-project="${project.id}" data-tooltip="Duplicar proyecto">📋</button>
+        <button class="btn btn--ghost btn--small" data-toggle-project="${project.id}" data-tooltip="${project.active ? 'Desactivar' : 'Activar'}">${project.active ? "🔴" : "🟢"}</button>
+        <button class="btn btn--danger btn--small" data-delete-project="${project.id}" data-tooltip="Archivar proyecto">🗑️</button>
       </div>
     </article>
   `).join("");
@@ -674,21 +822,18 @@ function renderProjectsList() {
   projectsList.querySelectorAll("[data-edit-project]").forEach(btn => {
     btn.addEventListener("click", () => openProjectForEdit(btn.getAttribute("data-edit-project")));
   });
-
   projectsList.querySelectorAll("[data-duplicate-project]").forEach(btn => {
     btn.addEventListener("click", async () => {
       const project = projectsData.find(p => String(p.id) === String(btn.getAttribute("data-duplicate-project")));
       if (project) await duplicateProject(project);
     });
   });
-
   projectsList.querySelectorAll("[data-toggle-project]").forEach(btn => {
     btn.addEventListener("click", async () => {
       const project = projectsData.find(p => String(p.id) === String(btn.getAttribute("data-toggle-project")));
       if (project) await toggleProjectActive(project);
     });
   });
-
   projectsList.querySelectorAll("[data-delete-project]").forEach(btn => {
     btn.addEventListener("click", async () => {
       const project = projectsData.find(p => String(p.id) === String(btn.getAttribute("data-delete-project")));
@@ -699,7 +844,7 @@ function renderProjectsList() {
 
 function resetProjectForm() {
   editingProjectId = null;
-  projectFormTitle.textContent = "Nueva web";
+  projectFormTitle.textContent = "✨ Nueva web";
   projectSaveBtn.textContent = "Publicar";
   projectDeleteBtn.style.display = "none";
   projectDuplicateBtn.style.display = "none";
@@ -722,7 +867,7 @@ function resetProjectForm() {
   projectFeaturedHomeInput.checked = false;
   projectFeaturedPortfolioInput.checked = false;
   projectAdvancedBox.style.display = "none";
-  projectAdvancedToggleBtn.textContent = "Abrir ajustes avanzados";
+  projectAdvancedToggleBtn.textContent = "🔧 Abrir ajustes avanzados";
   renderTagPreview();
   setProjectFormMsg("");
   if (projectUploadMsg) setProjectUploadMsg("");
@@ -730,7 +875,7 @@ function resetProjectForm() {
 
 function fillProjectForm(project) {
   editingProjectId = project.id;
-  projectFormTitle.textContent = "Editar web";
+  projectFormTitle.textContent = "✏️ Editar web";
   projectSaveBtn.textContent = "Guardar cambios";
   projectDeleteBtn.style.display = "";
   projectDuplicateBtn.style.display = "";
@@ -766,20 +911,20 @@ function openProjectForEdit(id) {
 function renderCategoriesList() {
   const list = categoriesData.slice().sort((a, b) => (a.order_index ?? 0) - (b.order_index ?? 0));
   if (!list.length) {
-    categoriesList.innerHTML = `<div class="emptyState">No hay categorías cargadas.</div>`;
+    categoriesList.innerHTML = `<div class="emptyState">📂 No hay categorías cargadas.</div>`;
     return;
   }
 
   categoriesList.innerHTML = list.map(cat => `
     <article class="listCard listCard--compact">
       <div class="listCard__body">
-        <div class="listCard__title">${escapeHtml(cat.name)}</div>
-        <div class="listCard__meta">Slug: ${escapeHtml(cat.slug)}</div>
-        <div class="listCard__meta">Activa: ${boolText(cat.active)} · Orden: ${cat.order_index ?? 0}</div>
+        <div class="listCard__title">📁 ${escapeHtml(cat.name)}</div>
+        <div class="listCard__meta">🔗 Slug: ${escapeHtml(cat.slug)}</div>
+        <div class="listCard__meta">${cat.active ? "🟢 Activa" : "🔴 Inactiva"} · 🔢 Orden: ${cat.order_index ?? 0}</div>
       </div>
       <div class="listCard__actions">
-        <button class="btn btn--ghost btn--small" type="button" data-edit-category="${cat.id}">Editar</button>
-        <button class="btn btn--ghost btn--small" type="button" data-toggle-category="${cat.id}">${cat.active ? "Desactivar" : "Activar"}</button>
+        <button class="btn btn--ghost btn--small" type="button" data-edit-category="${cat.id}" data-tooltip="Editar categoría">✏️</button>
+        <button class="btn btn--ghost btn--small" type="button" data-toggle-category="${cat.id}" data-tooltip="${cat.active ? 'Desactivar' : 'Activar'}">${cat.active ? "🔴" : "🟢"}</button>
       </div>
     </article>
   `).join("");
@@ -810,7 +955,7 @@ function renderCategoriesList() {
       }).eq("id", cat.id);
 
       if (error) return setCategoriesMsg(`No se pudo actualizar la categoría: ${error.message}`);
-      setCategoriesMsg("Categoría actualizada.");
+      setCategoriesMsg("✅ Categoría actualizada.");
       await loadCategories();
       await loadProjects();
     });
@@ -829,20 +974,20 @@ function resetCategoryForm() {
 function renderFaqsList() {
   const list = faqsData.slice().sort((a, b) => (a.order_index ?? 0) - (b.order_index ?? 0));
   if (!list.length) {
-    faqsList.innerHTML = `<div class="emptyState">No hay FAQs cargadas.</div>`;
+    faqsList.innerHTML = `<div class="emptyState">❓ No hay FAQs cargadas.</div>`;
     return;
   }
 
   faqsList.innerHTML = list.map(faq => `
     <article class="listCard listCard--compact">
       <div class="listCard__body">
-        <div class="listCard__title">${escapeHtml(faq.question)}</div>
-        <div class="listCard__meta">${escapeHtml(faq.answer)}</div>
-        <div class="listCard__meta">Activa: ${boolText(faq.active)} · Orden: ${faq.order_index ?? 0}</div>
+        <div class="listCard__title">❓ ${escapeHtml(faq.question)}</div>
+        <div class="listCard__meta">💬 ${escapeHtml(faq.answer.substring(0, 100))}${faq.answer.length > 100 ? "..." : ""}</div>
+        <div class="listCard__meta">${faq.active ? "🟢 Activa" : "🔴 Inactiva"} · 🔢 Orden: ${faq.order_index ?? 0}</div>
       </div>
       <div class="listCard__actions">
-        <button class="btn btn--ghost btn--small" type="button" data-edit-faq="${faq.id}">Editar</button>
-        <button class="btn btn--ghost btn--small" type="button" data-toggle-faq="${faq.id}">${faq.active ? "Desactivar" : "Activar"}</button>
+        <button class="btn btn--ghost btn--small" type="button" data-edit-faq="${faq.id}" data-tooltip="Editar FAQ">✏️</button>
+        <button class="btn btn--ghost btn--small" type="button" data-toggle-faq="${faq.id}" data-tooltip="${faq.active ? 'Desactivar' : 'Activar'}">${faq.active ? "🔴" : "🟢"}</button>
       </div>
     </article>
   `).join("");
@@ -873,7 +1018,7 @@ function renderFaqsList() {
       }).eq("id", faq.id);
 
       if (error) return setFaqsMsg(`No se pudo actualizar la FAQ: ${error.message}`);
-      setFaqsMsg("FAQ actualizada.");
+      setFaqsMsg("✅ FAQ actualizada.");
       await loadFaqs();
     });
   });
@@ -931,22 +1076,46 @@ function fillSiteSettingsForm() {
 
 function renderProjectHistory() {
   if (!projectHistoryData.length) {
-    projectHistoryList.innerHTML = `<div class="emptyState">No hay historial de proyectos.</div>`;
+    projectHistoryList.innerHTML = `<div class="emptyState">📜 No hay historial de proyectos.</div>`;
+    if (projectHistoryPaginator) projectHistoryPaginator.updateItems([]);
     return;
   }
 
-  projectHistoryList.innerHTML = projectHistoryData.map(item => {
+  if (!projectHistoryPaginator) {
+    projectHistoryPaginator = new Paginator({
+      items: projectHistoryData,
+      itemsPerPage: 10,
+      currentPage: 1,
+      onPageChange: (paginatedItems) => {
+        renderProjectHistoryPage(paginatedItems);
+      },
+      containerId: "projectHistoryPagination",
+    });
+  } else {
+    projectHistoryPaginator.updateItems(projectHistoryData);
+  }
+  
+  projectHistoryPaginator.setPage(1);
+}
+
+function renderProjectHistoryPage(items) {
+  if (!items.length) {
+    projectHistoryList.innerHTML = `<div class="emptyState">📜 No hay historial de proyectos.</div>`;
+    return;
+  }
+
+  projectHistoryList.innerHTML = items.map(item => {
     const snap = item.snapshot || {};
     const title = snap.title || `Proyecto ${item.project_id}`;
     return `
       <article class="listCard listCard--compact">
         <div class="listCard__body">
-          <div class="listCard__title">${escapeHtml(title)}</div>
-          <div class="listCard__meta">${escapeHtml(item.action_type)} · ${formatDate(item.created_at)}</div>
-          <div class="listCard__meta">Por: ${escapeHtml(item.changed_by || "admin")}</div>
+          <div class="listCard__title">📌 ${escapeHtml(title)}</div>
+          <div class="listCard__meta">⚡ ${escapeHtml(item.action_type)} · ${formatDate(item.created_at)}</div>
+          <div class="listCard__meta">👤 Por: ${escapeHtml(item.changed_by || "admin")}</div>
         </div>
         <div class="listCard__actions">
-          <button class="btn btn--ghost btn--small" type="button" data-restore-project-history="${item.id}">Restaurar</button>
+          <button class="btn btn--ghost btn--small" data-restore-project-history="${item.id}" data-tooltip="Restaurar esta versión">↩️ Restaurar</button>
         </div>
       </article>
     `;
@@ -962,19 +1131,43 @@ function renderProjectHistory() {
 
 function renderSettingsHistory() {
   if (!settingsHistoryData.length) {
-    settingsHistoryList.innerHTML = `<div class="emptyState">No hay historial de settings.</div>`;
+    settingsHistoryList.innerHTML = `<div class="emptyState">⚙️ No hay historial de settings.</div>`;
+    if (settingsHistoryPaginator) settingsHistoryPaginator.updateItems([]);
     return;
   }
 
-  settingsHistoryList.innerHTML = settingsHistoryData.map(item => `
+  if (!settingsHistoryPaginator) {
+    settingsHistoryPaginator = new Paginator({
+      items: settingsHistoryData,
+      itemsPerPage: 10,
+      currentPage: 1,
+      onPageChange: (paginatedItems) => {
+        renderSettingsHistoryPage(paginatedItems);
+      },
+      containerId: "settingsHistoryPagination",
+    });
+  } else {
+    settingsHistoryPaginator.updateItems(settingsHistoryData);
+  }
+  
+  settingsHistoryPaginator.setPage(1);
+}
+
+function renderSettingsHistoryPage(items) {
+  if (!items.length) {
+    settingsHistoryList.innerHTML = `<div class="emptyState">⚙️ No hay historial de settings.</div>`;
+    return;
+  }
+
+  settingsHistoryList.innerHTML = items.map(item => `
     <article class="listCard listCard--compact">
       <div class="listCard__body">
-        <div class="listCard__title">Settings globales</div>
-        <div class="listCard__meta">${escapeHtml(item.action_type)} · ${formatDate(item.created_at)}</div>
-        <div class="listCard__meta">Por: ${escapeHtml(item.changed_by || "admin")}</div>
+        <div class="listCard__title">⚙️ Settings globales</div>
+        <div class="listCard__meta">📝 ${escapeHtml(item.action_type)} · ${formatDate(item.created_at)}</div>
+        <div class="listCard__meta">👤 Por: ${escapeHtml(item.changed_by || "admin")}</div>
       </div>
       <div class="listCard__actions">
-        <button class="btn btn--ghost btn--small" type="button" data-restore-settings-history="${item.id}">Restaurar</button>
+        <button class="btn btn--ghost btn--small" data-restore-settings-history="${item.id}" data-tooltip="Restaurar esta configuración">↩️ Restaurar</button>
       </div>
     </article>
   `).join("");
@@ -1030,7 +1223,7 @@ async function restoreProjectFromHistory(item) {
   const { data: restored } = await sb.from("projects").select("*").eq("id", item.project_id).maybeSingle();
   if (restored) await snapshotProject(restored, "restore");
 
-  setProjectsMsg("Proyecto restaurado.");
+  setProjectsMsg("✅ Proyecto restaurado.");
   await loadProjects();
   await loadHistory();
 }
@@ -1052,7 +1245,7 @@ async function restoreSettingsFromHistory(item) {
   if (error) return setSiteSettingsMsg(`No se pudo restaurar settings: ${error.message}`);
 
   await snapshotSiteSettings(snap, "restore");
-  setSiteSettingsMsg("Settings restaurados.");
+  setSiteSettingsMsg("✅ Settings restaurados.");
   await loadSiteSettings();
   await loadHistory();
 }
@@ -1108,7 +1301,7 @@ async function uploadImageToStorage() {
   if (file.size > 8 * 1024 * 1024) return setProjectUploadMsg("La imagen supera 8MB.", "error");
 
   projectUploadBtn.disabled = true;
-  setProjectUploadMsg("Subiendo imagen...", "success");
+  setProjectUploadMsg("📤 Subiendo imagen...", "success");
 
   try {
     const filePath = buildStorageFilePath(file);
@@ -1135,7 +1328,7 @@ async function uploadImageToStorage() {
 
     projectImageUrlInput.value = publicUrl;
     projectPreviewImg.src = publicUrl;
-    setProjectUploadMsg("Imagen subida y URL completada.", "success");
+    setProjectUploadMsg("✅ Imagen subida y URL completada.", "success");
   } catch (error) {
     setProjectUploadMsg(error instanceof Error ? error.message : "No se pudo subir la imagen.", "error");
   } finally {
@@ -1168,7 +1361,7 @@ if (projectUploadBtn) {
 projectAdvancedToggleBtn.addEventListener("click", () => {
   const open = projectAdvancedBox.style.display !== "none";
   projectAdvancedBox.style.display = open ? "none" : "";
-  projectAdvancedToggleBtn.textContent = open ? "Abrir ajustes avanzados" : "Cerrar ajustes avanzados";
+  projectAdvancedToggleBtn.textContent = open ? "🔧 Abrir ajustes avanzados" : "🔧 Cerrar ajustes avanzados";
 });
 
 projectTagsInput.addEventListener("input", renderTagPreview);
@@ -1199,12 +1392,12 @@ projectSaveBtn.addEventListener("click", async () => {
   const status = projectStatusSelect.value || "published";
   const tags = parseTagInput(projectTagsInput.value);
 
-  if (!image_url) return setProjectFormMsg("Falta la URL de imagen.");
-  if (!title) return setProjectFormMsg("Falta el título.");
-  if (!demo_url) return setProjectFormMsg("Falta el link demo.");
-  if (!category_id) return setProjectFormMsg("Elegí una categoría.");
-  if (!solution_type) return setProjectFormMsg("Elegí un tipo de solución.");
-  if (!short_description) return setProjectFormMsg("Falta la descripción corta.");
+  if (!image_url) return setProjectFormMsg("❌ Falta la URL de imagen.");
+  if (!title) return setProjectFormMsg("❌ Falta el título.");
+  if (!demo_url) return setProjectFormMsg("❌ Falta el link demo.");
+  if (!category_id) return setProjectFormMsg("❌ Elegí una categoría.");
+  if (!solution_type) return setProjectFormMsg("❌ Elegí un tipo de solución.");
+  if (!short_description) return setProjectFormMsg("❌ Falta la descripción corta.");
 
   const legacy = deriveLegacyFlagsFromStatus(status);
   const payload = {
@@ -1246,7 +1439,7 @@ projectSaveBtn.addEventListener("click", async () => {
     }
 
     await snapshotProject(data, "create");
-    setProjectFormMsg("Proyecto publicado.");
+    setProjectFormMsg("✅ Proyecto publicado.");
   } else {
     const current = projectsData.find(p => String(p.id) === String(editingProjectId));
     if (current) await snapshotProject(current, "update");
@@ -1264,7 +1457,7 @@ projectSaveBtn.addEventListener("click", async () => {
       return;
     }
 
-    setProjectFormMsg("Proyecto actualizado.");
+    setProjectFormMsg("✅ Proyecto actualizado.");
   }
 
   await loadTags();
@@ -1291,14 +1484,14 @@ async function toggleProjectActive(project) {
   }).eq("id", project.id);
 
   if (error) return setProjectsMsg(`No se pudo actualizar el proyecto: ${error.message}`);
-  setProjectsMsg("Proyecto actualizado.");
+  setProjectsMsg("✅ Proyecto actualizado.");
   await loadProjects();
   await loadHistory();
 }
 
 async function deleteProject(project) {
   const ok = await confirmAction({
-    message: `¿Archivar "${project.title}"? No se borra físico, se oculta y queda restaurable.`,
+    message: `📦 ¿Archivar "${project.title}"? No se borra físico, se oculta y queda restaurable.`,
     type: "delete",
     double: true,
   });
@@ -1314,7 +1507,7 @@ async function deleteProject(project) {
   }).eq("id", project.id);
 
   if (error) return setProjectsMsg(`No se pudo archivar el proyecto: ${error.message}`);
-  setProjectsMsg("Proyecto archivado.");
+  setProjectsMsg("📦 Proyecto archivado.");
   await loadProjects();
   await loadHistory();
   resetProjectForm();
@@ -1322,7 +1515,7 @@ async function deleteProject(project) {
 }
 
 async function duplicateProject(project) {
-  const ok = await confirmAction({ message: `¿Duplicar "${project.title}"?`, type: "generic" });
+  const ok = await confirmAction({ message: `📋 ¿Duplicar "${project.title}"?`, type: "generic" });
   if (!ok) return;
 
   const clonePayload = {
@@ -1351,7 +1544,7 @@ async function duplicateProject(project) {
   await upsertTagsAndBindings(data.id, tags.map(t => t.name));
   await snapshotProject(data, "duplicate");
 
-  setProjectsMsg("Proyecto duplicado.");
+  setProjectsMsg("✅ Proyecto duplicado.");
   await loadTags();
   await loadProjects();
   await loadHistory();
@@ -1385,8 +1578,8 @@ categorySaveBtn.addEventListener("click", async () => {
   const slug = slugify(categorySlugInput.value || categoryNameInput.value);
   const order_index = Number(categoryOrderInput.value || 0);
   const active = categoryActiveInput.checked;
-  if (!name) return setCategoriesMsg("Falta el nombre.");
-  if (!slug) return setCategoriesMsg("Falta el slug.");
+  if (!name) return setCategoriesMsg("❌ Falta el nombre.");
+  if (!slug) return setCategoriesMsg("❌ Falta el slug.");
 
   const payload = {
     name,
@@ -1402,11 +1595,11 @@ categorySaveBtn.addEventListener("click", async () => {
   if (!editingCategoryId) {
     const { error } = await sb.from("categories").insert([payload]);
     if (error) return setCategoriesMsg(`No se pudo guardar la categoría: ${error.message}`);
-    setCategoriesMsg("Categoría creada.");
+    setCategoriesMsg("✅ Categoría creada.");
   } else {
     const { error } = await sb.from("categories").update(payload).eq("id", editingCategoryId);
     if (error) return setCategoriesMsg(`No se pudo actualizar la categoría: ${error.message}`);
-    setCategoriesMsg("Categoría actualizada.");
+    setCategoriesMsg("✅ Categoría actualizada.");
   }
 
   categorySlugInput.dataset.manuallyEdited = "";
@@ -1427,8 +1620,8 @@ faqSaveBtn.addEventListener("click", async () => {
   const answer = (faqAnswerInput.value || "").trim();
   const order_index = Number(faqOrderInput.value || 0);
   const active = faqActiveInput.checked;
-  if (!question) return setFaqsMsg("Falta la pregunta.");
-  if (!answer) return setFaqsMsg("Falta la respuesta.");
+  if (!question) return setFaqsMsg("❌ Falta la pregunta.");
+  if (!answer) return setFaqsMsg("❌ Falta la respuesta.");
 
   const payload = {
     question,
@@ -1444,11 +1637,11 @@ faqSaveBtn.addEventListener("click", async () => {
   if (!editingFaqId) {
     const { error } = await sb.from("faqs").insert([payload]);
     if (error) return setFaqsMsg(`No se pudo guardar la FAQ: ${error.message}`);
-    setFaqsMsg("FAQ creada.");
+    setFaqsMsg("✅ FAQ creada.");
   } else {
     const { error } = await sb.from("faqs").update(payload).eq("id", editingFaqId);
     if (error) return setFaqsMsg(`No se pudo actualizar la FAQ: ${error.message}`);
-    setFaqsMsg("FAQ actualizada.");
+    setFaqsMsg("✅ FAQ actualizada.");
   }
 
   resetFaqForm();
@@ -1480,7 +1673,7 @@ siteContentSelect.addEventListener("change", () => {
 siteContentSaveBtn.addEventListener("click", async () => {
   setSiteContentMsg("");
   const id = siteContentSelect.value;
-  if (!id) return setSiteContentMsg("Elegí un bloque.");
+  if (!id) return setSiteContentMsg("❌ Elegí un bloque.");
 
   const payload = {
     title: (siteContentTitleInput.value || "").trim() || null,
@@ -1500,7 +1693,7 @@ siteContentSaveBtn.addEventListener("click", async () => {
   const { error } = await sb.from("site_content").update(payload).eq("id", id);
   if (error) return setSiteContentMsg(`No se pudo guardar el bloque: ${error.message}`);
 
-  setSiteContentMsg("Bloque actualizado.");
+  setSiteContentMsg("✅ Bloque actualizado.");
   await loadSiteContent();
   siteContentSelect.value = id;
   fillSiteContentFormById(id);
@@ -1553,7 +1746,7 @@ siteSettingsSaveBtn.addEventListener("click", async () => {
   const { error } = await sb.from("site_settings").upsert([payload], { onConflict: "id" });
   if (error) return setSiteSettingsMsg(`No se pudo guardar settings: ${error.message}`);
 
-  setSiteSettingsMsg("Settings globales actualizados.");
+  setSiteSettingsMsg("✅ Settings globales actualizados.");
   await loadSiteSettings();
   await loadHistory();
 });
@@ -1562,6 +1755,33 @@ siteSettingsSaveBtn.addEventListener("click", async () => {
    HISTORY
 ========================= */
 historyRefreshBtn.addEventListener("click", loadHistory);
+
+/* =========================
+   KEYBOARD SHORTCUTS
+========================= */
+document.addEventListener("keydown", (e) => {
+  // Ctrl/Cmd + K para buscar proyectos
+  if ((e.ctrlKey || e.metaKey) && e.key === "k") {
+    e.preventDefault();
+    if (projectSearchInput) {
+      projectSearchInput.focus();
+      switchView("projects");
+    }
+  }
+  
+  // Ctrl/Cmd + N para nuevo proyecto
+  if ((e.ctrlKey || e.metaKey) && e.key === "n") {
+    e.preventDefault();
+    resetProjectForm();
+    switchView("new-project");
+  }
+  
+  // Esc para limpiar búsqueda
+  if (e.key === "Escape" && document.activeElement === projectSearchInput) {
+    projectSearchInput.value = "";
+    renderProjectsList();
+  }
+});
 
 /* =========================
    NAV
@@ -1574,4 +1794,3 @@ navBtns.forEach(btn => {
    INIT
 ========================= */
 guardAdmin();
- 
