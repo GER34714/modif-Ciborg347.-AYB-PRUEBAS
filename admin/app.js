@@ -1793,4 +1793,48 @@ navBtns.forEach(btn => {
 /* =========================
    INIT
 ========================= */
+/* =========================
+   TEMA CLARO/OSCURO
+========================= */
+
+function applyTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  localStorage.setItem('admin-theme', theme);
+  
+  const lightBtn = document.getElementById('lightThemeBtn');
+  const darkBtn = document.getElementById('darkThemeBtn');
+  
+  if (lightBtn && darkBtn) {
+    if (theme === 'light') {
+      lightBtn.classList.add('is-active');
+      darkBtn.classList.remove('is-active');
+    } else {
+      darkBtn.classList.add('is-active');
+      lightBtn.classList.remove('is-active');
+    }
+  }
+}
+
+function getSystemTheme() {
+  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+}
+
+function loadTheme() {
+  const savedTheme = localStorage.getItem('admin-theme');
+  
+  if (savedTheme && (savedTheme === 'light' || savedTheme === 'dark')) {
+    applyTheme(savedTheme);
+  } else {
+    applyTheme(getSystemTheme());
+  }
+}
+
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+  if (!localStorage.getItem('admin-theme')) {
+    applyTheme(e.matches ? 'dark' : 'light');
+  }
+});
+
+// Inicializar tema
+loadTheme();
 guardAdmin();
