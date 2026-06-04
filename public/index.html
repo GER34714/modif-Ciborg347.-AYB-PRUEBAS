@@ -10,11 +10,13 @@
   <meta property="og:image" content="https://fhxcumwhgtfirznnznjx.supabase.co/storage/v1/object/public/Imagenes/fETkPEv.md.png" />
   <meta property="og:type" content="website" />
   <link rel="canonical" href="https://ciborg347.com/" />
+  <!-- Favicon con logo real -->
+  <link rel="icon" type="image/png" href="https://fhxcumwhgtfirznnznjx.supabase.co/storage/v1/object/public/Imagenes/fETkPEv.md.png" />
+  <link rel="apple-touch-icon" href="https://fhxcumwhgtfirznnznjx.supabase.co/storage/v1/object/public/Imagenes/fETkPEv.md.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-
   <style>
     :root {
       --bg: #0a0a0f;
@@ -32,7 +34,6 @@
       --white: #ffffff;
       --card-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
     }
-
     [data-theme="light"] {
       --bg: #f0f4f8;
       --bg2: #ffffff;
@@ -47,7 +48,6 @@
       --white: #0f172a;
       --card-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
     }
-
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html { scroll-behavior: smooth; }
     body {
@@ -58,17 +58,13 @@
       overflow-x: hidden;
       transition: background 0.3s, color 0.2s;
     }
-
     img { max-width: 100%; display: block; }
     a { text-decoration: none; color: inherit; }
     button { cursor: pointer; font-family: inherit; }
-
     ::-webkit-scrollbar { width: 4px; }
     ::-webkit-scrollbar-track { background: var(--bg); }
     ::-webkit-scrollbar-thumb { background: var(--cyan); border-radius: 2px; }
-
     .wrap { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
-
     .topbar {
       position: sticky; top: 0; z-index: 100;
       background: rgba(10,10,15,0.82);
@@ -81,10 +77,16 @@
     }
     .brand { display: flex; align-items: center; gap: 12px; transition: transform 0.2s; }
     .brand:hover { transform: translateY(-1px); }
-    .brand__logo { width: 44px; height: 44px; object-fit: contain; border-radius: 10px; cursor: pointer; transition: all 0.3s ease; }
-    .brand__logo:hover { filter: drop-shadow(0 0 8px #00d4ff); transform: scale(1.02); }
-    .brand__text strong { font-family: 'Syne', sans-serif; font-size: 17px; color: var(--white); }
-
+    .brand__logo { width: 44px; height: 44px; object-fit: contain; border-radius: 10px; cursor: pointer; transition: all 0.3s ease; animation: neonPulse 2s ease-in-out infinite; }
+    .brand__logo:hover { animation: none; transform: scale(1.02); filter: drop-shadow(0 0 12px var(--cyan)) drop-shadow(0 0 25px var(--violet)); }
+    @keyframes neonPulse {
+      0% { filter: drop-shadow(0 0 2px var(--cyan)) drop-shadow(0 0 5px var(--cyan)); }
+      50% { filter: drop-shadow(0 0 8px var(--cyan)) drop-shadow(0 0 20px var(--cyan)) drop-shadow(0 0 30px var(--violet)); }
+      100% { filter: drop-shadow(0 0 2px var(--cyan)) drop-shadow(0 0 5px var(--cyan)); }
+    }
+    .brand__text { text-align: left; }
+    .brand__text strong { font-family: 'Syne', sans-serif; font-size: 18px; color: var(--white); display: block; line-height: 1.2; }
+    .brand__text span { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--cyan); text-transform: uppercase; letter-spacing: 1px; display: block; }
     .theme-toggle {
       background: var(--glass);
       border: 1px solid var(--border);
@@ -97,7 +99,6 @@
       transition: all 0.2s;
     }
     .theme-toggle:hover { border-color: var(--cyan); transform: scale(1.05); box-shadow: 0 0 10px var(--cyan); }
-
     .nav { display: flex; align-items: center; gap: 4px; }
     .nav a {
       padding: 7px 14px; border-radius: 8px;
@@ -105,9 +106,7 @@
       color: var(--text2); transition: all 0.15s;
     }
     .nav a:hover { color: var(--white); background: var(--glass); }
-
     .topbar__cta { display: flex; align-items: center; gap: 10px; }
-
     .btn {
       display: inline-flex; align-items: center; gap: 8px;
       padding: 10px 20px; border: none; border-radius: 10px;
@@ -120,7 +119,31 @@
     .btn--ghost:hover { background: var(--glass); transform: translateY(-1px); border-color: var(--cyan); }
     .btn--wa { background: linear-gradient(135deg,#25d366,#128c7e); color: white; }
     .btn--wa:hover { transform: translateY(-2px); box-shadow: 0 0 15px #25d366; }
-
+    .social-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--bg3);
+      transition: all 0.3s ease;
+      border: 1px solid var(--border);
+    }
+    .social-icon:hover {
+      transform: translateY(-3px);
+      border-color: var(--cyan);
+      box-shadow: 0 0 12px var(--cyan);
+    }
+    .social-icon svg {
+      width: 20px;
+      height: 20px;
+      fill: var(--text);
+      transition: fill 0.3s ease;
+    }
+    .social-icon:hover svg {
+      fill: var(--cyan);
+    }
     .burger {
       display: none; width: 40px; height: 40px;
       border: 1px solid var(--border); border-radius: 10px;
@@ -129,7 +152,6 @@
       gap: 5px;
     }
     .burger span { width: 16px; height: 2px; background: var(--text); border-radius: 2px; }
-
     .mobileMenu {
       display: none; flex-direction: column;
       position: fixed; top: 68px; left: 0; right: 0;
@@ -141,7 +163,6 @@
       font-family: 'JetBrains Mono', monospace; font-size: 13px;
       color: var(--text2); padding: 0.6rem 0; border-bottom: 1px solid var(--border);
     }
-
     .hero {
       position: relative;
       min-height: 88vh; display: flex; align-items: center;
@@ -160,7 +181,6 @@
     }
     .hero .wrap { position: relative; z-index: 1; width: 100%; padding: 80px 24px; }
     .hero__copy { max-width: 460px; margin-right: auto; }
-
     .typewriter {
       overflow: hidden;
       border-right: 2px solid var(--cyan);
@@ -174,12 +194,11 @@
       -webkit-text-fill-color: transparent;
       background-clip: text;
     }
-
     .hero__stats {
       display: flex;
       justify-content: space-evenly;
       align-items: center;
-      gap: 0;
+      gap: 20px;
       border: 1px solid var(--border);
       border-radius: 12px;
       overflow: hidden;
@@ -187,9 +206,8 @@
       background: rgba(10, 10, 15, 0.5);
       backdrop-filter: blur(8px);
       margin-top: 2rem;
-      padding: 16px 0;
+      padding: 16px 20px;
     }
-
     .hero__stat {
       flex: 1;
       text-align: center;
@@ -199,10 +217,9 @@
       justify-content: center;
       gap: 4px;
       border-right: 1px solid var(--border);
+      padding: 0 15px;
     }
-
     .hero__stat:last-child { border-right: none; }
-
     .hero__stat strong {
       display: block;
       font-family: 'Syne', sans-serif;
@@ -214,7 +231,6 @@
       background-clip: text;
       line-height: 1.2;
     }
-
     .hero__stat span {
       display: block;
       font-family: 'JetBrains Mono', monospace;
@@ -223,11 +239,11 @@
       text-transform: uppercase;
       color: var(--text2);
     }
-
     @media (max-width: 640px) {
       .hero__stat strong { font-size: 1.3rem; }
       .hero__stat span { font-size: 0.6rem; }
-      .hero__stats { padding: 12px 0; }
+      .hero__stats { padding: 12px 12px; gap: 8px; }
+      .hero__stat { padding: 0 5px; }
       .typewriter { font-size: clamp(1.5rem, 6vw, 2.2rem); }
       .hero::before {
         background: linear-gradient(to right, rgba(10,10,15,0.4) 0%, rgba(10,10,15,0.2) 50%, rgba(10,10,15,0) 100%) !important;
@@ -236,7 +252,6 @@
         background: linear-gradient(to right, rgba(240,244,248,0.5) 0%, rgba(240,244,248,0.2) 50%, rgba(240,244,248,0) 100%) !important;
       }
     }
-
     .section { padding: 90px 0; position: relative; }
     .section--alt { background: var(--bg2); }
     .section__head { margin-bottom: 3rem; }
@@ -251,8 +266,91 @@
       font-weight: 800; color: var(--white);
     }
     .section__head h2 em { background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-
-    /* ===== PROYECTOS DESTACADOS ===== */
+    /* Estilos para reseñas */
+    .reviews-section {
+      margin-top: 2rem;
+    }
+    .reviews-carousel-container {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .reviews-carousel {
+      overflow: hidden;
+      flex: 1;
+    }
+    .reviews-track {
+      display: flex;
+      transition: transform 0.4s ease-in-out;
+      gap: 24px;
+    }
+    .review-card {
+      flex: 0 0 calc(33.333% - 16px);
+      background: var(--bg2);
+      border-radius: 20px;
+      padding: 1.5rem;
+      border: 1px solid var(--border);
+      transition: all 0.3s ease;
+    }
+    .review-card:hover {
+      transform: translateY(-5px);
+      border-color: var(--cyan);
+      box-shadow: 0 0 15px var(--cyan);
+    }
+    .review-stars {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 1rem;
+    }
+    .review-stars svg {
+      width: 18px;
+      height: 18px;
+      fill: #f5b042;
+    }
+    .review-text {
+      font-size: 0.9rem;
+      color: var(--text);
+      line-height: 1.5;
+      margin-bottom: 1rem;
+      font-style: italic;
+    }
+    .review-author {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      color: var(--cyan);
+    }
+    .carousel-nav-btn {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      flex-shrink: 0;
+    }
+    .carousel-nav-btn:hover {
+      border-color: var(--cyan);
+      box-shadow: 0 0 10px var(--cyan);
+      transform: scale(1.05);
+    }
+    .carousel-nav-btn svg {
+      width: 20px;
+      height: 20px;
+      stroke: var(--text);
+      stroke-width: 2;
+    }
+    @media (max-width: 900px) {
+      .review-card { flex: 0 0 calc(50% - 12px); }
+    }
+    @media (max-width: 600px) {
+      .review-card { flex: 0 0 100%; }
+    }
+    /* Featured projects y otros estilos */
     .featured-section {
       margin-bottom: 3rem;
     }
@@ -324,7 +422,6 @@
     @media (max-width: 600px) {
       .featuredGrid { grid-template-columns: 1fr; }
     }
-
     .controls-bar {
       display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center;
       gap: 1rem; margin-bottom: 2rem;
@@ -337,7 +434,6 @@
       transition: all 0.2s;
     }
     .filter-btn:hover, .filter-btn.active { border-color: var(--cyan); color: var(--cyan); background: rgba(0,212,255,0.07); box-shadow: 0 0 8px var(--cyan); }
-    
     .search-sort { display: flex; gap: 10px; flex-wrap: wrap; }
     .search-box {
       display: flex; align-items: center; gap: 8px;
@@ -354,7 +450,6 @@
       padding: 5px 15px; color: var(--text); font-family: 'JetBrains Mono', monospace;
       font-size: 12px; cursor: pointer;
     }
-
     .projectsGrid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -431,7 +526,6 @@
       font-family: 'JetBrains Mono', monospace;
     }
     .share-btn:hover { background: var(--cyan); color: white; border-color: var(--cyan); box-shadow: 0 0 10px var(--cyan); }
-
     .skeleton-grid {
       display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 32px;
     }
@@ -444,7 +538,7 @@
       animation: shimmer 1.5s infinite;
     }
     @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-
+    /* Modal con lightbox */
     .modal-overlay {
       position: fixed;
       inset: 0;
@@ -492,6 +586,11 @@
       width: 100%;
       border-radius: 16px;
       margin-bottom: 1rem;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+    .modal-img:hover {
+      transform: scale(1.02);
     }
     .modal-cat {
       font-family: 'JetBrains Mono', monospace;
@@ -503,7 +602,25 @@
     .modal-desc { color: var(--text2); line-height: 1.7; margin: 1rem 0; }
     .modal-actions { display: flex; gap: 12px; margin-top: 1.5rem; flex-wrap: wrap; }
     .modal-actions .btn { flex: 1; justify-content: center; }
-
+    /* Lightbox para imagen grande */
+    .lightbox-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.95);
+      backdrop-filter: blur(15px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+      cursor: pointer;
+    }
+    .lightbox-image {
+      max-width: 90vw;
+      max-height: 90vh;
+      object-fit: contain;
+      border-radius: 12px;
+      box-shadow: 0 0 30px rgba(0,212,255,0.3);
+    }
     .servicesGrid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -553,7 +670,6 @@
     @media (max-width: 480px) {
       .servicesGrid { grid-template-columns: 1fr; }
     }
-
     .faqGrid {
       display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border);
     }
@@ -568,7 +684,6 @@
     }
     .faqQ::after { content: '+'; color: var(--cyan); font-size: 1.4rem; }
     .faqA { font-size: 14px; color: var(--text2); display: none; padding-top: 1rem; }
-
     .contact-form-section {
       background: var(--bg2);
       border-radius: 24px;
@@ -592,8 +707,7 @@
       transition: all 0.2s;
     }
     .contact-form input:focus, .contact-form textarea:focus { outline: none; border-color: var(--cyan); box-shadow: 0 0 10px var(--cyan); }
-    .contactLinks { display: flex; gap: 10px; justify-content: center; margin-top: 2rem; flex-wrap: wrap; }
-
+    .contactLinks { display: flex; gap: 15px; justify-content: center; margin-top: 2rem; flex-wrap: wrap; }
     footer {
       background: var(--bg2);
       border-top: 1px solid var(--border);
@@ -607,12 +721,17 @@
       align-items: center;
     }
     .footer__brand { display: flex; align-items: center; gap: 12px; }
-    .footer__brand img { width: 38px; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; }
-    .footer__brand img:hover { filter: drop-shadow(0 0 8px var(--cyan)); transform: scale(1.02); }
+    .footer__brand img { width: 38px; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; animation: neonPulse 2s ease-in-out infinite; }
+    .footer__brand img:hover { animation: none; filter: drop-shadow(0 0 12px var(--cyan)) drop-shadow(0 0 25px var(--violet)); transform: scale(1.02); }
+    .footer__brand div strong { font-family: 'Syne', sans-serif; font-size: 14px; color: var(--white); display: block; }
+    .footer__brand div span { font-size: 9px; color: var(--cyan); font-family: 'JetBrains Mono', monospace; }
     .footer__links { display: flex; gap: 1.5rem; }
     .footer__links a { font-size: 12px; color: var(--text2); transition: color 0.2s; }
     .footer__links a:hover { color: var(--cyan); }
-
+    .footer-social {
+      display: flex;
+      gap: 12px;
+    }
     .waFloat {
       position: fixed;
       bottom: 24px;
@@ -632,7 +751,6 @@
     }
     .waFloat.hidden { opacity: 0; visibility: hidden; }
     .waFloat:hover { transform: scale(1.08) rotate(5deg); box-shadow: 0 0 20px #25d366; }
-
     .toast {
       position: fixed;
       bottom: 100px;
@@ -651,8 +769,6 @@
       white-space: nowrap;
     }
     .toast.show { opacity: 1; }
-
-    /* Efectos de entrada lateral */
     .fade-in-left {
       opacity: 0;
       transform: translateX(-40px);
@@ -672,8 +788,6 @@
       opacity: 1;
       transform: translateX(0) translateY(0);
     }
-
-    /* Paginación completa */
     .pagination-container {
       display: flex;
       flex-direction: column;
@@ -746,7 +860,6 @@
       font-size: 12px;
       color: var(--text2);
     }
-
     @media (max-width: 900px) {
       .nav { display: none; }
       .burger { display: flex; }
@@ -760,17 +873,17 @@
     }
   </style>
 </head>
-<body><body>
-
+<body>
 <header class="topbar">
   <div class="wrap topbar__inner">
     <a href="#" class="brand">
       <img class="brand__logo" id="brandLogo" src="https://fhxcumwhgtfirznnznjx.supabase.co/storage/v1/object/public/Imagenes/fETkPEv.md.png" alt="Logo" />
-      <div class="brand__text"><strong>CIBORG 347</strong><span>Desarrollo Web</span></div>
+      <div class="brand__text"><strong>CIBORG 347</strong><span>DESARROLLO WEB</span></div>
     </a>
     <nav class="nav">
       <a href="#portfolio">Portfolio</a>
       <a href="#servicios">Servicios</a>
+      <a href="#resenas">Reseñas</a>
       <a href="#faq">FAQ</a>
       <a href="#contacto">Contacto</a>
     </nav>
@@ -781,15 +894,14 @@
     </div>
   </div>
 </header>
-
 <nav class="mobileMenu" id="mobileMenu">
   <a href="#portfolio">Portfolio</a>
   <a href="#servicios">Servicios</a>
+  <a href="#resenas">Reseñas</a>
   <a href="#faq">FAQ</a>
   <a href="#contacto">Contacto</a>
   <a href="#" class="btn btn--wa" id="mobileWhatsAppBtn">WhatsApp</a>
 </nav>
-
 <section class="hero">
   <div class="wrap">
     <div class="hero__copy fade-in-left">
@@ -799,31 +911,25 @@
         <a href="#portfolio" class="btn btn--primary">Ver proyectos →</a>
         <a href="#" class="btn btn--wa" id="heroWhatsAppBtn">Consultar gratis</a>
       </div>
-      
       <div class="hero__stats">
-        <div class="hero__stat"><strong id="statProjects">52+</strong><span>Proyectos</span></div>
-        <div class="hero__stat"><strong>24hs</strong><span>Online</span></div>
-        <div class="hero__stat"><strong>100%</strong><span>Código propio</span></div>
-        <div class="hero__stat"><strong>$0</strong><span>Mensualidad</span></div>
+        <div class="hero__stat"><strong id="statProjects">0</strong><span>Proyectos</span></div>
+        <div class="hero__stat"><strong id="statHours">0</strong><span>Online</span></div>
+        <div class="hero__stat"><strong id="statCode">0</strong><span>Código propio</span></div>
+        <div class="hero__stat"><strong id="statFee">0</strong><span>Mensualidad</span></div>
       </div>
     </div>
   </div>
-</section>
-
-<section class="section section--alt" id="portfolio">
+</section><section class="section section--alt" id="portfolio">
   <div class="wrap">
     <div class="section__head fade-in-right">
       <span class="section__label">Portafolio</span>
       <h2>Todos los <em>proyectos</em></h2>
       <p>Cada uno construido a medida. Sin plantillas, sin límites.</p>
     </div>
-    
-    <!-- SECCIÓN DE DESTACADOS -->
     <div id="featuredSection" class="featured-section fade-in-up" style="display: none;">
       <div class="featured-badge">✨ Proyectos Destacados</div>
       <div class="featuredGrid" id="featuredGrid"></div>
     </div>
-    
     <div class="controls-bar fade-in-up">
       <div class="filters" id="filters">
         <button class="filter-btn active" data-cat="all">Todos</button>
@@ -840,14 +946,10 @@
         </select>
       </div>
     </div>
-
     <div id="skeletonContainer" class="skeleton-grid">
       <div class="skeleton-card"></div><div class="skeleton-card"></div><div class="skeleton-card"></div>
     </div>
-    
     <div class="projectsGrid" id="projectsGrid" style="display: none;"></div>
-    
-    <!-- PAGINACIÓN COMPLETA -->
     <div class="pagination-container" id="paginationContainer" style="display: none;">
       <div class="pagination-controls">
         <button class="pagination-btn" id="prevPageBtn" disabled>← Anterior</button>
@@ -858,7 +960,6 @@
     </div>
   </div>
 </section>
-
 <section class="section" id="servicios">
   <div class="wrap">
     <div class="section__head fade-in-left">
@@ -905,8 +1006,29 @@
     </div>
   </div>
 </section>
-
-<section class="section section--alt" id="faq">
+<section class="section section--alt" id="resenas">
+  <div class="wrap">
+    <div class="section__head center fade-in-up">
+      <span class="section__label">Testimonios</span>
+      <h2>Lo que dicen <em>nuestros clientes</em></h2>
+      <p>Experiencias reales de personas que confiaron en nosotros.</p>
+    </div>
+    <div class="reviews-section">
+      <div class="reviews-carousel-container">
+        <button class="carousel-nav-btn" id="prevReviewBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+        <div class="reviews-carousel">
+          <div class="reviews-track" id="reviewsTrack"></div>
+        </div>
+        <button class="carousel-nav-btn" id="nextReviewBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="section" id="faq">
   <div class="wrap">
     <div class="section__head center fade-in-up">
       <span class="section__label">FAQ</span>
@@ -915,8 +1037,7 @@
     <div class="faqGrid" id="faqGrid"></div>
   </div>
 </section>
-
-<section class="section" id="contacto">
+<section class="section section--alt" id="contacto">
   <div class="wrap">
     <div class="section__head center fade-in-left">
       <span class="section__label">Contacto</span>
@@ -934,72 +1055,85 @@
       </form>
     </div>
     <div class="contactLinks">
-      <a href="#" class="btn btn--wa" id="finalWhatsAppBtn">WhatsApp</a>
-      <a href="https://instagram.com/ciborg347" class="btn btn--ghost" target="_blank">Instagram</a>
+      <a href="#" class="social-icon" id="contactWhatsAppBtn" target="_blank">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      </a>
+      <a href="https://instagram.com/ciborg347" class="social-icon" target="_blank">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zM12 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+      </a>
     </div>
   </div>
 </section>
-
 <footer>
   <div class="wrap">
     <div class="footer__inner">
       <div class="footer__brand">
         <img id="footerLogo" src="https://fhxcumwhgtfirznnznjx.supabase.co/storage/v1/object/public/Imagenes/fETkPEv.md.png" alt="Logo" />
-        <div><strong>CIBORG 347</strong><span style="display: block; font-size: 10px;">Desarrollo Web</span></div>
+        <div><strong>CIBORG 347</strong><span>Desarrollo Web</span></div>
       </div>
       <div class="footer__links">
         <a href="#portfolio">Proyectos</a>
         <a href="#servicios">Servicios</a>
+        <a href="#resenas">Reseñas</a>
         <a href="#faq">FAQ</a>
         <a href="#contacto">Contacto</a>
+      </div>
+      <div class="footer-social">
+        <a href="#" class="social-icon" id="footerWhatsAppBtn" target="_blank">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        </a>
+        <a href="https://instagram.com/ciborg347" class="social-icon" target="_blank">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zM12 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+        </a>
       </div>
       <div class="footer__copy">© 2025 Ciborg 347 — Diseñamos hoy, impulsamos tu futuro.</div>
     </div>
   </div>
 </footer>
-
 <a href="#" class="waFloat" id="waFloat" target="_blank"><svg width="26" height="26" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg></a>
-
 <div class="toast" id="toast">Enlace copiado</div>
-
 <script src="config.js"></script>
-<script>// ===== CONFIGURACIÓN =====
+<script>
 const SUPABASE_URL = "https://fhxcumwhgtfirznnznjx.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZoeGN1bXdoZ3RmaXJ6bm56bmp4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc5OTYyNzEsImV4cCI6MjA4MzU3MjI3MX0.7z1B099L4yrA9k1JxwvYGCABzqiqYtkUClI3E8wQ2zA";
 const DEFAULT_WA = "5491164499481";
 const sb = window.supabase?.createClient(SUPABASE_URL, SUPABASE_KEY);
-
 let projectsData = [];
 let allCategories = [];
 let activeFilter = "all";
 let currentSearch = "";
 let currentSort = "recent";
-
-// Paginación
 let currentPage = 1;
 const PROJECTS_PER_PAGE = 6;
 let filteredProjectsCache = [];
-
+let reviewsData = [];
+let currentReviewIndex = 0;
+let reviewsPerPage = 3;
 function esc(s) { return String(s ?? "").replace(/[&<>]/g, function(m) { return m === '&' ? '&amp;' : m === '<' ? '&lt;' : '&gt;'; }); }
 function getWA() { return DEFAULT_WA; }
 function waUrl(msg) { return `https://wa.me/${getWA()}?text=${encodeURIComponent(msg)}`; }
 const DEFAULT_MSG = "Hola CIBORG 347, vi tus demos y quiero consultar por una web.";
-
 function setWaLinks() {
-  ["heroWhatsAppBtn", "finalWhatsAppBtn", "waFloat", "mobileWhatsAppBtn"].forEach(id => {
+  ["heroWhatsAppBtn", "mobileWhatsAppBtn", "contactWhatsAppBtn", "footerWhatsAppBtn", "waFloat"].forEach(id => {
     const el = document.getElementById(id);
     if(el) el.href = waUrl(DEFAULT_MSG);
   });
 }
-
 function showToast(msg) {
   const toast = document.getElementById("toast");
   toast.textContent = msg;
   toast.classList.add("show");
   setTimeout(() => toast.classList.remove("show"), 2500);
 }
-
-// Tema claro/oscuro
+function openLightbox(imageUrl) {
+  const lightbox = document.createElement('div');
+  lightbox.className = 'lightbox-overlay';
+  lightbox.innerHTML = `<img src="${imageUrl}" class="lightbox-image" alt="Imagen ampliada">`;
+  lightbox.addEventListener('click', () => lightbox.remove());
+  document.body.appendChild(lightbox);
+  document.body.style.overflow = 'hidden';
+  lightbox.addEventListener('click', () => { document.body.style.overflow = ''; });
+}
 const themeToggle = document.getElementById("themeToggle");
 const savedTheme = localStorage.getItem("theme") || "dark";
 document.documentElement.setAttribute("data-theme", savedTheme);
@@ -1011,8 +1145,6 @@ themeToggle.addEventListener("click", () => {
   localStorage.setItem("theme", newTheme);
   themeToggle.textContent = newTheme === "dark" ? "☀️" : "🌙";
 });
-
-// Admin con doble clic en el logo
 const brandLogo = document.getElementById("brandLogo");
 const footerLogo = document.getElementById("footerLogo");
 if (brandLogo) {
@@ -1027,8 +1159,6 @@ if (footerLogo) {
     window.location.href = 'https://admin-ciborg.onrender.com/';
   });
 }
-
-// TYPEWRITER
 const phrases = ["Tu web.", "Tu negocio.", "Sin límites."];
 let phraseIndex = 0, charIndex = 0;
 let isDeleting = false;
@@ -1065,8 +1195,6 @@ function typeWriter() {
   }
 }
 setTimeout(typeWriter, 500);
-
-// Modal original
 function openModal(project) {
   const modalHTML = `
     <div class="modal-overlay" id="modalOverlay">
@@ -1076,7 +1204,7 @@ function openModal(project) {
           <button class="modal-close" onclick="closeModal()">×</button>
         </div>
         <div class="modal-body">
-          ${project.image_url ? `<img src="${esc(project.image_url)}" alt="${esc(project.title)}" class="modal-img" />` : ''}
+          ${project.image_url ? `<img src="${esc(project.image_url)}" alt="${esc(project.title)}" class="modal-img" onclick="openLightbox('${esc(project.image_url)}')" />` : ''}
           <div class="modal-cat">${esc(project.categories?.name || "Proyecto")}</div>
           <div class="modal-desc">${esc(project.full_description || project.short_description || "Sin descripción adicional.")}</div>
           <div class="modal-actions">
@@ -1090,24 +1218,19 @@ function openModal(project) {
   document.body.insertAdjacentHTML("beforeend", modalHTML);
   document.body.style.overflow = "hidden";
 }
-
 window.closeModal = function() {
   const modal = document.getElementById("modalOverlay");
   if (modal) modal.remove();
   document.body.style.overflow = "";
 }
-
-// Renderizar proyectos destacados
 function renderFeatured() {
   const featuredProjects = projectsData.filter(p => p.featured === true);
   const featuredSection = document.getElementById("featuredSection");
   const featuredGrid = document.getElementById("featuredGrid");
-  
   if (featuredProjects.length === 0) {
     featuredSection.style.display = "none";
     return;
   }
-  
   featuredSection.style.display = "block";
   featuredGrid.innerHTML = featuredProjects.slice(0, 6).map(p => `
     <div class="featuredCard" data-project='${JSON.stringify(p)}'>
@@ -1119,7 +1242,6 @@ function renderFeatured() {
       </div>
     </div>
   `).join("");
-  
   document.querySelectorAll(".featuredCard").forEach(card => {
     const project = JSON.parse(card.getAttribute("data-project"));
     card.addEventListener("click", () => openModal(project));
@@ -1127,8 +1249,6 @@ function renderFeatured() {
     observerElements.observe(card);
   });
 }
-
-// Obtener proyectos filtrados (excluyendo destacados para la lista principal)
 function getFilteredAndSortedProjects(excludeFeatured = true) {
   let filtered = projectsData.filter(p => activeFilter === "all" ? true : p.category_id === activeFilter);
   if (excludeFeatured) {
@@ -1143,7 +1263,6 @@ function getFilteredAndSortedProjects(excludeFeatured = true) {
   else filtered.sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
   return filtered;
 }
-
 function renderProjects() {
   const filtered = getFilteredAndSortedProjects(true);
   filteredProjectsCache = filtered;
@@ -1152,13 +1271,11 @@ function renderProjects() {
   const end = start + PROJECTS_PER_PAGE;
   const projectsToShow = filtered.slice(start, end);
   const grid = document.getElementById("projectsGrid");
-  
   if (!filtered.length) { 
     grid.innerHTML = '<div style="padding:2rem; text-align:center; color:var(--text2);">No hay proyectos en esta categoría.</div>'; 
     document.getElementById("paginationContainer").style.display = "none";
     return; 
   }
-  
   const sevenDaysAgo = new Date();
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
   grid.innerHTML = projectsToShow.map(p => `
@@ -1173,7 +1290,6 @@ function renderProjects() {
       </div>
     </div>
   `).join("");
-  
   document.querySelectorAll("#projectsGrid .projectCard").forEach(card => {
     const project = JSON.parse(card.getAttribute("data-project"));
     card.addEventListener("click", (e) => {
@@ -1182,27 +1298,21 @@ function renderProjects() {
     card.classList.add("fade-in-up");
     observerElements.observe(card);
   });
-  
   renderPagination(totalPages);
 }
-
 function renderPagination(totalPages) {
   const container = document.getElementById("paginationContainer");
   const prevBtn = document.getElementById("prevPageBtn");
   const nextBtn = document.getElementById("nextPageBtn");
   const pagesDiv = document.getElementById("paginationPages");
   const infoDiv = document.getElementById("paginationInfo");
-  
   if (totalPages <= 1) {
     container.style.display = "none";
     return;
   }
-  
   container.style.display = "flex";
-  
   prevBtn.disabled = currentPage === 1;
   nextBtn.disabled = currentPage === totalPages;
-  
   let pagesHTML = '';
   const maxVisible = 5;
   let startPage = Math.max(1, currentPage - Math.floor(maxVisible / 2));
@@ -1210,16 +1320,13 @@ function renderPagination(totalPages) {
   if (endPage - startPage + 1 < maxVisible) {
     startPage = Math.max(1, endPage - maxVisible + 1);
   }
-  
   for (let i = startPage; i <= endPage; i++) {
     pagesHTML += `<button class="page-number ${i === currentPage ? 'active' : ''}" data-page="${i}">${i}</button>`;
   }
   pagesDiv.innerHTML = pagesHTML;
-  
   const start = (currentPage - 1) * PROJECTS_PER_PAGE + 1;
   const end = Math.min(currentPage * PROJECTS_PER_PAGE, filteredProjectsCache.length);
   infoDiv.textContent = `Mostrando ${start} - ${end} de ${filteredProjectsCache.length} proyectos`;
-  
   prevBtn.onclick = () => {
     if (currentPage > 1) {
       currentPage--;
@@ -1227,7 +1334,6 @@ function renderPagination(totalPages) {
       window.scrollTo({ top: document.getElementById("portfolio").offsetTop - 80, behavior: "smooth" });
     }
   };
-  
   nextBtn.onclick = () => {
     if (currentPage < totalPages) {
       currentPage++;
@@ -1235,7 +1341,6 @@ function renderPagination(totalPages) {
       window.scrollTo({ top: document.getElementById("portfolio").offsetTop - 80, behavior: "smooth" });
     }
   };
-  
   document.querySelectorAll(".page-number").forEach(btn => {
     btn.addEventListener("click", () => {
       const page = parseInt(btn.dataset.page);
@@ -1247,12 +1352,10 @@ function renderPagination(totalPages) {
     });
   });
 }
-
 function resetPagination() {
   currentPage = 1;
   renderProjects();
 }
-
 async function loadProjects() {
   if (!sb) return;
   const skeleton = document.getElementById("skeletonContainer");
@@ -1264,15 +1367,21 @@ async function loadProjects() {
     if (projects) projectsData = projects;
     const { data: cats } = await sb.from("categories").select("*").eq("active", true);
     if (cats) allCategories = cats;
-    document.getElementById("statProjects").textContent = projectsData.length + "+";
+    document.getElementById("statProjects").textContent = projectsData.length;
     renderFeatured();
     buildFilters();
     resetPagination();
     skeleton.style.display = "none";
     projectsGrid.style.display = "grid";
+    if (!countersStarted && projectsData.length) {
+      countersStarted = true;
+      animateCounter(document.getElementById("statProjects"), projectsData.length, '+');
+      animateCounter(document.getElementById("statHours"), 24, 'hs');
+      animateCounter(document.getElementById("statCode"), 100, '%');
+      animateCounter(document.getElementById("statFee"), 0, '$');
+    }
   } catch(e) { console.error(e); skeleton.style.display = "none"; }
 }
-
 function buildFilters() {
   const container = document.getElementById("filters");
   container.innerHTML = '<button class="filter-btn active" data-cat="all">Todos</button>';
@@ -1293,13 +1402,59 @@ function buildFilters() {
     resetPagination();
   });
 }
-
 function shareProject(id, title) {
   const url = `${window.location.origin}${window.location.pathname}#portfolio`;
   navigator.clipboard.writeText(url);
   showToast(`"${title}" - Enlace copiado`);
 }
-
+async function loadReviews() {
+  if (!sb) return;
+  try {
+    const { data } = await sb.from("reviews").select("*").eq("active", true).order("created_at", { ascending: false });
+    if (data && data.length > 0) reviewsData = data;
+  } catch(e) { console.log("Error cargando reseñas", e); }
+  renderReviews();
+}
+function renderReviews() {
+  const track = document.getElementById("reviewsTrack");
+  if (!track) return;
+  if (reviewsData.length === 0) {
+    track.innerHTML = '<div class="review-card" style="width:100%; text-align:center;">No hay reseñas aún. ¡Sé el primero en dejar tu opinión!</div>';
+    return;
+  }
+  const starsMap = (rating) => {
+    let stars = '';
+    for (let i = 1; i <= 5; i++) {
+      stars += `<svg viewBox="0 0 24 24" fill="${i <= rating ? '#f5b042' : '#4a4a6a'}"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>`;
+    }
+    return stars;
+  };
+  track.innerHTML = reviewsData.map(review => `
+    <div class="review-card">
+      <div class="review-stars">${starsMap(review.rating)}</div>
+      <div class="review-text">"${esc(review.texto)}"</div>
+      <div class="review-author">— ${esc(review.nombre)}</div>
+    </div>
+  `).join('');
+  updateReviewCarousel();
+}
+function updateReviewCarousel() {
+  const track = document.getElementById("reviewsTrack");
+  if (!track) return;
+  const cards = track.children;
+  const totalCards = cards.length;
+  const visibleCards = Math.min(reviewsPerPage, totalCards);
+  const cardWidth = cards[0]?.offsetWidth || 0;
+  const gap = 24;
+  const slideWidth = cardWidth + gap;
+  const maxIndex = Math.max(0, totalCards - visibleCards);
+  if (currentReviewIndex > maxIndex) currentReviewIndex = maxIndex;
+  track.style.transform = `translateX(-${currentReviewIndex * slideWidth}px)`;
+  const prevBtn = document.getElementById("prevReviewBtn");
+  const nextBtn = document.getElementById("nextReviewBtn");
+  if (prevBtn) prevBtn.disabled = currentReviewIndex === 0;
+  if (nextBtn) nextBtn.disabled = currentReviewIndex >= maxIndex;
+}
 async function loadFaqs() {
   let faqs = [];
   if (sb) {
@@ -1334,8 +1489,6 @@ async function loadFaqs() {
     observerElements.observe(el);
   });
 }
-
-// WhatsApp flotante
 const waFloat = document.getElementById("waFloat");
 const footer = document.querySelector("footer");
 function checkWaFloatVisibility() {
@@ -1347,12 +1500,26 @@ function checkWaFloatVisibility() {
 window.addEventListener("scroll", checkWaFloatVisibility);
 window.addEventListener("resize", checkWaFloatVisibility);
 setTimeout(checkWaFloatVisibility, 100);
-
-// Eventos
 document.getElementById("searchInput")?.addEventListener("input", e => { currentSearch = e.target.value; resetPagination(); });
 document.getElementById("sortSelect")?.addEventListener("change", e => { currentSort = e.target.value; resetPagination(); });
-
-// Observador para efectos de entrada
+document.getElementById("prevReviewBtn")?.addEventListener("click", () => {
+  if (currentReviewIndex > 0) {
+    currentReviewIndex--;
+    updateReviewCarousel();
+  }
+});
+document.getElementById("nextReviewBtn")?.addEventListener("click", () => {
+  const track = document.getElementById("reviewsTrack");
+  const totalCards = track?.children.length || 0;
+  const maxIndex = Math.max(0, totalCards - reviewsPerPage);
+  if (currentReviewIndex < maxIndex) {
+    currentReviewIndex++;
+    updateReviewCarousel();
+  }
+});
+window.addEventListener('resize', () => {
+  updateReviewCarousel();
+});
 const observerElements = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
@@ -1361,31 +1528,21 @@ const observerElements = new IntersectionObserver((entries) => {
     }
   });
 }, { threshold: 0.1, rootMargin: "0px 0px -50px 0px" });
-
 document.querySelectorAll(".fade-in-left, .fade-in-right, .fade-in-up").forEach(el => {
   observerElements.observe(el);
 });
-
-// Menú móvil
 document.getElementById("burgerBtn")?.addEventListener("click", () => document.getElementById("mobileMenu").classList.toggle("isOpen"));
 document.querySelectorAll(".mobileMenu a").forEach(a => a.addEventListener("click", () => document.getElementById("mobileMenu").classList.remove("isOpen")));
-
-// Inicializar
 setWaLinks();
 loadProjects();
+loadReviews();
 loadFaqs();
-
-// Contador animado
 let countersStarted = false;
 const heroObserver = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
-    if (entry.isIntersecting && !countersStarted) {
+    if (entry.isIntersecting && !countersStarted && projectsData.length > 0) {
       countersStarted = true;
-      const statProjects = document.getElementById("statProjects");
-      if (statProjects) {
-        const target = parseInt(statProjects.textContent) || 52;
-        animateCounter(statProjects, target, '+');
-      }
+      animateCounter(document.getElementById("statProjects"), projectsData.length, '+');
       animateCounter(document.getElementById("statHours"), 24, 'hs');
       animateCounter(document.getElementById("statCode"), 100, '%');
       animateCounter(document.getElementById("statFee"), 0, '$');
@@ -1393,7 +1550,6 @@ const heroObserver = new IntersectionObserver((entries) => {
   });
 }, { threshold: 0.3 });
 if (document.querySelector(".hero")) heroObserver.observe(document.querySelector(".hero"));
-
 function animateCounter(element, target, suffix = '') {
   if (!element) return;
   let start = 0;
@@ -1412,4 +1568,4 @@ function animateCounter(element, target, suffix = '') {
 }
 </script>
 </body>
-</html> 
+</html>
