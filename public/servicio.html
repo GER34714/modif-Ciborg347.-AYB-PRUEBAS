@@ -7,15 +7,15 @@
   <meta name="description" content="Conocé en detalle nuestros servicios de desarrollo web." />
   <meta property="og:title" content="Ciborg 347 — Desarrollo Web" />
   <meta property="og:description" content="Construimos herramientas digitales que trabajan para tu negocio las 24 horas." />
-  <meta property="og:image" content="https://iili.io/fETkPEv.md.png" />
+  <meta property="og:image" content="https://fhxcumwhgtfirznnznjx.supabase.co/storage/v1/object/public/Imagenes/fETkPEv.md.png" />
   <meta property="og:type" content="website" />
   <link rel="canonical" href="https://ciborg347.com/servicio" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🤖%3C/text%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
 
   <style>
-    /* ===== TODOS TUS ESTILOS (exactamente los mismos que en index.html) ===== */
     :root {
       --bg: #0a0a0f;
       --bg2: #0f0f1a;
@@ -141,27 +141,6 @@
       color: var(--text2); padding: 0.6rem 0; border-bottom: 1px solid var(--border);
     }
 
-    /* No usaremos .hero en esta página, pero lo dejamos por consistencia */
-    .hero {
-      position: relative;
-      min-height: 88vh; display: flex; align-items: center;
-      background-image: url('https://fhxcumwhgtfirznnznjx.supabase.co/storage/v1/object/public/Imagenes/710478090_921107700943207_8371047012180220047_n.jpg');
-      background-size: cover;
-      background-position: center right;
-      background-attachment: fixed;
-    }
-    .hero::before {
-      content: '';
-      position: absolute; inset: 0;
-      background: linear-gradient(to right, var(--bg) 0%, rgba(10,10,15,0.95) 35%, rgba(10,10,15,0.6) 52%, transparent 100%);
-    }
-    [data-theme="light"] .hero::before {
-      background: linear-gradient(to right, #f0f4f8 0%, rgba(240,244,248,0.95) 40%, rgba(240,244,248,0.5) 70%, transparent 100%);
-    }
-    .hero .wrap { position: relative; z-index: 1; width: 100%; padding: 80px 24px; }
-    .hero__copy { max-width: 460px; margin-right: auto; }
-
-    /* ===== ESTILOS PROPIOS PARA LA PÁGINA DE DETALLE ===== */
     .service-detail {
       padding: 100px 0 80px;
     }
@@ -230,7 +209,27 @@
       color: var(--cyan);
     }
 
-    /* Footer */
+    /* WhatsApp flotante */
+    .waFloat {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #25d366, #128c7e);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 500;
+      transition: opacity 0.3s, transform 0.2s, visibility 0.3s;
+      opacity: 1;
+      visibility: visible;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+    .waFloat.hidden { opacity: 0; visibility: hidden; }
+    .waFloat:hover { transform: scale(1.08); }
+
     footer {
       background: var(--bg2);
       border-top: 1px solid var(--border);
@@ -250,7 +249,6 @@
     .footer__links a { font-size: 12px; color: var(--text2); transition: color 0.2s; }
     .footer__links a:hover { color: var(--cyan); }
 
-    /* Responsive */
     @media (max-width: 900px) {
       .nav { display: none; }
       .burger { display: flex; }
@@ -265,11 +263,10 @@
 </head>
 <body>
 
-<!-- ===== HEADER (exactamente igual al de index.html) ===== -->
 <header class="topbar">
   <div class="wrap topbar__inner">
     <a href="index.html" class="brand">
-      <img class="brand__logo" src="https://iili.io/fETkPEv.md.png" alt="Logo" />
+      <img class="brand__logo" src="https://fhxcumwhgtfirznnznjx.supabase.co/storage/v1/object/public/Imagenes/fETkPEv.md.png" alt="Logo" />
       <div class="brand__text"><strong>CIBORG 347</strong><span>Desarrollo Web</span></div>
     </a>
     <nav class="nav">
@@ -296,16 +293,15 @@
 
 <main>
   <div class="wrap service-detail fade-in" id="serviceContent">
-    <!-- El contenido se cargará dinámicamente según el parámetro tipo -->
+    <!-- El contenido se cargará dinámicamente -->
   </div>
 </main>
 
-<!-- ===== FOOTER (exactamente igual al de index.html) ===== -->
 <footer>
   <div class="wrap">
     <div class="footer__inner">
       <div class="footer__brand">
-        <img src="https://iili.io/fETkPEv.md.png" alt="Logo" />
+        <img src="https://fhxcumwhgtfirznnznjx.supabase.co/storage/v1/object/public/Imagenes/fETkPEv.md.png" alt="Logo" />
         <div><strong>CIBORG 347</strong><span style="display: block; font-size: 10px;">Desarrollo Web</span></div>
       </div>
       <div class="footer__links">
@@ -319,8 +315,16 @@
   </div>
 </footer>
 
+<!-- WhatsApp flotante -->
+<a href="#" class="waFloat" id="waFloat" target="_blank">
+  <svg width="26" height="26" viewBox="0 0 24 24" fill="white">
+    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+  </svg>
+</a>
+
+<script src="config.js"></script>
 <script>
-  // ===== TEMA CLARO/OSCURO (mismo código que en index.html) =====
+  // Tema claro/oscuro
   const themeToggle = document.getElementById("themeToggle");
   const savedTheme = localStorage.getItem("theme") || "dark";
   document.documentElement.setAttribute("data-theme", savedTheme);
@@ -333,7 +337,9 @@
     themeToggle.textContent = newTheme === "dark" ? "☀️" : "🌙";
   });
 
-  // ===== DATOS DE SERVICIOS =====
+  const waNumber = window.CIBORG_CONFIG.WHATSAPP_NUMBER;
+  const waUrl = (msg) => `https://wa.me/${waNumber}?text=${encodeURIComponent(msg)}`;
+
   const serviciosData = {
     tienda: {
       titulo: "Tiendas Online",
@@ -422,24 +428,16 @@
     }
   };
 
-  // ===== LEER PARÁMETRO URL =====
   const urlParams = new URLSearchParams(window.location.search);
   let tipo = urlParams.get('tipo');
-  if (!tipo || !serviciosData[tipo]) {
-    tipo = 'tienda';
-  }
+  if (!tipo || !serviciosData[tipo]) tipo = 'tienda';
   const data = serviciosData[tipo];
 
-  // ===== ACTUALIZAR TÍTULO =====
   document.title = `Ciborg 347 — ${data.titulo}`;
   const metaDesc = document.querySelector('meta[name="description"]');
   if (metaDesc) metaDesc.setAttribute('content', data.descripcionLarga.slice(0, 150));
 
-  // ===== RENDERIZAR CONTENIDO =====
   const container = document.getElementById('serviceContent');
-  const waNumber = "5491164499481";
-  const waUrl = (msg) => `https://wa.me/${waNumber}?text=${encodeURIComponent(msg)}`;
-
   container.innerHTML = `
     <div class="breadcrumb">
       <a href="index.html">Inicio</a> / <a href="index.html#servicios">Servicios</a> / <span style="color:var(--cyan)">${data.titulo}</span>
@@ -458,17 +456,34 @@
     </div>
   `;
 
-  // ===== MENÚ MÓVIL =====
+  // WhatsApp flotante
+  const waFloat = document.getElementById("waFloat");
+  if (waFloat) waFloat.href = waUrl(data.waMsg);
+
+  // Ocultar WhatsApp flotante al hacer scroll
+  const footer = document.querySelector("footer");
+  function checkWaFloatVisibility() {
+    if (!waFloat || !footer) return;
+    const footerRect = footer.getBoundingClientRect();
+    if (footerRect.top < window.innerHeight - 50) {
+      waFloat.classList.add("hidden");
+    } else {
+      waFloat.classList.remove("hidden");
+    }
+  }
+  window.addEventListener("scroll", checkWaFloatVisibility);
+  window.addEventListener("resize", checkWaFloatVisibility);
+  setTimeout(checkWaFloatVisibility, 100);
+
+  // Menú móvil
   const burgerBtn = document.getElementById("burgerBtn");
   const mobileMenu = document.getElementById("mobileMenu");
   burgerBtn?.addEventListener("click", () => mobileMenu.classList.toggle("isOpen"));
   document.querySelectorAll(".mobileMenu a").forEach(a => a.addEventListener("click", () => mobileMenu.classList.remove("isOpen")));
 
-  // ===== WHATSAPP EN MOBILE =====
   const mobileWa = document.getElementById("mobileWhatsAppBtn");
   if (mobileWa) mobileWa.href = waUrl(data.waMsg);
 
-  // ===== FADE-IN =====
   const observer = new IntersectionObserver(entries => {
     entries.forEach(e => { if(e.isIntersecting) { e.target.classList.add("visible"); observer.unobserve(e.target); } });
   }, { threshold: 0.1 });
