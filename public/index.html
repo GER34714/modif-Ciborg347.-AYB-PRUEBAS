@@ -1448,20 +1448,38 @@ function shareProject(id, title) {
 }
 async function loadReviews() {
   if (!sb) return;
+  
   try {
-    const { data } = await sb.from("reviews").select("*").eq("active", true).order("created_at", { ascending: false });
-    if (data && data.length > 0) reviewsData = data;
-    else {
-      // Reseñas ficticias por si la tabla está vacía
+    // 🔥 Leer de 'reviews' solo las aprobadas
+    const { data, error } = await sb
+      .from("reviews")
+      .select("*")
+      .eq("status", "approved")
+      .order("created_at", { ascending: false });
+    
+    if (error) throw error;
+    
+    if (data && data.length > 0) {
+      // Convertir al formato que espera el frontend
+      reviewsData = data.map(review => ({
+        nombre: review.user_name,
+        texto: review.comment,
+        rating: review.rating,
+        created_at: review.created_at
+      }));
+    } else {
+      // Reseñas de ejemplo mientras no hay aprobadas
       reviewsData = [
         { nombre: "Martín", texto: "Excelente trabajo. La tienda online que me hicieron es increíble, muy profesional y rápida. 100% recomendado.", rating: 5 },
         { nombre: "Laura G.", texto: "Muy contenta con el desarrollo de mi web institucional. Siempre atentos a mis dudas y cambios.", rating: 5 },
-        { nombre: "Carlos D.", texto: "El sistema de pedidos por WhatsApp transformó mi negocio. Ahora todo es más organizado.", rating: 4 },
-        { nombre: "Sofía M.", texto: "Atención excelente y resultados impecables. Sin dudas volveré a contratar.", rating: 5 },
-        { nombre: "Julián R.", texto: "La landing page convierte muchísimo. Muy conforme con el diseño y la velocidad.", rating: 5 }
+        { nombre: "Carlos D.", texto: "El sistema de pedidos por WhatsApp transformó mi negocio. Ahora todo es más organizado.", rating: 4 }
       ];
     }
-  } catch(e) { console.log("Error cargando reseñas", e); }
+    
+  } catch(e) { 
+    console.error("Error cargando reseñas:", e);
+  }
+  
   renderReviews();
 }
 function renderReviews() {
