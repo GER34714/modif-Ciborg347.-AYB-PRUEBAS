@@ -840,4 +840,20 @@ sb.auth.getSession().then(({ data: { session } }) => {
 });
 </script>
 </body>
+<script src="./app.js"></script>
+<script>
+// ===== CONFIGURACIÓN SUPABASE =====
+const SUPABASE_URL = "https://fhxcumwhgtfirznnznjx.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...";
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+let currentUser = null;
+
+// ===== TEMA CLARO/OSCURO =====
+function applyTheme(theme) { ... }
+function getSystemTheme() { ... }
+function loadTheme() { ... }
+loadTheme();
+document.getElementById('lightThemeBtn')?.addEventListener('click', () => applyTheme('light'));
+document.getElementById('darkThemeBtn')?.addEventListener('click', () => applyTheme('dark'));
+</script>
 </html>
