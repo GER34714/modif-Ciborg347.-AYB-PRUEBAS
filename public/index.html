@@ -33,20 +33,6 @@
       --white: #ffffff;
       --card-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
     }
-    [data-theme="light"] {
-      --bg: #f0f4f8;
-      --bg2: #ffffff;
-      --bg3: #e8edf5;
-      --border: rgba(0, 0, 0, 0.08);
-      --cyan: #0066cc;
-      --violet: #7c3aed;
-      --magenta: #db2777;
-      --grad: linear-gradient(135deg, #0066cc, #7c3aed);
-      --text: #1e293b;
-      --text2: #475569;
-      --white: #0f172a;
-      --card-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-    }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html { scroll-behavior: smooth; }
     body {
@@ -55,7 +41,16 @@
       color: var(--text);
       line-height: 1.6;
       overflow-x: hidden;
-      transition: background 0.3s, color 0.2s;
+      background: linear-gradient(180deg, rgba(5, 8, 20, 0.80), rgba(8, 14, 28, 0.92)), url('https://iili.io/qlbiQ5u.jpg') center/cover fixed no-repeat;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: -1;
+      background: radial-gradient(900px 500px at 10% 0%, rgba(0, 229, 255, 0.09), transparent 60%), radial-gradient(900px 500px at 100% 10%, rgba(255, 60, 255, 0.09), transparent 60%), radial-gradient(700px 420px at 50% 100%, rgba(185, 124, 255, 0.08), transparent 60%);
+      backdrop-filter: blur(4px);
     }
     img { max-width: 100%; display: block; }
     a { text-decoration: none; color: inherit; }
@@ -86,18 +81,6 @@
     .brand__text { text-align: left; }
     .brand__text strong { font-family: 'Syne', sans-serif; font-size: 18px; color: var(--white); display: block; line-height: 1.2; }
     .brand__text span { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--cyan); text-transform: uppercase; letter-spacing: 1px; display: block; }
-    .theme-toggle {
-      background: var(--glass);
-      border: 1px solid var(--border);
-      border-radius: 40px;
-      width: 40px; height: 40px;
-      display: flex;
-      align-items: center; justify-content: center;
-      font-size: 1.2rem;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .theme-toggle:hover { border-color: var(--cyan); transform: scale(1.05); box-shadow: 0 0 10px var(--cyan); }
     .nav { display: flex; align-items: center; gap: 4px; }
     .nav a {
       padding: 7px 14px; border-radius: 8px;
@@ -151,9 +134,6 @@
       background: linear-gradient(to right, var(--bg) 0%, rgba(10,10,15,0.85) 35%, rgba(10,10,15,0.5) 52%, transparent 100%);
       z-index: 1;
     }
-    [data-theme="light"] .hero::before {
-      background: linear-gradient(to right, #f0f4f8 0%, rgba(240,244,248,0.85) 40%, rgba(240,244,248,0.4) 70%, transparent 100%);
-    }
     .hero canvas {
       position: absolute;
       top: 0;
@@ -161,9 +141,9 @@
       width: 100%;
       height: 100%;
       z-index: 0;
-      opacity: 0.55;
+      opacity: 0.75;
       pointer-events: none;
-      filter: brightness(1.2) contrast(1.1);
+      filter: brightness(1.35) contrast(1.25) saturate(1.3);
     }
     .hero .wrap { position: relative; z-index: 2; width: 100%; padding: 80px 24px; }
     .hero__copy { max-width: 460px; margin-right: auto; }
@@ -236,10 +216,7 @@
       .hero::before {
         background: linear-gradient(to right, rgba(10,10,15,0.6) 0%, rgba(10,10,15,0.3) 50%, rgba(10,10,15,0) 100%) !important;
       }
-      .hero canvas { opacity: 0.4; filter: brightness(1.1) contrast(1.05); }
-      [data-theme="light"] .hero::before {
-        background: linear-gradient(to right, rgba(240,244,248,0.6) 0%, rgba(240,244,248,0.2) 50%, rgba(240,244,248,0) 100%) !important;
-      }
+      .hero canvas { opacity: 0.55; filter: brightness(1.2) contrast(1.1); }
     }
     .section { padding: 90px 0; position: relative; }
     .section--alt { background: var(--bg2); }
@@ -255,7 +232,6 @@
       font-weight: 800; color: var(--white);
     }
     .section__head h2 em { background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    /* Servicios mejorados - menos cuadrados */
     .servicesGrid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -623,9 +599,6 @@
       font-family: 'JetBrains Mono', monospace;
     }
     .share-btn:hover { background: var(--cyan); color: white; border-color: var(--cyan); box-shadow: 0 0 10px var(--cyan); }
-    .skeleton-grid {
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 32px;
-    }
     .skeleton-card {
       background: var(--bg3);
       border-radius: 20px;
@@ -934,13 +907,13 @@
     <nav class="nav">
       <a href="#portfolio">Portfolio</a>
       <a href="#servicios">Servicios</a>
+      <a href="#planes">Planes</a>
       <a href="#resenas">Reseñas</a>
       <a href="#faq">FAQ</a>
       <a href="#contacto">Contacto</a>
     </nav>
     <div class="topbar__cta">
-      <button class="theme-toggle" id="themeToggle">🌙</button>
-      <a href="#contacto" class="btn btn--primary btn--sm">Contacto</a>
+      <a href="#contacto" class="btn btn--primary btn--sm">Presupuesto</a>
       <button class="burger" id="burgerBtn"><span></span><span></span><span></span></button>
     </div>
   </div>
@@ -948,6 +921,7 @@
 <nav class="mobileMenu" id="mobileMenu">
   <a href="#portfolio">Portfolio</a>
   <a href="#servicios">Servicios</a>
+  <a href="#planes">Planes</a>
   <a href="#resenas">Reseñas</a>
   <a href="#faq">FAQ</a>
   <a href="#contacto">Contacto</a>
@@ -1011,7 +985,8 @@
       <div class="pagination-info" id="paginationInfo"></div>
     </div>
   </div>
-</section><section class="section" id="servicios">
+</section>
+<section class="section" id="servicios">
   <div class="wrap">
     <div class="section__head fade-in-left">
       <span class="section__label">Qué construimos</span>
@@ -1057,7 +1032,24 @@
     </div>
   </div>
 </section>
-<section class="section section--alt" id="resenas">
+<section class="section section--alt" id="planes">
+  <div class="wrap">
+    <div class="section__head center fade-in-up">
+      <span class="section__label">Inversión</span>
+      <h2>Planes <em>a medida</em></h2>
+      <p>Precios de referencia. Primero trabajamos, después pagás.</p>
+    </div>
+    <div class="servicesGrid" id="plansGrid">
+      <div class="skeleton-card"></div>
+      <div class="skeleton-card"></div>
+      <div class="skeleton-card"></div>
+    </div>
+    <div class="featured-badge" style="display: block; text-align: center; margin-top: 2rem;">
+      🔥 Primero te muestro el proyecto funcionando. Pagás solo cuando estés conforme.
+    </div>
+  </div>
+</section>
+<section class="section" id="resenas">
   <div class="wrap">
     <div class="section__head center fade-in-up">
       <span class="section__label">Testimonios</span>
@@ -1077,7 +1069,6 @@
         </button>
       </div>
     </div>
-    <!-- Formulario para enviar reseña -->
     <div class="review-form-container fade-in-up">
       <div class="review-form-title">📝 Dejanos tu opinión</div>
       <form class="review-form" id="reviewForm">
@@ -1100,7 +1091,7 @@
     </div>
   </div>
 </section>
-<section class="section" id="faq">
+<section class="section section--alt" id="faq">
   <div class="wrap">
     <div class="section__head center fade-in-up">
       <span class="section__label">FAQ</span>
@@ -1109,7 +1100,7 @@
     <div class="faqGrid" id="faqGrid"></div>
   </div>
 </section>
-<section class="section section--alt" id="contacto">
+<section class="section" id="contacto">
   <div class="wrap">
     <div class="section__head center fade-in-left">
       <span class="section__label">Contacto</span>
@@ -1138,6 +1129,7 @@
       <div class="footer__links">
         <a href="#portfolio">Proyectos</a>
         <a href="#servicios">Servicios</a>
+        <a href="#planes">Planes</a>
         <a href="#resenas">Reseñas</a>
         <a href="#faq">FAQ</a>
         <a href="#contacto">Contacto</a>
@@ -1148,12 +1140,16 @@
 </footer>
 <a href="#" class="waFloat" id="waFloat" target="_blank"><svg width="26" height="26" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg></a>
 <div class="toast" id="toast">Enlace copiado</div>
-<script src="config.js"></script>
 <script>
+// Configuración
 const SUPABASE_URL = "https://fhxcumwhgtfirznnznjx.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZoeGN1bXdoZ3RmaXJ6bm56bmp4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc5OTYyNzEsImV4cCI6MjA4MzU3MjI3MX0.7z1B099L4yrA9k1JxwvYGCABzqiqYtkUClI3E8wQ2zA";
 const DEFAULT_WA = "5491164499481";
 const sb = window.supabase?.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+console.log("🔌 Conectando a Supabase...");
+
+// Variables globales
 let projectsData = [];
 let allCategories = [];
 let activeFilter = "all";
@@ -1165,6 +1161,8 @@ let filteredProjectsCache = [];
 let reviewsData = [];
 let currentReviewIndex = 0;
 let reviewsPerPage = 3;
+let countersStarted = false;
+
 function esc(s) { return String(s ?? "").replace(/[&<>]/g, function(m) { return m === '&' ? '&amp;' : m === '<' ? '&lt;' : '&gt;'; }); }
 function getWA() { return DEFAULT_WA; }
 function waUrl(msg) { return `https://wa.me/${getWA()}?text=${encodeURIComponent(msg)}`; }
@@ -1177,9 +1175,7 @@ function setWaLinks() {
 }
 function showToast(msg) {
   const toast = document.getElementById("toast");
-  toast.textContent = msg;
-  toast.classList.add("show");
-  setTimeout(() => toast.classList.remove("show"), 2500);
+  if (toast) { toast.textContent = msg; toast.classList.add("show"); setTimeout(() => toast.classList.remove("show"), 2500); }
 }
 function openLightbox(imageUrl) {
   const lightbox = document.createElement('div');
@@ -1190,347 +1186,175 @@ function openLightbox(imageUrl) {
   document.body.style.overflow = 'hidden';
   lightbox.addEventListener('click', () => { document.body.style.overflow = ''; });
 }
-const themeToggle = document.getElementById("themeToggle");
-const savedTheme = localStorage.getItem("theme") || "dark";
-document.documentElement.setAttribute("data-theme", savedTheme);
-themeToggle.textContent = savedTheme === "dark" ? "☀️" : "🌙";
-themeToggle.addEventListener("click", () => {
-  const current = document.documentElement.getAttribute("data-theme");
-  const newTheme = current === "dark" ? "light" : "dark";
-  document.documentElement.setAttribute("data-theme", newTheme);
-  localStorage.setItem("theme", newTheme);
-  themeToggle.textContent = newTheme === "dark" ? "☀️" : "🌙";
-});
-const brandLogo = document.getElementById("brandLogo");
-const footerLogo = document.getElementById("footerLogo");
-if (brandLogo) {
-  brandLogo.addEventListener('dblclick', function(e) {
-    e.preventDefault();
-    window.location.href = 'https://admin-ciborg.onrender.com/';
-  });
-}
-if (footerLogo) {
-  footerLogo.addEventListener('dblclick', function(e) {
-    e.preventDefault();
-    window.location.href = 'https://admin-ciborg.onrender.com/';
-  });
-}
-const phrases = ["Ciborg 347.", "Tu web.", "Tu negocio.", "Sin límites."];
-let phraseIndex = 0, charIndex = 0;
-let isDeleting = false;
-const typewriterEl = document.getElementById("typewriterTitle");
 
+// Typewriter
+const phrases = ["Tu web.", "Tu negocio.", "Ciborg 347"];
+let phraseIndex = 0, charIndex = 0, isDeleting = false, isComplete = false;
+const typewriterEl = document.getElementById("typewriterTitle");
 function typeWriter() {
-  if (!typewriterEl) return;
-  
+  if (!typewriterEl || isComplete) return;
   const currentPhrase = phrases[phraseIndex];
-  
   if (!isDeleting && charIndex <= currentPhrase.length) {
-    // Escribiendo
     typewriterEl.textContent = currentPhrase.substring(0, charIndex);
     charIndex++;
     if (charIndex > currentPhrase.length) {
-      // Terminó de escribir esta frase
-      if (phraseIndex === phrases.length - 1) {
-        // Era la última frase ("Sin límites"), volver a la primera
-        phraseIndex = 0;
-        charIndex = 0;
-        setTimeout(typeWriter, 2000);
-        return;
-      }
-      // Pasar a la siguiente frase
-      isDeleting = true;
-      setTimeout(typeWriter, 1200);
-      return;
+      if (phraseIndex === phrases.length - 1) { typewriterEl.style.borderRight = "2px solid var(--cyan)"; isComplete = true; return; }
+      isDeleting = true; setTimeout(typeWriter, 1200); return;
     }
     setTimeout(typeWriter, 100);
   } else if (isDeleting && charIndex >= 0) {
-    // Borrando
     typewriterEl.textContent = currentPhrase.substring(0, charIndex);
     charIndex--;
-    if (charIndex < 0) {
-      // Terminó de borrar, pasar a la siguiente frase
-      isDeleting = false;
-      phraseIndex++;
-      charIndex = 0;
-      setTimeout(typeWriter, 300);
-      return;
-    }
+    if (charIndex < 0) { isDeleting = false; phraseIndex++; charIndex = 0; setTimeout(typeWriter, 300); return; }
     setTimeout(typeWriter, 50);
   }
 }
-
 setTimeout(typeWriter, 500);
+
 function openModal(project) {
-  const modalHTML = `
-    <div class="modal-overlay" id="modalOverlay">
-      <div class="modal-container">
-        <div class="modal-header">
-          <h3>${esc(project.title)}</h3>
-          <button class="modal-close" onclick="closeModal()">×</button>
-        </div>
-        <div class="modal-body">
-          ${project.image_url ? `<img src="${esc(project.image_url)}" alt="${esc(project.title)}" class="modal-img" onclick="openLightbox('${esc(project.image_url)}')" />` : ''}
-          <div class="modal-cat">${esc(project.categories?.name || "Proyecto")}</div>
-          <div class="modal-desc">${esc(project.full_description || project.short_description || "Sin descripción adicional.")}</div>
-          <div class="modal-actions">
-            <a href="${esc(project.demo_url || "#")}" target="_blank" class="btn btn--primary">Ver demo →</a>
-            <a href="${waUrl(`Hola, vi la demo "${project.title}" y quiero algo así.`)}" class="btn btn--wa">Consultar por WhatsApp</a>
-          </div>
-        </div>
-      </div>
-    </div>
-  `;
+  const modalHTML = `<div class="modal-overlay" id="modalOverlay"><div class="modal-container"><div class="modal-header"><h3>${esc(project.title)}</h3><button class="modal-close" onclick="closeModal()">×</button></div><div class="modal-body">${project.image_url ? `<img src="${esc(project.image_url)}" alt="${esc(project.title)}" class="modal-img" onclick="openLightbox('${esc(project.image_url)}')" />` : ''}<div class="modal-cat">${esc(project.categories?.name || "Proyecto")}</div><div class="modal-desc">${esc(project.full_description || project.short_description || "Sin descripción adicional.")}</div><div class="modal-actions"><a href="${esc(project.demo_url || "#")}" target="_blank" class="btn btn--primary">Ver demo →</a><a href="${waUrl(`Hola, vi la demo "${project.title}" y quiero algo así.`)}" class="btn btn--wa">Consultar por WhatsApp</a></div></div></div></div>`;
   document.body.insertAdjacentHTML("beforeend", modalHTML);
   document.body.style.overflow = "hidden";
 }
-window.closeModal = function() {
-  const modal = document.getElementById("modalOverlay");
-  if (modal) modal.remove();
-  document.body.style.overflow = "";
-}
+window.closeModal = function() { const modal = document.getElementById("modalOverlay"); if (modal) modal.remove(); document.body.style.overflow = ""; }
+
 function renderFeatured() {
   const featuredProjects = projectsData.filter(p => p.featured === true);
   const featuredSection = document.getElementById("featuredSection");
   const featuredGrid = document.getElementById("featuredGrid");
-  if (featuredProjects.length === 0) {
-    featuredSection.style.display = "none";
-    return;
+  if (featuredProjects.length === 0) { if (featuredSection) featuredSection.style.display = "none"; return; }
+  if (featuredSection) featuredSection.style.display = "block";
+  if (featuredGrid) { featuredGrid.innerHTML = featuredProjects.slice(0, 6).map(p => `<div class="featuredCard" data-project='${JSON.stringify(p)}'><img class="featuredCard__image" src="${esc(p.image_url)}" alt="${esc(p.title)}" loading="lazy" /><div class="featuredCard__content"><div class="featuredCard__cat">${esc(p.categories?.name || "Destacado")}</div><div class="featuredCard__title">${esc(p.title)}</div><div class="featuredCard__desc">${esc(p.short_description || "").substring(0, 80)}${(p.short_description || "").length > 80 ? '...' : ''}</div></div></div>`).join("");
+    document.querySelectorAll(".featuredCard").forEach(card => { const project = JSON.parse(card.getAttribute("data-project")); card.addEventListener("click", () => openModal(project)); });
   }
-  featuredSection.style.display = "block";
-  featuredGrid.innerHTML = featuredProjects.slice(0, 6).map(p => `
-    <div class="featuredCard" data-project='${JSON.stringify(p)}'>
-      <img class="featuredCard__image" src="${esc(p.image_url)}" alt="${esc(p.title)}" loading="lazy" />
-      <div class="featuredCard__content">
-        <div class="featuredCard__cat">${esc(p.categories?.name || "Destacado")}</div>
-        <div class="featuredCard__title">${esc(p.title)}</div>
-        <div class="featuredCard__desc">${esc(p.short_description || "").substring(0, 80)}${(p.short_description || "").length > 80 ? '...' : ''}</div>
-      </div>
-    </div>
-  `).join("");
-  document.querySelectorAll(".featuredCard").forEach(card => {
-    const project = JSON.parse(card.getAttribute("data-project"));
-    card.addEventListener("click", () => openModal(project));
-    card.classList.add("fade-in-up");
-    observerElements.observe(card);
-  });
 }
+
 function getFilteredAndSortedProjects(excludeFeatured = true) {
   let filtered = projectsData.filter(p => activeFilter === "all" ? true : p.category_id === activeFilter);
-  if (excludeFeatured) {
-    filtered = filtered.filter(p => !p.featured);
-  }
-  if (currentSearch) {
-    const searchLower = currentSearch.toLowerCase();
-    filtered = filtered.filter(p => p.title.toLowerCase().includes(searchLower) || (p.short_description || "").toLowerCase().includes(searchLower));
-  }
+  if (excludeFeatured) filtered = filtered.filter(p => !p.featured);
+  if (currentSearch) { const searchLower = currentSearch.toLowerCase(); filtered = filtered.filter(p => p.title.toLowerCase().includes(searchLower) || (p.short_description || "").toLowerCase().includes(searchLower)); }
   if (currentSort === "az") filtered.sort((a,b) => a.title.localeCompare(b.title));
   else if (currentSort === "za") filtered.sort((a,b) => b.title.localeCompare(a.title));
   else filtered.sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
   return filtered;
 }
+
 function renderProjects() {
   const filtered = getFilteredAndSortedProjects(true);
   filteredProjectsCache = filtered;
   const totalPages = Math.ceil(filtered.length / PROJECTS_PER_PAGE);
   const start = (currentPage - 1) * PROJECTS_PER_PAGE;
-  const end = start + PROJECTS_PER_PAGE;
-  const projectsToShow = filtered.slice(start, end);
+  const projectsToShow = filtered.slice(start, start + PROJECTS_PER_PAGE);
   const grid = document.getElementById("projectsGrid");
-  if (!filtered.length) { 
-    grid.innerHTML = '<div style="padding:2rem; text-align:center; color:var(--text2);">No hay proyectos en esta categoría.</div>'; 
-    document.getElementById("paginationContainer").style.display = "none";
-    return; 
-  }
-  const sevenDaysAgo = new Date();
-  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-  grid.innerHTML = projectsToShow.map(p => `
-    <div class="projectCard fade-in-up" data-project='${JSON.stringify(p)}'>
-      <img class="projectCard__image" src="${esc(p.image_url)}" alt="${esc(p.title)}" loading="lazy" />
-      <div class="projectCard__content">
-        ${new Date(p.created_at) > sevenDaysAgo ? '<div class="new-badge">NUEVO</div>' : ''}
-        <div class="projectCard__cat">${esc(p.categories?.name || "Proyecto")}</div>
-        <div class="projectCard__title">${esc(p.title)}</div>
-        <div class="projectCard__desc">${esc(p.short_description || "")}</div>
-        <button class="share-btn" onclick="event.stopPropagation(); shareProject('${p.id}', '${esc(p.title)}')">📤 Compartir</button>
-      </div>
-    </div>
-  `).join("");
-  document.querySelectorAll("#projectsGrid .projectCard").forEach(card => {
-    const project = JSON.parse(card.getAttribute("data-project"));
-    card.addEventListener("click", (e) => {
-      if (!e.target.closest(".share-btn")) openModal(project);
-    });
-    card.classList.add("fade-in-up");
-    observerElements.observe(card);
-  });
+  if (!filtered.length) { grid.innerHTML = '<div style="padding:2rem; text-align:center; color:var(--text2);">No hay proyectos en esta categoría.</div>'; document.getElementById("paginationContainer").style.display = "none"; return; }
+  const sevenDaysAgo = new Date(); sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+  grid.innerHTML = projectsToShow.map(p => `<div class="projectCard fade-in-up" data-project='${JSON.stringify(p)}'><img class="projectCard__image" src="${esc(p.image_url)}" alt="${esc(p.title)}" loading="lazy" /><div class="projectCard__content">${new Date(p.created_at) > sevenDaysAgo ? '<div class="new-badge">NUEVO</div>' : ''}<div class="projectCard__cat">${esc(p.categories?.name || "Proyecto")}</div><div class="projectCard__title">${esc(p.title)}</div><div class="projectCard__desc">${esc(p.short_description || "")}</div><button class="share-btn" onclick="event.stopPropagation(); shareProject('${p.id}', '${esc(p.title)}')">📤 Compartir</button></div></div>`).join("");
+  document.querySelectorAll("#projectsGrid .projectCard").forEach(card => { const project = JSON.parse(card.getAttribute("data-project")); card.addEventListener("click", (e) => { if (!e.target.closest(".share-btn")) openModal(project); }); });
   renderPagination(totalPages);
 }
+
 function renderPagination(totalPages) {
   const container = document.getElementById("paginationContainer");
   const prevBtn = document.getElementById("prevPageBtn");
   const nextBtn = document.getElementById("nextPageBtn");
   const pagesDiv = document.getElementById("paginationPages");
   const infoDiv = document.getElementById("paginationInfo");
-  if (totalPages <= 1) {
-    container.style.display = "none";
-    return;
-  }
+  if (totalPages <= 1) { container.style.display = "none"; return; }
   container.style.display = "flex";
   prevBtn.disabled = currentPage === 1;
   nextBtn.disabled = currentPage === totalPages;
-  let pagesHTML = '';
-  const maxVisible = 5;
-  let startPage = Math.max(1, currentPage - Math.floor(maxVisible / 2));
-  let endPage = Math.min(totalPages, startPage + maxVisible - 1);
-  if (endPage - startPage + 1 < maxVisible) {
-    startPage = Math.max(1, endPage - maxVisible + 1);
-  }
-  for (let i = startPage; i <= endPage; i++) {
-    pagesHTML += `<button class="page-number ${i === currentPage ? 'active' : ''}" data-page="${i}">${i}</button>`;
-  }
+  let pagesHTML = ''; let startPage = Math.max(1, currentPage - 2); let endPage = Math.min(totalPages, startPage + 4);
+  if (endPage - startPage + 1 < 5 && startPage > 1) startPage = Math.max(1, endPage - 4);
+  for (let i = startPage; i <= endPage; i++) pagesHTML += `<button class="page-number ${i === currentPage ? 'active' : ''}" data-page="${i}">${i}</button>`;
   pagesDiv.innerHTML = pagesHTML;
-  const start = (currentPage - 1) * PROJECTS_PER_PAGE + 1;
-  const end = Math.min(currentPage * PROJECTS_PER_PAGE, filteredProjectsCache.length);
-  infoDiv.textContent = `Mostrando ${start} - ${end} de ${filteredProjectsCache.length} proyectos`;
-  prevBtn.onclick = () => {
-    if (currentPage > 1) {
-      currentPage--;
-      renderProjects();
-      window.scrollTo({ top: document.getElementById("portfolio").offsetTop - 80, behavior: "smooth" });
-    }
-  };
-  nextBtn.onclick = () => {
-    if (currentPage < totalPages) {
-      currentPage++;
-      renderProjects();
-      window.scrollTo({ top: document.getElementById("portfolio").offsetTop - 80, behavior: "smooth" });
-    }
-  };
-  document.querySelectorAll(".page-number").forEach(btn => {
-    btn.addEventListener("click", () => {
-      const page = parseInt(btn.dataset.page);
-      if (page !== currentPage) {
-        currentPage = page;
-        renderProjects();
-        window.scrollTo({ top: document.getElementById("portfolio").offsetTop - 80, behavior: "smooth" });
-      }
-    });
-  });
+  infoDiv.textContent = `Mostrando ${(currentPage-1)*PROJECTS_PER_PAGE+1} - ${Math.min(currentPage*PROJECTS_PER_PAGE, filteredProjectsCache.length)} de ${filteredProjectsCache.length} proyectos`;
+  prevBtn.onclick = () => { if (currentPage > 1) { currentPage--; renderProjects(); document.getElementById("portfolio")?.scrollIntoView({ behavior: "smooth" }); } };
+  nextBtn.onclick = () => { if (currentPage < totalPages) { currentPage++; renderProjects(); document.getElementById("portfolio")?.scrollIntoView({ behavior: "smooth" }); } };
+  document.querySelectorAll(".page-number").forEach(btn => { btn.addEventListener("click", () => { const page = parseInt(btn.dataset.page); if (page !== currentPage) { currentPage = page; renderProjects(); document.getElementById("portfolio")?.scrollIntoView({ behavior: "smooth" }); } }); });
 }
-function resetPagination() {
-  currentPage = 1;
-  renderProjects();
-}
+
+function resetPagination() { currentPage = 1; renderProjects(); }
+
 async function loadProjects() {
-  if (!sb) return;
   const skeleton = document.getElementById("skeletonContainer");
   const projectsGrid = document.getElementById("projectsGrid");
-  skeleton.style.display = "grid";
-  projectsGrid.style.display = "none";
+  if (skeleton) skeleton.style.display = "grid";
+  if (projectsGrid) projectsGrid.style.display = "none";
+  if (!sb) { console.error("❌ Supabase no inicializado"); if (skeleton) skeleton.style.display = "none"; if (projectsGrid) projectsGrid.style.display = "grid"; return; }
   try {
-    const { data: projects } = await sb.from("projects").select(`*, categories(name,slug)`).eq("active", true).order("created_at", { ascending: false });
+    console.log("🔄 Cargando proyectos desde Supabase...");
+    const { data: projects, error } = await sb.from("projects").select(`*, categories(name,slug)`).eq("active", true).order("created_at", { ascending: false });
+    if (error) throw error;
     if (projects) projectsData = projects;
+    console.log(`📦 Proyectos cargados: ${projectsData.length}`);
     const { data: cats } = await sb.from("categories").select("*").eq("active", true);
     if (cats) allCategories = cats;
     document.getElementById("statProjects").textContent = projectsData.length;
-    renderFeatured();
-    buildFilters();
-    resetPagination();
-    skeleton.style.display = "none";
-    projectsGrid.style.display = "grid";
-    if (!countersStarted && projectsData.length) {
-      countersStarted = true;
-      animateCounter(document.getElementById("statProjects"), projectsData.length, '+');
-      animateCounter(document.getElementById("statHours"), 24, 'hs');
-      animateCounter(document.getElementById("statCode"), 100, '%');
-    }
-  } catch(e) { console.error(e); skeleton.style.display = "none"; }
+    renderFeatured(); buildFilters(); resetPagination();
+    if (skeleton) skeleton.style.display = "none";
+    if (projectsGrid) projectsGrid.style.display = "grid";
+    if (!countersStarted && projectsData.length) { countersStarted = true; animateCounter(document.getElementById("statProjects"), projectsData.length, '+'); animateCounter(document.getElementById("statHours"), 24, 'hs'); animateCounter(document.getElementById("statCode"), 100, '%'); }
+  } catch(e) { console.error("Error loadProjects:", e); if (skeleton) skeleton.style.display = "none"; if (projectsGrid) projectsGrid.style.display = "grid"; }
 }
+
 function buildFilters() {
   const container = document.getElementById("filters");
+  if (!container) return;
   container.innerHTML = '<button class="filter-btn active" data-cat="all">Todos</button>';
   const usedCats = new Set(projectsData.map(p => p.category_id).filter(Boolean));
-  allCategories.filter(c => usedCats.has(c.id)).forEach(cat => {
-    const btn = document.createElement("button");
-    btn.className = "filter-btn";
-    btn.dataset.cat = cat.id;
-    btn.textContent = cat.name;
-    container.appendChild(btn);
-  });
-  container.addEventListener("click", e => {
-    const btn = e.target.closest(".filter-btn");
-    if (!btn) return;
-    document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
-    btn.classList.add("active");
-    activeFilter = btn.dataset.cat;
-    resetPagination();
-  });
+  allCategories.filter(c => usedCats.has(c.id)).forEach(cat => { const btn = document.createElement("button"); btn.className = "filter-btn"; btn.dataset.cat = cat.id; btn.textContent = cat.name; container.appendChild(btn); });
+  container.addEventListener("click", e => { const btn = e.target.closest(".filter-btn"); if (!btn) return; document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active")); btn.classList.add("active"); activeFilter = btn.dataset.cat; resetPagination(); });
 }
-function shareProject(id, title) {
-  const url = `${window.location.origin}${window.location.pathname}#portfolio`;
-  navigator.clipboard.writeText(url);
-  showToast(`"${title}" - Enlace copiado`);
+
+function shareProject(id, title) { navigator.clipboard.writeText(window.location.href); showToast(`"${title}" - Enlace copiado`); }
+
+async function loadPlans() {
+  const container = document.getElementById("plansGrid");
+  if (!container) return;
+  container.innerHTML = '<div class="skeleton-card"></div><div class="skeleton-card"></div><div class="skeleton-card"></div>';
+  if (!sb) return;
+  try {
+    const { data, error } = await sb.from("service_plans").select("*").eq("active", true).order("order_index", { ascending: true });
+    if (error) throw error;
+    if (!data || data.length === 0) { container.innerHTML = '<div style="text-align:center; grid-column:1/-1;">🌟 Próximamente más planes. Consultanos por WhatsApp.</div>'; return; }
+    container.innerHTML = data.map(plan => `<div class="serviceCard"><div class="serviceCard__icon">${esc(plan.icon || '📦')}</div><div class="serviceCard__title">${esc(plan.name)}</div><div class="serviceCard__desc">${esc(plan.description || '')}</div><div class="serviceCard__price"><strong>${esc(plan.price)}</strong></div><ul class="serviceCard__features">${plan.features?.map(f => `<li>${esc(f)}</li>`).join('') || '<li>Consulta por detalles personalizados</li>'}</ul><a href="#contacto" class="serviceCard__btn">${esc(plan.cta_text || 'Consultar →')}</a></div>`).join('');
+  } catch(e) { console.error("Error cargando planes:", e); container.innerHTML = '<div style="text-align:center; grid-column:1/-1;">⚠️ Error al cargar planes. Consultanos por WhatsApp.</div>'; }
 }
+
+async function loadFaqs() {
+  const grid = document.getElementById("faqGrid");
+  if (!grid || !sb) return;
+  try {
+    console.log("🔄 Cargando FAQs desde Supabase...");
+    const { data, error } = await sb.from("faqs").select("*").eq("active", true).order("order_index", { ascending: true });
+    if (error) throw error;
+    if (!data || data.length === 0) { grid.innerHTML = '<div class="faqItem" style="grid-column:1/-1; text-align:center;">No hay preguntas frecuentes cargadas.</div>'; return; }
+    console.log(`📋 FAQs cargadas: ${data.length}`);
+    grid.innerHTML = data.map((faq, idx) => `<div class="faqItem fade-in-up" style="transition-delay: ${idx * 0.05}s"><div class="faqQ">${esc(faq.question)}</div><div class="faqA">${esc(faq.answer)}</div></div>`).join("");
+    document.querySelectorAll(".faqItem").forEach(item => { const q = item.querySelector(".faqQ"); const a = item.querySelector(".faqA"); if (q && a) { a.style.display = "none"; q.addEventListener("click", () => { const isOpen = a.style.display === "block"; a.style.display = isOpen ? "none" : "block"; }); } });
+  } catch(e) { console.error("Error loadFaqs:", e); }
+}
+
 async function loadReviews() {
   if (!sb) return;
-  
   try {
-    // 🔥 Leer de 'reviews' solo las aprobadas
-    const { data, error } = await sb
-      .from("reviews")
-      .select("*")
-      .eq("status", "approved")
-      .order("created_at", { ascending: false });
-    
+    const { data, error } = await sb.from("reviews").select("*").eq("status", "approved").order("created_at", { ascending: false });
     if (error) throw error;
-    
-    if (data && data.length > 0) {
-      // Convertir al formato que espera el frontend
-      reviewsData = data.map(review => ({
-        nombre: review.user_name,
-        texto: review.comment,
-        rating: review.rating,
-        created_at: review.created_at
-      }));
-    } else {
-      // Reseñas de ejemplo mientras no hay aprobadas
-      reviewsData = [
-        { nombre: "Martín", texto: "Excelente trabajo. La tienda online que me hicieron es increíble, muy profesional y rápida. 100% recomendado.", rating: 5 },
-        { nombre: "Laura G.", texto: "Muy contenta con el desarrollo de mi web institucional. Siempre atentos a mis dudas y cambios.", rating: 5 },
-        { nombre: "Carlos D.", texto: "El sistema de pedidos por WhatsApp transformó mi negocio. Ahora todo es más organizado.", rating: 4 }
-      ];
-    }
-    
-  } catch(e) { 
-    console.error("Error cargando reseñas:", e);
-  }
-  
+    if (data && data.length > 0) { reviewsData = data.map(review => ({ nombre: review.user_name, texto: review.comment, rating: review.rating })); }
+    else { reviewsData = [{ nombre: "Martín", texto: "Excelente trabajo. La tienda online que me hicieron es increíble.", rating: 5 }, { nombre: "Laura G.", texto: "Muy contenta con el desarrollo de mi web institucional.", rating: 5 }, { nombre: "Carlos D.", texto: "El sistema de pedidos por WhatsApp transformó mi negocio.", rating: 4 }]; }
+  } catch(e) { console.error(e); }
   renderReviews();
 }
+
 function renderReviews() {
   const track = document.getElementById("reviewsTrack");
   if (!track) return;
-  if (reviewsData.length === 0) {
-    track.innerHTML = '<div class="review-card" style="width:100%; text-align:center;">No hay reseñas aún. ¡Sé el primero en dejar tu opinión!</div>';
-    return;
-  }
-  const starsMap = (rating) => {
-    let stars = '';
-    for (let i = 1; i <= 5; i++) {
-      stars += `<svg viewBox="0 0 24 24" fill="${i <= rating ? '#f5b042' : '#4a4a6a'}"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>`;
-    }
-    return stars;
-  };
-  track.innerHTML = reviewsData.map(review => `
-    <div class="review-card">
-      <div class="review-stars">${starsMap(review.rating)}</div>
-      <div class="review-text">"${esc(review.texto)}"</div>
-      <div class="review-author">— ${esc(review.nombre)}</div>
-    </div>
-  `).join('');
+  if (reviewsData.length === 0) { track.innerHTML = '<div class="review-card" style="width:100%; text-align:center;">No hay reseñas aún. ¡Sé el primero en dejar tu opinión!</div>'; return; }
+  const starsMap = (r) => { let s = ''; for (let i=1;i<=5;i++) s += `<svg viewBox="0 0 24 24" fill="${i<=r?'#f5b042':'#4a4a6a'}"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>`; return s; };
+  track.innerHTML = reviewsData.map(r => `<div class="review-card"><div class="review-stars">${starsMap(r.rating)}</div><div class="review-text">"${esc(r.texto)}"</div><div class="review-author">— ${esc(r.nombre)}</div></div>`).join('');
   updateReviewCarousel();
 }
+
 function updateReviewCarousel() {
   const track = document.getElementById("reviewsTrack");
   if (!track) return;
@@ -1539,8 +1363,7 @@ function updateReviewCarousel() {
   const visibleCards = Math.min(reviewsPerPage, totalCards);
   if (totalCards === 0) return;
   const cardWidth = cards[0]?.offsetWidth || 0;
-  const gap = 24;
-  const slideWidth = cardWidth + gap;
+  const slideWidth = cardWidth + 24;
   const maxIndex = Math.max(0, totalCards - visibleCards);
   if (currentReviewIndex > maxIndex) currentReviewIndex = maxIndex;
   track.style.transform = `translateX(-${currentReviewIndex * slideWidth}px)`;
@@ -1549,238 +1372,85 @@ function updateReviewCarousel() {
   if (prevBtn) prevBtn.disabled = currentReviewIndex === 0;
   if (nextBtn) nextBtn.disabled = currentReviewIndex >= maxIndex;
 }
- async function submitReview(event) {
-  event.preventDefault();
-  const nombre = document.getElementById("reviewNombre").value.trim();
-  const rating = parseInt(document.getElementById("reviewRating").value);
-  const texto = document.getElementById("reviewTexto").value.trim();
-  
-  if (!nombre || !texto) {
-    showToast("Completá tu nombre y tu reseña");
-    return;
-  }
-  
-  if (!sb) {
-    showToast("Error de conexión, intentá más tarde");
-    return;
-  }
-  
+
+async function submitReview(e) {
+  e.preventDefault();
+  const nombre = document.getElementById("reviewNombre")?.value.trim();
+  const rating = parseInt(document.getElementById("reviewRating")?.value);
+  const texto = document.getElementById("reviewTexto")?.value.trim();
+  if (!nombre || !texto) { showToast("Completá tu nombre y tu reseña"); return; }
+  if (!sb) { showToast("Error de conexión"); return; }
   try {
-    // 🔥 Ahora guarda en la tabla 'reviews' en lugar de 'reviews_pending'
-    const { error } = await sb.from("reviews").insert({
-      user_name: nombre,
-      comment: texto,
-      rating: rating,
-      title: null,
-      status: "pending",
-      created_at: new Date().toISOString(),
-      user_email: null,
-      project_id: null,
-      project_title: null
-    });
-    
+    const { error } = await sb.from("reviews").insert({ user_name: nombre, comment: texto, rating: rating, status: "pending", created_at: new Date().toISOString() });
     if (error) throw error;
-    
     document.getElementById("reviewForm").reset();
     document.getElementById("reviewRating").value = "5";
-    document.querySelectorAll(".rating-star-input").forEach((star, idx) => {
-      if (idx < 5) star.classList.add("active");
-      else star.classList.remove("active");
-    });
-    
+    document.querySelectorAll(".rating-star-input").forEach((star, idx) => { if (idx < 5) star.classList.add("active"); else star.classList.remove("active"); });
     document.getElementById("reviewMessage").innerHTML = '<span style="color: var(--cyan);">✅ ¡Gracias! Tu reseña será revisada y publicada pronto.</span>';
-    setTimeout(() => {
-      document.getElementById("reviewMessage").innerHTML = '';
-    }, 5000);
-    
-  } catch(e) {
-    console.error("Error al enviar reseña:", e);
-    showToast("Error al enviar la reseña, intentá de nuevo");
-  }
-}
-async function loadFaqs() {
-  let faqs = [];
-  if (sb) {
-    try {
-      const { data } = await sb.from("faqs").select("*").eq("active", true);
-      if (data && data.length > 0) faqs = data;
-    } catch(e) { console.log("Error cargando FAQs desde Supabase, usando fallback"); }
-  }
-  if (!faqs.length) {
-    faqs = [
-      { question: "¿Cuánto tarda un proyecto?", answer: "Depende de la complejidad, pero presento una propuesta visual antes de comprometerse. Generalmente entre 7 y 21 días." },
-      { question: "¿Hay mensualidad obligatoria?", answer: "No. El sitio es tuyo para siempre. Sin pagos recurrentes. Solo pagás el desarrollo una sola vez." },
-      { question: "¿Puedo administrar el contenido yo mismo?", answer: "Sí. Los proyectos incluyen panel de administración propio, fácil de usar desde cualquier dispositivo." },
-      { question: "¿La web funciona en celular?", answer: "Siempre. Todos los desarrollos son Mobile First y se adaptan perfectamente a tablets y celulares." },
-      { question: "¿Qué pasa con el dominio y hosting?", answer: "Te ayudo a contratar hosting (recomiendo Hostinger o Donweb) o podés usar el que ya tengas. El dominio lo gestionás vos." },
-      { question: "¿Hacen mantenimiento?", answer: "Sí, ofrezco planes opcionales de mantenimiento y actualizaciones. Pero no es obligatorio." }
-    ];
-  }
-  const grid = document.getElementById("faqGrid");
-  grid.innerHTML = faqs.map(f => `<div class="faqItem fade-in-up"><div class="faqQ">${esc(f.question)}</div><div class="faqA">${esc(f.answer)}</div></div>`).join("");
-  document.querySelectorAll(".faqItem").forEach(item => {
-    const q = item.querySelector(".faqQ");
-    const a = item.querySelector(".faqA");
-    q.addEventListener("click", () => {
-      const open = a.style.display === "block";
-      document.querySelectorAll(".faqA").forEach(aa => aa.style.display = "none");
-      a.style.display = open ? "none" : "block";
-    });
-  });
-  document.querySelectorAll("#faqGrid .faqItem").forEach(el => {
-    el.classList.add("fade-in-up");
-    observerElements.observe(el);
-  });
-}
-const waFloat = document.getElementById("waFloat");
-const footer = document.querySelector("footer");
-function checkWaFloatVisibility() {
-  if (!waFloat || !footer) return;
-  const footerRect = footer.getBoundingClientRect();
-  if (footerRect.top < window.innerHeight - 50) waFloat.classList.add("hidden");
-  else waFloat.classList.remove("hidden");
-}
-window.addEventListener("scroll", checkWaFloatVisibility);
-window.addEventListener("resize", checkWaFloatVisibility);
-setTimeout(checkWaFloatVisibility, 100);
-document.getElementById("searchInput")?.addEventListener("input", e => { currentSearch = e.target.value; resetPagination(); });
-document.getElementById("sortSelect")?.addEventListener("change", e => { currentSort = e.target.value; resetPagination(); });
-document.getElementById("prevReviewBtn")?.addEventListener("click", () => {
-  const track = document.getElementById("reviewsTrack");
-  const totalCards = track?.children.length || 0;
-  const visibleCards = Math.min(reviewsPerPage, totalCards);
-  const maxIndex = Math.max(0, totalCards - visibleCards);
-  if (currentReviewIndex > 0) {
-    currentReviewIndex--;
-    updateReviewCarousel();
-  }
-});
-document.getElementById("nextReviewBtn")?.addEventListener("click", () => {
-  const track = document.getElementById("reviewsTrack");
-  const totalCards = track?.children.length || 0;
-  const visibleCards = Math.min(reviewsPerPage, totalCards);
-  const maxIndex = Math.max(0, totalCards - visibleCards);
-  if (currentReviewIndex < maxIndex) {
-    currentReviewIndex++;
-    updateReviewCarousel();
-  }
-});
-window.addEventListener('resize', () => {
-  updateReviewCarousel();
-});
-document.getElementById("reviewForm")?.addEventListener("submit", submitReview);
-// Estrellas del formulario
-const starsInputs = document.querySelectorAll(".rating-star-input");
-const ratingInput = document.getElementById("reviewRating");
-starsInputs.forEach(star => {
-  star.addEventListener("click", () => {
-    const value = parseInt(star.dataset.value);
-    ratingInput.value = value;
-    starsInputs.forEach((s, idx) => {
-      if (idx < value) s.classList.add("active");
-      else s.classList.remove("active");
-    });
-  });
-});
-const observerElements = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add("visible");
-      observerElements.unobserve(entry.target);
-    }
-  });
-}, { threshold: 0.1, rootMargin: "0px 0px -50px 0px" });
-document.querySelectorAll(".fade-in-left, .fade-in-right, .fade-in-up").forEach(el => {
-  observerElements.observe(el);
-});
-document.getElementById("burgerBtn")?.addEventListener("click", () => document.getElementById("mobileMenu").classList.toggle("isOpen"));
-document.querySelectorAll(".mobileMenu a").forEach(a => a.addEventListener("click", () => document.getElementById("mobileMenu").classList.remove("isOpen")));
-setWaLinks();
-loadProjects();
-loadReviews();
-loadFaqs();
-let countersStarted = false;
-const heroObserver = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting && !countersStarted && projectsData.length > 0) {
-      countersStarted = true;
-      animateCounter(document.getElementById("statProjects"), projectsData.length, '+');
-      animateCounter(document.getElementById("statHours"), 24, 'hs');
-      animateCounter(document.getElementById("statCode"), 100, '%');
-    }
-  });
-}, { threshold: 0.3 });
-if (document.querySelector(".hero")) heroObserver.observe(document.querySelector(".hero"));
-function animateCounter(element, target, suffix = '') {
-  if (!element) return;
-  let start = 0;
-  const duration = 2000;
-  const increment = target / (duration / 16);
-  function updateCounter() {
-    start += increment;
-    if (start < target) {
-      element.textContent = Math.floor(start) + suffix;
-      requestAnimationFrame(updateCounter);
-    } else {
-      element.textContent = target + suffix;
-    }
-  }
-  updateCounter();
+    setTimeout(() => { document.getElementById("reviewMessage").innerHTML = ''; }, 5000);
+  } catch(err) { console.error(err); showToast("Error al enviar la reseña"); }
 }
 
-// ============================================================
-// FONDO MATRIX PARA EL HERO (con mensajes ocultos para tu familia)
-// ============================================================
+const starsInputs = document.querySelectorAll(".rating-star-input");
+const ratingInput = document.getElementById("reviewRating");
+starsInputs.forEach(star => { star.addEventListener("click", () => { const value = parseInt(star.dataset.value); ratingInput.value = value; starsInputs.forEach((s, idx) => { if (idx < value) s.classList.add("active"); else s.classList.remove("active"); }); }); });
+
+function animateCounter(element, target, suffix = '') { if (!element) return; let start = 0; const increment = target / (2000 / 16); function update() { start += increment; if (start < target) { element.textContent = Math.floor(start) + suffix; requestAnimationFrame(update); } else { element.textContent = target + suffix; } } update(); }
+
+const brandLogo = document.getElementById("brandLogo");
+const footerLogo = document.getElementById("footerLogo");
+if (brandLogo) brandLogo.addEventListener('dblclick', () => window.location.href = 'https://admin-ciborg.onrender.com/');
+if (footerLogo) footerLogo.addEventListener('dblclick', () => window.location.href = 'https://admin-ciborg.onrender.com/');
+
+const observer = new IntersectionObserver((entries) => { entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add("visible"); observer.unobserve(e.target); } }); }, { threshold: 0.1 });
+document.querySelectorAll(".fade-in-left, .fade-in-right, .fade-in-up").forEach(el => observer.observe(el));
+
+document.getElementById("searchInput")?.addEventListener("input", e => { currentSearch = e.target.value; resetPagination(); });
+document.getElementById("sortSelect")?.addEventListener("change", e => { currentSort = e.target.value; resetPagination(); });
+document.getElementById("prevReviewBtn")?.addEventListener("click", () => { const track = document.getElementById("reviewsTrack"); const total = track?.children.length || 0; const visible = Math.min(reviewsPerPage, total); const maxIdx = Math.max(0, total - visible); if (currentReviewIndex > 0) { currentReviewIndex--; updateReviewCarousel(); } });
+document.getElementById("nextReviewBtn")?.addEventListener("click", () => { const track = document.getElementById("reviewsTrack"); const total = track?.children.length || 0; const visible = Math.min(reviewsPerPage, total); const maxIdx = Math.max(0, total - visible); if (currentReviewIndex < maxIdx) { currentReviewIndex++; updateReviewCarousel(); } });
+window.addEventListener('resize', () => updateReviewCarousel());
+document.getElementById("reviewForm")?.addEventListener("submit", submitReview);
+document.getElementById("burgerBtn")?.addEventListener("click", () => document.getElementById("mobileMenu")?.classList.toggle("isOpen"));
+document.querySelectorAll(".mobileMenu a").forEach(a => a.addEventListener("click", () => document.getElementById("mobileMenu")?.classList.remove("isOpen")));
+setWaLinks();
+
+const heroObserver = new IntersectionObserver((entries) => { entries.forEach(e => { if (e.isIntersecting && !countersStarted && projectsData.length > 0) { countersStarted = true; animateCounter(document.getElementById("statProjects"), projectsData.length, '+'); animateCounter(document.getElementById("statHours"), 24, 'hs'); animateCounter(document.getElementById("statCode"), 100, '%'); } }); }, { threshold: 0.3 });
+if (document.querySelector(".hero")) heroObserver.observe(document.querySelector(".hero"));
+
+// Inicializar todo
+loadProjects();
+loadPlans();
+loadFaqs();
+loadReviews();
+
+// Matrix canvas
 (function() {
   const canvas = document.getElementById('matrixCanvas');
   if (!canvas) return;
-  
   const ctx = canvas.getContext('2d');
-
-  function resize() {
-    const hero = canvas.parentElement;
-    canvas.width = hero.offsetWidth;
-    canvas.height = hero.offsetHeight;
-  }
-  
-  resize();
-  window.addEventListener('resize', resize);
-
-  const fs = 13;
-  const lineH = fs + 5;
-
-  const C = {
-    kw:[100,160,255], fn:[255,200,80],  str:[100,255,160],
-    cmt:[80,160,200], sym:[200,200,255], sp:[255,100,180],
-    num:[255,140,60], wh:[220,220,220], vr:[180,100,255],
-  };
-
-  // Nombres y mensajes ocultos
+  function resize() { const hero = canvas.parentElement; canvas.width = hero.offsetWidth; canvas.height = hero.offsetHeight; }
+  resize(); window.addEventListener('resize', resize);
+  const fs = 13, lineH = fs + 5;
+  const C = { kw:[100,160,255], fn:[255,200,80], str:[100,255,160], cmt:[80,160,200], sym:[200,200,255], sp:[255,100,180], num:[255,140,60], wh:[220,220,220], vr:[180,100,255] };
   const families = ['MA1L3N','K14R4','JUL10','Z03','Y3S1','C1B0RG_347'];
-  const msgs = [
-    'M1_M41L3N','M1_H1J4_M45_6R4ND3','M1_K14R4','M1_R31N4_H3RM0S4',
-    'M1_JUL10','BU5C4_TU_F3L1C1D4D','M1_Z03','M1_B3B3_M45_CH1QU1T4',
-    'Y3S1','MUJ3R_D3_M1_VID4','M1_C0MP4Ñ3R4_D3_C4D4_D14','M1_4M0R_3T3RN0',
-    'JUNT05_S0M05_FU3RT35','S13MPR3_JUNT05','T3_4M0_P0R_S13MPR3'
-  ];
-  
+  const msgs = ['M1_M41L3N','M1_H1J4_M45_6R4ND3','M1_K14R4','M1_R31N4_H3RM0S4','M1_JUL10','BU5C4_TU_F3L1C1D4D','M1_Z03','M1_B3B3_M45_CH1QU1T4','Y3S1','MUJ3R_D3_M1_VID4','M1_C0MP4Ñ3R4_D3_C4D4_D14','M1_4M0R_3T3RN0','JUNT05_S0M05_FU3RT35','S13MPR3_JUNT05','T3_4M0_P0R_S13MPR3'];
   function rnd(a){ return a[Math.floor(Math.random()*a.length)]; }
   function rndInt(a,b){ return Math.floor(Math.random()*(b-a))+a; }
   function rndHex(){ return '0x'+Math.floor(Math.random()*0xFFFF).toString(16).toUpperCase().padStart(4,'0'); }
   function rndVar(){ return rnd(['data','res','val','tmp','idx','ref','node','state','cfg','out','buf','key','token','hash','amor','vida','core']); }
-
   function genLine(){
     const t = rndInt(0,20);
-    if(t===0)  return {t:'',c:C.wh};
-    if(t===1)  return {t:`// --- ${rnd(families)} :: ${rnd(msgs)} ---`,c:C.cmt};
-    if(t===2)  return {t:`// ${rnd(msgs)} :: ref=${rndHex()}`,c:C.cmt};
-    if(t===3)  return {t:`const ${rndVar()} = new ${rnd(families)}(${rndHex()});`,c:C.vr};
-    if(t===4)  return {t:`let ${rndVar()} = { amor: Infinity, id: "${rnd(families)}" };`,c:C.vr};
-    if(t===5)  return {t:`function ${rndVar()}(${rndVar()}, ${rndVar()}) {`,c:C.fn};
-    if(t===6)  return {t:`  return ${rndVar()}.map(x => x * ${rndInt(1,99)});`,c:C.wh};
-    if(t===7)  return {t:`  if (!${rndVar()}) throw new Error("${rnd(msgs)}");`,c:C.kw};
-    if(t===8)  return {t:`  const res = await fetch("/${rnd(families).toLowerCase()}");`,c:C.str};
-    if(t===9)  return {t:`  console.log("[${rnd(families)}]::", ${rndVar()});`,c:C.fn};
+    if(t===0) return {t:'',c:C.wh};
+    if(t===1) return {t:`// --- ${rnd(families)} :: ${rnd(msgs)} ---`,c:C.cmt};
+    if(t===2) return {t:`// ${rnd(msgs)} :: ref=${rndHex()}`,c:C.cmt};
+    if(t===3) return {t:`const ${rndVar()} = new ${rnd(families)}(${rndHex()});`,c:C.vr};
+    if(t===4) return {t:`let ${rndVar()} = { amor: Infinity, id: "${rnd(families)}" };`,c:C.vr};
+    if(t===5) return {t:`function ${rndVar()}(${rndVar()}, ${rndVar()}) {`,c:C.fn};
+    if(t===6) return {t:`  return ${rndVar()}.map(x => x * ${rndInt(1,99)});`,c:C.wh};
+    if(t===7) return {t:`  if (!${rndVar()}) throw new Error("${rnd(msgs)}");`,c:C.kw};
+    if(t===8) return {t:`  const res = await fetch("/${rnd(families).toLowerCase()}");`,c:C.str};
+    if(t===9) return {t:`  console.log("[${rnd(families)}]::", ${rndVar()});`,c:C.fn};
     if(t===10) return {t:`}`,c:C.sym};
     if(t===11) return {t:`class ${rnd(families)} extends C1B0RG_347 {`,c:C.kw};
     if(t===12) return {t:`  get status() { return "${rnd(msgs)}"; }`,c:C.fn};
@@ -1791,29 +1461,17 @@ function animateCounter(element, target, suffix = '') {
     if(t===17) return {t:`setInterval(() => ${rnd(families)}.amar(), ${rndInt(0,999)});`,c:C.fn};
     if(t===18) return {t:`  switch(${rndVar()}) { case "${rnd(msgs)}": break; }`,c:C.kw};
     if(t===19) return {t:`  Object.assign(${rndVar()}, { ${rndVar()}: ${rndHex()} });`,c:C.wh};
-    return      {t:`  JSON.stringify({ ${rndVar()}: "${rnd(msgs)}", ts: Date.now() });`,c:C.str};
+    return {t:`  JSON.stringify({ ${rndVar()}: "${rnd(msgs)}", ts: Date.now() });`,c:C.str};
   }
-
-  const buffer = [];
-  for(let i=0;i<40;i++) buffer.push(genLine());
-
+  const buffer = []; for(let i=0;i<40;i++) buffer.push(genLine());
   let lineIdx=0, charIdx=0, scrollTop=0, cur=true, curTimer=0;
-  const speed=2;
-
   function draw(){
-    curTimer++;
-    if(curTimer%30===0) cur=!cur;
+    curTimer++; if(curTimer%30===0) cur=!cur;
     const maxVisible = Math.floor(canvas.height/lineH)+2;
     while(buffer.length < lineIdx+maxVisible+20) buffer.push(genLine());
-    
-    // Limpiar con transparencia
     ctx.clearRect(0,0,canvas.width,canvas.height);
-    
     ctx.font=fs+'px "Courier New",monospace';
-    for(let s=0;s<speed;s++){
-      if(charIdx<buffer[lineIdx].t.length){ charIdx++; }
-      else { lineIdx++; charIdx=0; if(lineIdx>scrollTop+maxVisible-3) scrollTop=lineIdx-maxVisible+3; }
-    }
+    for(let s=0;s<2;s++){ if(charIdx<buffer[lineIdx].t.length){ charIdx++; } else { lineIdx++; charIdx=0; if(lineIdx>scrollTop+maxVisible-3) scrollTop=lineIdx-maxVisible+3; } }
     for(let i=scrollTop;i<scrollTop+maxVisible+1;i++){
       if(i>=buffer.length) break;
       const y=(i-scrollTop)*lineH+lineH;
@@ -1822,9 +1480,9 @@ function animateCounter(element, target, suffix = '') {
       const text=i<lineIdx?buffer[i].t:(isTyping?buffer[i].t.slice(0,charIdx):'');
       if(!text&&!isTyping) continue;
       const [r,g,b]=buffer[i].c;
-      ctx.fillStyle=`rgba(${r},${g},${b},0.9)`;
+      ctx.fillStyle=`rgba(${r},${g},${b},0.85)`;
       ctx.fillText(text,16,y);
-      if(isTyping&&cur){ const tw=ctx.measureText(text).width; ctx.fillStyle='rgba(0,200,255,0.8)'; ctx.fillRect(16+tw,y-fs+2,7,fs+1); }
+      if(isTyping&&cur){ const tw=ctx.measureText(text).width; ctx.fillStyle='rgba(0,200,255,0.9)'; ctx.fillRect(16+tw,y-fs+2,7,fs+1); }
     }
     requestAnimationFrame(draw);
   }
