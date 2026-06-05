@@ -24,6 +24,10 @@ let projectsPaginator = null;
 let projectHistoryPaginator = null;
 let settingsHistoryPaginator = null;
 
+// Elementos DOM (declarados ANTES de usarlos)
+const navBtns = document.querySelectorAll(".navBtn");
+const viewPanels = document.querySelectorAll(".viewPanel");
+
 /* =========================
    HELPERS
 ========================= */
