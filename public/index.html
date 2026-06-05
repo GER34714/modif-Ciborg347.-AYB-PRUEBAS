@@ -1505,7 +1505,7 @@ function updateReviewCarousel() {
   if (prevBtn) prevBtn.disabled = currentReviewIndex === 0;
   if (nextBtn) nextBtn.disabled = currentReviewIndex >= maxIndex;
 }
-async function submitReview(event) {
+aasync function submitReview(event) {
   event.preventDefault();
   const nombre = document.getElementById("reviewNombre").value.trim();
   const rating = parseInt(document.getElementById("reviewRating").value);
