@@ -1505,41 +1505,52 @@ function updateReviewCarousel() {
   if (prevBtn) prevBtn.disabled = currentReviewIndex === 0;
   if (nextBtn) nextBtn.disabled = currentReviewIndex >= maxIndex;
 }
-  async function submitReview(event) {
+ async function submitReview(event) {
   event.preventDefault();
   const nombre = document.getElementById("reviewNombre").value.trim();
   const rating = parseInt(document.getElementById("reviewRating").value);
   const texto = document.getElementById("reviewTexto").value.trim();
+  
   if (!nombre || !texto) {
     showToast("Completá tu nombre y tu reseña");
     return;
   }
+  
   if (!sb) {
     showToast("Error de conexión, intentá más tarde");
     return;
   }
+  
   try {
-    const { error } = await sb.from("reviews_pending").insert({
-      nombre: nombre,
-      texto: texto,
+    // 🔥 Ahora guarda en la tabla 'reviews' en lugar de 'reviews_pending'
+    const { error } = await sb.from("reviews").insert({
+      user_name: nombre,
+      comment: texto,
       rating: rating,
-      estado: "pendiente",
-      ip: "cliente",
-      user_agent: navigator.userAgent
+      title: null,
+      status: "pending",
+      created_at: new Date().toISOString(),
+      user_email: null,
+      project_id: null,
+      project_title: null
     });
+    
     if (error) throw error;
+    
     document.getElementById("reviewForm").reset();
     document.getElementById("reviewRating").value = "5";
     document.querySelectorAll(".rating-star-input").forEach((star, idx) => {
       if (idx < 5) star.classList.add("active");
       else star.classList.remove("active");
     });
+    
     document.getElementById("reviewMessage").innerHTML = '<span style="color: var(--cyan);">✅ ¡Gracias! Tu reseña será revisada y publicada pronto.</span>';
     setTimeout(() => {
       document.getElementById("reviewMessage").innerHTML = '';
     }, 5000);
+    
   } catch(e) {
-    console.error(e);
+    console.error("Error al enviar reseña:", e);
     showToast("Error al enviar la reseña, intentá de nuevo");
   }
 }
