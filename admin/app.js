@@ -1642,7 +1642,14 @@ document.addEventListener("keydown", (e) => {
 });
 
 /* =========================
-   REVIEWS (RESEÑAS)
+   NAV
+========================= */
+navBtns.forEach(btn => {
+  btn.addEventListener("click", () => switchView(btn.dataset.view));
+});
+
+/* =========================
+   REVIEWS (RESEÑAS) - AL FINAL DE TODO
 ========================= */
 let reviewsData = [];
 
@@ -1650,24 +1657,29 @@ async function loadPendingReviews() {
   const container = document.getElementById("reviewsPendingList");
   if (!container) return;
   
-  // Mostrar loading
   container.innerHTML = '<div class="loading-skeleton"><div class="skeleton-line"></div><div class="skeleton-line"></div></div>';
   
-  const { data, error } = await sb
-    .from("reviews")
-    .select("*")
-    .eq("status", "pending")
-    .order("created_at", { ascending: false });
+  try {
+    const { data, error } = await sb
+      .from("reviews")
+      .select("*")
+      .eq("status", "pending")
+      .order("created_at", { ascending: false });
 
-  if (error) {
-    setReviewsMsg(`❌ Error: ${error.message}`, true);
-    container.innerHTML = `<div class="emptyState">⚠️ No se pudieron cargar las reseñas: ${error.message}</div>`;
-    return;
+    if (error) {
+      console.error("Error loading reviews:", error);
+      setReviewsMsg(`❌ Error: ${error.message}`, true);
+      container.innerHTML = `<div class="emptyState">⚠️ Error al cargar reseñas. ¿La tabla 'reviews' existe?</div>`;
+      return;
+    }
+    
+    reviewsData = data || [];
+    updatePendingStats();
+    renderPendingReviews();
+  } catch (err) {
+    console.error("Exception loading reviews:", err);
+    container.innerHTML = `<div class="emptyState">⚠️ Error: ${err.message}</div>`;
   }
-  
-  reviewsData = data || [];
-  updatePendingStats();
-  renderPendingReviews();
 }
 
 function updatePendingStats() {
@@ -1736,8 +1748,8 @@ function renderPendingReviews() {
               <small>${formatDate(review.created_at)}</small>
             </td>
             <td data-label="Acciones" class="action-btns">
-              <button class="btn btn--success btn--small" data-approve-review="${review.id}" data-tooltip="Aprobar y publicar">✅ Aprobar</button>
-              <button class="btn btn--danger btn--small" data-reject-review="${review.id}" data-tooltip="Rechazar y eliminar">❌ Rechazar</button>
+              <button class="btn btn--success btn--small" data-approve-review="${review.id}">✅ Aprobar</button>
+              <button class="btn btn--danger btn--small" data-reject-review="${review.id}">❌ Rechazar</button>
             </td>
           </tr>
         `).join("")}
@@ -1745,7 +1757,6 @@ function renderPendingReviews() {
     </table>
   `;
   
-  // Event listeners para aprobar
   container.querySelectorAll("[data-approve-review]").forEach(btn => {
     btn.addEventListener("click", async () => {
       const id = btn.getAttribute("data-approve-review");
@@ -1753,7 +1764,6 @@ function renderPendingReviews() {
     });
   });
   
-  // Event listeners para rechazar
   container.querySelectorAll("[data-reject-review]").forEach(btn => {
     btn.addEventListener("click", async () => {
       const id = btn.getAttribute("data-reject-review");
@@ -1814,21 +1824,21 @@ async function rejectReview(reviewId) {
   await loadPendingReviews();
 }
 
-// Integrar loadPendingReviews con loadAll (sin sobrescribir)
-const _originalLoadAll = loadAll;
+// Guardar referencia original de loadAll
+const originalLoadAll = loadAll;
 loadAll = async function() {
-  await _originalLoadAll();
+  await originalLoadAll();
   if (document.getElementById("reviewsPendingList")) {
     await loadPendingReviews();
   }
 };
 
-// Integrar switchView para cargar reseñas al cambiar al panel
-const _originalSwitchView = switchView;
+// Guardar referencia original de switchView
+const originalSwitchView = switchView;
 switchView = function(view) {
-  _originalSwitchView(view);
+  originalSwitchView(view);
   if (view === "reviews-pending" && document.getElementById("reviewsPendingList")) {
-    loadPendingReviews();
+    setTimeout(() => loadPendingReviews(), 100);
   }
 };
 
@@ -1840,9 +1850,4 @@ if (reviewsRefreshBtn) {
   });
 }
 
-/* =========================
-   NAV
-========================= */
-navBtns.forEach(btn => {
-  btn.addEventListener("click", () => switchView(btn.dataset.view));
-});
+console.log("✅ Sistema de reseñas cargado correctamente");
