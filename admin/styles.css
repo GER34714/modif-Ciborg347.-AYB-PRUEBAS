@@ -994,4 +994,156 @@ input[type="file"]::file-selector-button:hover {
     width: 100%;
     justify-content: space-between;
   }
+}/* ===== RESEÑAS PENDIENTES ===== */
+.pending-reviews-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.stat-card-pending {
+  background: var(--bg-card);
+  border-radius: 20px;
+  padding: 1.5rem;
+  text-align: center;
+  border: 1px solid var(--border);
+  backdrop-filter: blur(16px);
+}
+
+.stat-card-pending span {
+  display: block;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.5rem;
+}
+
+.stat-card-pending strong {
+  font-size: 2.5rem;
+  display: block;
+  font-weight: 800;
+  background: linear-gradient(135deg, #00e5ff, #ff3cff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.reviews-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+.reviews-table th,
+.reviews-table td {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+
+.reviews-table th {
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-secondary);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.reviews-table td {
+  font-size: 0.875rem;
+}
+
+.review-rating {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.review-rating svg {
+  width: 18px;
+  height: 18px;
+}
+
+.action-btns {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.btn--small {
+  padding: 6px 12px;
+  font-size: 0.75rem;
+  border-radius: 12px;
+}
+
+.btn--success {
+  background: var(--success);
+  color: #07111a;
+  border: none;
+}
+
+.btn--success:hover {
+  background: #0d9488;
+  color: white;
+}
+
+.btn--danger {
+  background: var(--danger);
+  color: white;
+  border: none;
+}
+
+.btn--danger:hover {
+  background: #dc2626;
+}
+
+/* Responsive para tabla de reseñas */
+@media (max-width: 768px) {
+  .reviews-table,
+  .reviews-table tbody,
+  .reviews-table tr,
+  .reviews-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .reviews-table thead {
+    display: none;
+  }
+
+  .reviews-table tr {
+    margin-bottom: 1rem;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 0.5rem;
+  }
+
+  .reviews-table td {
+    padding: 0.5rem;
+    border: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .reviews-table td:before {
+    content: attr(data-label);
+    font-weight: 800;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    min-width: 100px;
+  }
+
+  .action-btns {
+    justify-content: flex-end;
+    width: 100%;
+  }
 }

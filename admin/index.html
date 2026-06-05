@@ -246,15 +246,25 @@
         </section>
 
         <!-- RESEÑAS PENDIENTES -->
-        <section class="panel viewPanel" data-panel="reviews-pending" style="display:none">
-          <div class="row row--between row--wrap">
-            <div><h2>⭐ Reseñas Pendientes</h2><p class="muted">Moderá las reseñas que los usuarios envían desde el frontend.</p></div>
-            <div class="row row--wrap"><button id="reviewsRefreshBtn" class="btn btn--ghost" type="button">Actualizar</button></div>
-          </div>
-          <div class="pending-reviews-stats"><div class="stat-card-pending"><span>📝 Pendientes</span><strong id="pendingCount">0</strong></div></div>
-          <div id="reviewsPendingMsg" class="msg"></div>
-          <div id="reviewsPendingList" class="stackList"></div>
-        </section>
+<section class="panel viewPanel" data-panel="reviews-pending" style="display:none">
+  <div class="row row--between row--wrap">
+    <div>
+      <h2>⭐ Reseñas Pendientes</h2>
+      <p class="muted">Moderá las reseñas que los usuarios envían desde el frontend.</p>
+    </div>
+    <div class="row row--wrap">
+      <button id="reviewsRefreshBtn" class="btn btn--ghost" type="button">Actualizar</button>
+    </div>
+  </div>
+  <div class="pending-reviews-stats">
+    <div class="stat-card-pending">
+      <span>📝 Pendientes</span>
+      <strong id="pendingCount">0</strong>
+    </div>
+  </div>
+  <div id="reviewsPendingMsg" class="msg"></div>
+  <div id="reviewsPendingList" class="stackList"></div>
+</section>
 
         <!-- HISTORIAL -->
         <section class="panel viewPanel" data-panel="history" style="display:none">
