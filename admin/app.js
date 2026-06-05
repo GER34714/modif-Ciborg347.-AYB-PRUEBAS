@@ -1642,6 +1642,205 @@ document.addEventListener("keydown", (e) => {
 });
 
 /* =========================
+   REVIEWS (RESEÑAS)
+========================= */
+let reviewsData = [];
+
+async function loadPendingReviews() {
+  const container = document.getElementById("reviewsPendingList");
+  if (!container) return;
+  
+  // Mostrar loading
+  container.innerHTML = '<div class="loading-skeleton"><div class="skeleton-line"></div><div class="skeleton-line"></div></div>';
+  
+  const { data, error } = await sb
+    .from("reviews")
+    .select("*")
+    .eq("status", "pending")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    setReviewsMsg(`❌ Error: ${error.message}`, true);
+    container.innerHTML = `<div class="emptyState">⚠️ No se pudieron cargar las reseñas: ${error.message}</div>`;
+    return;
+  }
+  
+  reviewsData = data || [];
+  updatePendingStats();
+  renderPendingReviews();
+}
+
+function updatePendingStats() {
+  const pendingCount = reviewsData.length;
+  const pendingCountEl = document.getElementById("pendingCount");
+  if (pendingCountEl) {
+    pendingCountEl.textContent = pendingCount;
+  }
+}
+
+function setReviewsMsg(msg, isError = false) {
+  const msgEl = document.getElementById("reviewsPendingMsg");
+  if (!msgEl) return;
+  
+  msgEl.textContent = msg;
+  msgEl.classList.remove("msg--success", "msg--error");
+  msgEl.classList.add(isError ? "msg--error" : "msg--success");
+  
+  setTimeout(() => {
+    if (msgEl.textContent === msg) {
+      msgEl.textContent = "";
+      msgEl.classList.remove("msg--success", "msg--error");
+    }
+  }, 4000);
+}
+
+function renderPendingReviews() {
+  const container = document.getElementById("reviewsPendingList");
+  if (!container) return;
+  
+  if (!reviewsData.length) {
+    container.innerHTML = `<div class="emptyState">✅ No hay reseñas pendientes de moderación.</div>`;
+    return;
+  }
+  
+  container.innerHTML = `
+    <table class="reviews-table">
+      <thead>
+        <tr>
+          <th>Usuario</th>
+          <th>Calificación</th>
+          <th>Reseña</th>
+          <th>Proyecto</th>
+          <th>Fecha</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${reviewsData.map(review => `
+          <tr>
+            <td data-label="Usuario">
+              <strong>${escapeHtml(review.user_name || "Anónimo")}</strong>
+              ${review.user_email ? `<br/><small>${escapeHtml(review.user_email)}</small>` : ""}
+            </td>
+            <td data-label="Calificación">
+              ${"⭐".repeat(review.rating)} (${review.rating}/5)
+            </td>
+            <td data-label="Reseña">
+              ${review.title ? `<strong>${escapeHtml(review.title)}</strong><br/>` : ""}
+              ${escapeHtml((review.comment || "").substring(0, 200))}${(review.comment || "").length > 200 ? "..." : ""}
+            </td>
+            <td data-label="Proyecto">
+              ${review.project_id ? escapeHtml(review.project_title || `Proyecto ${review.project_id}`) : "Opinión general"}
+            </td>
+            <td data-label="Fecha">
+              <small>${formatDate(review.created_at)}</small>
+            </td>
+            <td data-label="Acciones" class="action-btns">
+              <button class="btn btn--success btn--small" data-approve-review="${review.id}" data-tooltip="Aprobar y publicar">✅ Aprobar</button>
+              <button class="btn btn--danger btn--small" data-reject-review="${review.id}" data-tooltip="Rechazar y eliminar">❌ Rechazar</button>
+            </td>
+          </tr>
+        `).join("")}
+      </tbody>
+    </table>
+  `;
+  
+  // Event listeners para aprobar
+  container.querySelectorAll("[data-approve-review]").forEach(btn => {
+    btn.addEventListener("click", async () => {
+      const id = btn.getAttribute("data-approve-review");
+      await approveReview(id);
+    });
+  });
+  
+  // Event listeners para rechazar
+  container.querySelectorAll("[data-reject-review]").forEach(btn => {
+    btn.addEventListener("click", async () => {
+      const id = btn.getAttribute("data-reject-review");
+      await rejectReview(id);
+    });
+  });
+}
+
+async function approveReview(reviewId) {
+  const ok = await confirmAction({
+    message: "✅ ¿Aprobar esta reseña? Se publicará automáticamente en el sitio.",
+    type: "generic",
+  });
+  if (!ok) return;
+  
+  setReviewsMsg("⏳ Aprobando reseña...");
+  
+  const { error } = await sb
+    .from("reviews")
+    .update({
+      status: "approved",
+      approved_at: new Date().toISOString(),
+      approved_by: currentUserEmail,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", reviewId);
+  
+  if (error) {
+    setReviewsMsg(`❌ Error al aprobar: ${error.message}`, true);
+    return;
+  }
+  
+  setReviewsMsg("✅ Reseña aprobada y publicada correctamente.");
+  await loadPendingReviews();
+}
+
+async function rejectReview(reviewId) {
+  const ok = await confirmAction({
+    message: "❌ ¿Rechazar esta reseña? Se eliminará permanentemente y no se podrá recuperar.",
+    type: "delete",
+    double: true,
+  });
+  if (!ok) return;
+  
+  setReviewsMsg("⏳ Eliminando reseña...");
+  
+  const { error } = await sb
+    .from("reviews")
+    .delete()
+    .eq("id", reviewId);
+  
+  if (error) {
+    setReviewsMsg(`❌ Error al rechazar: ${error.message}`, true);
+    return;
+  }
+  
+  setReviewsMsg("❌ Reseña rechazada y eliminada.");
+  await loadPendingReviews();
+}
+
+// Integrar loadPendingReviews con loadAll (sin sobrescribir)
+const _originalLoadAll = loadAll;
+loadAll = async function() {
+  await _originalLoadAll();
+  if (document.getElementById("reviewsPendingList")) {
+    await loadPendingReviews();
+  }
+};
+
+// Integrar switchView para cargar reseñas al cambiar al panel
+const _originalSwitchView = switchView;
+switchView = function(view) {
+  _originalSwitchView(view);
+  if (view === "reviews-pending" && document.getElementById("reviewsPendingList")) {
+    loadPendingReviews();
+  }
+};
+
+// Botón de refresh de reseñas
+const reviewsRefreshBtn = document.getElementById("reviewsRefreshBtn");
+if (reviewsRefreshBtn) {
+  reviewsRefreshBtn.addEventListener("click", () => {
+    loadPendingReviews();
+  });
+}
+
+/* =========================
    NAV
 ========================= */
 navBtns.forEach(btn => {
