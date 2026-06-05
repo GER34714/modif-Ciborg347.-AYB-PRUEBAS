@@ -148,12 +148,24 @@
     .hero::before {
       content: '';
       position: absolute; inset: 0;
-      background: linear-gradient(to right, var(--bg) 0%, rgba(10,10,15,0.95) 35%, rgba(10,10,15,0.6) 52%, transparent 100%);
+      background: linear-gradient(to right, var(--bg) 0%, rgba(10,10,15,0.85) 35%, rgba(10,10,15,0.5) 52%, transparent 100%);
+      z-index: 1;
     }
     [data-theme="light"] .hero::before {
-      background: linear-gradient(to right, #f0f4f8 0%, rgba(240,244,248,0.95) 40%, rgba(240,244,248,0.5) 70%, transparent 100%);
+      background: linear-gradient(to right, #f0f4f8 0%, rgba(240,244,248,0.85) 40%, rgba(240,244,248,0.4) 70%, transparent 100%);
     }
-    .hero .wrap { position: relative; z-index: 1; width: 100%; padding: 80px 24px; }
+    .hero canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      opacity: 0.55;
+      pointer-events: none;
+      filter: brightness(1.2) contrast(1.1);
+    }
+    .hero .wrap { position: relative; z-index: 2; width: 100%; padding: 80px 24px; }
     .hero__copy { max-width: 460px; margin-right: auto; }
     .typewriter {
       overflow: hidden;
@@ -222,10 +234,11 @@
       .hero__stat { padding: 0 5px; }
       .typewriter { font-size: clamp(1.5rem, 6vw, 2.2rem); }
       .hero::before {
-        background: linear-gradient(to right, rgba(10,10,15,0.4) 0%, rgba(10,10,15,0.2) 50%, rgba(10,10,15,0) 100%) !important;
+        background: linear-gradient(to right, rgba(10,10,15,0.6) 0%, rgba(10,10,15,0.3) 50%, rgba(10,10,15,0) 100%) !important;
       }
+      .hero canvas { opacity: 0.4; filter: brightness(1.1) contrast(1.05); }
       [data-theme="light"] .hero::before {
-        background: linear-gradient(to right, rgba(240,244,248,0.5) 0%, rgba(240,244,248,0.2) 50%, rgba(240,244,248,0) 100%) !important;
+        background: linear-gradient(to right, rgba(240,244,248,0.6) 0%, rgba(240,244,248,0.2) 50%, rgba(240,244,248,0) 100%) !important;
       }
     }
     .section { padding: 90px 0; position: relative; }
@@ -941,6 +954,7 @@
   <a href="#" class="btn btn--wa" id="mobileWhatsAppBtn">WhatsApp</a>
 </nav>
 <section class="hero">
+  <canvas id="matrixCanvas"></canvas>
   <div class="wrap">
     <div class="hero__copy fade-in-left">
       <h1 class="typewriter" id="typewriterTitle"></h1>
@@ -1713,6 +1727,109 @@ function animateCounter(element, target, suffix = '') {
   }
   updateCounter();
 }
+
+// ============================================================
+// FONDO MATRIX PARA EL HERO (con mensajes ocultos para tu familia)
+// ============================================================
+(function() {
+  const canvas = document.getElementById('matrixCanvas');
+  if (!canvas) return;
+  
+  const ctx = canvas.getContext('2d');
+
+  function resize() {
+    const hero = canvas.parentElement;
+    canvas.width = hero.offsetWidth;
+    canvas.height = hero.offsetHeight;
+  }
+  
+  resize();
+  window.addEventListener('resize', resize);
+
+  const fs = 13;
+  const lineH = fs + 5;
+
+  const C = {
+    kw:[100,160,255], fn:[255,200,80],  str:[100,255,160],
+    cmt:[80,160,200], sym:[200,200,255], sp:[255,100,180],
+    num:[255,140,60], wh:[220,220,220], vr:[180,100,255],
+  };
+
+  // Nombres y mensajes ocultos
+  const families = ['MA1L3N','K14R4','JUL10','Z03','Y3S1','C1B0RG_347'];
+  const msgs = [
+    'M1_M41L3N','M1_H1J4_M45_6R4ND3','M1_K14R4','M1_R31N4_H3RM0S4',
+    'M1_JUL10','BU5C4_TU_F3L1C1D4D','M1_Z03','M1_B3B3_M45_CH1QU1T4',
+    'Y3S1','MUJ3R_D3_M1_VID4','M1_C0MP4Ñ3R4_D3_C4D4_D14','M1_4M0R_3T3RN0',
+    'JUNT05_S0M05_FU3RT35','S13MPR3_JUNT05','T3_4M0_P0R_S13MPR3'
+  ];
+  
+  function rnd(a){ return a[Math.floor(Math.random()*a.length)]; }
+  function rndInt(a,b){ return Math.floor(Math.random()*(b-a))+a; }
+  function rndHex(){ return '0x'+Math.floor(Math.random()*0xFFFF).toString(16).toUpperCase().padStart(4,'0'); }
+  function rndVar(){ return rnd(['data','res','val','tmp','idx','ref','node','state','cfg','out','buf','key','token','hash','amor','vida','core']); }
+
+  function genLine(){
+    const t = rndInt(0,20);
+    if(t===0)  return {t:'',c:C.wh};
+    if(t===1)  return {t:`// --- ${rnd(families)} :: ${rnd(msgs)} ---`,c:C.cmt};
+    if(t===2)  return {t:`// ${rnd(msgs)} :: ref=${rndHex()}`,c:C.cmt};
+    if(t===3)  return {t:`const ${rndVar()} = new ${rnd(families)}(${rndHex()});`,c:C.vr};
+    if(t===4)  return {t:`let ${rndVar()} = { amor: Infinity, id: "${rnd(families)}" };`,c:C.vr};
+    if(t===5)  return {t:`function ${rndVar()}(${rndVar()}, ${rndVar()}) {`,c:C.fn};
+    if(t===6)  return {t:`  return ${rndVar()}.map(x => x * ${rndInt(1,99)});`,c:C.wh};
+    if(t===7)  return {t:`  if (!${rndVar()}) throw new Error("${rnd(msgs)}");`,c:C.kw};
+    if(t===8)  return {t:`  const res = await fetch("/${rnd(families).toLowerCase()}");`,c:C.str};
+    if(t===9)  return {t:`  console.log("[${rnd(families)}]::", ${rndVar()});`,c:C.fn};
+    if(t===10) return {t:`}`,c:C.sym};
+    if(t===11) return {t:`class ${rnd(families)} extends C1B0RG_347 {`,c:C.kw};
+    if(t===12) return {t:`  get status() { return "${rnd(msgs)}"; }`,c:C.fn};
+    if(t===13) return {t:`export const ${rndVar()} = new ${rnd(families)}();`,c:C.sp};
+    if(t===14) return {t:`  return { ok: true, msg: "${rnd(msgs)}", code: ${rndHex()} };`,c:C.str};
+    if(t===15) return {t:`Promise.all([${rnd(families)}.load(), ${rnd(families)}.init()])`,c:C.fn};
+    if(t===16) return {t:`  .then(r => r.forEach(x => x.proteger()));`,c:C.wh};
+    if(t===17) return {t:`setInterval(() => ${rnd(families)}.amar(), ${rndInt(0,999)});`,c:C.fn};
+    if(t===18) return {t:`  switch(${rndVar()}) { case "${rnd(msgs)}": break; }`,c:C.kw};
+    if(t===19) return {t:`  Object.assign(${rndVar()}, { ${rndVar()}: ${rndHex()} });`,c:C.wh};
+    return      {t:`  JSON.stringify({ ${rndVar()}: "${rnd(msgs)}", ts: Date.now() });`,c:C.str};
+  }
+
+  const buffer = [];
+  for(let i=0;i<40;i++) buffer.push(genLine());
+
+  let lineIdx=0, charIdx=0, scrollTop=0, cur=true, curTimer=0;
+  const speed=2;
+
+  function draw(){
+    curTimer++;
+    if(curTimer%30===0) cur=!cur;
+    const maxVisible = Math.floor(canvas.height/lineH)+2;
+    while(buffer.length < lineIdx+maxVisible+20) buffer.push(genLine());
+    
+    // Limpiar con transparencia
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    
+    ctx.font=fs+'px "Courier New",monospace';
+    for(let s=0;s<speed;s++){
+      if(charIdx<buffer[lineIdx].t.length){ charIdx++; }
+      else { lineIdx++; charIdx=0; if(lineIdx>scrollTop+maxVisible-3) scrollTop=lineIdx-maxVisible+3; }
+    }
+    for(let i=scrollTop;i<scrollTop+maxVisible+1;i++){
+      if(i>=buffer.length) break;
+      const y=(i-scrollTop)*lineH+lineH;
+      if(y>canvas.height+lineH) break;
+      const isTyping=i===lineIdx;
+      const text=i<lineIdx?buffer[i].t:(isTyping?buffer[i].t.slice(0,charIdx):'');
+      if(!text&&!isTyping) continue;
+      const [r,g,b]=buffer[i].c;
+      ctx.fillStyle=`rgba(${r},${g},${b},0.9)`;
+      ctx.fillText(text,16,y);
+      if(isTyping&&cur){ const tw=ctx.measureText(text).width; ctx.fillStyle='rgba(0,200,255,0.8)'; ctx.fillRect(16+tw,y-fs+2,7,fs+1); }
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
 </script>
 </body>
 </html>
