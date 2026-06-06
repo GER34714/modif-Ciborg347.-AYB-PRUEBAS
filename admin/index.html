@@ -8,7 +8,6 @@
   <link rel="stylesheet" href="./styles.css" />
   <link rel="icon" href="data:," />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="config.js"></script>
   <style>
     /* Estilos adicionales para el admin */
     .pending-reviews-stats {
@@ -283,7 +282,6 @@
         <div id="reviewsApprovedPagination" class="pagination" style="display:none"></div>
       </section>
 
-      <!-- PANEL DE PLANES -->
       <section class="panel viewPanel" data-panel="plans" style="display:none">
         <div class="row row--between row--wrap">
           <div><h2>💰 Planes y Precios</h2><p class="muted">Administrá los planes que se muestran en el frontend.</p></div>
@@ -370,6 +368,20 @@
 
 <script src="./app.js"></script>
 <script>
+  // Configuración inline (reemplaza a config.js)
+  window.CIBORG_CONFIG = {
+    WHATSAPP_NUMBER: "5491164499481",
+    SUPABASE_URL: "https://fhxcumwhgtfirznnznjx.supabase.co",
+    SUPABASE_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZoeGN1bXdoZ3RmaXJ6bm56bmp4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc5OTYyNzEsImV4cCI6MjA4MzU3MjI3MX0.7z1B099L4yrA9k1JxwvYGCABzqiqYtkUClI3E8wQ2zA"
+  };
+
+  // Inicializar Supabase
+  const SUPABASE_URL = window.CIBORG_CONFIG.SUPABASE_URL;
+  const SUPABASE_KEY = window.CIBORG_CONFIG.SUPABASE_KEY;
+  const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  let currentUser = null;
+
+  // Tema
   function initTheme() {
     const saved = localStorage.getItem('admin-theme');
     const prefers = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -396,25 +408,19 @@
     document.getElementById('lightThemeBtn')?.classList.remove('is-active');
   });
 
-  const SUPABASE_URL = window.CIBORG_CONFIG?.SUPABASE_URL || "https://fhxcumwhgtfirznnznjx.supabase.co";
-  const SUPABASE_KEY = window.CIBORG_CONFIG?.SUPABASE_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZoeGN1bXdoZ3RmaXJ6bm56bmp4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc5OTYyNzEsImV4cCI6MjA4MzU3MjI3MX0.7z1B099L4yrA9k1JxwvYGCABzqiqYtkUClI3E8wQ2zA";
-  const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-  let currentUser = null;
-
+  // Verificar sesión
   sb.auth.getSession().then(({ data: { session } }) => {
     if (session?.user) {
       currentUser = session.user;
       document.getElementById('userEmail').textContent = currentUser.email;
       document.getElementById('authBox').style.display = 'none';
       document.getElementById('adminBox').style.display = 'grid';
-      if (typeof loadDashboardStats === 'function') loadDashboardStats();
-      if (typeof loadProjectsList === 'function') loadProjectsList();
-      if (typeof loadCategoriesList === 'function') loadCategoriesList();
-      if (typeof loadFaqsList === 'function') loadFaqsList();
-      if (typeof loadSiteContentOptions === 'function') loadSiteContentOptions();
-      if (typeof loadSiteSettings === 'function') loadSiteSettings();
-      if (typeof loadPendingReviews === 'function') loadPendingReviews();
-      if (typeof loadPlansAdmin === 'function') loadPlansAdmin();
+      // Las funciones se cargan desde app.js, solo esperamos que existan
+      setTimeout(() => {
+        if (typeof loadAll === 'function') loadAll();
+        if (typeof loadPendingReviews === 'function') loadPendingReviews();
+        if (typeof loadPlansAdmin === 'function') loadPlansAdmin();
+      }, 500);
     }
   });
 </script>
