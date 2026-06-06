@@ -2795,3 +2795,200 @@ if (featuredRefreshBtn) {
 }
 
 console.log("✅ Panel de Proyectos Destacados cargado");
+/* =========================
+   ELIMINAR HISTORIAL
+========================= */
+async function clearProjectHistory() {
+  const ok = await confirmAction({
+    message: "⚠️ ¿Eliminar TODO el historial de proyectos? Esta acción no se puede deshacer.",
+    type: "delete",
+    double: true,
+  });
+  if (!ok) return;
+  
+  setHistoryMsg("⏳ Eliminando historial de proyectos...");
+  
+  try {
+    const { error } = await sb.from("project_history").delete().neq("id", "00000000-0000-0000-0000-000000000000");
+    if (error) throw error;
+    
+    setHistoryMsg("✅ Historial de proyectos eliminado correctamente.");
+    await loadHistory();
+  } catch (err) {
+    setHistoryMsg(`❌ Error: ${err.message}`, true);
+  }
+}
+
+async function clearSettingsHistory() {
+  const ok = await confirmAction({
+    message: "⚠️ ¿Eliminar TODO el historial de settings? Esta acción no se puede deshacer.",
+    type: "delete",
+    double: true,
+  });
+  if (!ok) return;
+  
+  setHistoryMsg("⏳ Eliminando historial de settings...");
+  
+  try {
+    const { error } = await sb.from("site_settings_history").delete().neq("id", "00000000-0000-0000-0000-000000000000");
+    if (error) throw error;
+    
+    setHistoryMsg("✅ Historial de settings eliminado correctamente.");
+    await loadHistory();
+  } catch (err) {
+    setHistoryMsg(`❌ Error: ${err.message}`, true);
+  }
+}
+
+function setHistoryMsg(msg, isError = false) {
+  const msgEl = document.getElementById("historyMsg");
+  if (!msgEl) return;
+  msgEl.textContent = msg;
+  msgEl.classList.remove("msg--success", "msg--error");
+  msgEl.classList.add(isError ? "msg--error" : "msg--success");
+  setTimeout(() => {
+    if (msgEl.textContent === msg) {
+      msgEl.textContent = "";
+      msgEl.classList.remove("msg--success", "msg--error");
+    }
+  }, 4000);
+}
+
+/* =========================
+   PAGINACIÓN PARA DESTACADOS
+========================= */
+let featuredProjectsPaginator = null;
+let allFeaturedProjects = [];
+
+async function loadFeaturedProjects() {
+  const container = document.getElementById("featuredProjectsList");
+  if (!container) return;
+  
+  container.innerHTML = '<div class="loading-skeleton"><div class="skeleton-line"></div><div class="skeleton-line"></div></div>';
+  
+  try {
+    const { data: projects, error } = await sb
+      .from("projects")
+      .select(`*, categories(name,slug)`)
+      .eq("active", true)
+      .in("status", ["published", "featured"])
+      .order("created_at", { ascending: false });
+    
+    if (error) throw error;
+    
+    allFeaturedProjects = projects || [];
+    renderFeaturedProjectsPaginated();
+  } catch (err) {
+    console.error("Error loading featured projects:", err);
+    container.innerHTML = `<div class="emptyState">⚠️ Error al cargar proyectos: ${err.message}</div>`;
+  }
+}
+
+function renderFeaturedProjectsPaginated() {
+  const container = document.getElementById("featuredProjectsList");
+  if (!container) return;
+  
+  if (!allFeaturedProjects.length) {
+    container.innerHTML = `<div class="emptyState">📭 No hay proyectos activos. Creá uno nuevo primero.</div>`;
+    const pagContainer = document.getElementById("featuredProjectsPagination");
+    if (pagContainer) pagContainer.style.display = "none";
+    return;
+  }
+  
+  if (!featuredProjectsPaginator) {
+    featuredProjectsPaginator = new Paginator({
+      items: allFeaturedProjects,
+      itemsPerPage: 6,
+      currentPage: 1,
+      onPageChange: (paginatedItems) => {
+        renderFeaturedProjectsPage(paginatedItems);
+      },
+      containerId: "featuredProjectsPagination",
+    });
+  } else {
+    featuredProjectsPaginator.updateItems(allFeaturedProjects);
+  }
+  
+  featuredProjectsPaginator.setPage(1);
+}
+
+function renderFeaturedProjectsPage(projects) {
+  const container = document.getElementById("featuredProjectsList");
+  if (!container) return;
+  
+  if (!projects.length) {
+    container.innerHTML = `<div class="emptyState">📭 No hay proyectos para mostrar.</div>`;
+    return;
+  }
+  
+  container.innerHTML = projects.map(project => `
+    <div class="featured-project-card" data-project-id="${project.id}">
+      <img src="${escapeHtml(project.image_url || '')}" alt="${escapeHtml(project.title)}" onerror="this.src='https://placehold.co/60x60?text=No+image'">
+      <div class="featured-project-info">
+        <div class="featured-project-title">${escapeHtml(project.title)}</div>
+        <div class="featured-project-cat">${escapeHtml(project.categories?.name || "Sin categoría")}</div>
+      </div>
+      <div class="featured-project-actions">
+        <button class="star-btn ${project.featured ? 'active' : ''}" data-project-id="${project.id}" data-featured="${project.featured}" title="${project.featured ? 'Quitar destacado' : 'Destacar proyecto'}">
+          ${project.featured ? '★' : '☆'}
+        </button>
+      </div>
+    </div>
+  `).join("");
+  
+  container.querySelectorAll(".star-btn").forEach(btn => {
+    btn.addEventListener("click", async (e) => {
+      e.stopPropagation();
+      const projectId = btn.getAttribute("data-project-id");
+      const isFeatured = btn.getAttribute("data-featured") === "true";
+      await toggleProjectFeatured(projectId, !isFeatured);
+    });
+  });
+}
+
+async function toggleProjectFeatured(projectId, featured) {
+  const project = allFeaturedProjects.find(p => p.id === projectId);
+  if (!project) return;
+  
+  const actionText = featured ? "destacar" : "quitar destacado";
+  const ok = await confirmAction({
+    message: `¿${featured ? 'Destacar' : 'Quitar destacado de'} "${project.title}"?`,
+    type: "generic",
+  });
+  if (!ok) return;
+  
+  setFeaturedProjectsMsg(`⏳ ${featured ? 'Destacando' : 'Actualizando'}...`);
+  
+  try {
+    const { error } = await sb
+      .from("projects")
+      .update({ 
+        featured: featured,
+        status: featured ? "featured" : "published",
+        updated_at: new Date().toISOString()
+      })
+      .eq("id", projectId);
+    
+    if (error) throw error;
+    
+    setFeaturedProjectsMsg(`✅ Proyecto ${featured ? 'destacado' : 'quitado de destacados'} correctamente.`);
+    await loadFeaturedProjects();
+    await loadProjects();
+  } catch (err) {
+    setFeaturedProjectsMsg(`❌ Error: ${err.message}`, true);
+  }
+}
+
+function setFeaturedProjectsMsg(msg, isError = false) {
+  const msgEl = document.getElementById("featuredProjectsMsg");
+  if (!msgEl) return;
+  msgEl.textContent = msg;
+  msgEl.classList.remove("msg--success", "msg--error");
+  msgEl.classList.add(isError ? "msg--error" : "msg--success");
+  setTimeout(() => {
+    if (msgEl.textContent === msg) {
+      msgEl.textContent = "";
+      msgEl.classList.remove("msg--success", "msg--error");
+    }
+  }, 4000);
+}
