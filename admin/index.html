@@ -79,7 +79,7 @@
       box-shadow: 0 0 15px var(--cyan);
     }
 
-    /* Menú hamburguesa para admin - CERRADO POR DEFECTO */
+    /* Menú hamburguesa para admin */
     .sidebar-toggle {
       position: fixed;
       bottom: 20px;
@@ -112,29 +112,6 @@
 
     .sidebar__nav-section:first-of-type {
       margin-top: 0;
-    }
-
-    @media (max-width: 980px) {
-      .sidebar {
-        position: fixed;
-        left: -300px;
-        top: 0;
-        height: 100%;
-        z-index: 200;
-        transition: left 0.3s ease;
-        width: 280px;
-        border-radius: 0;
-        overflow-y: auto;
-      }
-      .sidebar.open {
-        left: 0;
-      }
-      .sidebar-toggle {
-        display: flex;
-      }
-      .adminLayout {
-        grid-template-columns: 1fr;
-      }
     }
 
     /* Estilos para la sección de destacados */
@@ -192,6 +169,109 @@
     .star-btn.active {
       color: #f5b042;
       text-shadow: 0 0 5px #f5b042;
+    }
+
+    /* Responsive para móvil */
+    @media (max-width: 980px) {
+      .sidebar {
+        position: fixed;
+        left: -300px;
+        top: 0;
+        height: 100%;
+        z-index: 200;
+        transition: left 0.3s ease;
+        width: 280px;
+        border-radius: 0;
+        overflow-y: auto;
+      }
+      .sidebar.open {
+        left: 0;
+      }
+      .sidebar-toggle {
+        display: flex;
+      }
+      .adminLayout {
+        grid-template-columns: 1fr;
+      }
+      .statsGrid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+      }
+      .filtersGrid, .filtersGrid--5 {
+        grid-template-columns: 1fr;
+      }
+      .reviews-table, .reviews-table tbody, .reviews-table tr, .reviews-table td {
+        display: block;
+        width: 100%;
+      }
+      .reviews-table thead {
+        display: none;
+      }
+      .reviews-table tr {
+        margin-bottom: 1rem;
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 0.5rem;
+      }
+      .reviews-table td {
+        padding: 0.5rem;
+        border: none;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .reviews-table td:before {
+        content: attr(data-label);
+        font-weight: 800;
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        color: var(--text-secondary);
+        min-width: 100px;
+      }
+      .featured-projects-grid {
+        grid-template-columns: 1fr;
+      }
+      .btn, .btn--small {
+        padding: 10px 16px;
+        min-height: 44px;
+      }
+      .action-btns {
+        justify-content: flex-end;
+        width: 100%;
+      }
+      .pagination {
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      .pagination button {
+        min-width: 40px;
+        min-height: 40px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .statsGrid {
+        grid-template-columns: 1fr;
+      }
+      .row {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .row .btn {
+        width: 100%;
+      }
+      .subPanel {
+        padding: 12px;
+      }
+      .listCard {
+        grid-template-columns: 1fr;
+      }
+      .listCard__thumb {
+        width: 100%;
+        height: 150px;
+      }
     }
   </style>
 </head>
@@ -320,6 +400,7 @@
         </div>
         <div id="featuredProjectsMsg" class="msg"></div>
         <div id="featuredProjectsList" class="featured-projects-grid"></div>
+        <div id="featuredProjectsPagination" class="pagination" style="display:none; margin-top: 1rem;"></div>
       </section>
 
       <section class="panel viewPanel" data-panel="projects" style="display:none">
@@ -407,9 +488,31 @@
       </section>
 
       <section class="panel viewPanel" data-panel="history" style="display:none">
-        <div class="row row--between row--wrap"><div><h2>📜 Historial</h2><p class="muted">Versiones previas y restauración segura.</p></div><div class="row row--wrap"><button id="historyRefreshBtn" class="btn btn--ghost" type="button">Actualizar</button></div></div>
-        <div class="subPanel"><h3>Historial de proyectos</h3><div id="projectHistoryList" class="stackList"></div><div id="projectHistoryPagination" class="pagination" style="display:none"></div></div>
-        <div class="subPanel"><h3>Historial de settings</h3><div id="settingsHistoryList" class="stackList"></div><div id="settingsHistoryPagination" class="pagination" style="display:none"></div></div>
+        <div class="row row--between row--wrap">
+          <div><h2>📜 Historial</h2><p class="muted">Versiones previas y restauración segura.</p></div>
+          <div class="row row--wrap">
+            <button id="historyRefreshBtn" class="btn btn--ghost" type="button">Actualizar</button>
+          </div>
+        </div>
+        <div id="historyMsg" class="msg"></div>
+        
+        <div class="subPanel">
+          <div class="row row--between row--wrap">
+            <h3>Historial de proyectos</h3>
+            <button id="clearProjectHistoryBtn" class="btn btn--danger btn--small" type="button">🗑️ Limpiar historial</button>
+          </div>
+          <div id="projectHistoryList" class="stackList"></div>
+          <div id="projectHistoryPagination" class="pagination" style="display:none"></div>
+        </div>
+        
+        <div class="subPanel">
+          <div class="row row--between row--wrap">
+            <h3>Historial de settings</h3>
+            <button id="clearSettingsHistoryBtn" class="btn btn--danger btn--small" type="button">🗑️ Limpiar historial</button>
+          </div>
+          <div id="settingsHistoryList" class="stackList"></div>
+          <div id="settingsHistoryPagination" class="pagination" style="display:none"></div>
+        </div>
       </section>
 
       <section class="panel viewPanel" data-panel="faqs" style="display:none">
@@ -528,6 +631,107 @@
     document.getElementById('darkThemeBtn')?.classList.add('is-active');
     document.getElementById('lightThemeBtn')?.classList.remove('is-active');
   });
+
+  // Función para limpiar historial de proyectos
+  async function clearProjectHistory() {
+    const ok = confirm("⚠️ ¿Eliminar TODO el historial de proyectos? Esta acción no se puede deshacer.");
+    if (!ok) return;
+    
+    const confirm2 = confirm("⚠️ Confirmación final: ¿Estás seguro de eliminar todo el historial de proyectos?");
+    if (!confirm2) return;
+    
+    const msgEl = document.getElementById("historyMsg");
+    if (msgEl) msgEl.textContent = "⏳ Eliminando historial de proyectos...";
+    
+    try {
+      const { error } = await sb.from("project_history").delete().neq("id", "00000000-0000-0000-0000-000000000000");
+      if (error) throw error;
+      
+      if (msgEl) {
+        msgEl.textContent = "✅ Historial de proyectos eliminado correctamente.";
+        msgEl.classList.add("msg--success");
+      }
+      if (typeof loadHistory === "function") await loadHistory();
+    } catch (err) {
+      if (msgEl) {
+        msgEl.textContent = `❌ Error: ${err.message}`;
+        msgEl.classList.add("msg--error");
+      }
+    }
+    setTimeout(() => {
+      if (msgEl) {
+        msgEl.textContent = "";
+        msgEl.classList.remove("msg--success", "msg--error");
+      }
+    }, 4000);
+  }
+
+  // Función para limpiar historial de settings
+  async function clearSettingsHistory() {
+    const ok = confirm("⚠️ ¿Eliminar TODO el historial de settings? Esta acción no se puede deshacer.");
+    if (!ok) return;
+    
+    const confirm2 = confirm("⚠️ Confirmación final: ¿Estás seguro de eliminar todo el historial de settings?");
+    if (!confirm2) return;
+    
+    const msgEl = document.getElementById("historyMsg");
+    if (msgEl) msgEl.textContent = "⏳ Eliminando historial de settings...";
+    
+    try {
+      const { error } = await sb.from("site_settings_history").delete().neq("id", "00000000-0000-0000-0000-000000000000");
+      if (error) throw error;
+      
+      if (msgEl) {
+        msgEl.textContent = "✅ Historial de settings eliminado correctamente.";
+        msgEl.classList.add("msg--success");
+      }
+      if (typeof loadHistory === "function") await loadHistory();
+    } catch (err) {
+      if (msgEl) {
+        msgEl.textContent = `❌ Error: ${err.message}`;
+        msgEl.classList.add("msg--error");
+      }
+    }
+    setTimeout(() => {
+      if (msgEl) {
+        msgEl.textContent = "";
+        msgEl.classList.remove("msg--success", "msg--error");
+      }
+    }, 4000);
+  }
+
+  // Event listeners para botones de limpiar historial
+  document.getElementById("clearProjectHistoryBtn")?.addEventListener("click", clearProjectHistory);
+  document.getElementById("clearSettingsHistoryBtn")?.addEventListener("click", clearSettingsHistory);
+
+  // Menú hamburguesa
+  function initSidebarToggle() {
+    const toggleBtn = document.getElementById("sidebarToggleBtn");
+    const sidebar = document.querySelector(".sidebar");
+    
+    if (!toggleBtn || !sidebar) return;
+    
+    toggleBtn.addEventListener("click", () => {
+      sidebar.classList.toggle("open");
+    });
+    
+    document.addEventListener("click", (e) => {
+      if (window.innerWidth <= 980) {
+        if (!sidebar.contains(e.target) && !toggleBtn.contains(e.target)) {
+          sidebar.classList.remove("open");
+        }
+      }
+    });
+    
+    document.querySelectorAll(".navBtn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        if (window.innerWidth <= 980) {
+          sidebar.classList.remove("open");
+        }
+      });
+    });
+  }
+  initSidebarToggle();
 
   // Verificar sesión
   setTimeout(() => {
