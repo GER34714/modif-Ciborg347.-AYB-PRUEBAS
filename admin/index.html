@@ -633,7 +633,7 @@
   });
 
   // Función para limpiar historial de proyectos
-  async function clearProjectHistory() {
+  window.clearProjectHistory = async function() {
     const ok = confirm("⚠️ ¿Eliminar TODO el historial de proyectos? Esta acción no se puede deshacer.");
     if (!ok) return;
     
@@ -664,10 +664,10 @@
         msgEl.classList.remove("msg--success", "msg--error");
       }
     }, 4000);
-  }
+  };
 
   // Función para limpiar historial de settings
-  async function clearSettingsHistory() {
+  window.clearSettingsHistory = async function() {
     const ok = confirm("⚠️ ¿Eliminar TODO el historial de settings? Esta acción no se puede deshacer.");
     if (!ok) return;
     
@@ -698,11 +698,11 @@
         msgEl.classList.remove("msg--success", "msg--error");
       }
     }, 4000);
-  }
+  };
 
   // Event listeners para botones de limpiar historial
-  document.getElementById("clearProjectHistoryBtn")?.addEventListener("click", clearProjectHistory);
-  document.getElementById("clearSettingsHistoryBtn")?.addEventListener("click", clearSettingsHistory);
+  document.getElementById("clearProjectHistoryBtn")?.addEventListener("click", window.clearProjectHistory);
+  document.getElementById("clearSettingsHistoryBtn")?.addEventListener("click", window.clearSettingsHistory);
 
   // Menú hamburguesa
   function initSidebarToggle() {
