@@ -69,8 +69,17 @@
     .btn--danger:hover {
       background: #dc2626;
     }
+    .btn--frontend {
+      background: linear-gradient(135deg, #00d4ff, #8b5cf6);
+      color: white;
+      margin-bottom: 1rem;
+    }
+    .btn--frontend:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 15px var(--cyan);
+    }
 
-    /* Menú hamburguesa para admin */
+    /* Menú hamburguesa para admin - CERRADO POR DEFECTO */
     .sidebar-toggle {
       position: fixed;
       bottom: 20px;
@@ -84,9 +93,25 @@
       font-size: 24px;
       cursor: pointer;
       box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-      display: none !important;
+      display: none;
       align-items: center;
       justify-content: center;
+    }
+
+    /* Separadores de sección en el menú */
+    .sidebar__nav-section {
+      margin-top: 1rem;
+      margin-bottom: 0.5rem;
+      padding-left: 0.5rem;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--cyan);
+      opacity: 0.7;
+    }
+
+    .sidebar__nav-section:first-of-type {
+      margin-top: 0;
     }
 
     @media (max-width: 980px) {
@@ -105,11 +130,68 @@
         left: 0;
       }
       .sidebar-toggle {
-        display: flex !important;
+        display: flex;
       }
       .adminLayout {
         grid-template-columns: 1fr;
       }
+    }
+
+    /* Estilos para la sección de destacados */
+    .featured-projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    .featured-project-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1rem;
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      transition: all 0.2s;
+    }
+    .featured-project-card:hover {
+      border-color: var(--cyan);
+      transform: translateY(-2px);
+    }
+    .featured-project-card img {
+      width: 60px;
+      height: 60px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+    .featured-project-info {
+      flex: 1;
+    }
+    .featured-project-title {
+      font-weight: bold;
+      margin-bottom: 0.25rem;
+    }
+    .featured-project-cat {
+      font-size: 0.7rem;
+      color: var(--text2);
+    }
+    .featured-project-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+    .star-btn {
+      background: transparent;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .star-btn:hover {
+      transform: scale(1.1);
+    }
+    .star-btn.active {
+      color: #f5b042;
+      text-shadow: 0 0 5px #f5b042;
     }
   </style>
 </head>
@@ -162,6 +244,10 @@
         <div class="sidebar__title">Panel B</div>
         <div class="sidebar__subtitle">Gestión de CIBORG 347</div>
       </div>
+      
+      <!-- Botón para ir al frontend -->
+      <button id="goToFrontendBtn" class="btn btn--frontend btn--block" style="margin-top: 1rem;">🌐 Ver sitio web →</button>
+      
       <div class="themeSelector">
         <span class="themeSelector__label">🎨 Tema</span>
         <div class="themeSelector__buttons">
@@ -169,21 +255,34 @@
           <button id="darkThemeBtn" class="themeBtn" data-theme="dark">🌙 Oscuro</button>
         </div>
       </div>
+      
       <nav class="sidebar__nav">
+        <!-- Sección: Contenido -->
+        <div class="sidebar__nav-section">📦 CONTENIDO</div>
         <button class="navBtn is-active" data-view="dashboard" type="button">Dashboard</button>
-        <button class="navBtn" data-view="projects" type="button">Proyectos</button>
-        <button class="navBtn" data-view="new-project" type="button">Nueva web</button>
-        <button class="navBtn" data-view="categories" type="button">Categorías</button>
-        <button class="navBtn" data-view="site-content" type="button">Contenido global</button>
-        <button class="navBtn" data-view="site-settings" type="button">Settings visuales</button>
-        <button class="navBtn" data-view="reviews-pending" type="button">⭐ Reseñas Pendientes <span id="pendingBadge" style="background:#ef4444; color:white; border-radius:20px; padding:2px 8px; font-size:10px; margin-left:8px; display:none;">0</span></button>
-        <button class="navBtn" data-view="reviews-approved" type="button">✅ Reseñas Aprobadas</button>
+        <button class="navBtn" data-view="featured-projects" type="button">⭐ Proyectos Destacados</button>
+        <button class="navBtn" data-view="projects" type="button">📁 Todos los Proyectos</button>
+        <button class="navBtn" data-view="new-project" type="button">✨ Nueva web</button>
+        <button class="navBtn" data-view="categories" type="button">📂 Categorías</button>
         <button class="navBtn" data-view="plans" type="button">💰 Planes</button>
-        <button class="navBtn" data-view="history" type="button">Historial</button>
-        <button class="navBtn" data-view="faqs" type="button">FAQs</button>
+        <button class="navBtn" data-view="faqs" type="button">❓ FAQs</button>
+        
+        <!-- Sección: Apariencia -->
+        <div class="sidebar__nav-section">🎨 APARIENCIA</div>
+        <button class="navBtn" data-view="site-content" type="button">📄 Contenido global</button>
+        <button class="navBtn" data-view="site-settings" type="button">⚙️ Settings visuales</button>
+        
+        <!-- Sección: Reseñas -->
+        <div class="sidebar__nav-section">⭐ RESEÑAS</div>
+        <button class="navBtn" data-view="reviews-pending" type="button">⏳ Pendientes <span id="pendingBadge" style="background:#ef4444; color:white; border-radius:20px; padding:2px 8px; font-size:10px; margin-left:8px; display:none;">0</span></button>
+        <button class="navBtn" data-view="reviews-approved" type="button">✅ Aprobadas</button>
+        
+        <!-- Sección: Sistema -->
+        <div class="sidebar__nav-section">🔧 SISTEMA</div>
+        <button class="navBtn" data-view="history" type="button">📜 Historial</button>
       </nav>
       <div class="sidebar__foot">
-        <button id="quickNewProjectBtn" class="btn btn--primary btn--block" type="button">Cargar nueva web</button>
+        <button id="quickNewProjectBtn" class="btn btn--primary btn--block" type="button">➕ Cargar nueva web</button>
       </div>
     </aside>
 
@@ -211,8 +310,20 @@
         </div>
       </section>
 
+      <!-- PANEL DE PROYECTOS DESTACADOS -->
+      <section class="panel viewPanel" data-panel="featured-projects" style="display:none">
+        <div class="row row--between row--wrap">
+          <div><h2>⭐ Proyectos Destacados</h2><p class="muted">Gestioná qué proyectos aparecen como destacados en el frontend.</p></div>
+          <div class="row row--wrap">
+            <button id="featuredRefreshBtn" class="btn btn--ghost" type="button">Actualizar</button>
+          </div>
+        </div>
+        <div id="featuredProjectsMsg" class="msg"></div>
+        <div id="featuredProjectsList" class="featured-projects-grid"></div>
+      </section>
+
       <section class="panel viewPanel" data-panel="projects" style="display:none">
-        <div class="row row--between row--wrap"><div><h2>Proyectos</h2><p class="muted">Listado completo</p></div><div class="row row--wrap"><button id="projectsRefreshBtn" class="btn btn--ghost" type="button">Actualizar</button><button id="projectsNewBtn" class="btn btn--primary" type="button">Nueva web</button></div></div>
+        <div class="row row--between row--wrap"><div><h2>📁 Todos los Proyectos</h2><p class="muted">Listado completo</p></div><div class="row row--wrap"><button id="projectsRefreshBtn" class="btn btn--ghost" type="button">Actualizar</button><button id="projectsNewBtn" class="btn btn--primary" type="button">Nueva web</button></div></div>
         <div class="filtersGrid filtersGrid--5">
           <div class="field"><label for="projectSearchInput">Buscar</label><input id="projectSearchInput" type="search" placeholder="Título..." /></div>
           <div class="field"><label for="projectCategoryFilter">Categoría</label><select id="projectCategoryFilter"><option value="__all__">Todas</option></select></div>
@@ -226,7 +337,7 @@
       </section>
 
       <section class="panel viewPanel" data-panel="new-project" style="display:none">
-        <div class="row row--between row--wrap"><div><h2 id="projectFormTitle">Nueva web</h2><p class="muted">Cargá una demo nueva o editá una existente.</p></div><div class="row row--wrap"><button id="projectFormResetBtn" class="btn btn--ghost" type="button">Limpiar</button><button id="projectDuplicateBtn" class="btn btn--ghost" type="button" style="display:none">Duplicar</button></div></div>
+        <div class="row row--between row--wrap"><div><h2 id="projectFormTitle">✨ Nueva web</h2><p class="muted">Cargá una demo nueva o editá una existente.</p></div><div class="row row--wrap"><button id="projectFormResetBtn" class="btn btn--ghost" type="button">Limpiar</button><button id="projectDuplicateBtn" class="btn btn--ghost" type="button" style="display:none">Duplicar</button></div></div>
         <div class="grid2"><div class="field"><label for="projectImageUrlInput">URL de imagen</label><input id="projectImageUrlInput" type="url" placeholder="https://..." /><small class="muted">Podés pegar URL manual o subir imagen.</small></div><div class="field"><label>Preview</label><div class="preview preview--large"><img id="projectPreviewImg" alt="Preview" /></div></div></div>
         <div class="subPanel"><h3>Subida de imagen</h3><div class="grid2"><div class="field"><label for="projectImageFileInput">Elegir imagen</label><input id="projectImageFileInput" type="file" accept="image/*" /><small class="muted">Seleccioná una imagen y tocá subir.</small></div><div class="field"><label>&nbsp;</label><button id="projectUploadBtn" class="btn btn--ghost" type="button">Subir imagen</button></div></div><div id="projectUploadMsg" class="msg"></div></div>
         <div class="grid2"><div class="field"><label for="projectTitleInput">Título</label><input id="projectTitleInput" type="text" placeholder="Nombre de la web/demo" /></div><div class="field"><label for="projectDemoUrlInput">Link demo</label><input id="projectDemoUrlInput" type="url" placeholder="https://..." /></div></div>
@@ -241,25 +352,25 @@
       </section>
 
       <section class="panel viewPanel" data-panel="categories" style="display:none">
-        <div class="row row--between row--wrap"><div><h2>Categorías</h2><p class="muted">Administrá las categorías del portfolio.</p></div><div class="row row--wrap"><button id="categoriesRefreshBtn" class="btn btn--ghost" type="button">Actualizar</button></div></div>
+        <div class="row row--between row--wrap"><div><h2>📂 Categorías</h2><p class="muted">Administrá las categorías del portfolio.</p></div><div class="row row--wrap"><button id="categoriesRefreshBtn" class="btn btn--ghost" type="button">Actualizar</button></div></div>
         <div class="subPanel"><h3>Nueva categoría</h3><div class="grid3"><div class="field"><label for="categoryNameInput">Nombre</label><input id="categoryNameInput" type="text" placeholder="Ej: Estética" /></div><div class="field"><label for="categorySlugInput">Slug</label><input id="categorySlugInput" type="text" placeholder="ej-estetica" /></div><div class="field"><label for="categoryOrderInput">Orden</label><input id="categoryOrderInput" type="number" step="1" value="0" /></div></div><div class="togglesGrid togglesGrid--single"><label class="switchRow"><input id="categoryActiveInput" type="checkbox" checked /><span>Activa</span></label></div><div class="actions"><button id="categorySaveBtn" class="btn btn--primary" type="button">Guardar categoría</button><button id="categoryResetBtn" class="btn btn--ghost" type="button">Limpiar</button></div><div id="categoriesMsg" class="msg"></div></div>
         <div class="subPanel"><h3>Listado de categorías</h3><div id="categoriesList" class="stackList"></div></div>
       </section>
 
       <section class="panel viewPanel" data-panel="site-content" style="display:none">
-        <div class="row row--between row--wrap"><div><h2>Contenido global</h2><p class="muted">Editá los bloques fijos editoriales del frente A.</p></div><div class="row row--wrap"><button id="siteContentRefreshBtn" class="btn btn--ghost" type="button">Actualizar</button></div></div>
+        <div class="row row--between row--wrap"><div><h2>📄 Contenido global</h2><p class="muted">Editá los bloques fijos editoriales del frente A.</p></div><div class="row row--wrap"><button id="siteContentRefreshBtn" class="btn btn--ghost" type="button">Actualizar</button></div></div>
         <div class="subPanel"><div class="field"><label for="siteContentSelect">Bloque</label><select id="siteContentSelect"><option value="">Elegir bloque...</option></select></div><div class="grid2"><div class="field"><label for="siteContentTitleInput">Título</label><input id="siteContentTitleInput" type="text" /></div><div class="field"><label for="siteContentSubtitleInput">Subtítulo</label><input id="siteContentSubtitleInput" type="text" /></div></div><div class="field"><label for="siteContentBodyInput">Contenido</label><textarea id="siteContentBodyInput" rows="5"></textarea></div><div class="grid3"><div class="field"><label for="siteContentImageUrlInput">URL de imagen</label><input id="siteContentImageUrlInput" type="url" placeholder="https://..." /></div><div class="field"><label for="siteContentCtaLabelInput">Texto CTA</label><input id="siteContentCtaLabelInput" type="text" /></div><div class="field"><label for="siteContentCtaUrlInput">URL CTA</label><input id="siteContentCtaUrlInput" type="text" /></div></div><div class="grid2"><div class="field"><label for="siteContentOrderInput">Orden</label><input id="siteContentOrderInput" type="number" step="1" value="0" /></div><div class="togglesGrid togglesGrid--single"><label class="switchRow"><input id="siteContentActiveInput" type="checkbox" checked /><span>Activo</span></label></div></div><div class="actions"><button id="siteContentSaveBtn" class="btn btn--primary" type="button">Guardar bloque</button></div><div id="siteContentMsg" class="msg"></div></div>
       </section>
 
       <section class="panel viewPanel" data-panel="site-settings" style="display:none">
-        <div class="row row--between row--wrap"><div><h2>Settings visuales</h2><p class="muted">Configuración global visual y de contacto del frente A.</p></div><div class="row row--wrap"><button id="siteSettingsRefreshBtn" class="btn btn--ghost" type="button">Actualizar</button></div></div>
+        <div class="row row--between row--wrap"><div><h2>⚙️ Settings visuales</h2><p class="muted">Configuración global visual y de contacto del frente A.</p></div><div class="row row--wrap"><button id="siteSettingsRefreshBtn" class="btn btn--ghost" type="button">Actualizar</button></div></div>
         <div class="subPanel"><h3>Marca y hero</h3><div class="grid2"><div class="field"><label for="siteTitleInput">Título del sitio</label><input id="siteTitleInput" type="text" /></div><div class="field"><label for="siteTaglineInput">Tagline</label><input id="siteTaglineInput" type="text" /></div></div><div class="grid2"><div class="field"><label for="heroBadgeInput">Badge hero</label><input id="heroBadgeInput" type="text" /></div><div class="field"><label for="heroTitleInput">Título hero</label><input id="heroTitleInput" type="text" /></div></div><div class="field"><label for="heroSubtitleInput">Subtítulo hero</label><textarea id="heroSubtitleInput" rows="3"></textarea></div><div class="grid2"><div class="field"><label for="heroCtaLabelInput">Texto CTA hero</label><input id="heroCtaLabelInput" type="text" /></div><div class="field"><label for="heroCtaUrlInput">URL CTA hero</label><input id="heroCtaUrlInput" type="text" /></div></div></div>
         <div class="subPanel"><h3>Assets y contacto</h3><div class="grid2"><div class="field"><label for="logoUrlInput">Logo principal</label><input id="logoUrlInput" type="url" /></div><div class="field"><label for="heroLogoUrlInput">Logo hero</label><input id="heroLogoUrlInput" type="url" /></div></div><div class="grid2"><div class="field"><label for="footerLogoUrlInput">Logo footer</label><input id="footerLogoUrlInput" type="url" /></div><div class="field"><label for="faviconUrlInput">Favicon</label><input id="faviconUrlInput" type="url" /></div></div><div class="grid2"><div class="field"><label for="backgroundImageUrlInput">Background general</label><input id="backgroundImageUrlInput" type="url" /></div><div class="field"><label for="heroImageUrlInput">Imagen hero</label><input id="heroImageUrlInput" type="url" /></div></div><div class="grid2"><div class="field"><label for="heroOverlayUrlInput">Overlay hero</label><input id="heroOverlayUrlInput" type="url" /></div><div class="field"><label for="heroVideoUrlInput">Video hero</label><input id="heroVideoUrlInput" type="url" /></div></div><div class="grid2"><div class="field"><label for="whatsappNumberInput">WhatsApp</label><input id="whatsappNumberInput" type="text" placeholder="54911..." /></div><div class="field"><label for="emailContactInput">Email</label><input id="emailContactInput" type="email" /></div></div><div class="grid3"><div class="field"><label for="instagramUrlInput">Instagram</label><input id="instagramUrlInput" type="url" /></div><div class="field"><label for="facebookUrlInput">Facebook</label><input id="facebookUrlInput" type="url" /></div><div class="field"><label for="tiktokUrlInput">TikTok</label><input id="tiktokUrlInput" type="url" /></div></div><div class="togglesGrid togglesGrid--single"><label class="switchRow"><input id="useHeroVideoInput" type="checkbox" /><span>Usar video en hero</span></label><label class="switchRow"><input id="useBackgroundImageInput" type="checkbox" /><span>Usar background global</span></label></div><div class="actions"><button id="siteSettingsSaveBtn" class="btn btn--primary" type="button">Guardar settings</button></div><div id="siteSettingsMsg" class="msg"></div></div>
       </section>
 
       <section class="panel viewPanel" data-panel="reviews-pending" style="display:none">
         <div class="row row--between row--wrap">
-          <div><h2>⭐ Reseñas Pendientes</h2><p class="muted">Moderá las reseñas que los usuarios envían desde el frontend.</p></div>
+          <div><h2>⏳ Reseñas Pendientes</h2><p class="muted">Moderá las reseñas que los usuarios envían desde el frontend.</p></div>
           <div class="row row--wrap"><button id="reviewsRefreshBtn" class="btn btn--ghost" type="button">Actualizar</button></div>
         </div>
         <div class="pending-reviews-stats"><div class="stat-card-pending"><span>📝 Pendientes</span><strong id="pendingCount">0</strong></div></div>
@@ -296,13 +407,13 @@
       </section>
 
       <section class="panel viewPanel" data-panel="history" style="display:none">
-        <div class="row row--between row--wrap"><div><h2>Historial</h2><p class="muted">Versiones previas y restauración segura.</p></div><div class="row row--wrap"><button id="historyRefreshBtn" class="btn btn--ghost" type="button">Actualizar</button></div></div>
+        <div class="row row--between row--wrap"><div><h2>📜 Historial</h2><p class="muted">Versiones previas y restauración segura.</p></div><div class="row row--wrap"><button id="historyRefreshBtn" class="btn btn--ghost" type="button">Actualizar</button></div></div>
         <div class="subPanel"><h3>Historial de proyectos</h3><div id="projectHistoryList" class="stackList"></div><div id="projectHistoryPagination" class="pagination" style="display:none"></div></div>
         <div class="subPanel"><h3>Historial de settings</h3><div id="settingsHistoryList" class="stackList"></div><div id="settingsHistoryPagination" class="pagination" style="display:none"></div></div>
       </section>
 
       <section class="panel viewPanel" data-panel="faqs" style="display:none">
-        <div class="row row--between row--wrap"><div><h2>FAQs</h2><p class="muted">Preguntas frecuentes del sitio.</p></div><div class="row row--wrap"><button id="faqsRefreshBtn" class="btn btn--ghost" type="button">Actualizar</button></div></div>
+        <div class="row row--between row--wrap"><div><h2>❓ FAQs</h2><p class="muted">Preguntas frecuentes del sitio.</p></div><div class="row row--wrap"><button id="faqsRefreshBtn" class="btn btn--ghost" type="button">Actualizar</button></div></div>
         <div class="subPanel"><h3>Nueva FAQ</h3><div class="field"><label for="faqQuestionInput">Pregunta</label><input id="faqQuestionInput" type="text" placeholder="¿Cómo trabajás?" /></div><div class="field"><label for="faqAnswerInput">Respuesta</label><textarea id="faqAnswerInput" rows="4" placeholder="Respuesta..."></textarea></div><div class="grid2"><div class="field"><label for="faqOrderInput">Orden</label><input id="faqOrderInput" type="number" step="1" value="0" /></div><div class="togglesGrid togglesGrid--single"><label class="switchRow"><input id="faqActiveInput" type="checkbox" checked /><span>Activa</span></label></div></div><div class="actions"><button id="faqSaveBtn" class="btn btn--primary" type="button">Guardar FAQ</button><button id="faqResetBtn" class="btn btn--ghost" type="button">Limpiar</button></div><div id="faqsMsg" class="msg"></div></div>
         <div class="subPanel"><h3>Listado de FAQs</h3><div id="faqsList" class="stackList"></div></div>
       </section>
@@ -368,7 +479,7 @@
 
 <script>
   // ============================================
-  // CONFIGURACIÓN INLINE (reemplaza a config.js)
+  // CONFIGURACIÓN INLINE
   // ============================================
   window.CIBORG_CONFIG = {
     WHATSAPP_NUMBER: "5491164499481",
@@ -376,24 +487,19 @@
     SUPABASE_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZoeGN1bXdoZ3RmaXJ6bm56bmp4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc5OTYyNzEsImV4cCI6MjA4MzU3MjI3MX0.7z1B099L4yrA9k1JxwvYGCABzqiqYtkUClI3E8wQ2zA"
   };
 
-  // ============================================
-  // INICIALIZAR SUPABASE (ANTES de cargar app.js)
-  // ============================================
   const SUPABASE_URL = window.CIBORG_CONFIG.SUPABASE_URL;
   const SUPABASE_KEY = window.CIBORG_CONFIG.SUPABASE_KEY;
   const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
   let currentUser = null;
-</script>
 
-<!-- ============================================ -->
-<!-- CARGAR app.js (DESPUÉS de definir sb) -->
-<!-- ============================================ -->
-<script src="./app.js"></script>
+  // Botón para ir al frontend
+  const goToFrontendBtn = document.getElementById("goToFrontendBtn");
+  if (goToFrontendBtn) {
+    goToFrontendBtn.addEventListener("click", () => {
+      window.open("https://ciborg347.com/", "_blank");
+    });
+  }
 
-<!-- ============================================ -->
-<!-- INICIALIZACIÓN DE TEMA Y SESIÓN -->
-<!-- ============================================ -->
-<script>
   // Tema
   function initTheme() {
     const saved = localStorage.getItem('admin-theme');
@@ -423,7 +529,7 @@
     document.getElementById('lightThemeBtn')?.classList.remove('is-active');
   });
 
-  // Verificar sesión (esperar a que app.js cargue sus funciones)
+  // Verificar sesión
   setTimeout(() => {
     if (typeof sb !== 'undefined') {
       sb.auth.getSession().then(({ data: { session } }) => {
@@ -435,6 +541,7 @@
           if (typeof loadAll === 'function') loadAll();
           if (typeof loadPendingReviews === 'function') loadPendingReviews();
           if (typeof loadPlansAdmin === 'function') loadPlansAdmin();
+          if (typeof loadFeaturedProjects === 'function') loadFeaturedProjects();
         }
       }).catch(err => console.error("Error de sesión:", err));
     } else {
@@ -442,5 +549,7 @@
     }
   }, 500);
 </script>
+
+<script src="./app.js"></script>
 </body>
 </html>
