@@ -263,42 +263,8 @@
     .pagination button.active { background: var(--grad); color: white; border-color: transparent; }
     .pagination button:disabled { opacity: 0.4; cursor: not-allowed; }
 
-    /* MENÚ HAMBURGUESA - MEJORADO */
-    .sidebar-toggle {
-      position: fixed;
-      bottom: 24px;
-      left: 24px;
-      z-index: 1000;
-      background: var(--grad);
-      border: none;
-      border-radius: 50%;
-      width: 60px;
-      height: 60px;
-      font-size: 30px;
-      cursor: pointer;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.2s ease;
-    }
-    .sidebar-toggle:active { transform: scale(0.95); }
-
-    /* ===== RESPONSIVE MÓVIL MEJORADO ===== */
+    /* RESPONSIVE MÓVIL MEJORADO - SIN DUPLICAR EL MENÚ HAMBURGUESA */
     @media (max-width: 980px) {
-      .sidebar-toggle { display: flex; }
-      .sidebar {
-        position: fixed;
-        left: -320px;
-        top: 0;
-        width: 280px;
-        height: 100%;
-        z-index: 1001;
-        border-radius: 0;
-        transition: left 0.3s ease;
-        overflow-y: auto;
-      }
-      .sidebar.open { left: 0; }
       .adminLayout { grid-template-columns: 1fr; }
       .statsGrid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
       .filtersGrid, .filtersGrid--5 { grid-template-columns: 1fr; gap: 12px; }
@@ -679,7 +645,7 @@
   const goToFrontendBtn = document.getElementById("goToFrontendBtn");
   if (goToFrontendBtn) {
     goToFrontendBtn.addEventListener("click", () => {
-      window.open("https://ciborg347.com/", "_blank");
+      window.open("https://ciborg347.onrender.com/", "_blank");
     });
   }
 
@@ -711,106 +677,6 @@
     document.getElementById('darkThemeBtn')?.classList.add('is-active');
     document.getElementById('lightThemeBtn')?.classList.remove('is-active');
   });
-
-  // Función para limpiar historial de proyectos
-  window.clearProjectHistory = async function() {
-    const ok = confirm("⚠️ ¿Eliminar TODO el historial de proyectos? Esta acción no se puede deshacer.");
-    if (!ok) return;
-    const confirm2 = confirm("⚠️ Confirmación final: ¿Estás seguro?");
-    if (!confirm2) return;
-    const msgEl = document.getElementById("historyMsg");
-    if (msgEl) msgEl.textContent = "⏳ Eliminando historial de proyectos...";
-    try {
-      const { error } = await sb.from("project_history").delete().neq("id", "00000000-0000-0000-0000-000000000000");
-      if (error) throw error;
-      if (msgEl) {
-        msgEl.textContent = "✅ Historial de proyectos eliminado correctamente.";
-        msgEl.classList.add("msg--success");
-      }
-      if (typeof loadHistory === "function") await loadHistory();
-    } catch (err) {
-      if (msgEl) {
-        msgEl.textContent = `❌ Error: ${err.message}`;
-        msgEl.classList.add("msg--error");
-      }
-    }
-    setTimeout(() => {
-      if (msgEl) {
-        msgEl.textContent = "";
-        msgEl.classList.remove("msg--success", "msg--error");
-      }
-    }, 4000);
-  };
-
-  // Función para limpiar historial de settings
-  window.clearSettingsHistory = async function() {
-    const ok = confirm("⚠️ ¿Eliminar TODO el historial de settings? Esta acción no se puede deshacer.");
-    if (!ok) return;
-    const confirm2 = confirm("⚠️ Confirmación final: ¿Estás seguro?");
-    if (!confirm2) return;
-    const msgEl = document.getElementById("historyMsg");
-    if (msgEl) msgEl.textContent = "⏳ Eliminando historial de settings...";
-    try {
-      const { error } = await sb.from("site_settings_history").delete().neq("id", "00000000-0000-0000-0000-000000000000");
-      if (error) throw error;
-      if (msgEl) {
-        msgEl.textContent = "✅ Historial de settings eliminado correctamente.";
-        msgEl.classList.add("msg--success");
-      }
-      if (typeof loadHistory === "function") await loadHistory();
-    } catch (err) {
-      if (msgEl) {
-        msgEl.textContent = `❌ Error: ${err.message}`;
-        msgEl.classList.add("msg--error");
-      }
-    }
-    setTimeout(() => {
-      if (msgEl) {
-        msgEl.textContent = "";
-        msgEl.classList.remove("msg--success", "msg--error");
-      }
-    }, 4000);
-  };
-
-  // Event listeners para botones de limpiar historial
-  document.getElementById("clearProjectHistoryBtn")?.addEventListener("click", window.clearProjectHistory);
-  document.getElementById("clearSettingsHistoryBtn")?.addEventListener("click", window.clearSettingsHistory);
-
-  // Menú hamburguesa - MEJORADO
-  function initSidebarToggle() {
-    const toggleBtn = document.getElementById("sidebarToggleBtn");
-    const sidebar = document.querySelector(".sidebar");
-    
-    if (!toggleBtn || !sidebar) return;
-    
-    toggleBtn.addEventListener("click", (e) => {
-      e.stopPropagation();
-      sidebar.classList.toggle("open");
-    });
-    
-    document.addEventListener("click", (e) => {
-      if (window.innerWidth <= 980 && sidebar.classList.contains("open")) {
-        if (!sidebar.contains(e.target) && !toggleBtn.contains(e.target)) {
-          sidebar.classList.remove("open");
-        }
-      }
-    });
-    
-    document.querySelectorAll(".navBtn").forEach(btn => {
-      btn.addEventListener("click", () => {
-        if (window.innerWidth <= 980) {
-          sidebar.classList.remove("open");
-        }
-      });
-    });
-    
-    window.addEventListener("resize", () => {
-      if (window.innerWidth > 980 && sidebar.classList.contains("open")) {
-        sidebar.classList.remove("open");
-      }
-    });
-  }
-  initSidebarToggle();
 
   // Verificar sesión
   setTimeout(() => {
