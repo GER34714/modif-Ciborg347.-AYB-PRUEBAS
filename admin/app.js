@@ -23,6 +23,19 @@ let editingFaqId = null;
 let projectsPaginator = null;
 let projectHistoryPaginator = null;
 let settingsHistoryPaginator = null;
+let plansPaginator = null;
+let approvedReviewsPaginator = null;
+
+// Variables para reseñas
+let reviewsData = [];
+let approvedReviewsData = [];
+let currentEditReviewId = null;
+let notificationCheckInterval = null;
+let lastPendingCount = 0;
+
+// Variables para planes
+let plansData = [];
+let editingPlanId = null;
 
 // Elementos DOM (declarados ANTES de usarlos)
 const navBtns = document.querySelectorAll(".navBtn");
@@ -559,6 +572,7 @@ async function loadAll() {
     loadSiteSettings(),
     loadHistory(),
   ]);
+  if (document.getElementById("plansList")) await loadPlansAdmin();
 }
 
 /* =========================
@@ -1653,9 +1667,8 @@ navBtns.forEach(btn => {
 });
 
 /* =========================
-   REVIEWS (RESEÑAS) - AL FINAL DE TODO
+   REVIEWS (RESEÑAS) - MEJORADO
 ========================= */
-let reviewsData = [];
 
 async function loadPendingReviews() {
   const container = document.getElementById("reviewsPendingList");
@@ -1691,6 +1704,15 @@ function updatePendingStats() {
   const pendingCountEl = document.getElementById("pendingCount");
   if (pendingCountEl) {
     pendingCountEl.textContent = pendingCount;
+  }
+  const pendingBadge = document.getElementById("pendingBadge");
+  if (pendingBadge) {
+    if (pendingCount > 0) {
+      pendingBadge.textContent = pendingCount;
+      pendingBadge.style.display = "inline-block";
+    } else {
+      pendingBadge.style.display = "none";
+    }
   }
 }
 
@@ -1752,10 +1774,11 @@ function renderPendingReviews() {
               <small>${formatDate(review.created_at)}</small>
             </td>
             <td data-label="Acciones" class="action-btns">
+              <button class="btn btn--small btn--ghost" data-edit-review="${review.id}" style="border-color:var(--cyan);">✏️ Editar</button>
               <button class="btn btn--success btn--small" data-approve-review="${review.id}">✅ Aprobar</button>
               <button class="btn btn--danger btn--small" data-reject-review="${review.id}">❌ Rechazar</button>
-            </td>
-          </tr>
+             </td>
+           </tr>
         `).join("")}
       </tbody>
     </table>
@@ -1772,6 +1795,14 @@ function renderPendingReviews() {
     btn.addEventListener("click", async () => {
       const id = btn.getAttribute("data-reject-review");
       await rejectReview(id);
+    });
+  });
+  
+  container.querySelectorAll("[data-edit-review]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const id = btn.getAttribute("data-edit-review");
+      const review = reviewsData.find(r => String(r.id) === String(id));
+      if (review) openEditModal(review);
     });
   });
 }
@@ -1802,6 +1833,8 @@ async function approveReview(reviewId) {
   
   setReviewsMsg("✅ Reseña aprobada y publicada correctamente.");
   await loadPendingReviews();
+  if (typeof loadApprovedReviews === "function") await loadApprovedReviews();
+  checkNewReviewsNotification();
 }
 
 async function rejectReview(reviewId) {
@@ -1826,32 +1859,667 @@ async function rejectReview(reviewId) {
   
   setReviewsMsg("❌ Reseña rechazada y eliminada.");
   await loadPendingReviews();
+  if (typeof loadApprovedReviews === "function") await loadApprovedReviews();
+  checkNewReviewsNotification();
 }
 
-// Guardar referencia original de loadAll
-const originalLoadAll = loadAll;
-loadAll = async function() {
-  await originalLoadAll();
-  if (document.getElementById("reviewsPendingList")) {
-    await loadPendingReviews();
+// NOTIFICACIONES VISUALES
+async function checkNewReviewsNotification() {
+  if (!sb || !currentUserEmail) return;
+  
+  try {
+    const { data, error } = await sb
+      .from("reviews")
+      .select("id", { count: "exact", head: true })
+      .eq("status", "pending");
+    
+    if (error) throw error;
+    
+    const currentCount = data?.length || 0;
+    
+    if (pendingBadge) {
+      if (currentCount > 0) {
+        pendingBadge.textContent = currentCount;
+        pendingBadge.style.display = "inline-block";
+      } else {
+        pendingBadge.style.display = "none";
+      }
+    }
+    
+    if (currentCount > lastPendingCount && lastPendingCount > 0) {
+      mostrarNotificacion(`✨ Tienes ${currentCount - lastPendingCount} reseña(s) nueva(s) para moderar`);
+    }
+    
+    lastPendingCount = currentCount;
+    
+  } catch (err) {
+    console.error("Error checking reviews:", err);
   }
-};
+}
 
-// Guardar referencia original de switchView
-const originalSwitchView = switchView;
-switchView = function(view) {
-  originalSwitchView(view);
-  if (view === "reviews-pending" && document.getElementById("reviewsPendingList")) {
-    setTimeout(() => loadPendingReviews(), 100);
+function mostrarNotificacion(mensaje) {
+  const toast = document.createElement("div");
+  toast.style.cssText = `
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: linear-gradient(135deg, #00d4ff, #8b5cf6);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    font-weight: bold;
+    z-index: 9999;
+    animation: slideIn 0.3s ease;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  `;
+  toast.textContent = `🔔 ${mensaje}`;
+  
+  if (!document.querySelector("#notificationStyle")) {
+    const style = document.createElement("style");
+    style.id = "notificationStyle";
+    style.textContent = `
+      @keyframes slideIn {
+        from { transform: translateX(100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+      }
+      @keyframes slideOut {
+        from { transform: translateX(0); opacity: 1; }
+        to { transform: translateX(100%); opacity: 0; }
+      }
+    `;
+    document.head.appendChild(style);
   }
-};
+  
+  document.body.appendChild(toast);
+  
+  toast.addEventListener("click", () => {
+    if (typeof switchView === "function") {
+      switchView("reviews-pending");
+    }
+    cerrarNotificacion(toast);
+  });
+  
+  setTimeout(() => cerrarNotificacion(toast), 8000);
+}
 
-// Botón de refresh de reseñas
-const reviewsRefreshBtn = document.getElementById("reviewsRefreshBtn");
-if (reviewsRefreshBtn) {
-  reviewsRefreshBtn.addEventListener("click", () => {
-    loadPendingReviews();
+function cerrarNotificacion(toast) {
+  toast.style.animation = "slideOut 0.3s ease";
+  setTimeout(() => toast.remove(), 300);
+}
+
+function iniciarNotificaciones() {
+  if (notificationCheckInterval) clearInterval(notificationCheckInterval);
+  checkNewReviewsNotification();
+  notificationCheckInterval = setInterval(checkNewReviewsNotification, 15000);
+}
+
+// PANEL DE RESEÑAS APROBADAS
+async function loadApprovedReviews() {
+  const container = document.getElementById("reviewsApprovedList");
+  if (!container) return;
+  
+  container.innerHTML = '<div class="loading-skeleton"><div class="skeleton-line"></div><div class="skeleton-line"></div></div>';
+  
+  try {
+    const { data, error } = await sb
+      .from("reviews")
+      .select("*")
+      .eq("status", "approved")
+      .order("approved_at", { ascending: false });
+    
+    if (error) throw error;
+    
+    approvedReviewsData = data || [];
+    renderApprovedReviews();
+  } catch (err) {
+    console.error("Error loading approved reviews:", err);
+    container.innerHTML = `<div class="emptyState">⚠️ Error al cargar reseñas aprobadas.</div>`;
+  }
+}
+
+function renderApprovedReviews() {
+  let filtered = [...approvedReviewsData];
+  const searchTerm = document.getElementById("approvedSearchInput")?.value.toLowerCase() || "";
+  const ratingFilter = document.getElementById("approvedRatingFilter")?.value || "all";
+  const sortFilter = document.getElementById("approvedSortFilter")?.value || "recent";
+  
+  if (searchTerm) {
+    filtered = filtered.filter(r => 
+      (r.user_name || "").toLowerCase().includes(searchTerm) ||
+      (r.comment || "").toLowerCase().includes(searchTerm)
+    );
+  }
+  
+  if (ratingFilter !== "all") {
+    filtered = filtered.filter(r => r.rating === parseInt(ratingFilter));
+  }
+  
+  switch(sortFilter) {
+    case "oldest":
+      filtered.sort((a,b) => new Date(a.created_at) - new Date(b.created_at));
+      break;
+    case "rating_high":
+      filtered.sort((a,b) => b.rating - a.rating);
+      break;
+    case "rating_low":
+      filtered.sort((a,b) => a.rating - b.rating);
+      break;
+    default:
+      filtered.sort((a,b) => new Date(b.approved_at || b.created_at) - new Date(a.approved_at || a.created_at));
+  }
+  
+  if (!approvedReviewsPaginator) {
+    approvedReviewsPaginator = new Paginator({
+      items: filtered,
+      itemsPerPage: 10,
+      currentPage: 1,
+      onPageChange: (paginatedItems) => {
+        renderApprovedReviewsPage(paginatedItems);
+      },
+      containerId: "reviewsApprovedPagination",
+    });
+  } else {
+    approvedReviewsPaginator.updateItems(filtered);
+  }
+  
+  approvedReviewsPaginator.setPage(1);
+}
+
+function renderApprovedReviewsPage(reviews) {
+  const container = document.getElementById("reviewsApprovedList");
+  if (!container) return;
+  
+  if (!reviews.length) {
+    container.innerHTML = `<div class="emptyState">📭 No hay reseñas aprobadas para mostrar.</div>`;
+    return;
+  }
+  
+  container.innerHTML = `
+    <table class="reviews-table">
+      <thead>
+        <tr>
+          <th>Usuario</th>
+          <th>Calificación</th>
+          <th>Reseña</th>
+          <th>Fecha</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${reviews.map(review => `
+          <tr>
+            <td data-label="Usuario"><strong>${escapeHtml(review.user_name || "Anónimo")}</strong>${review.user_email ? `<br/><small>${escapeHtml(review.user_email)}</small>` : ""}</td>
+            <td data-label="Calificación">${"⭐".repeat(review.rating)} (${review.rating}/5)</td>
+            <td data-label="Reseña">${review.title ? `<strong>${escapeHtml(review.title)}</strong><br/>` : ""}${escapeHtml((review.comment || "").substring(0, 200))}${(review.comment || "").length > 200 ? "..." : ""}</td>
+            <td data-label="Fecha"><small>${formatDate(review.approved_at || review.created_at)}</small></td>
+          </tr>
+        `).join("")}
+      </tbody>
+    </table>
+  `;
+}
+
+// EDICIÓN DE RESEÑA
+function openEditModal(review) {
+  currentEditReviewId = review.id;
+  
+  document.getElementById("editReviewName").value = review.user_name || "";
+  document.getElementById("editReviewComment").value = review.comment || "";
+  document.getElementById("editReviewId").value = review.id;
+  
+  const stars = document.querySelectorAll("#editRatingStars span");
+  stars.forEach((star, idx) => {
+    star.style.color = idx < review.rating ? "#f5b042" : "#4a4a6a";
+    star.textContent = idx < review.rating ? "★" : "☆";
+  });
+  
+  window.currentEditRating = review.rating;
+  
+  stars.forEach(star => {
+    star.onclick = () => {
+      const rating = parseInt(star.dataset.rating);
+      window.currentEditRating = rating;
+      stars.forEach((s, i) => {
+        s.style.color = i < rating ? "#f5b042" : "#4a4a6a";
+        s.textContent = i < rating ? "★" : "☆";
+      });
+    };
+  });
+  
+  document.getElementById("editReviewModal").style.display = "flex";
+}
+
+async function saveEditedReviewAndApprove() {
+  const reviewId = document.getElementById("editReviewId").value;
+  const newComment = document.getElementById("editReviewComment").value.trim();
+  const newRating = window.currentEditRating || 5;
+  
+  if (!newComment) {
+    setReviewsMsg("❌ El comentario no puede estar vacío", true);
+    return;
+  }
+  
+  const ok = await confirmAction({
+    message: "✅ ¿Aprobar esta reseña con los cambios realizados?",
+    type: "generic",
+  });
+  if (!ok) return;
+  
+  setReviewsMsg("⏳ Guardando cambios y aprobando...");
+  
+  const { error } = await sb
+    .from("reviews")
+    .update({
+      comment: newComment,
+      rating: newRating,
+      status: "approved",
+      approved_at: new Date().toISOString(),
+      approved_by: currentUserEmail,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", reviewId);
+  
+  if (error) {
+    setReviewsMsg(`❌ Error: ${error.message}`, true);
+    return;
+  }
+  
+  setReviewsMsg("✅ Reseña editada y aprobada correctamente.");
+  document.getElementById("editReviewModal").style.display = "none";
+  
+  await loadPendingReviews();
+  await loadApprovedReviews();
+}
+
+function exportReviewsToCSV() {
+  if (!approvedReviewsData.length) {
+    setReviewsMsg("No hay reseñas para exportar.", true);
+    return;
+  }
+  
+  const headers = ["ID", "Usuario", "Email", "Calificación", "Comentario", "Fecha de Aprobación", "Aprobado por"];
+  const rows = approvedReviewsData.map(r => [
+    r.id,
+    r.user_name || "",
+    r.user_email || "",
+    r.rating,
+    `"${(r.comment || "").replace(/"/g, '""')}"`,
+    r.approved_at || r.created_at,
+    r.approved_by || ""
+  ]);
+  
+  const csvContent = [headers, ...rows].map(row => row.join(",")).join("\n");
+  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+  const link = document.createElement("a");
+  const url = URL.createObjectURL(blob);
+  link.href = url;
+  link.setAttribute("download", `reseñas_aprobadas_${new Date().toISOString().split("T")[0]}.csv`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+  
+  setReviewsMsg("✅ CSV exportado correctamente.");
+}
+
+/* =========================
+   ADMINISTRACIÓN DE PLANES
+========================= */
+
+async function loadPlansAdmin() {
+  const container = document.getElementById("plansList");
+  if (!container) return;
+  
+  container.innerHTML = '<div class="loading-skeleton"><div class="skeleton-line"></div><div class="skeleton-line"></div></div>';
+  
+  try {
+    const { data, error } = await sb
+      .from("service_plans")
+      .select("*")
+      .order("order_index", { ascending: true });
+    
+    if (error) throw error;
+    
+    plansData = data || [];
+    renderPlansList();
+  } catch (err) {
+    console.error("Error loading plans:", err);
+    container.innerHTML = `<div class="emptyState">⚠️ Error al cargar planes: ${err.message}</div>`;
+  }
+}
+
+function renderPlansList() {
+  const container = document.getElementById("plansList");
+  if (!container) return;
+  
+  if (!plansData.length) {
+    container.innerHTML = `<div class="emptyState">💰 No hay planes cargados. Creá uno nuevo.</div>`;
+    if (plansPaginator) plansPaginator.updateItems([]);
+    return;
+  }
+  
+  if (!plansPaginator) {
+    plansPaginator = new Paginator({
+      items: plansData,
+      itemsPerPage: 10,
+      currentPage: 1,
+      onPageChange: (paginatedItems) => {
+        renderPlansListPage(paginatedItems);
+      },
+      containerId: "plansPagination",
+    });
+  } else {
+    plansPaginator.updateItems(plansData);
+  }
+  
+  plansPaginator.setPage(1);
+}
+
+function renderPlansListPage(plans) {
+  const container = document.getElementById("plansList");
+  if (!container) return;
+  
+  if (!plans.length) {
+    container.innerHTML = `<div class="emptyState">💰 No hay planes para mostrar.</div>`;
+    return;
+  }
+  
+  container.innerHTML = plans.map(plan => `
+    <article class="listCard listCard--compact">
+      <div class="listCard__body">
+        <div class="listCard__title">💰 ${escapeHtml(plan.name)}</div>
+        <div class="listCard__meta">${escapeHtml(plan.icon || '📦')} · ${escapeHtml(plan.price || 'Precio no definido')} · Orden: ${plan.order_index || 0}</div>
+        <div class="listCard__meta">${plan.active ? '🟢 Activo' : '🔴 Inactivo'}</div>
+        <div class="listCard__badges">
+          ${plan.features?.slice(0, 3).map(f => `<span class="miniTag">${escapeHtml(f)}</span>`).join('') || ''}
+          ${plan.features?.length > 3 ? `<span class="miniTag">+${plan.features.length - 3}</span>` : ''}
+        </div>
+      </div>
+      <div class="listCard__actions">
+        <button class="btn btn--ghost btn--small" data-edit-plan="${plan.id}" data-tooltip="Editar plan">✏️</button>
+        <button class="btn btn--ghost btn--small" data-duplicate-plan="${plan.id}" data-tooltip="Duplicar plan">📋</button>
+        <button class="btn btn--danger btn--small" data-delete-plan="${plan.id}" data-tooltip="Eliminar plan">🗑️</button>
+      </div>
+    </article>
+  `).join("");
+  
+  container.querySelectorAll("[data-edit-plan]").forEach(btn => {
+    btn.addEventListener("click", () => openPlanModal(btn.getAttribute("data-edit-plan")));
+  });
+  container.querySelectorAll("[data-duplicate-plan]").forEach(btn => {
+    btn.addEventListener("click", () => duplicatePlan(btn.getAttribute("data-duplicate-plan")));
+  });
+  container.querySelectorAll("[data-delete-plan]").forEach(btn => {
+    btn.addEventListener("click", () => deletePlan(btn.getAttribute("data-delete-plan")));
   });
 }
 
-console.log("✅ Sistema de reseñas cargado correctamente");
+function openPlanModal(id = null) {
+  editingPlanId = id;
+  const modal = document.getElementById("planModal");
+  const title = document.getElementById("planModalTitle");
+  
+  if (!id) {
+    title.textContent = "📝 Nuevo Plan";
+    document.getElementById("planId").value = "";
+    document.getElementById("planName").value = "";
+    document.getElementById("planSlug").value = "";
+    document.getElementById("planDescription").value = "";
+    document.getElementById("planPrice").value = "";
+    document.getElementById("planIcon").value = "📦";
+    document.getElementById("planFeaturesInput").value = "";
+    document.getElementById("planCtaText").value = "Consultar →";
+    document.getElementById("planOrder").value = "0";
+    document.getElementById("planActive").checked = true;
+  } else {
+    const plan = plansData.find(p => String(p.id) === String(id));
+    if (!plan) return;
+    title.textContent = `✏️ Editar: ${plan.name}`;
+    document.getElementById("planId").value = plan.id;
+    document.getElementById("planName").value = plan.name || "";
+    document.getElementById("planSlug").value = plan.slug || "";
+    document.getElementById("planDescription").value = plan.description || "";
+    document.getElementById("planPrice").value = plan.price || "";
+    document.getElementById("planIcon").value = plan.icon || "📦";
+    document.getElementById("planFeaturesInput").value = (plan.features || []).join(", ");
+    document.getElementById("planCtaText").value = plan.cta_text || "Consultar →";
+    document.getElementById("planOrder").value = plan.order_index || 0;
+    document.getElementById("planActive").checked = plan.active !== false;
+  }
+  
+  modal.style.display = "flex";
+}
+
+async function savePlan() {
+  const id = document.getElementById("planId").value;
+  const name = document.getElementById("planName").value.trim();
+  let slug = document.getElementById("planSlug").value.trim();
+  const description = document.getElementById("planDescription").value.trim();
+  const price = document.getElementById("planPrice").value.trim();
+  const icon = document.getElementById("planIcon").value.trim() || "📦";
+  const featuresInput = document.getElementById("planFeaturesInput").value;
+  const features = featuresInput.split(",").map(f => f.trim()).filter(Boolean);
+  const cta_text = document.getElementById("planCtaText").value.trim() || "Consultar →";
+  const order_index = parseInt(document.getElementById("planOrder").value) || 0;
+  const active = document.getElementById("planActive").checked;
+  
+  if (!name) {
+    setPlansMsg("❌ El nombre del plan es obligatorio", true);
+    return;
+  }
+  
+  if (!slug) {
+    slug = name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+  }
+  
+  const payload = { name, slug, description, price, icon, features, cta_text, order_index, active, updated_at: new Date().toISOString() };
+  
+  const ok = await confirmAction({
+    message: id ? `¿Guardar cambios en "${name}"?` : `¿Crear el plan "${name}"?`,
+    type: "generic",
+  });
+  if (!ok) return;
+  
+  setPlansMsg("⏳ Guardando...");
+  
+  try {
+    if (id) {
+      const { error } = await sb.from("service_plans").update(payload).eq("id", id);
+      if (error) throw error;
+      setPlansMsg("✅ Plan actualizado correctamente.");
+    } else {
+      const { error } = await sb.from("service_plans").insert([payload]);
+      if (error) throw error;
+      setPlansMsg("✅ Plan creado correctamente.");
+    }
+    
+    document.getElementById("planModal").style.display = "none";
+    await loadPlansAdmin();
+  } catch (err) {
+    setPlansMsg(`❌ Error: ${err.message}`, true);
+  }
+}
+
+async function duplicatePlan(id) {
+  const original = plansData.find(p => String(p.id) === String(id));
+  if (!original) return;
+  
+  const ok = await confirmAction({
+    message: `📋 ¿Duplicar el plan "${original.name}"?`,
+    type: "generic",
+  });
+  if (!ok) return;
+  
+  const newName = `${original.name} (copia)`;
+  const newSlug = `${original.slug}-copia-${Date.now()}`;
+  
+  const payload = {
+    name: newName,
+    slug: newSlug,
+    description: original.description,
+    price: original.price,
+    icon: original.icon,
+    features: original.features,
+    cta_text: original.cta_text,
+    order_index: (original.order_index || 0) + 1,
+    active: false,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  };
+  
+  try {
+    const { error } = await sb.from("service_plans").insert([payload]);
+    if (error) throw error;
+    setPlansMsg("✅ Plan duplicado correctamente.");
+    await loadPlansAdmin();
+  } catch (err) {
+    setPlansMsg(`❌ Error al duplicar: ${err.message}`, true);
+  }
+}
+
+async function deletePlan(id) {
+  const plan = plansData.find(p => String(p.id) === String(id));
+  if (!plan) return;
+  
+  const ok = await confirmAction({
+    message: `⚠️ ¿Eliminar permanentemente el plan "${plan.name}"? Esta acción no se puede deshacer.`,
+    type: "delete",
+    double: true,
+  });
+  if (!ok) return;
+  
+  setPlansMsg("⏳ Eliminando...");
+  
+  try {
+    const { error } = await sb.from("service_plans").delete().eq("id", id);
+    if (error) throw error;
+    setPlansMsg("✅ Plan eliminado correctamente.");
+    await loadPlansAdmin();
+  } catch (err) {
+    setPlansMsg(`❌ Error al eliminar: ${err.message}`, true);
+  }
+}
+
+function setPlansMsg(msg, isError = false) {
+  const msgEl = document.getElementById("plansMsg");
+  if (!msgEl) return;
+  msgEl.textContent = msg;
+  msgEl.classList.remove("msg--success", "msg--error");
+  msgEl.classList.add(isError ? "msg--error" : "msg--success");
+  setTimeout(() => {
+    if (msgEl.textContent === msg) {
+      msgEl.textContent = "";
+      msgEl.classList.remove("msg--success", "msg--error");
+    }
+  }, 4000);
+}
+
+/* =========================
+   MENÚ HAMBURGUESA PARA ADMIN
+========================= */
+function initSidebarToggle() {
+  const toggleBtn = document.getElementById("sidebarToggleBtn");
+  const sidebar = document.querySelector(".sidebar");
+  
+  if (!toggleBtn || !sidebar) return;
+  
+  toggleBtn.addEventListener("click", () => {
+    sidebar.classList.toggle("open");
+  });
+  
+  document.addEventListener("click", (e) => {
+    if (window.innerWidth <= 980) {
+      if (!sidebar.contains(e.target) && !toggleBtn.contains(e.target)) {
+        sidebar.classList.remove("open");
+      }
+    }
+  });
+  
+  document.querySelectorAll(".navBtn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      if (window.innerWidth <= 980) {
+        sidebar.classList.remove("open");
+      }
+    });
+  });
+}
+
+/* =========================
+   INTEGRACIÓN CON LOADALL Y SWITCHVIEW
+========================= */
+const originalLoadAll = window.loadAll;
+window.loadAll = async function() {
+  if (originalLoadAll) await originalLoadAll();
+  if (document.getElementById("plansList")) {
+    await loadPlansAdmin();
+  }
+  if (document.getElementById("reviewsApprovedList")) {
+    await loadApprovedReviews();
+  }
+  iniciarNotificaciones();
+};
+
+const originalSwitchView = window.switchView;
+window.switchView = function(view) {
+  if (originalSwitchView) originalSwitchView(view);
+  if (view === "reviews-pending" && document.getElementById("reviewsPendingList")) {
+    setTimeout(() => loadPendingReviews(), 100);
+  }
+  if (view === "reviews-approved" && document.getElementById("reviewsApprovedList")) {
+    setTimeout(() => loadApprovedReviews(), 100);
+  }
+  if (view === "plans" && document.getElementById("plansList")) {
+    setTimeout(() => loadPlansAdmin(), 100);
+  }
+};
+
+/* =========================
+   EVENT LISTENERS EXTRA
+========================= */
+document.getElementById("reviewsApprovedRefreshBtn")?.addEventListener("click", () => {
+  loadApprovedReviews();
+});
+
+document.getElementById("exportReviewsBtn")?.addEventListener("click", () => {
+  exportReviewsToCSV();
+});
+
+document.getElementById("approvedSearchInput")?.addEventListener("input", () => {
+  renderApprovedReviews();
+});
+
+document.getElementById("approvedRatingFilter")?.addEventListener("change", () => {
+  renderApprovedReviews();
+});
+
+document.getElementById("approvedSortFilter")?.addEventListener("change", () => {
+  renderApprovedReviews();
+});
+
+document.getElementById("saveEditReviewBtn")?.addEventListener("click", saveEditedReviewAndApprove);
+document.getElementById("cancelEditReviewBtn")?.addEventListener("click", () => {
+  document.getElementById("editReviewModal").style.display = "none";
+});
+
+document.getElementById("plansRefreshBtn")?.addEventListener("click", () => loadPlansAdmin());
+document.getElementById("plansNewBtn")?.addEventListener("click", () => openPlanModal());
+document.getElementById("planSaveBtn")?.addEventListener("click", () => savePlan());
+document.getElementById("planCancelBtn")?.addEventListener("click", () => {
+  document.getElementById("planModal").style.display = "none";
+});
+
+document.getElementById("planName")?.addEventListener("input", function() {
+  const slugInput = document.getElementById("planSlug");
+  if (slugInput && !slugInput.dataset.manuallyEdited) {
+    slugInput.value = this.value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+  }
+});
+document.getElementById("planSlug")?.addEventListener("input", function() {
+  this.dataset.manuallyEdited = "true";
+});
+
+initSidebarToggle();
+
+console.log("✅ Admin panel completamente cargado");
