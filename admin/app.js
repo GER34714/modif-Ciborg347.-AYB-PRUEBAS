@@ -729,9 +729,7 @@ async function loadAll() {
     loadHistory(),
   ]);
   if (document.getElementById("plansList")) await loadPlansAdmin();
-}
-
-/* =========================
+}/* =========================
    RENDER (con paginación)
 ========================= */
 function updateDashboardStats() {
@@ -1962,26 +1960,26 @@ function renderPendingReviews() {
             <td data-label="Usuario">
               <strong>${escapeHtml(review.user_name || "Anónimo")}</strong>
               ${review.user_email ? `<br/><small>${escapeHtml(review.user_email)}</small>` : ""}
-            </td>
+             </td>
             <td data-label="Calificación">
               ${"⭐".repeat(review.rating)} (${review.rating}/5)
-            </td>
+             </td>
             <td data-label="Reseña">
               ${review.title ? `<strong>${escapeHtml(review.title)}</strong><br/>` : ""}
               ${escapeHtml((review.comment || "").substring(0, 200))}${(review.comment || "").length > 200 ? "..." : ""}
-            </td>
+             </td>
             <td data-label="Proyecto">
               ${review.project_id ? escapeHtml(review.project_title || `Proyecto ${review.project_id}`) : "Opinión general"}
-            </td>
+             </td>
             <td data-label="Fecha">
               <small>${formatDate(review.created_at)}</small>
-            </td>
+             </td>
             <td data-label="Acciones" class="action-btns">
               <button class="btn btn--small btn--ghost" data-edit-review="${review.id}" style="border-color:var(--cyan);">✏️ Editar</button>
               <button class="btn btn--success btn--small" data-approve-review="${review.id}">✅ Aprobar</button>
               <button class="btn btn--danger btn--small" data-reject-review="${review.id}">❌ Rechazar</button>
-              </td>
-           </td>
+            </td>
+          </tr>
         `).join("")}
       </tbody>
     </table>
@@ -2650,26 +2648,33 @@ function setPlansMsg(msg, isError = false) {
 }
 
 /* =========================
-   MENÚ HAMBURGUESA PARA ADMIN
+   MENÚ HAMBURGUESA PARA ADMIN (VERSIÓN CORREGIDA)
 ========================= */
 function initSidebarToggle() {
   const toggleBtn = document.getElementById("sidebarToggleBtn");
   const sidebar = document.querySelector(".sidebar");
   
-  if (!toggleBtn || !sidebar) return;
+  if (!toggleBtn || !sidebar) {
+    console.warn("Botón o sidebar no encontrados");
+    return;
+  }
   
-  toggleBtn.addEventListener("click", () => {
+  // Abrir/cerrar al hacer clic en el botón
+  toggleBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
     sidebar.classList.toggle("open");
   });
   
+  // Cerrar al hacer clic fuera
   document.addEventListener("click", (e) => {
-    if (window.innerWidth <= 980) {
+    if (window.innerWidth <= 980 && sidebar.classList.contains("open")) {
       if (!sidebar.contains(e.target) && !toggleBtn.contains(e.target)) {
         sidebar.classList.remove("open");
       }
     }
   });
   
+  // Cerrar al hacer clic en cualquier navBtn (en móvil)
   document.querySelectorAll(".navBtn").forEach(btn => {
     btn.addEventListener("click", () => {
       if (window.innerWidth <= 980) {
@@ -2677,6 +2682,15 @@ function initSidebarToggle() {
       }
     });
   });
+  
+  // Cerrar automáticamente al redimensionar a desktop
+  window.addEventListener("resize", () => {
+    if (window.innerWidth > 980 && sidebar.classList.contains("open")) {
+      sidebar.classList.remove("open");
+    }
+  });
+  
+  console.log("✅ Menú hamburguesa inicializado correctamente");
 }
 
 /* =========================
@@ -2799,11 +2813,8 @@ if (planSlug) {
   });
 }
 
-initSidebarToggle();
-
-console.log("✅ Admin panel completamente cargado");
 /* =========================
-   PROYECTOS DESTACADOS (VERSIÓN ÚNICA Y CORREGIDA)
+   PROYECTOS DESTACADOS
 ========================= */
 let featuredProjectsPaginator = null;
 let allFeaturedProjects = [];
@@ -2941,7 +2952,7 @@ function setFeaturedProjectsMsg(msg, isError = false) {
 }
 
 /* =========================
-   ELIMINAR HISTORIAL (VERSIÓN ÚNICA)
+   ELIMINAR HISTORIAL
 ========================= */
 async function clearProjectHistory() {
   const ok = await confirmAction({
@@ -2999,7 +3010,16 @@ function setHistoryMsg(msg, isError = false) {
   }, 4000);
 }
 
-// Event listeners para botones de limpiar historial (asegurar que existan)
+// Event listeners para botones de limpiar historial
 document.getElementById("clearProjectHistoryBtn")?.addEventListener("click", clearProjectHistory);
 document.getElementById("clearSettingsHistoryBtn")?.addEventListener("click", clearSettingsHistory);
 document.getElementById("featuredRefreshBtn")?.addEventListener("click", loadFeaturedProjects);
+
+// INICIALIZAR MENÚ HAMBURGUESA
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initSidebarToggle);
+} else {
+  initSidebarToggle();
+}
+
+console.log("✅ Admin panel completamente cargado");
