@@ -44,18 +44,20 @@ const viewPanels = document.querySelectorAll(".viewPanel");
 /* =========================
    HELPERS
 ========================= */
-function setAuthMsg(msg = "") { authMsg.textContent = msg; }
-function setProjectsMsg(msg = "") { projectsMsg.textContent = msg; }
-function setProjectFormMsg(msg = "") { projectFormMsg.textContent = msg; }
+function setAuthMsg(msg = "") { if (authMsg) authMsg.textContent = msg; }
+function setProjectsMsg(msg = "") { if (projectsMsg) projectsMsg.textContent = msg; }
+function setProjectFormMsg(msg = "") { if (projectFormMsg) projectFormMsg.textContent = msg; }
 function setProjectUploadMsg(msg = "", type = "") {
-  projectUploadMsg.textContent = msg;
-  projectUploadMsg.classList.remove("msg--success", "msg--error");
-  if (type) projectUploadMsg.classList.add(type === "success" ? "msg--success" : "msg--error");
+  if (projectUploadMsg) {
+    projectUploadMsg.textContent = msg;
+    projectUploadMsg.classList.remove("msg--success", "msg--error");
+    if (type) projectUploadMsg.classList.add(type === "success" ? "msg--success" : "msg--error");
+  }
 }
-function setCategoriesMsg(msg = "") { categoriesMsg.textContent = msg; }
-function setFaqsMsg(msg = "") { faqsMsg.textContent = msg; }
-function setSiteContentMsg(msg = "") { siteContentMsg.textContent = msg; }
-function setSiteSettingsMsg(msg = "") { siteSettingsMsg.textContent = msg; }
+function setCategoriesMsg(msg = "") { if (categoriesMsg) categoriesMsg.textContent = msg; }
+function setFaqsMsg(msg = "") { if (faqsMsg) faqsMsg.textContent = msg; }
+function setSiteContentMsg(msg = "") { if (siteContentMsg) siteContentMsg.textContent = msg; }
+function setSiteSettingsMsg(msg = "") { if (siteSettingsMsg) siteSettingsMsg.textContent = msg; }
 
 function escapeHtml(s) {
   return String(s ?? "")
@@ -97,19 +99,19 @@ function fillCategorySelects() {
   const opts = [`<option value="">Elegir...</option>`]
     .concat(activeCats.map(cat => `<option value="${cat.id}">${escapeHtml(cat.name)}</option>`))
     .join("");
-  projectCategorySelect.innerHTML = opts;
+  if (projectCategorySelect) projectCategorySelect.innerHTML = opts;
 
   const filterOpts = [`<option value="__all__">📁 Todas</option>`]
     .concat(activeCats.map(cat => `<option value="${cat.id}">${escapeHtml(cat.name)}</option>`))
     .join("");
-  projectCategoryFilter.innerHTML = filterOpts;
+  if (projectCategoryFilter) projectCategoryFilter.innerHTML = filterOpts;
 }
 
 function fillTagFilter() {
   const filterOpts = [`<option value="__all__">🏷️ Todos</option>`]
     .concat(tagsData.filter(t => t.active).map(tag => `<option value="${tag.id}">${escapeHtml(tag.name)}</option>`))
     .join("");
-  projectTagFilter.innerHTML = filterOpts;
+  if (projectTagFilter) projectTagFilter.innerHTML = filterOpts;
 }
 
 function fillSiteContentSelect() {
@@ -121,7 +123,7 @@ function fillSiteContentSelect() {
         .map(item => `<option value="${item.id}">${escapeHtml(item.key)}</option>`)
     )
     .join("");
-  siteContentSelect.innerHTML = opts;
+  if (siteContentSelect) siteContentSelect.innerHTML = opts;
 }
 
 function findCategoryName(categoryId) {
@@ -134,12 +136,14 @@ function getProjectTags(projectId) {
 }
 
 function renderTagPreview() {
-  const raw = parseTagInput(projectTagsInput.value);
+  const raw = parseTagInput(projectTagsInput?.value || "");
   if (!raw.length) {
-    projectTagsPreview.innerHTML = "";
+    if (projectTagsPreview) projectTagsPreview.innerHTML = "";
     return;
   }
-  projectTagsPreview.innerHTML = raw.map(tag => `<span class="miniTag">🏷️ ${escapeHtml(tag)}</span>`).join("");
+  if (projectTagsPreview) {
+    projectTagsPreview.innerHTML = raw.map(tag => `<span class="miniTag">🏷️ ${escapeHtml(tag)}</span>`).join("");
+  }
 }
 
 function parseTagInput(value) {
@@ -177,8 +181,8 @@ async function confirmAction({ message, type = "generic", double = false }) {
 }
 
 function setModeButtons() {
-  safeModeBtn.classList.toggle("is-active", currentSafetyMode === "safe");
-  fastModeBtn.classList.toggle("is-active", currentSafetyMode === "fast");
+  if (safeModeBtn) safeModeBtn.classList.toggle("is-active", currentSafetyMode === "safe");
+  if (fastModeBtn) fastModeBtn.classList.toggle("is-active", currentSafetyMode === "fast");
 }
 
 function mapStatusLabel(status) {
@@ -218,7 +222,7 @@ async function getCurrentUserEmail() {
 
 function buildStorageFilePath(file) {
   const ext = (file.name.split(".").pop() || "jpg").toLowerCase().replace(/[^a-z0-9]/g, "");
-  const titleSlug = slugify(projectTitleInput.value || "proyecto");
+  const titleSlug = slugify(projectTitleInput?.value || "proyecto");
   const stamp = Date.now();
   const random = Math.random().toString(36).slice(2, 8);
   return `projects/${titleSlug || "proyecto"}-${stamp}-${random}.${ext || "jpg"}`;
@@ -407,9 +411,9 @@ async function guardAdmin() {
   const session = data?.session;
 
   if (!session) {
-    authBox.style.display = "";
-    adminBox.style.display = "none";
-    userEmail.textContent = "";
+    if (authBox) authBox.style.display = "";
+    if (adminBox) adminBox.style.display = "none";
+    if (userEmail) userEmail.textContent = "";
     currentUserEmail = "";
     return;
   }
@@ -418,42 +422,50 @@ async function guardAdmin() {
   if (!check.ok) {
     setAuthMsg(check.reason);
     await sb.auth.signOut();
-    authBox.style.display = "";
-    adminBox.style.display = "none";
-    userEmail.textContent = "";
+    if (authBox) authBox.style.display = "";
+    if (adminBox) adminBox.style.display = "none";
+    if (userEmail) userEmail.textContent = "";
     return;
   }
 
   currentUserEmail = check.email;
-  userEmail.textContent = check.email;
-  authBox.style.display = "none";
-  adminBox.style.display = "";
+  if (userEmail) userEmail.textContent = check.email;
+  if (authBox) authBox.style.display = "none";
+  if (adminBox) adminBox.style.display = "";
   setAuthMsg("");
 
   await loadAdminPreferences();
   await loadAll();
 }
 
-loginBtn.addEventListener("click", async () => {
-  setAuthMsg("Ingresando...");
-  const email = (emailInput.value || "").trim();
-  const password = passInput.value || "";
-  if (!email || !password) return setAuthMsg("Completá email y password.");
+if (loginBtn) {
+  loginBtn.addEventListener("click", async () => {
+    setAuthMsg("Ingresando...");
+    const email = (emailInput?.value || "").trim();
+    const password = passInput?.value || "";
+    if (!email || !password) return setAuthMsg("Completá email y password.");
 
-  const { error } = await sb.auth.signInWithPassword({ email, password });
-  if (error) return setAuthMsg(`No autenticado: ${error.message}`);
-  await guardAdmin();
-});
+    const { error } = await sb.auth.signInWithPassword({ email, password });
+    if (error) return setAuthMsg(`No autenticado: ${error.message}`);
+    await guardAdmin();
+  });
+}
 
-logoutBtn.addEventListener("click", async () => {
-  await sb.auth.signOut();
-  await guardAdmin();
-});
+if (logoutBtn) {
+  logoutBtn.addEventListener("click", async () => {
+    await sb.auth.signOut();
+    await guardAdmin();
+  });
+}
 
 sb.auth.onAuthStateChange(() => { guardAdmin(); });
 
-safeModeBtn.addEventListener("click", () => updateAdminSafetyMode("safe"));
-fastModeBtn.addEventListener("click", () => updateAdminSafetyMode("fast"));
+if (safeModeBtn) {
+  safeModeBtn.addEventListener("click", () => updateAdminSafetyMode("safe"));
+}
+if (fastModeBtn) {
+  fastModeBtn.addEventListener("click", () => updateAdminSafetyMode("fast"));
+}
 
 /* =========================
    LOADERS
@@ -579,12 +591,12 @@ async function loadAll() {
    RENDER (con paginación)
 ========================= */
 function updateDashboardStats() {
-  statProjects.textContent = String(projectsData.length);
-  statActive.textContent = String(projectsData.filter(p => p.status === "published").length);
-  statHighlight.textContent = String(projectsData.filter(p => p.status === "featured" || p.highlight).length);
-  statHome.textContent = String(projectsData.filter(p => p.featured_home).length);
-  statPortfolio.textContent = String(projectsData.filter(p => p.featured_portfolio).length);
-  statCategories.textContent = String(categoriesData.filter(c => c.active).length);
+  if (statProjects) statProjects.textContent = String(projectsData.length);
+  if (statActive) statActive.textContent = String(projectsData.filter(p => p.status === "published").length);
+  if (statHighlight) statHighlight.textContent = String(projectsData.filter(p => p.status === "featured" || p.highlight).length);
+  if (statHome) statHome.textContent = String(projectsData.filter(p => p.featured_home).length);
+  if (statPortfolio) statPortfolio.textContent = String(projectsData.filter(p => p.featured_portfolio).length);
+  if (statCategories) statCategories.textContent = String(categoriesData.filter(c => c.active).length);
 }
 
 function renderProjectBadges(project) {
@@ -599,35 +611,37 @@ function renderProjectBadges(project) {
 function renderDashboardRecent() {
   const list = projectsData.slice().sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()).slice(0, 6);
   if (!list.length) {
-    dashboardRecentList.innerHTML = `<div class="emptyState">🚀 Todavía no hay proyectos cargados.</div>`;
+    if (dashboardRecentList) dashboardRecentList.innerHTML = `<div class="emptyState">🚀 Todavía no hay proyectos cargados.</div>`;
     return;
   }
 
-  dashboardRecentList.innerHTML = list.map(project => `
-    <article class="listCard">
-      <div class="listCard__thumb"><img src="${escapeHtml(project.image_url || "")}" alt="${escapeHtml(project.title)}" loading="lazy" /></div>
-      <div class="listCard__body">
-        <div class="listCard__title">${escapeHtml(project.title)}</div>
-        <div class="listCard__meta">📁 ${escapeHtml(findCategoryName(project.category_id))} · 🔧 ${escapeHtml(project.solution_type || "")}</div>
-        <div class="listCard__badges">${renderProjectBadges(project)}</div>
-      </div>
-      <div class="listCard__actions">
-        <button class="btn btn--ghost btn--small" type="button" data-edit-project="${project.id}" data-tooltip="Editar proyecto">✏️ Editar</button>
-      </div>
-    </article>
-  `).join("");
+  if (dashboardRecentList) {
+    dashboardRecentList.innerHTML = list.map(project => `
+      <article class="listCard">
+        <div class="listCard__thumb"><img src="${escapeHtml(project.image_url || "")}" alt="${escapeHtml(project.title)}" loading="lazy" /></div>
+        <div class="listCard__body">
+          <div class="listCard__title">${escapeHtml(project.title)}</div>
+          <div class="listCard__meta">📁 ${escapeHtml(findCategoryName(project.category_id))} · 🔧 ${escapeHtml(project.solution_type || "")}</div>
+          <div class="listCard__badges">${renderProjectBadges(project)}</div>
+        </div>
+        <div class="listCard__actions">
+          <button class="btn btn--ghost btn--small" type="button" data-edit-project="${project.id}" data-tooltip="Editar proyecto">✏️ Editar</button>
+        </div>
+      </article>
+    `).join("");
 
-  dashboardRecentList.querySelectorAll("[data-edit-project]").forEach(btn => {
-    btn.addEventListener("click", () => openProjectForEdit(btn.getAttribute("data-edit-project")));
-  });
+    dashboardRecentList.querySelectorAll("[data-edit-project]").forEach(btn => {
+      btn.addEventListener("click", () => openProjectForEdit(btn.getAttribute("data-edit-project")));
+    });
+  }
 }
 
 function renderProjectsList() {
-  const q = (projectSearchInput.value || "").trim().toLowerCase();
-  const cat = projectCategoryFilter.value;
-  const type = projectTypeFilter.value;
-  const status = projectStatusFilter.value;
-  const tag = projectTagFilter.value;
+  const q = (projectSearchInput?.value || "").trim().toLowerCase();
+  const cat = projectCategoryFilter?.value || "__all__";
+  const type = projectTypeFilter?.value || "__all__";
+  const status = projectStatusFilter?.value || "__all__";
+  const tag = projectTagFilter?.value || "__all__";
 
   let list = projectsData.slice();
 
@@ -670,6 +684,8 @@ function renderProjectsList() {
 }
 
 function renderProjectsListPage(projects) {
+  if (!projectsList) return;
+  
   if (!projects.length) {
     projectsList.innerHTML = `<div class="emptyState">🔍 No hay proyectos para mostrar con esos filtros.</div>`;
     return;
@@ -720,30 +736,30 @@ function renderProjectsListPage(projects) {
 
 function resetProjectForm() {
   editingProjectId = null;
-  projectFormTitle.textContent = "✨ Nueva web";
-  projectSaveBtn.textContent = "Publicar";
-  projectDeleteBtn.style.display = "none";
-  projectDuplicateBtn.style.display = "none";
+  if (projectFormTitle) projectFormTitle.textContent = "✨ Nueva web";
+  if (projectSaveBtn) projectSaveBtn.textContent = "Publicar";
+  if (projectDeleteBtn) projectDeleteBtn.style.display = "none";
+  if (projectDuplicateBtn) projectDuplicateBtn.style.display = "none";
 
-  projectImageUrlInput.value = "";
+  if (projectImageUrlInput) projectImageUrlInput.value = "";
   if (projectImageFileInput) projectImageFileInput.value = "";
-  projectPreviewImg.removeAttribute("src");
-  projectTitleInput.value = "";
-  projectDemoUrlInput.value = "";
-  projectCategorySelect.value = "";
-  projectTypeSelect.value = "";
-  projectStatusSelect.value = "published";
-  projectTagsInput.value = "";
-  projectShortDescInput.value = "";
-  projectFullDescInput.value = "";
-  projectPreviewTypeSelect.value = "image";
-  projectOrderInput.value = "0";
-  projectActiveInput.checked = true;
-  projectHighlightInput.checked = false;
-  projectFeaturedHomeInput.checked = false;
-  projectFeaturedPortfolioInput.checked = false;
-  projectAdvancedBox.style.display = "none";
-  projectAdvancedToggleBtn.textContent = "🔧 Abrir ajustes avanzados";
+  if (projectPreviewImg) projectPreviewImg.removeAttribute("src");
+  if (projectTitleInput) projectTitleInput.value = "";
+  if (projectDemoUrlInput) projectDemoUrlInput.value = "";
+  if (projectCategorySelect) projectCategorySelect.value = "";
+  if (projectTypeSelect) projectTypeSelect.value = "";
+  if (projectStatusSelect) projectStatusSelect.value = "published";
+  if (projectTagsInput) projectTagsInput.value = "";
+  if (projectShortDescInput) projectShortDescInput.value = "";
+  if (projectFullDescInput) projectFullDescInput.value = "";
+  if (projectPreviewTypeSelect) projectPreviewTypeSelect.value = "image";
+  if (projectOrderInput) projectOrderInput.value = "0";
+  if (projectActiveInput) projectActiveInput.checked = true;
+  if (projectHighlightInput) projectHighlightInput.checked = false;
+  if (projectFeaturedHomeInput) projectFeaturedHomeInput.checked = false;
+  if (projectFeaturedPortfolioInput) projectFeaturedPortfolioInput.checked = false;
+  if (projectAdvancedBox) projectAdvancedBox.style.display = "none";
+  if (projectAdvancedToggleBtn) projectAdvancedToggleBtn.textContent = "🔧 Abrir ajustes avanzados";
   renderTagPreview();
   setProjectFormMsg("");
   if (projectUploadMsg) setProjectUploadMsg("");
@@ -751,27 +767,27 @@ function resetProjectForm() {
 
 function fillProjectForm(project) {
   editingProjectId = project.id;
-  projectFormTitle.textContent = "✏️ Editar web";
-  projectSaveBtn.textContent = "Guardar cambios";
-  projectDeleteBtn.style.display = "";
-  projectDuplicateBtn.style.display = "";
+  if (projectFormTitle) projectFormTitle.textContent = "✏️ Editar web";
+  if (projectSaveBtn) projectSaveBtn.textContent = "Guardar cambios";
+  if (projectDeleteBtn) projectDeleteBtn.style.display = "";
+  if (projectDuplicateBtn) projectDuplicateBtn.style.display = "";
 
-  projectImageUrlInput.value = project.image_url || "";
-  if (project.image_url) projectPreviewImg.src = project.image_url;
-  projectTitleInput.value = project.title || "";
-  projectDemoUrlInput.value = project.demo_url || "";
-  projectCategorySelect.value = project.category_id || "";
-  projectTypeSelect.value = project.solution_type || "";
-  projectStatusSelect.value = project.status || "published";
-  projectTagsInput.value = getProjectTags(project.id).map(t => t.name).join(", ");
-  projectShortDescInput.value = project.short_description || "";
-  projectFullDescInput.value = project.full_description || "";
-  projectPreviewTypeSelect.value = project.preview_type || "image";
-  projectOrderInput.value = String(project.order_index ?? 0);
-  projectActiveInput.checked = !!project.active;
-  projectHighlightInput.checked = !!project.highlight;
-  projectFeaturedHomeInput.checked = !!project.featured_home;
-  projectFeaturedPortfolioInput.checked = !!project.featured_portfolio;
+  if (projectImageUrlInput) projectImageUrlInput.value = project.image_url || "";
+  if (projectPreviewImg && project.image_url) projectPreviewImg.src = project.image_url;
+  if (projectTitleInput) projectTitleInput.value = project.title || "";
+  if (projectDemoUrlInput) projectDemoUrlInput.value = project.demo_url || "";
+  if (projectCategorySelect) projectCategorySelect.value = project.category_id || "";
+  if (projectTypeSelect) projectTypeSelect.value = project.solution_type || "";
+  if (projectStatusSelect) projectStatusSelect.value = project.status || "published";
+  if (projectTagsInput) projectTagsInput.value = getProjectTags(project.id).map(t => t.name).join(", ");
+  if (projectShortDescInput) projectShortDescInput.value = project.short_description || "";
+  if (projectFullDescInput) projectFullDescInput.value = project.full_description || "";
+  if (projectPreviewTypeSelect) projectPreviewTypeSelect.value = project.preview_type || "image";
+  if (projectOrderInput) projectOrderInput.value = String(project.order_index ?? 0);
+  if (projectActiveInput) projectActiveInput.checked = !!project.active;
+  if (projectHighlightInput) projectHighlightInput.checked = !!project.highlight;
+  if (projectFeaturedHomeInput) projectFeaturedHomeInput.checked = !!project.featured_home;
+  if (projectFeaturedPortfolioInput) projectFeaturedPortfolioInput.checked = !!project.featured_portfolio;
   renderTagPreview();
   setProjectFormMsg("");
   if (projectUploadMsg) setProjectUploadMsg("");
@@ -787,125 +803,129 @@ function openProjectForEdit(id) {
 function renderCategoriesList() {
   const list = categoriesData.slice().sort((a, b) => (a.order_index ?? 0) - (b.order_index ?? 0));
   if (!list.length) {
-    categoriesList.innerHTML = `<div class="emptyState">📂 No hay categorías cargadas.</div>`;
+    if (categoriesList) categoriesList.innerHTML = `<div class="emptyState">📂 No hay categorías cargadas.</div>`;
     return;
   }
 
-  categoriesList.innerHTML = list.map(cat => `
-    <article class="listCard listCard--compact">
-      <div class="listCard__body">
-        <div class="listCard__title">📁 ${escapeHtml(cat.name)}</div>
-        <div class="listCard__meta">🔗 Slug: ${escapeHtml(cat.slug)}</div>
-        <div class="listCard__meta">${cat.active ? "🟢 Activa" : "🔴 Inactiva"} · 🔢 Orden: ${cat.order_index ?? 0}</div>
-      </div>
-      <div class="listCard__actions">
-        <button class="btn btn--ghost btn--small" type="button" data-edit-category="${cat.id}" data-tooltip="Editar categoría">✏️</button>
-        <button class="btn btn--ghost btn--small" type="button" data-toggle-category="${cat.id}" data-tooltip="${cat.active ? 'Desactivar' : 'Activar'}">${cat.active ? "🔴" : "🟢"}</button>
-      </div>
-    </article>
-  `).join("");
+  if (categoriesList) {
+    categoriesList.innerHTML = list.map(cat => `
+      <article class="listCard listCard--compact">
+        <div class="listCard__body">
+          <div class="listCard__title">📁 ${escapeHtml(cat.name)}</div>
+          <div class="listCard__meta">🔗 Slug: ${escapeHtml(cat.slug)}</div>
+          <div class="listCard__meta">${cat.active ? "🟢 Activa" : "🔴 Inactiva"} · 🔢 Orden: ${cat.order_index ?? 0}</div>
+        </div>
+        <div class="listCard__actions">
+          <button class="btn btn--ghost btn--small" type="button" data-edit-category="${cat.id}" data-tooltip="Editar categoría">✏️</button>
+          <button class="btn btn--ghost btn--small" type="button" data-toggle-category="${cat.id}" data-tooltip="${cat.active ? 'Desactivar' : 'Activar'}">${cat.active ? "🔴" : "🟢"}</button>
+        </div>
+      </article>
+    `).join("");
 
-  categoriesList.querySelectorAll("[data-edit-category]").forEach(btn => {
-    btn.addEventListener("click", () => {
-      const cat = categoriesData.find(c => String(c.id) === String(btn.getAttribute("data-edit-category")));
-      if (!cat) return;
-      editingCategoryId = cat.id;
-      categoryNameInput.value = cat.name || "";
-      categorySlugInput.value = cat.slug || "";
-      categoryOrderInput.value = String(cat.order_index ?? 0);
-      categoryActiveInput.checked = !!cat.active;
-      setCategoriesMsg("");
+    categoriesList.querySelectorAll("[data-edit-category]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const cat = categoriesData.find(c => String(c.id) === String(btn.getAttribute("data-edit-category")));
+        if (!cat) return;
+        editingCategoryId = cat.id;
+        if (categoryNameInput) categoryNameInput.value = cat.name || "";
+        if (categorySlugInput) categorySlugInput.value = cat.slug || "";
+        if (categoryOrderInput) categoryOrderInput.value = String(cat.order_index ?? 0);
+        if (categoryActiveInput) categoryActiveInput.checked = !!cat.active;
+        setCategoriesMsg("");
+      });
     });
-  });
 
-  categoriesList.querySelectorAll("[data-toggle-category]").forEach(btn => {
-    btn.addEventListener("click", async () => {
-      const cat = categoriesData.find(c => String(c.id) === String(btn.getAttribute("data-toggle-category")));
-      if (!cat) return;
-      const ok = await confirmAction({ message: `¿Actualizar categoría "${cat.name}"?`, type: "generic" });
-      if (!ok) return;
+    categoriesList.querySelectorAll("[data-toggle-category]").forEach(btn => {
+      btn.addEventListener("click", async () => {
+        const cat = categoriesData.find(c => String(c.id) === String(btn.getAttribute("data-toggle-category")));
+        if (!cat) return;
+        const ok = await confirmAction({ message: `¿Actualizar categoría "${cat.name}"?`, type: "generic" });
+        if (!ok) return;
 
-      const { error } = await sb.from("categories").update({
-        active: !cat.active,
-        updated_at: new Date().toISOString(),
-      }).eq("id", cat.id);
+        const { error } = await sb.from("categories").update({
+          active: !cat.active,
+          updated_at: new Date().toISOString(),
+        }).eq("id", cat.id);
 
-      if (error) return setCategoriesMsg(`No se pudo actualizar la categoría: ${error.message}`);
-      setCategoriesMsg("✅ Categoría actualizada.");
-      await loadCategories();
-      await loadProjects();
+        if (error) return setCategoriesMsg(`No se pudo actualizar la categoría: ${error.message}`);
+        setCategoriesMsg("✅ Categoría actualizada.");
+        await loadCategories();
+        await loadProjects();
+      });
     });
-  });
+  }
 }
 
 function resetCategoryForm() {
   editingCategoryId = null;
-  categoryNameInput.value = "";
-  categorySlugInput.value = "";
-  categoryOrderInput.value = "0";
-  categoryActiveInput.checked = true;
+  if (categoryNameInput) categoryNameInput.value = "";
+  if (categorySlugInput) categorySlugInput.value = "";
+  if (categoryOrderInput) categoryOrderInput.value = "0";
+  if (categoryActiveInput) categoryActiveInput.checked = true;
   setCategoriesMsg("");
 }
 
 function renderFaqsList() {
   const list = faqsData.slice().sort((a, b) => (a.order_index ?? 0) - (b.order_index ?? 0));
   if (!list.length) {
-    faqsList.innerHTML = `<div class="emptyState">❓ No hay FAQs cargadas.</div>`;
+    if (faqsList) faqsList.innerHTML = `<div class="emptyState">❓ No hay FAQs cargadas.</div>`;
     return;
   }
 
-  faqsList.innerHTML = list.map(faq => `
-    <article class="listCard listCard--compact">
-      <div class="listCard__body">
-        <div class="listCard__title">❓ ${escapeHtml(faq.question)}</div>
-        <div class="listCard__meta">💬 ${escapeHtml(faq.answer.substring(0, 100))}${faq.answer.length > 100 ? "..." : ""}</div>
-        <div class="listCard__meta">${faq.active ? "🟢 Activa" : "🔴 Inactiva"} · 🔢 Orden: ${faq.order_index ?? 0}</div>
-      </div>
-      <div class="listCard__actions">
-        <button class="btn btn--ghost btn--small" type="button" data-edit-faq="${faq.id}" data-tooltip="Editar FAQ">✏️</button>
-        <button class="btn btn--ghost btn--small" type="button" data-toggle-faq="${faq.id}" data-tooltip="${faq.active ? 'Desactivar' : 'Activar'}">${faq.active ? "🔴" : "🟢"}</button>
-      </div>
-    </article>
-  `).join("");
+  if (faqsList) {
+    faqsList.innerHTML = list.map(faq => `
+      <article class="listCard listCard--compact">
+        <div class="listCard__body">
+          <div class="listCard__title">❓ ${escapeHtml(faq.question)}</div>
+          <div class="listCard__meta">💬 ${escapeHtml(faq.answer.substring(0, 100))}${faq.answer.length > 100 ? "..." : ""}</div>
+          <div class="listCard__meta">${faq.active ? "🟢 Activa" : "🔴 Inactiva"} · 🔢 Orden: ${faq.order_index ?? 0}</div>
+        </div>
+        <div class="listCard__actions">
+          <button class="btn btn--ghost btn--small" type="button" data-edit-faq="${faq.id}" data-tooltip="Editar FAQ">✏️</button>
+          <button class="btn btn--ghost btn--small" type="button" data-toggle-faq="${faq.id}" data-tooltip="${faq.active ? 'Desactivar' : 'Activar'}">${faq.active ? "🔴" : "🟢"}</button>
+        </div>
+      </article>
+    `).join("");
 
-  faqsList.querySelectorAll("[data-edit-faq]").forEach(btn => {
-    btn.addEventListener("click", () => {
-      const faq = faqsData.find(f => String(f.id) === String(btn.getAttribute("data-edit-faq")));
-      if (!faq) return;
-      editingFaqId = faq.id;
-      faqQuestionInput.value = faq.question || "";
-      faqAnswerInput.value = faq.answer || "";
-      faqOrderInput.value = String(faq.order_index ?? 0);
-      faqActiveInput.checked = !!faq.active;
-      setFaqsMsg("");
+    faqsList.querySelectorAll("[data-edit-faq]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const faq = faqsData.find(f => String(f.id) === String(btn.getAttribute("data-edit-faq")));
+        if (!faq) return;
+        editingFaqId = faq.id;
+        if (faqQuestionInput) faqQuestionInput.value = faq.question || "";
+        if (faqAnswerInput) faqAnswerInput.value = faq.answer || "";
+        if (faqOrderInput) faqOrderInput.value = String(faq.order_index ?? 0);
+        if (faqActiveInput) faqActiveInput.checked = !!faq.active;
+        setFaqsMsg("");
+      });
     });
-  });
 
-  faqsList.querySelectorAll("[data-toggle-faq]").forEach(btn => {
-    btn.addEventListener("click", async () => {
-      const faq = faqsData.find(f => String(f.id) === String(btn.getAttribute("data-toggle-faq")));
-      if (!faq) return;
-      const ok = await confirmAction({ message: `¿Actualizar FAQ?`, type: "generic" });
-      if (!ok) return;
+    faqsList.querySelectorAll("[data-toggle-faq]").forEach(btn => {
+      btn.addEventListener("click", async () => {
+        const faq = faqsData.find(f => String(f.id) === String(btn.getAttribute("data-toggle-faq")));
+        if (!faq) return;
+        const ok = await confirmAction({ message: `¿Actualizar FAQ?`, type: "generic" });
+        if (!ok) return;
 
-      const { error } = await sb.from("faqs").update({
-        active: !faq.active,
-        updated_at: new Date().toISOString(),
-      }).eq("id", faq.id);
+        const { error } = await sb.from("faqs").update({
+          active: !faq.active,
+          updated_at: new Date().toISOString(),
+        }).eq("id", faq.id);
 
-      if (error) return setFaqsMsg(`No se pudo actualizar la FAQ: ${error.message}`);
-      setFaqsMsg("✅ FAQ actualizada.");
-      await loadFaqs();
+        if (error) return setFaqsMsg(`No se pudo actualizar la FAQ: ${error.message}`);
+        setFaqsMsg("✅ FAQ actualizada.");
+        await loadFaqs();
+      });
     });
-  });
+  }
 }
 
 function resetFaqForm() {
   editingFaqId = null;
-  faqQuestionInput.value = "";
-  faqAnswerInput.value = "";
-  faqOrderInput.value = "0";
-  faqActiveInput.checked = true;
+  if (faqQuestionInput) faqQuestionInput.value = "";
+  if (faqAnswerInput) faqAnswerInput.value = "";
+  if (faqOrderInput) faqOrderInput.value = "0";
+  if (faqActiveInput) faqActiveInput.checked = true;
   setFaqsMsg("");
 }
 
@@ -913,46 +933,46 @@ function fillSiteContentFormById(id) {
   const item = siteContentData.find(x => String(x.id) === String(id));
   if (!item) return;
 
-  siteContentTitleInput.value = item.title || "";
-  siteContentSubtitleInput.value = item.subtitle || "";
-  siteContentBodyInput.value = item.content || "";
-  siteContentImageUrlInput.value = item.image_url || "";
-  siteContentCtaLabelInput.value = item.cta_label || "";
-  siteContentCtaUrlInput.value = item.cta_url || "";
-  siteContentOrderInput.value = String(item.order_index ?? 0);
-  siteContentActiveInput.checked = !!item.active;
+  if (siteContentTitleInput) siteContentTitleInput.value = item.title || "";
+  if (siteContentSubtitleInput) siteContentSubtitleInput.value = item.subtitle || "";
+  if (siteContentBodyInput) siteContentBodyInput.value = item.content || "";
+  if (siteContentImageUrlInput) siteContentImageUrlInput.value = item.image_url || "";
+  if (siteContentCtaLabelInput) siteContentCtaLabelInput.value = item.cta_label || "";
+  if (siteContentCtaUrlInput) siteContentCtaUrlInput.value = item.cta_url || "";
+  if (siteContentOrderInput) siteContentOrderInput.value = String(item.order_index ?? 0);
+  if (siteContentActiveInput) siteContentActiveInput.checked = !!item.active;
   setSiteContentMsg("");
 }
 
 function fillSiteSettingsForm() {
   const s = siteSettingsData || {};
-  siteTitleInput.value = s.site_title || "";
-  siteTaglineInput.value = s.site_tagline || "";
-  heroBadgeInput.value = s.hero_badge || "";
-  heroTitleInput.value = s.hero_title || "";
-  heroSubtitleInput.value = s.hero_subtitle || "";
-  heroCtaLabelInput.value = s.hero_cta_label || "";
-  heroCtaUrlInput.value = s.hero_cta_url || "";
-  logoUrlInput.value = s.logo_url || "";
-  heroLogoUrlInput.value = s.hero_logo_url || "";
-  footerLogoUrlInput.value = s.footer_logo_url || "";
-  faviconUrlInput.value = s.favicon_url || "";
-  backgroundImageUrlInput.value = s.background_image_url || "";
-  heroImageUrlInput.value = s.hero_image_url || "";
-  heroOverlayUrlInput.value = s.hero_overlay_url || "";
-  heroVideoUrlInput.value = s.hero_video_url || "";
-  whatsappNumberInput.value = s.whatsapp_number || "";
-  emailContactInput.value = s.email_contact || "";
-  instagramUrlInput.value = s.instagram_url || "";
-  facebookUrlInput.value = s.facebook_url || "";
-  tiktokUrlInput.value = s.tiktok_url || "";
-  useHeroVideoInput.checked = !!s.use_hero_video;
-  useBackgroundImageInput.checked = !!s.use_background_image;
+  if (siteTitleInput) siteTitleInput.value = s.site_title || "";
+  if (siteTaglineInput) siteTaglineInput.value = s.site_tagline || "";
+  if (heroBadgeInput) heroBadgeInput.value = s.hero_badge || "";
+  if (heroTitleInput) heroTitleInput.value = s.hero_title || "";
+  if (heroSubtitleInput) heroSubtitleInput.value = s.hero_subtitle || "";
+  if (heroCtaLabelInput) heroCtaLabelInput.value = s.hero_cta_label || "";
+  if (heroCtaUrlInput) heroCtaUrlInput.value = s.hero_cta_url || "";
+  if (logoUrlInput) logoUrlInput.value = s.logo_url || "";
+  if (heroLogoUrlInput) heroLogoUrlInput.value = s.hero_logo_url || "";
+  if (footerLogoUrlInput) footerLogoUrlInput.value = s.footer_logo_url || "";
+  if (faviconUrlInput) faviconUrlInput.value = s.favicon_url || "";
+  if (backgroundImageUrlInput) backgroundImageUrlInput.value = s.background_image_url || "";
+  if (heroImageUrlInput) heroImageUrlInput.value = s.hero_image_url || "";
+  if (heroOverlayUrlInput) heroOverlayUrlInput.value = s.hero_overlay_url || "";
+  if (heroVideoUrlInput) heroVideoUrlInput.value = s.hero_video_url || "";
+  if (whatsappNumberInput) whatsappNumberInput.value = s.whatsapp_number || "";
+  if (emailContactInput) emailContactInput.value = s.email_contact || "";
+  if (instagramUrlInput) instagramUrlInput.value = s.instagram_url || "";
+  if (facebookUrlInput) facebookUrlInput.value = s.facebook_url || "";
+  if (tiktokUrlInput) tiktokUrlInput.value = s.tiktok_url || "";
+  if (useHeroVideoInput) useHeroVideoInput.checked = !!s.use_hero_video;
+  if (useBackgroundImageInput) useBackgroundImageInput.checked = !!s.use_background_image;
 }
 
 function renderProjectHistory() {
   if (!projectHistoryData.length) {
-    projectHistoryList.innerHTML = `<div class="emptyState">📜 No hay historial de proyectos.</div>`;
+    if (projectHistoryList) projectHistoryList.innerHTML = `<div class="emptyState">📜 No hay historial de proyectos.</div>`;
     if (projectHistoryPaginator) projectHistoryPaginator.updateItems([]);
     return;
   }
@@ -976,38 +996,40 @@ function renderProjectHistory() {
 
 function renderProjectHistoryPage(items) {
   if (!items.length) {
-    projectHistoryList.innerHTML = `<div class="emptyState">📜 No hay historial de proyectos.</div>`;
+    if (projectHistoryList) projectHistoryList.innerHTML = `<div class="emptyState">📜 No hay historial de proyectos.</div>`;
     return;
   }
 
-  projectHistoryList.innerHTML = items.map(item => {
-    const snap = item.snapshot || {};
-    const title = snap.title || `Proyecto ${item.project_id}`;
-    return `
-      <article class="listCard listCard--compact">
-        <div class="listCard__body">
-          <div class="listCard__title">📌 ${escapeHtml(title)}</div>
-          <div class="listCard__meta">⚡ ${escapeHtml(item.action_type)} · ${formatDate(item.created_at)}</div>
-          <div class="listCard__meta">👤 Por: ${escapeHtml(item.changed_by || "admin")}</div>
-        </div>
-        <div class="listCard__actions">
-          <button class="btn btn--ghost btn--small" data-restore-project-history="${item.id}" data-tooltip="Restaurar esta versión">↩️ Restaurar</button>
-        </div>
-      </article>
-    `;
-  }).join("");
+  if (projectHistoryList) {
+    projectHistoryList.innerHTML = items.map(item => {
+      const snap = item.snapshot || {};
+      const title = snap.title || `Proyecto ${item.project_id}`;
+      return `
+        <article class="listCard listCard--compact">
+          <div class="listCard__body">
+            <div class="listCard__title">📌 ${escapeHtml(title)}</div>
+            <div class="listCard__meta">⚡ ${escapeHtml(item.action_type)} · ${formatDate(item.created_at)}</div>
+            <div class="listCard__meta">👤 Por: ${escapeHtml(item.changed_by || "admin")}</div>
+          </div>
+          <div class="listCard__actions">
+            <button class="btn btn--ghost btn--small" data-restore-project-history="${item.id}" data-tooltip="Restaurar esta versión">↩️ Restaurar</button>
+          </div>
+        </article>
+      `;
+    }).join("");
 
-  projectHistoryList.querySelectorAll("[data-restore-project-history]").forEach(btn => {
-    btn.addEventListener("click", async () => {
-      const item = projectHistoryData.find(x => String(x.id) === String(btn.getAttribute("data-restore-project-history")));
-      if (item) await restoreProjectFromHistory(item);
+    projectHistoryList.querySelectorAll("[data-restore-project-history]").forEach(btn => {
+      btn.addEventListener("click", async () => {
+        const item = projectHistoryData.find(x => String(x.id) === String(btn.getAttribute("data-restore-project-history")));
+        if (item) await restoreProjectFromHistory(item);
+      });
     });
-  });
+  }
 }
 
 function renderSettingsHistory() {
   if (!settingsHistoryData.length) {
-    settingsHistoryList.innerHTML = `<div class="emptyState">⚙️ No hay historial de settings.</div>`;
+    if (settingsHistoryList) settingsHistoryList.innerHTML = `<div class="emptyState">⚙️ No hay historial de settings.</div>`;
     if (settingsHistoryPaginator) settingsHistoryPaginator.updateItems([]);
     return;
   }
@@ -1031,29 +1053,31 @@ function renderSettingsHistory() {
 
 function renderSettingsHistoryPage(items) {
   if (!items.length) {
-    settingsHistoryList.innerHTML = `<div class="emptyState">⚙️ No hay historial de settings.</div>`;
+    if (settingsHistoryList) settingsHistoryList.innerHTML = `<div class="emptyState">⚙️ No hay historial de settings.</div>`;
     return;
   }
 
-  settingsHistoryList.innerHTML = items.map(item => `
-    <article class="listCard listCard--compact">
-      <div class="listCard__body">
-        <div class="listCard__title">⚙️ Settings globales</div>
-        <div class="listCard__meta">📝 ${escapeHtml(item.action_type)} · ${formatDate(item.created_at)}</div>
-        <div class="listCard__meta">👤 Por: ${escapeHtml(item.changed_by || "admin")}</div>
-      </div>
-      <div class="listCard__actions">
-        <button class="btn btn--ghost btn--small" data-restore-settings-history="${item.id}" data-tooltip="Restaurar esta configuración">↩️ Restaurar</button>
-      </div>
-    </article>
-  `).join("");
+  if (settingsHistoryList) {
+    settingsHistoryList.innerHTML = items.map(item => `
+      <article class="listCard listCard--compact">
+        <div class="listCard__body">
+          <div class="listCard__title">⚙️ Settings globales</div>
+          <div class="listCard__meta">📝 ${escapeHtml(item.action_type)} · ${formatDate(item.created_at)}</div>
+          <div class="listCard__meta">👤 Por: ${escapeHtml(item.changed_by || "admin")}</div>
+        </div>
+        <div class="listCard__actions">
+          <button class="btn btn--ghost btn--small" data-restore-settings-history="${item.id}" data-tooltip="Restaurar esta configuración">↩️ Restaurar</button>
+        </div>
+      </article>
+    `).join("");
 
-  settingsHistoryList.querySelectorAll("[data-restore-settings-history]").forEach(btn => {
-    btn.addEventListener("click", async () => {
-      const item = settingsHistoryData.find(x => String(x.id) === String(btn.getAttribute("data-restore-settings-history")));
-      if (item) await restoreSettingsFromHistory(item);
+    settingsHistoryList.querySelectorAll("[data-restore-settings-history]").forEach(btn => {
+      btn.addEventListener("click", async () => {
+        const item = settingsHistoryData.find(x => String(x.id) === String(btn.getAttribute("data-restore-settings-history")));
+        if (item) await restoreSettingsFromHistory(item);
+      });
     });
-  });
+  }
 }
 
 /* =========================
@@ -1202,8 +1226,8 @@ async function uploadImageToStorage() {
       throw new Error("No se pudo obtener la URL pública.");
     }
 
-    projectImageUrlInput.value = publicUrl;
-    projectPreviewImg.src = publicUrl;
+    if (projectImageUrlInput) projectImageUrlInput.value = publicUrl;
+    if (projectPreviewImg) projectPreviewImg.src = publicUrl;
     setProjectUploadMsg("✅ Imagen subida y URL completada.", "success");
   } catch (error) {
     setProjectUploadMsg(error instanceof Error ? error.message : "No se pudo subir la imagen.", "error");
@@ -1215,18 +1239,20 @@ async function uploadImageToStorage() {
 /* =========================
    PROJECTS CRUD
 ========================= */
-projectImageUrlInput.addEventListener("input", () => {
-  const value = safeUrl(projectImageUrlInput.value);
-  if (value) projectPreviewImg.src = value;
-  else projectPreviewImg.removeAttribute("src");
-});
+if (projectImageUrlInput) {
+  projectImageUrlInput.addEventListener("input", () => {
+    const value = safeUrl(projectImageUrlInput.value);
+    if (value && projectPreviewImg) projectPreviewImg.src = value;
+    else if (projectPreviewImg) projectPreviewImg.removeAttribute("src");
+  });
+}
 
 if (projectImageFileInput) {
   projectImageFileInput.addEventListener("change", () => {
     const file = projectImageFileInput.files?.[0];
     if (!file) return;
     const localUrl = URL.createObjectURL(file);
-    projectPreviewImg.src = localUrl;
+    if (projectPreviewImg) projectPreviewImg.src = localUrl;
   });
 }
 
@@ -1234,120 +1260,138 @@ if (projectUploadBtn) {
   projectUploadBtn.addEventListener("click", uploadImageToStorage);
 }
 
-projectAdvancedToggleBtn.addEventListener("click", () => {
-  const open = projectAdvancedBox.style.display !== "none";
-  projectAdvancedBox.style.display = open ? "none" : "";
-  projectAdvancedToggleBtn.textContent = open ? "🔧 Abrir ajustes avanzados" : "🔧 Cerrar ajustes avanzados";
-});
-
-projectTagsInput.addEventListener("input", renderTagPreview);
-
-projectFormResetBtn.addEventListener("click", resetProjectForm);
-dashboardNewBtn.addEventListener("click", () => { resetProjectForm(); switchView("new-project"); });
-projectsNewBtn.addEventListener("click", () => { resetProjectForm(); switchView("new-project"); });
-quickNewProjectBtn.addEventListener("click", () => { resetProjectForm(); switchView("new-project"); });
-
-projectDuplicateBtn.addEventListener("click", async () => {
-  if (!editingProjectId) return;
-  const project = projectsData.find(p => String(p.id) === String(editingProjectId));
-  if (project) await duplicateProject(project);
-});
-
-projectSaveBtn.addEventListener("click", async () => {
-  setProjectFormMsg("");
-
-  const image_url = safeUrl(projectImageUrlInput.value);
-  const title = (projectTitleInput.value || "").trim();
-  const demo_url = safeUrl(projectDemoUrlInput.value);
-  const category_id = projectCategorySelect.value || null;
-  const solution_type = projectTypeSelect.value || "";
-  const short_description = (projectShortDescInput.value || "").trim();
-  const full_description = (projectFullDescInput.value || "").trim();
-  const preview_type = projectPreviewTypeSelect.value || "image";
-  const order_index = Number(projectOrderInput.value || 0);
-  const status = projectStatusSelect.value || "published";
-  const tags = parseTagInput(projectTagsInput.value);
-
-  if (!image_url) return setProjectFormMsg("❌ Falta la URL de imagen.");
-  if (!title) return setProjectFormMsg("❌ Falta el título.");
-  if (!demo_url) return setProjectFormMsg("❌ Falta el link demo.");
-  if (!category_id) return setProjectFormMsg("❌ Elegí una categoría.");
-  if (!solution_type) return setProjectFormMsg("❌ Elegí un tipo de solución.");
-  if (!short_description) return setProjectFormMsg("❌ Falta la descripción corta.");
-
-  const legacy = deriveLegacyFlagsFromStatus(status);
-  const payload = {
-    image_url,
-    title,
-    demo_url,
-    category_id,
-    solution_type,
-    short_description,
-    full_description: full_description || null,
-    preview_type,
-    order_index: Number.isNaN(order_index) ? 0 : order_index,
-    status,
-    active: projectActiveInput.checked && legacy.active,
-    highlight: projectHighlightInput.checked || legacy.highlight,
-    featured_home: projectFeaturedHomeInput.checked,
-    featured_portfolio: projectFeaturedPortfolioInput.checked,
-    updated_at: new Date().toISOString(),
-  };
-
-  const ok = await confirmAction({
-    message: editingProjectId ? `¿Guardar cambios en "${title}"?` : `¿Crear "${title}"?`,
-    type: "generic",
+if (projectAdvancedToggleBtn) {
+  projectAdvancedToggleBtn.addEventListener("click", () => {
+    const open = projectAdvancedBox?.style.display !== "none";
+    if (projectAdvancedBox) projectAdvancedBox.style.display = open ? "none" : "";
+    if (projectAdvancedToggleBtn) projectAdvancedToggleBtn.textContent = open ? "🔧 Abrir ajustes avanzados" : "🔧 Cerrar ajustes avanzados";
   });
-  if (!ok) return;
+}
 
-  if (!editingProjectId) {
-    const { data, error } = await sb.from("projects").insert([payload]).select("*").single();
-    if (error) return setProjectFormMsg(`No se pudo publicar: ${error.message}`);
+if (projectTagsInput) {
+  projectTagsInput.addEventListener("input", renderTagPreview);
+}
 
-    try {
-      await upsertTagsAndBindings(data.id, tags);
-    } catch (tagError) {
-      console.error(tagError);
-      setProjectFormMsg(tagError instanceof Error ? tagError.message : "Proyecto creado pero fallaron los tags.");
-      await loadTags();
-      await loadProjects();
-      return;
+if (projectFormResetBtn) {
+  projectFormResetBtn.addEventListener("click", resetProjectForm);
+}
+if (dashboardNewBtn) {
+  dashboardNewBtn.addEventListener("click", () => { resetProjectForm(); switchView("new-project"); });
+}
+if (projectsNewBtn) {
+  projectsNewBtn.addEventListener("click", () => { resetProjectForm(); switchView("new-project"); });
+}
+if (quickNewProjectBtn) {
+  quickNewProjectBtn.addEventListener("click", () => { resetProjectForm(); switchView("new-project"); });
+}
+
+if (projectDuplicateBtn) {
+  projectDuplicateBtn.addEventListener("click", async () => {
+    if (!editingProjectId) return;
+    const project = projectsData.find(p => String(p.id) === String(editingProjectId));
+    if (project) await duplicateProject(project);
+  });
+}
+
+if (projectSaveBtn) {
+  projectSaveBtn.addEventListener("click", async () => {
+    setProjectFormMsg("");
+
+    const image_url = safeUrl(projectImageUrlInput?.value);
+    const title = (projectTitleInput?.value || "").trim();
+    const demo_url = safeUrl(projectDemoUrlInput?.value);
+    const category_id = projectCategorySelect?.value || null;
+    const solution_type = projectTypeSelect?.value || "";
+    const short_description = (projectShortDescInput?.value || "").trim();
+    const full_description = (projectFullDescInput?.value || "").trim();
+    const preview_type = projectPreviewTypeSelect?.value || "image";
+    const order_index = Number(projectOrderInput?.value || 0);
+    const status = projectStatusSelect?.value || "published";
+    const tags = parseTagInput(projectTagsInput?.value);
+
+    if (!image_url) return setProjectFormMsg("❌ Falta la URL de imagen.");
+    if (!title) return setProjectFormMsg("❌ Falta el título.");
+    if (!demo_url) return setProjectFormMsg("❌ Falta el link demo.");
+    if (!category_id) return setProjectFormMsg("❌ Elegí una categoría.");
+    if (!solution_type) return setProjectFormMsg("❌ Elegí un tipo de solución.");
+    if (!short_description) return setProjectFormMsg("❌ Falta la descripción corta.");
+
+    const legacy = deriveLegacyFlagsFromStatus(status);
+    const payload = {
+      image_url,
+      title,
+      demo_url,
+      category_id,
+      solution_type,
+      short_description,
+      full_description: full_description || null,
+      preview_type,
+      order_index: Number.isNaN(order_index) ? 0 : order_index,
+      status,
+      active: projectActiveInput?.checked && legacy.active,
+      highlight: projectHighlightInput?.checked || legacy.highlight,
+      featured_home: projectFeaturedHomeInput?.checked,
+      featured_portfolio: projectFeaturedPortfolioInput?.checked,
+      updated_at: new Date().toISOString(),
+    };
+
+    const ok = await confirmAction({
+      message: editingProjectId ? `¿Guardar cambios en "${title}"?` : `¿Crear "${title}"?`,
+      type: "generic",
+    });
+    if (!ok) return;
+
+    if (!editingProjectId) {
+      const { data, error } = await sb.from("projects").insert([payload]).select("*").single();
+      if (error) return setProjectFormMsg(`No se pudo publicar: ${error.message}`);
+
+      try {
+        await upsertTagsAndBindings(data.id, tags);
+      } catch (tagError) {
+        console.error(tagError);
+        setProjectFormMsg(tagError instanceof Error ? tagError.message : "Proyecto creado pero fallaron los tags.");
+        await loadTags();
+        await loadProjects();
+        return;
+      }
+
+      await snapshotProject(data, "create");
+      setProjectFormMsg("✅ Proyecto publicado.");
+    } else {
+      const current = projectsData.find(p => String(p.id) === String(editingProjectId));
+      if (current) await snapshotProject(current, "update");
+
+      const { data, error } = await sb.from("projects").update(payload).eq("id", editingProjectId).select("*").single();
+      if (error) return setProjectFormMsg(`No se pudo guardar: ${error.message}`);
+
+      try {
+        await upsertTagsAndBindings(editingProjectId, tags);
+      } catch (tagError) {
+        console.error(tagError);
+        setProjectFormMsg(tagError instanceof Error ? tagError.message : "Proyecto actualizado pero fallaron los tags.");
+        await loadTags();
+        await loadProjects();
+        return;
+      }
+
+      setProjectFormMsg("✅ Proyecto actualizado.");
     }
 
-    await snapshotProject(data, "create");
-    setProjectFormMsg("✅ Proyecto publicado.");
-  } else {
-    const current = projectsData.find(p => String(p.id) === String(editingProjectId));
-    if (current) await snapshotProject(current, "update");
+    await loadTags();
+    await loadProjects();
+    await loadHistory();
+    resetProjectForm();
+    switchView("projects");
+  });
+}
 
-    const { data, error } = await sb.from("projects").update(payload).eq("id", editingProjectId).select("*").single();
-    if (error) return setProjectFormMsg(`No se pudo guardar: ${error.message}`);
-
-    try {
-      await upsertTagsAndBindings(editingProjectId, tags);
-    } catch (tagError) {
-      console.error(tagError);
-      setProjectFormMsg(tagError instanceof Error ? tagError.message : "Proyecto actualizado pero fallaron los tags.");
-      await loadTags();
-      await loadProjects();
-      return;
-    }
-
-    setProjectFormMsg("✅ Proyecto actualizado.");
-  }
-
-  await loadTags();
-  await loadProjects();
-  await loadHistory();
-  resetProjectForm();
-  switchView("projects");
-});
-
-projectDeleteBtn.addEventListener("click", async () => {
-  if (!editingProjectId) return;
-  const project = projectsData.find(p => String(p.id) === String(editingProjectId));
-  if (project) await deleteProject(project);
-});
+if (projectDeleteBtn) {
+  projectDeleteBtn.addEventListener("click", async () => {
+    if (!editingProjectId) return;
+    const project = projectsData.find(p => String(p.id) === String(editingProjectId));
+    if (project) await deleteProject(project);
+  });
+}
 
 async function toggleProjectActive(project) {
   const ok = await confirmAction({ message: `¿Actualizar estado activo de "${project.title}"?`, type: "generic" });
@@ -1429,214 +1473,231 @@ async function duplicateProject(project) {
 /* =========================
    FILTERS
 ========================= */
-projectsRefreshBtn.addEventListener("click", loadProjects);
-dashboardRefreshBtn.addEventListener("click", loadAll);
-dashboardSeeProjectsBtn.addEventListener("click", () => switchView("projects"));
-projectSearchInput.addEventListener("input", renderProjectsList);
-projectCategoryFilter.addEventListener("change", renderProjectsList);
-projectTypeFilter.addEventListener("change", renderProjectsList);
-projectStatusFilter.addEventListener("change", renderProjectsList);
-projectTagFilter.addEventListener("change", renderProjectsList);
+if (projectsRefreshBtn) projectsRefreshBtn.addEventListener("click", loadProjects);
+if (dashboardRefreshBtn) dashboardRefreshBtn.addEventListener("click", loadAll);
+if (dashboardSeeProjectsBtn) dashboardSeeProjectsBtn.addEventListener("click", () => switchView("projects"));
+if (projectSearchInput) projectSearchInput.addEventListener("input", renderProjectsList);
+if (projectCategoryFilter) projectCategoryFilter.addEventListener("change", renderProjectsList);
+if (projectTypeFilter) projectTypeFilter.addEventListener("change", renderProjectsList);
+if (projectStatusFilter) projectStatusFilter.addEventListener("change", renderProjectsList);
+if (projectTagFilter) projectTagFilter.addEventListener("change", renderProjectsList);
 
 /* =========================
    CATEGORIES CRUD
 ========================= */
-categoryNameInput.addEventListener("input", () => {
-  if (!categorySlugInput.dataset.manuallyEdited) categorySlugInput.value = slugify(categoryNameInput.value);
-});
-categorySlugInput.addEventListener("input", () => { categorySlugInput.dataset.manuallyEdited = "true"; });
-categoryResetBtn.addEventListener("click", () => { categorySlugInput.dataset.manuallyEdited = ""; resetCategoryForm(); });
-categoriesRefreshBtn.addEventListener("click", loadCategories);
+if (categoryNameInput) {
+  categoryNameInput.addEventListener("input", () => {
+    if (categorySlugInput && !categorySlugInput.dataset.manuallyEdited) {
+      categorySlugInput.value = slugify(categoryNameInput.value);
+    }
+  });
+}
+if (categorySlugInput) {
+  categorySlugInput.addEventListener("input", () => { categorySlugInput.dataset.manuallyEdited = "true"; });
+}
+if (categoryResetBtn) {
+  categoryResetBtn.addEventListener("click", () => { if (categorySlugInput) categorySlugInput.dataset.manuallyEdited = ""; resetCategoryForm(); });
+}
+if (categoriesRefreshBtn) categoriesRefreshBtn.addEventListener("click", loadCategories);
 
-categorySaveBtn.addEventListener("click", async () => {
-  setCategoriesMsg("");
-  const name = (categoryNameInput.value || "").trim();
-  const slug = slugify(categorySlugInput.value || categoryNameInput.value);
-  const order_index = Number(categoryOrderInput.value || 0);
-  const active = categoryActiveInput.checked;
-  if (!name) return setCategoriesMsg("❌ Falta el nombre.");
-  if (!slug) return setCategoriesMsg("❌ Falta el slug.");
+if (categorySaveBtn) {
+  categorySaveBtn.addEventListener("click", async () => {
+    setCategoriesMsg("");
+    const name = (categoryNameInput?.value || "").trim();
+    const slug = slugify(categorySlugInput?.value || categoryNameInput?.value);
+    const order_index = Number(categoryOrderInput?.value || 0);
+    const active = categoryActiveInput?.checked || false;
+    if (!name) return setCategoriesMsg("❌ Falta el nombre.");
+    if (!slug) return setCategoriesMsg("❌ Falta el slug.");
 
-  const payload = {
-    name,
-    slug,
-    order_index: Number.isNaN(order_index) ? 0 : order_index,
-    active,
-    updated_at: new Date().toISOString(),
-  };
+    const payload = {
+      name,
+      slug,
+      order_index: Number.isNaN(order_index) ? 0 : order_index,
+      active,
+      updated_at: new Date().toISOString(),
+    };
 
-  const ok = await confirmAction({ message: editingCategoryId ? `¿Guardar categoría "${name}"?` : `¿Crear categoría "${name}"?`, type: "generic" });
-  if (!ok) return;
+    const ok = await confirmAction({ message: editingCategoryId ? `¿Guardar categoría "${name}"?` : `¿Crear categoría "${name}"?`, type: "generic" });
+    if (!ok) return;
 
-  if (!editingCategoryId) {
-    const { error } = await sb.from("categories").insert([payload]);
-    if (error) return setCategoriesMsg(`No se pudo guardar la categoría: ${error.message}`);
-    setCategoriesMsg("✅ Categoría creada.");
-  } else {
-    const { error } = await sb.from("categories").update(payload).eq("id", editingCategoryId);
-    if (error) return setCategoriesMsg(`No se pudo actualizar la categoría: ${error.message}`);
-    setCategoriesMsg("✅ Categoría actualizada.");
-  }
+    if (!editingCategoryId) {
+      const { error } = await sb.from("categories").insert([payload]);
+      if (error) return setCategoriesMsg(`No se pudo guardar la categoría: ${error.message}`);
+      setCategoriesMsg("✅ Categoría creada.");
+    } else {
+      const { error } = await sb.from("categories").update(payload).eq("id", editingCategoryId);
+      if (error) return setCategoriesMsg(`No se pudo actualizar la categoría: ${error.message}`);
+      setCategoriesMsg("✅ Categoría actualizada.");
+    }
 
-  categorySlugInput.dataset.manuallyEdited = "";
-  resetCategoryForm();
-  await loadCategories();
-  await loadProjects();
-});
+    if (categorySlugInput) categorySlugInput.dataset.manuallyEdited = "";
+    resetCategoryForm();
+    await loadCategories();
+    await loadProjects();
+  });
+}
 
 /* =========================
    FAQS CRUD
 ========================= */
-faqsRefreshBtn.addEventListener("click", loadFaqs);
-faqResetBtn.addEventListener("click", resetFaqForm);
+if (faqsRefreshBtn) faqsRefreshBtn.addEventListener("click", loadFaqs);
+if (faqResetBtn) faqResetBtn.addEventListener("click", resetFaqForm);
 
-faqSaveBtn.addEventListener("click", async () => {
-  setFaqsMsg("");
-  const question = (faqQuestionInput.value || "").trim();
-  const answer = (faqAnswerInput.value || "").trim();
-  const order_index = Number(faqOrderInput.value || 0);
-  const active = faqActiveInput.checked;
-  if (!question) return setFaqsMsg("❌ Falta la pregunta.");
-  if (!answer) return setFaqsMsg("❌ Falta la respuesta.");
+if (faqSaveBtn) {
+  faqSaveBtn.addEventListener("click", async () => {
+    setFaqsMsg("");
+    const question = (faqQuestionInput?.value || "").trim();
+    const answer = (faqAnswerInput?.value || "").trim();
+    const order_index = Number(faqOrderInput?.value || 0);
+    const active = faqActiveInput?.checked || false;
+    if (!question) return setFaqsMsg("❌ Falta la pregunta.");
+    if (!answer) return setFaqsMsg("❌ Falta la respuesta.");
 
-  const payload = {
-    question,
-    answer,
-    order_index: Number.isNaN(order_index) ? 0 : order_index,
-    active,
-    updated_at: new Date().toISOString(),
-  };
+    const payload = {
+      question,
+      answer,
+      order_index: Number.isNaN(order_index) ? 0 : order_index,
+      active,
+      updated_at: new Date().toISOString(),
+    };
 
-  const ok = await confirmAction({ message: editingFaqId ? "¿Guardar FAQ?" : "¿Crear FAQ?", type: "generic" });
-  if (!ok) return;
+    const ok = await confirmAction({ message: editingFaqId ? "¿Guardar FAQ?" : "¿Crear FAQ?", type: "generic" });
+    if (!ok) return;
 
-  if (!editingFaqId) {
-    const { error } = await sb.from("faqs").insert([payload]);
-    if (error) return setFaqsMsg(`No se pudo guardar la FAQ: ${error.message}`);
-    setFaqsMsg("✅ FAQ creada.");
-  } else {
-    const { error } = await sb.from("faqs").update(payload).eq("id", editingFaqId);
-    if (error) return setFaqsMsg(`No se pudo actualizar la FAQ: ${error.message}`);
-    setFaqsMsg("✅ FAQ actualizada.");
-  }
+    if (!editingFaqId) {
+      const { error } = await sb.from("faqs").insert([payload]);
+      if (error) return setFaqsMsg(`No se pudo guardar la FAQ: ${error.message}`);
+      setFaqsMsg("✅ FAQ creada.");
+    } else {
+      const { error } = await sb.from("faqs").update(payload).eq("id", editingFaqId);
+      if (error) return setFaqsMsg(`No se pudo actualizar la FAQ: ${error.message}`);
+      setFaqsMsg("✅ FAQ actualizada.");
+    }
 
-  resetFaqForm();
-  await loadFaqs();
-});
+    resetFaqForm();
+    await loadFaqs();
+  });
+}
 
 /* =========================
    SITE CONTENT CRUD
 ========================= */
-siteContentRefreshBtn.addEventListener("click", loadSiteContent);
+if (siteContentRefreshBtn) siteContentRefreshBtn.addEventListener("click", loadSiteContent);
 
-siteContentSelect.addEventListener("change", () => {
-  const id = siteContentSelect.value;
-  if (!id) {
-    siteContentTitleInput.value = "";
-    siteContentSubtitleInput.value = "";
-    siteContentBodyInput.value = "";
-    siteContentImageUrlInput.value = "";
-    siteContentCtaLabelInput.value = "";
-    siteContentCtaUrlInput.value = "";
-    siteContentOrderInput.value = "0";
-    siteContentActiveInput.checked = true;
+if (siteContentSelect) {
+  siteContentSelect.addEventListener("change", () => {
+    const id = siteContentSelect.value;
+    if (!id) {
+      if (siteContentTitleInput) siteContentTitleInput.value = "";
+      if (siteContentSubtitleInput) siteContentSubtitleInput.value = "";
+      if (siteContentBodyInput) siteContentBodyInput.value = "";
+      if (siteContentImageUrlInput) siteContentImageUrlInput.value = "";
+      if (siteContentCtaLabelInput) siteContentCtaLabelInput.value = "";
+      if (siteContentCtaUrlInput) siteContentCtaUrlInput.value = "";
+      if (siteContentOrderInput) siteContentOrderInput.value = "0";
+      if (siteContentActiveInput) siteContentActiveInput.checked = true;
+      setSiteContentMsg("");
+      return;
+    }
+    fillSiteContentFormById(id);
+  });
+}
+
+if (siteContentSaveBtn) {
+  siteContentSaveBtn.addEventListener("click", async () => {
     setSiteContentMsg("");
-    return;
-  }
-  fillSiteContentFormById(id);
-});
+    const id = siteContentSelect?.value;
+    if (!id) return setSiteContentMsg("❌ Elegí un bloque.");
 
-siteContentSaveBtn.addEventListener("click", async () => {
-  setSiteContentMsg("");
-  const id = siteContentSelect.value;
-  if (!id) return setSiteContentMsg("❌ Elegí un bloque.");
+    const payload = {
+      title: (siteContentTitleInput?.value || "").trim() || null,
+      subtitle: (siteContentSubtitleInput?.value || "").trim() || null,
+      content: (siteContentBodyInput?.value || "").trim() || null,
+      image_url: safeUrl(siteContentImageUrlInput?.value),
+      cta_label: (siteContentCtaLabelInput?.value || "").trim() || null,
+      cta_url: safeUrl(siteContentCtaUrlInput?.value),
+      order_index: Number(siteContentOrderInput?.value || 0) || 0,
+      active: siteContentActiveInput?.checked || false,
+      updated_at: new Date().toISOString(),
+    };
 
-  const payload = {
-    title: (siteContentTitleInput.value || "").trim() || null,
-    subtitle: (siteContentSubtitleInput.value || "").trim() || null,
-    content: (siteContentBodyInput.value || "").trim() || null,
-    image_url: safeUrl(siteContentImageUrlInput.value),
-    cta_label: (siteContentCtaLabelInput.value || "").trim() || null,
-    cta_url: safeUrl(siteContentCtaUrlInput.value),
-    order_index: Number(siteContentOrderInput.value || 0) || 0,
-    active: siteContentActiveInput.checked,
-    updated_at: new Date().toISOString(),
-  };
+    const ok = await confirmAction({ message: "¿Guardar bloque de contenido global?", type: "generic" });
+    if (!ok) return;
 
-  const ok = await confirmAction({ message: "¿Guardar bloque de contenido global?", type: "generic" });
-  if (!ok) return;
+    const { error } = await sb.from("site_content").update(payload).eq("id", id);
+    if (error) return setSiteContentMsg(`No se pudo guardar el bloque: ${error.message}`);
 
-  const { error } = await sb.from("site_content").update(payload).eq("id", id);
-  if (error) return setSiteContentMsg(`No se pudo guardar el bloque: ${error.message}`);
-
-  setSiteContentMsg("✅ Bloque actualizado.");
-  await loadSiteContent();
-  siteContentSelect.value = id;
-  fillSiteContentFormById(id);
-});
+    setSiteContentMsg("✅ Bloque actualizado.");
+    await loadSiteContent();
+    if (siteContentSelect) siteContentSelect.value = id;
+    fillSiteContentFormById(id);
+  });
+}
 
 /* =========================
    SITE SETTINGS CRUD
 ========================= */
-siteSettingsRefreshBtn.addEventListener("click", loadSiteSettings);
+if (siteSettingsRefreshBtn) siteSettingsRefreshBtn.addEventListener("click", loadSiteSettings);
 
-siteSettingsSaveBtn.addEventListener("click", async () => {
-  setSiteSettingsMsg("");
+if (siteSettingsSaveBtn) {
+  siteSettingsSaveBtn.addEventListener("click", async () => {
+    setSiteSettingsMsg("");
 
-  const payload = {
-    id: "global",
-    site_title: (siteTitleInput.value || "").trim() || null,
-    site_tagline: (siteTaglineInput.value || "").trim() || null,
-    hero_badge: (heroBadgeInput.value || "").trim() || null,
-    hero_title: (heroTitleInput.value || "").trim() || null,
-    hero_subtitle: (heroSubtitleInput.value || "").trim() || null,
-    hero_cta_label: (heroCtaLabelInput.value || "").trim() || null,
-    hero_cta_url: safeUrl(heroCtaUrlInput.value),
-    logo_url: safeUrl(logoUrlInput.value),
-    hero_logo_url: safeUrl(heroLogoUrlInput.value),
-    footer_logo_url: safeUrl(footerLogoUrlInput.value),
-    favicon_url: safeUrl(faviconUrlInput.value),
-    background_image_url: safeUrl(backgroundImageUrlInput.value),
-    hero_image_url: safeUrl(heroImageUrlInput.value),
-    hero_overlay_url: safeUrl(heroOverlayUrlInput.value),
-    hero_video_url: safeUrl(heroVideoUrlInput.value),
-    whatsapp_number: (whatsappNumberInput.value || "").trim() || null,
-    email_contact: (emailContactInput.value || "").trim() || null,
-    instagram_url: safeUrl(instagramUrlInput.value),
-    facebook_url: safeUrl(facebookUrlInput.value),
-    tiktok_url: safeUrl(tiktokUrlInput.value),
-    use_hero_video: useHeroVideoInput.checked,
-    use_background_image: useBackgroundImageInput.checked,
-    updated_at: new Date().toISOString(),
-    updated_by: currentUserEmail || null,
-  };
+    const payload = {
+      id: "global",
+      site_title: (siteTitleInput?.value || "").trim() || null,
+      site_tagline: (siteTaglineInput?.value || "").trim() || null,
+      hero_badge: (heroBadgeInput?.value || "").trim() || null,
+      hero_title: (heroTitleInput?.value || "").trim() || null,
+      hero_subtitle: (heroSubtitleInput?.value || "").trim() || null,
+      hero_cta_label: (heroCtaLabelInput?.value || "").trim() || null,
+      hero_cta_url: safeUrl(heroCtaUrlInput?.value),
+      logo_url: safeUrl(logoUrlInput?.value),
+      hero_logo_url: safeUrl(heroLogoUrlInput?.value),
+      footer_logo_url: safeUrl(footerLogoUrlInput?.value),
+      favicon_url: safeUrl(faviconUrlInput?.value),
+      background_image_url: safeUrl(backgroundImageUrlInput?.value),
+      hero_image_url: safeUrl(heroImageUrlInput?.value),
+      hero_overlay_url: safeUrl(heroOverlayUrlInput?.value),
+      hero_video_url: safeUrl(heroVideoUrlInput?.value),
+      whatsapp_number: (whatsappNumberInput?.value || "").trim() || null,
+      email_contact: (emailContactInput?.value || "").trim() || null,
+      instagram_url: safeUrl(instagramUrlInput?.value),
+      facebook_url: safeUrl(facebookUrlInput?.value),
+      tiktok_url: safeUrl(tiktokUrlInput?.value),
+      use_hero_video: useHeroVideoInput?.checked || false,
+      use_background_image: useBackgroundImageInput?.checked || false,
+      updated_at: new Date().toISOString(),
+      updated_by: currentUserEmail || null,
+    };
 
-  const ok = await confirmAction({
-    message: "¿Guardar settings visuales globales?",
-    type: "generic",
+    const ok = await confirmAction({
+      message: "¿Guardar settings visuales globales?",
+      type: "generic",
+    });
+    if (!ok) return;
+
+    if (siteSettingsData?.id) await snapshotSiteSettings(siteSettingsData, "update");
+
+    const { error } = await sb.from("site_settings").upsert([payload], { onConflict: "id" });
+    if (error) return setSiteSettingsMsg(`No se pudo guardar settings: ${error.message}`);
+
+    setSiteSettingsMsg("✅ Settings globales actualizados.");
+    await loadSiteSettings();
+    await loadHistory();
   });
-  if (!ok) return;
-
-  if (siteSettingsData?.id) await snapshotSiteSettings(siteSettingsData, "update");
-
-  const { error } = await sb.from("site_settings").upsert([payload], { onConflict: "id" });
-  if (error) return setSiteSettingsMsg(`No se pudo guardar settings: ${error.message}`);
-
-  setSiteSettingsMsg("✅ Settings globales actualizados.");
-  await loadSiteSettings();
-  await loadHistory();
-});
+}
 
 /* =========================
    HISTORY
 ========================= */
-historyRefreshBtn.addEventListener("click", loadHistory);
+if (historyRefreshBtn) historyRefreshBtn.addEventListener("click", loadHistory);
 
 /* =========================
    KEYBOARD SHORTCUTS
 ========================= */
 document.addEventListener("keydown", (e) => {
-  // Ctrl/Cmd + K para buscar proyectos
   if ((e.ctrlKey || e.metaKey) && e.key === "k") {
     e.preventDefault();
     if (projectSearchInput) {
@@ -1645,16 +1706,14 @@ document.addEventListener("keydown", (e) => {
     }
   }
   
-  // Ctrl/Cmd + N para nuevo proyecto
   if ((e.ctrlKey || e.metaKey) && e.key === "n") {
     e.preventDefault();
     resetProjectForm();
     switchView("new-project");
   }
   
-  // Esc para limpiar búsqueda
   if (e.key === "Escape" && document.activeElement === projectSearchInput) {
-    projectSearchInput.value = "";
+    if (projectSearchInput) projectSearchInput.value = "";
     renderProjectsList();
   }
 });
@@ -1777,8 +1836,8 @@ function renderPendingReviews() {
               <button class="btn btn--small btn--ghost" data-edit-review="${review.id}" style="border-color:var(--cyan);">✏️ Editar</button>
               <button class="btn btn--success btn--small" data-approve-review="${review.id}">✅ Aprobar</button>
               <button class="btn btn--danger btn--small" data-reject-review="${review.id}">❌ Rechazar</button>
-             </td>
-           </tr>
+              </td>
+           </td>
         `).join("")}
       </tbody>
     </table>
@@ -1877,6 +1936,7 @@ async function checkNewReviewsNotification() {
     
     const currentCount = data?.length || 0;
     
+    const pendingBadge = document.getElementById("pendingBadge");
     if (pendingBadge) {
       if (currentCount > 0) {
         pendingBadge.textContent = currentCount;
@@ -2065,9 +2125,13 @@ function renderApprovedReviewsPage(reviews) {
 function openEditModal(review) {
   currentEditReviewId = review.id;
   
-  document.getElementById("editReviewName").value = review.user_name || "";
-  document.getElementById("editReviewComment").value = review.comment || "";
-  document.getElementById("editReviewId").value = review.id;
+  const editName = document.getElementById("editReviewName");
+  const editComment = document.getElementById("editReviewComment");
+  const editId = document.getElementById("editReviewId");
+  
+  if (editName) editName.value = review.user_name || "";
+  if (editComment) editComment.value = review.comment || "";
+  if (editId) editId.value = review.id;
   
   const stars = document.querySelectorAll("#editRatingStars span");
   stars.forEach((star, idx) => {
@@ -2088,12 +2152,13 @@ function openEditModal(review) {
     };
   });
   
-  document.getElementById("editReviewModal").style.display = "flex";
+  const modal = document.getElementById("editReviewModal");
+  if (modal) modal.style.display = "flex";
 }
 
 async function saveEditedReviewAndApprove() {
-  const reviewId = document.getElementById("editReviewId").value;
-  const newComment = document.getElementById("editReviewComment").value.trim();
+  const reviewId = document.getElementById("editReviewId")?.value;
+  const newComment = document.getElementById("editReviewComment")?.value.trim();
   const newRating = window.currentEditRating || 5;
   
   if (!newComment) {
@@ -2127,7 +2192,8 @@ async function saveEditedReviewAndApprove() {
   }
   
   setReviewsMsg("✅ Reseña editada y aprobada correctamente.");
-  document.getElementById("editReviewModal").style.display = "none";
+  const modal = document.getElementById("editReviewModal");
+  if (modal) modal.style.display = "none";
   
   await loadPendingReviews();
   await loadApprovedReviews();
@@ -2262,48 +2328,70 @@ function openPlanModal(id = null) {
   const title = document.getElementById("planModalTitle");
   
   if (!id) {
-    title.textContent = "📝 Nuevo Plan";
-    document.getElementById("planId").value = "";
-    document.getElementById("planName").value = "";
-    document.getElementById("planSlug").value = "";
-    document.getElementById("planDescription").value = "";
-    document.getElementById("planPrice").value = "";
-    document.getElementById("planIcon").value = "📦";
-    document.getElementById("planFeaturesInput").value = "";
-    document.getElementById("planCtaText").value = "Consultar →";
-    document.getElementById("planOrder").value = "0";
-    document.getElementById("planActive").checked = true;
+    if (title) title.textContent = "📝 Nuevo Plan";
+    const planId = document.getElementById("planId");
+    const planName = document.getElementById("planName");
+    const planSlug = document.getElementById("planSlug");
+    const planDescription = document.getElementById("planDescription");
+    const planPrice = document.getElementById("planPrice");
+    const planIcon = document.getElementById("planIcon");
+    const planFeaturesInput = document.getElementById("planFeaturesInput");
+    const planCtaText = document.getElementById("planCtaText");
+    const planOrder = document.getElementById("planOrder");
+    const planActive = document.getElementById("planActive");
+    
+    if (planId) planId.value = "";
+    if (planName) planName.value = "";
+    if (planSlug) planSlug.value = "";
+    if (planDescription) planDescription.value = "";
+    if (planPrice) planPrice.value = "";
+    if (planIcon) planIcon.value = "📦";
+    if (planFeaturesInput) planFeaturesInput.value = "";
+    if (planCtaText) planCtaText.value = "Consultar →";
+    if (planOrder) planOrder.value = "0";
+    if (planActive) planActive.checked = true;
   } else {
     const plan = plansData.find(p => String(p.id) === String(id));
     if (!plan) return;
-    title.textContent = `✏️ Editar: ${plan.name}`;
-    document.getElementById("planId").value = plan.id;
-    document.getElementById("planName").value = plan.name || "";
-    document.getElementById("planSlug").value = plan.slug || "";
-    document.getElementById("planDescription").value = plan.description || "";
-    document.getElementById("planPrice").value = plan.price || "";
-    document.getElementById("planIcon").value = plan.icon || "📦";
-    document.getElementById("planFeaturesInput").value = (plan.features || []).join(", ");
-    document.getElementById("planCtaText").value = plan.cta_text || "Consultar →";
-    document.getElementById("planOrder").value = plan.order_index || 0;
-    document.getElementById("planActive").checked = plan.active !== false;
+    if (title) title.textContent = `✏️ Editar: ${plan.name}`;
+    const planId = document.getElementById("planId");
+    const planName = document.getElementById("planName");
+    const planSlug = document.getElementById("planSlug");
+    const planDescription = document.getElementById("planDescription");
+    const planPrice = document.getElementById("planPrice");
+    const planIcon = document.getElementById("planIcon");
+    const planFeaturesInput = document.getElementById("planFeaturesInput");
+    const planCtaText = document.getElementById("planCtaText");
+    const planOrder = document.getElementById("planOrder");
+    const planActive = document.getElementById("planActive");
+    
+    if (planId) planId.value = plan.id;
+    if (planName) planName.value = plan.name || "";
+    if (planSlug) planSlug.value = plan.slug || "";
+    if (planDescription) planDescription.value = plan.description || "";
+    if (planPrice) planPrice.value = plan.price || "";
+    if (planIcon) planIcon.value = plan.icon || "📦";
+    if (planFeaturesInput) planFeaturesInput.value = (plan.features || []).join(", ");
+    if (planCtaText) planCtaText.value = plan.cta_text || "Consultar →";
+    if (planOrder) planOrder.value = plan.order_index || 0;
+    if (planActive) planActive.checked = plan.active !== false;
   }
   
-  modal.style.display = "flex";
+  if (modal) modal.style.display = "flex";
 }
 
 async function savePlan() {
-  const id = document.getElementById("planId").value;
-  const name = document.getElementById("planName").value.trim();
-  let slug = document.getElementById("planSlug").value.trim();
-  const description = document.getElementById("planDescription").value.trim();
-  const price = document.getElementById("planPrice").value.trim();
-  const icon = document.getElementById("planIcon").value.trim() || "📦";
-  const featuresInput = document.getElementById("planFeaturesInput").value;
+  const id = document.getElementById("planId")?.value;
+  const name = document.getElementById("planName")?.value.trim();
+  let slug = document.getElementById("planSlug")?.value.trim();
+  const description = document.getElementById("planDescription")?.value.trim();
+  const price = document.getElementById("planPrice")?.value.trim();
+  const icon = document.getElementById("planIcon")?.value.trim() || "📦";
+  const featuresInput = document.getElementById("planFeaturesInput")?.value || "";
   const features = featuresInput.split(",").map(f => f.trim()).filter(Boolean);
-  const cta_text = document.getElementById("planCtaText").value.trim() || "Consultar →";
-  const order_index = parseInt(document.getElementById("planOrder").value) || 0;
-  const active = document.getElementById("planActive").checked;
+  const cta_text = document.getElementById("planCtaText")?.value.trim() || "Consultar →";
+  const order_index = parseInt(document.getElementById("planOrder")?.value) || 0;
+  const active = document.getElementById("planActive")?.checked || false;
   
   if (!name) {
     setPlansMsg("❌ El nombre del plan es obligatorio", true);
@@ -2335,7 +2423,8 @@ async function savePlan() {
       setPlansMsg("✅ Plan creado correctamente.");
     }
     
-    document.getElementById("planModal").style.display = "none";
+    const modal = document.getElementById("planModal");
+    if (modal) modal.style.display = "none";
     await loadPlansAdmin();
   } catch (err) {
     setPlansMsg(`❌ Error: ${err.message}`, true);
@@ -2478,47 +2567,93 @@ window.switchView = function(view) {
 /* =========================
    EVENT LISTENERS EXTRA
 ========================= */
-document.getElementById("reviewsApprovedRefreshBtn")?.addEventListener("click", () => {
-  loadApprovedReviews();
-});
+const reviewsApprovedRefreshBtn = document.getElementById("reviewsApprovedRefreshBtn");
+if (reviewsApprovedRefreshBtn) {
+  reviewsApprovedRefreshBtn.addEventListener("click", () => {
+    loadApprovedReviews();
+  });
+}
 
-document.getElementById("exportReviewsBtn")?.addEventListener("click", () => {
-  exportReviewsToCSV();
-});
+const exportReviewsBtn = document.getElementById("exportReviewsBtn");
+if (exportReviewsBtn) {
+  exportReviewsBtn.addEventListener("click", () => {
+    exportReviewsToCSV();
+  });
+}
 
-document.getElementById("approvedSearchInput")?.addEventListener("input", () => {
-  renderApprovedReviews();
-});
+const approvedSearchInput = document.getElementById("approvedSearchInput");
+if (approvedSearchInput) {
+  approvedSearchInput.addEventListener("input", () => {
+    renderApprovedReviews();
+  });
+}
 
-document.getElementById("approvedRatingFilter")?.addEventListener("change", () => {
-  renderApprovedReviews();
-});
+const approvedRatingFilter = document.getElementById("approvedRatingFilter");
+if (approvedRatingFilter) {
+  approvedRatingFilter.addEventListener("change", () => {
+    renderApprovedReviews();
+  });
+}
 
-document.getElementById("approvedSortFilter")?.addEventListener("change", () => {
-  renderApprovedReviews();
-});
+const approvedSortFilter = document.getElementById("approvedSortFilter");
+if (approvedSortFilter) {
+  approvedSortFilter.addEventListener("change", () => {
+    renderApprovedReviews();
+  });
+}
 
-document.getElementById("saveEditReviewBtn")?.addEventListener("click", saveEditedReviewAndApprove);
-document.getElementById("cancelEditReviewBtn")?.addEventListener("click", () => {
-  document.getElementById("editReviewModal").style.display = "none";
-});
+const saveEditReviewBtn = document.getElementById("saveEditReviewBtn");
+if (saveEditReviewBtn) {
+  saveEditReviewBtn.addEventListener("click", saveEditedReviewAndApprove);
+}
 
-document.getElementById("plansRefreshBtn")?.addEventListener("click", () => loadPlansAdmin());
-document.getElementById("plansNewBtn")?.addEventListener("click", () => openPlanModal());
-document.getElementById("planSaveBtn")?.addEventListener("click", () => savePlan());
-document.getElementById("planCancelBtn")?.addEventListener("click", () => {
-  document.getElementById("planModal").style.display = "none";
-});
+const cancelEditReviewBtn = document.getElementById("cancelEditReviewBtn");
+if (cancelEditReviewBtn) {
+  cancelEditReviewBtn.addEventListener("click", () => {
+    const modal = document.getElementById("editReviewModal");
+    if (modal) modal.style.display = "none";
+  });
+}
 
-document.getElementById("planName")?.addEventListener("input", function() {
-  const slugInput = document.getElementById("planSlug");
-  if (slugInput && !slugInput.dataset.manuallyEdited) {
-    slugInput.value = this.value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
-  }
-});
-document.getElementById("planSlug")?.addEventListener("input", function() {
-  this.dataset.manuallyEdited = "true";
-});
+const plansRefreshBtn = document.getElementById("plansRefreshBtn");
+if (plansRefreshBtn) {
+  plansRefreshBtn.addEventListener("click", () => loadPlansAdmin());
+}
+
+const plansNewBtn = document.getElementById("plansNewBtn");
+if (plansNewBtn) {
+  plansNewBtn.addEventListener("click", () => openPlanModal());
+}
+
+const planSaveBtn = document.getElementById("planSaveBtn");
+if (planSaveBtn) {
+  planSaveBtn.addEventListener("click", () => savePlan());
+}
+
+const planCancelBtn = document.getElementById("planCancelBtn");
+if (planCancelBtn) {
+  planCancelBtn.addEventListener("click", () => {
+    const modal = document.getElementById("planModal");
+    if (modal) modal.style.display = "none";
+  });
+}
+
+const planName = document.getElementById("planName");
+if (planName) {
+  planName.addEventListener("input", function() {
+    const slugInput = document.getElementById("planSlug");
+    if (slugInput && !slugInput.dataset.manuallyEdited) {
+      slugInput.value = this.value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+    }
+  });
+}
+
+const planSlug = document.getElementById("planSlug");
+if (planSlug) {
+  planSlug.addEventListener("input", function() {
+    this.dataset.manuallyEdited = "true";
+  });
+}
 
 initSidebarToggle();
 
