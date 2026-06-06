@@ -41,6 +41,150 @@ let editingPlanId = null;
 const navBtns = document.querySelectorAll(".navBtn");
 const viewPanels = document.querySelectorAll(".viewPanel");
 
+// ============================================
+// ELEMENTOS DOM QUE FALTABAN (PARA EVITAR ERRORES)
+// ============================================
+const backgroundImageUrlInput = document.getElementById("backgroundImageUrlInput") || { value: "", checked: false, style: {} };
+const userEmail = document.getElementById("userEmail") || { textContent: "" };
+
+// Elementos del formulario de settings
+const siteTitleInput = document.getElementById("siteTitleInput") || { value: "" };
+const siteTaglineInput = document.getElementById("siteTaglineInput") || { value: "" };
+const heroBadgeInput = document.getElementById("heroBadgeInput") || { value: "" };
+const heroTitleInput = document.getElementById("heroTitleInput") || { value: "" };
+const heroSubtitleInput = document.getElementById("heroSubtitleInput") || { value: "" };
+const heroCtaLabelInput = document.getElementById("heroCtaLabelInput") || { value: "" };
+const heroCtaUrlInput = document.getElementById("heroCtaUrlInput") || { value: "" };
+const logoUrlInput = document.getElementById("logoUrlInput") || { value: "" };
+const heroLogoUrlInput = document.getElementById("heroLogoUrlInput") || { value: "" };
+const footerLogoUrlInput = document.getElementById("footerLogoUrlInput") || { value: "" };
+const faviconUrlInput = document.getElementById("faviconUrlInput") || { value: "" };
+const heroImageUrlInput = document.getElementById("heroImageUrlInput") || { value: "" };
+const heroOverlayUrlInput = document.getElementById("heroOverlayUrlInput") || { value: "" };
+const heroVideoUrlInput = document.getElementById("heroVideoUrlInput") || { value: "" };
+const whatsappNumberInput = document.getElementById("whatsappNumberInput") || { value: "" };
+const emailContactInput = document.getElementById("emailContactInput") || { value: "" };
+const instagramUrlInput = document.getElementById("instagramUrlInput") || { value: "" };
+const facebookUrlInput = document.getElementById("facebookUrlInput") || { value: "" };
+const tiktokUrlInput = document.getElementById("tiktokUrlInput") || { value: "" };
+const useHeroVideoInput = document.getElementById("useHeroVideoInput") || { checked: false };
+const useBackgroundImageInput = document.getElementById("useBackgroundImageInput") || { checked: false };
+
+// Elementos de autenticación
+const authBox = document.getElementById("authBox");
+const adminBox = document.getElementById("adminBox");
+const loginBtn = document.getElementById("loginBtn");
+const logoutBtn = document.getElementById("logoutBtn");
+const emailInput = document.getElementById("emailInput");
+const passInput = document.getElementById("passInput");
+const safeModeBtn = document.getElementById("safeModeBtn");
+const fastModeBtn = document.getElementById("fastModeBtn");
+
+// Elementos de proyectos
+const projectsList = document.getElementById("projectsList");
+const projectsMsg = document.getElementById("projectsMsg");
+const projectSearchInput = document.getElementById("projectSearchInput");
+const projectCategoryFilter = document.getElementById("projectCategoryFilter");
+const projectTypeFilter = document.getElementById("projectTypeFilter");
+const projectStatusFilter = document.getElementById("projectStatusFilter");
+const projectTagFilter = document.getElementById("projectTagFilter");
+const projectsRefreshBtn = document.getElementById("projectsRefreshBtn");
+const dashboardRefreshBtn = document.getElementById("dashboardRefreshBtn");
+const dashboardSeeProjectsBtn = document.getElementById("dashboardSeeProjectsBtn");
+const projectsNewBtn = document.getElementById("projectsNewBtn");
+const quickNewProjectBtn = document.getElementById("quickNewProjectBtn");
+const dashboardNewBtn = document.getElementById("dashboardNewBtn");
+
+// Elementos de formulario de proyectos
+const projectFormTitle = document.getElementById("projectFormTitle");
+const projectSaveBtn = document.getElementById("projectSaveBtn");
+const projectDeleteBtn = document.getElementById("projectDeleteBtn");
+const projectDuplicateBtn = document.getElementById("projectDuplicateBtn");
+const projectFormResetBtn = document.getElementById("projectFormResetBtn");
+const projectImageUrlInput = document.getElementById("projectImageUrlInput");
+const projectImageFileInput = document.getElementById("projectImageFileInput");
+const projectPreviewImg = document.getElementById("projectPreviewImg");
+const projectUploadBtn = document.getElementById("projectUploadBtn");
+const projectUploadMsg = document.getElementById("projectUploadMsg");
+const projectTitleInput = document.getElementById("projectTitleInput");
+const projectDemoUrlInput = document.getElementById("projectDemoUrlInput");
+const projectCategorySelect = document.getElementById("projectCategorySelect");
+const projectTypeSelect = document.getElementById("projectTypeSelect");
+const projectStatusSelect = document.getElementById("projectStatusSelect");
+const projectTagsInput = document.getElementById("projectTagsInput");
+const projectTagsPreview = document.getElementById("projectTagsPreview");
+const projectShortDescInput = document.getElementById("projectShortDescInput");
+const projectFullDescInput = document.getElementById("projectFullDescInput");
+const projectPreviewTypeSelect = document.getElementById("projectPreviewTypeSelect");
+const projectOrderInput = document.getElementById("projectOrderInput");
+const projectActiveInput = document.getElementById("projectActiveInput");
+const projectHighlightInput = document.getElementById("projectHighlightInput");
+const projectFeaturedHomeInput = document.getElementById("projectFeaturedHomeInput");
+const projectFeaturedPortfolioInput = document.getElementById("projectFeaturedPortfolioInput");
+const projectAdvancedBox = document.getElementById("projectAdvancedBox");
+const projectAdvancedToggleBtn = document.getElementById("projectAdvancedToggleBtn");
+const projectFormMsg = document.getElementById("projectFormMsg");
+
+// Elementos de categorías
+const categoriesList = document.getElementById("categoriesList");
+const categoriesMsg = document.getElementById("categoriesMsg");
+const categoriesRefreshBtn = document.getElementById("categoriesRefreshBtn");
+const categoryNameInput = document.getElementById("categoryNameInput");
+const categorySlugInput = document.getElementById("categorySlugInput");
+const categoryOrderInput = document.getElementById("categoryOrderInput");
+const categoryActiveInput = document.getElementById("categoryActiveInput");
+const categorySaveBtn = document.getElementById("categorySaveBtn");
+const categoryResetBtn = document.getElementById("categoryResetBtn");
+
+// Elementos de FAQs
+const faqsList = document.getElementById("faqsList");
+const faqsMsg = document.getElementById("faqsMsg");
+const faqsRefreshBtn = document.getElementById("faqsRefreshBtn");
+const faqQuestionInput = document.getElementById("faqQuestionInput");
+const faqAnswerInput = document.getElementById("faqAnswerInput");
+const faqOrderInput = document.getElementById("faqOrderInput");
+const faqActiveInput = document.getElementById("faqActiveInput");
+const faqSaveBtn = document.getElementById("faqSaveBtn");
+const faqResetBtn = document.getElementById("faqResetBtn");
+
+// Elementos de contenido global
+const siteContentSelect = document.getElementById("siteContentSelect");
+const siteContentRefreshBtn = document.getElementById("siteContentRefreshBtn");
+const siteContentTitleInput = document.getElementById("siteContentTitleInput");
+const siteContentSubtitleInput = document.getElementById("siteContentSubtitleInput");
+const siteContentBodyInput = document.getElementById("siteContentBodyInput");
+const siteContentImageUrlInput = document.getElementById("siteContentImageUrlInput");
+const siteContentCtaLabelInput = document.getElementById("siteContentCtaLabelInput");
+const siteContentCtaUrlInput = document.getElementById("siteContentCtaUrlInput");
+const siteContentOrderInput = document.getElementById("siteContentOrderInput");
+const siteContentActiveInput = document.getElementById("siteContentActiveInput");
+const siteContentSaveBtn = document.getElementById("siteContentSaveBtn");
+const siteContentMsg = document.getElementById("siteContentMsg");
+
+// Elementos de settings
+const siteSettingsRefreshBtn = document.getElementById("siteSettingsRefreshBtn");
+const siteSettingsSaveBtn = document.getElementById("siteSettingsSaveBtn");
+const siteSettingsMsg = document.getElementById("siteSettingsMsg");
+
+// Elementos de estadísticas
+const statProjects = document.getElementById("statProjects");
+const statActive = document.getElementById("statActive");
+const statHighlight = document.getElementById("statHighlight");
+const statHome = document.getElementById("statHome");
+const statPortfolio = document.getElementById("statPortfolio");
+const statCategories = document.getElementById("statCategories");
+
+// Elementos de dashboard
+const dashboardRecentList = document.getElementById("dashboardRecentList");
+
+// Elementos de historial
+const projectHistoryList = document.getElementById("projectHistoryList");
+const settingsHistoryList = document.getElementById("settingsHistoryList");
+const historyRefreshBtn = document.getElementById("historyRefreshBtn");
+
+// Elementos de reseñas
+const reviewsRefreshBtn = document.getElementById("reviewsRefreshBtn");
+
 /* =========================
    HELPERS
 ========================= */
