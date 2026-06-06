@@ -895,6 +895,24 @@
       .hero__stats { display: flex; }
       .projectsGrid { gap: 20px; }
     }
+
+    /* ===== CORRECCIÓN DE VISIBILIDAD ===== */
+    .fade-in-up,
+    .fade-in-left,
+    .fade-in-right,
+    .projectCard,
+    .faqItem,
+    .featuredCard,
+    .serviceCard {
+      opacity: 1 !important;
+      transform: translateX(0) translateY(0) !important;
+    }
+    .skeleton-grid {
+      display: none;
+    }
+    .projectsGrid {
+      display: grid !important;
+    }
   </style>
 </head>
 <body>
@@ -1402,7 +1420,24 @@ const footerLogo = document.getElementById("footerLogo");
 if (brandLogo) brandLogo.addEventListener('dblclick', () => window.location.href = 'https://admin-ciborg.onrender.com/');
 if (footerLogo) footerLogo.addEventListener('dblclick', () => window.location.href = 'https://admin-ciborg.onrender.com/');
 
-const observer = new IntersectionObserver((entries) => { entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add("visible"); observer.unobserve(e.target); } }); }, { threshold: 0.1 });
+// Forzar visibilidad inmediata de todos los elementos
+document.querySelectorAll(".fade-in-left, .fade-in-right, .fade-in-up, .projectCard, .faqItem, .featuredCard, .serviceCard").forEach(el => {
+  el.classList.add("visible");
+  el.style.opacity = "1";
+  el.style.transform = "translateX(0) translateY(0)";
+});
+
+// Observer opcional (ya no es necesario pero lo dejo)
+const observer = new IntersectionObserver((entries) => { 
+  entries.forEach(e => { 
+    if (e.isIntersecting) { 
+      e.target.classList.add("visible"); 
+      e.target.style.opacity = "1";
+      e.target.style.transform = "translateX(0) translateY(0)";
+      observer.unobserve(e.target); 
+    } 
+  }); 
+}, { threshold: 0.1 });
 document.querySelectorAll(".fade-in-left, .fade-in-right, .fade-in-up").forEach(el => observer.observe(el));
 
 document.getElementById("searchInput")?.addEventListener("input", e => { currentSearch = e.target.value; resetPagination(); });
