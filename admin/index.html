@@ -366,21 +366,34 @@
   </div>
 </div>
 
-<script src="./app.js"></script>
 <script>
-  // Configuración inline (reemplaza a config.js)
+  // ============================================
+  // CONFIGURACIÓN INLINE (reemplaza a config.js)
+  // ============================================
   window.CIBORG_CONFIG = {
     WHATSAPP_NUMBER: "5491164499481",
     SUPABASE_URL: "https://fhxcumwhgtfirznnznjx.supabase.co",
     SUPABASE_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZoeGN1bXdoZ3RmaXJ6bm56bmp4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc5OTYyNzEsImV4cCI6MjA4MzU3MjI3MX0.7z1B099L4yrA9k1JxwvYGCABzqiqYtkUClI3E8wQ2zA"
   };
 
-  // Inicializar Supabase
+  // ============================================
+  // INICIALIZAR SUPABASE (ANTES de cargar app.js)
+  // ============================================
   const SUPABASE_URL = window.CIBORG_CONFIG.SUPABASE_URL;
   const SUPABASE_KEY = window.CIBORG_CONFIG.SUPABASE_KEY;
   const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
   let currentUser = null;
+</script>
 
+<!-- ============================================ -->
+<!-- CARGAR app.js (DESPUÉS de definir sb) -->
+<!-- ============================================ -->
+<script src="./app.js"></script>
+
+<!-- ============================================ -->
+<!-- INICIALIZACIÓN DE TEMA Y SESIÓN -->
+<!-- ============================================ -->
+<script>
   // Tema
   function initTheme() {
     const saved = localStorage.getItem('admin-theme');
@@ -395,12 +408,14 @@
     }
   }
   initTheme();
+  
   document.getElementById('lightThemeBtn')?.addEventListener('click', () => {
     document.documentElement.setAttribute('data-theme', 'light');
     localStorage.setItem('admin-theme', 'light');
     document.getElementById('lightThemeBtn')?.classList.add('is-active');
     document.getElementById('darkThemeBtn')?.classList.remove('is-active');
   });
+  
   document.getElementById('darkThemeBtn')?.addEventListener('click', () => {
     document.documentElement.setAttribute('data-theme', 'dark');
     localStorage.setItem('admin-theme', 'dark');
@@ -408,21 +423,24 @@
     document.getElementById('lightThemeBtn')?.classList.remove('is-active');
   });
 
-  // Verificar sesión
-  sb.auth.getSession().then(({ data: { session } }) => {
-    if (session?.user) {
-      currentUser = session.user;
-      document.getElementById('userEmail').textContent = currentUser.email;
-      document.getElementById('authBox').style.display = 'none';
-      document.getElementById('adminBox').style.display = 'grid';
-      // Las funciones se cargan desde app.js, solo esperamos que existan
-      setTimeout(() => {
-        if (typeof loadAll === 'function') loadAll();
-        if (typeof loadPendingReviews === 'function') loadPendingReviews();
-        if (typeof loadPlansAdmin === 'function') loadPlansAdmin();
-      }, 500);
+  // Verificar sesión (esperar a que app.js cargue sus funciones)
+  setTimeout(() => {
+    if (typeof sb !== 'undefined') {
+      sb.auth.getSession().then(({ data: { session } }) => {
+        if (session?.user) {
+          currentUser = session.user;
+          document.getElementById('userEmail').textContent = currentUser.email;
+          document.getElementById('authBox').style.display = 'none';
+          document.getElementById('adminBox').style.display = 'grid';
+          if (typeof loadAll === 'function') loadAll();
+          if (typeof loadPendingReviews === 'function') loadPendingReviews();
+          if (typeof loadPlansAdmin === 'function') loadPlansAdmin();
+        }
+      }).catch(err => console.error("Error de sesión:", err));
+    } else {
+      console.error("sb no está definido");
     }
-  });
+  }, 500);
 </script>
 </body>
 </html>
