@@ -1237,7 +1237,8 @@ function openModal(project) {
 window.closeModal = function() { const modal = document.getElementById("modalOverlay"); if (modal) modal.remove(); document.body.style.overflow = ""; }
 
 function renderFeatured() {
-  const featuredProjects = projectsData.filter(p => p.featured === true);
+  // SOLO proyectos destacados que además sean published
+  const featuredProjects = projectsData.filter(p => p.featured === true && p.status === "published");
   const featuredSection = document.getElementById("featuredSection");
   const featuredGrid = document.getElementById("featuredGrid");
   if (featuredProjects.length === 0) { if (featuredSection) featuredSection.style.display = "none"; return; }
@@ -1301,10 +1302,15 @@ async function loadProjects() {
   if (!sb) { console.error("❌ Supabase no inicializado"); if (skeleton) skeleton.style.display = "none"; if (projectsGrid) projectsGrid.style.display = "grid"; return; }
   try {
     console.log("🔄 Cargando proyectos desde Supabase...");
-    const { data: projects, error } = await sb.from("projects").select(`*, categories(name,slug)`).eq("active", true).order("created_at", { ascending: false });
+    // SOLO proyectos con active = true Y status = 'published' o 'featured'
+    const { data: projects, error } = await sb.from("projects")
+      .select(`*, categories(name,slug)`)
+      .eq("active", true)
+      .in("status", ["published", "featured"])
+      .order("created_at", { ascending: false });
     if (error) throw error;
     if (projects) projectsData = projects;
-    console.log(`📦 Proyectos cargados: ${projectsData.length}`);
+    console.log(`📦 Proyectos publicados: ${projectsData.length}`);
     const { data: cats } = await sb.from("categories").select("*").eq("active", true);
     if (cats) allCategories = cats;
     document.getElementById("statProjects").textContent = projectsData.length;
@@ -1427,7 +1433,7 @@ document.querySelectorAll(".fade-in-left, .fade-in-right, .fade-in-up, .projectC
   el.style.transform = "translateX(0) translateY(0)";
 });
 
-// Observer opcional (ya no es necesario pero lo dejo)
+// Observer opcional
 const observer = new IntersectionObserver((entries) => { 
   entries.forEach(e => { 
     if (e.isIntersecting) { 
