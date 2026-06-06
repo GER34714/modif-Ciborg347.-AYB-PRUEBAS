@@ -2,256 +2,323 @@
 <html lang="es-AR">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1, user-scalable=yes" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover" />
   <title>Admin | CIBORG 347</title>
   <meta name="description" content="Panel admin de CIBORG 347 para gestionar proyectos, categorias, contenido global, settings visuales, FAQs, planes y reseñas." />
   <link rel="stylesheet" href="./styles.css" />
   <link rel="icon" href="data:," />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    /* Estilos adicionales para el admin */
-    .pending-reviews-stats {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 1rem;
-      margin-bottom: 2rem;
-    }
-    .stat-card-pending {
-      background: var(--bg2);
-      border-radius: 16px;
-      padding: 1rem;
-      text-align: center;
-      border: 1px solid var(--border);
-    }
-    .stat-card-pending strong {
-      font-size: 2rem;
-      display: block;
-      font-family: 'Syne', sans-serif;
-      background: var(--grad);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-    }
-    .reviews-table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-    .reviews-table th, .reviews-table td {
-      padding: 12px;
-      text-align: left;
-      border-bottom: 1px solid var(--border);
-    }
-    .reviews-table th {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 12px;
-      color: var(--cyan);
-    }
-    .action-btns {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-    .btn--small {
-      padding: 4px 12px;
-      font-size: 11px;
-    }
-    .btn--success {
-      background: #22c55e;
-      color: white;
-    }
-    .btn--success:hover {
-      background: #16a34a;
-    }
-    .btn--danger {
-      background: #ef4444;
-      color: white;
-    }
-    .btn--danger:hover {
-      background: #dc2626;
-    }
-    .btn--frontend {
-      background: linear-gradient(135deg, #00d4ff, #8b5cf6);
-      color: white;
-      margin-bottom: 1rem;
-    }
-    .btn--frontend:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 0 15px var(--cyan);
+    /* Estilos base */
+    :root {
+      --bg: #0a0a0f;
+      --bg2: #0f0f1a;
+      --bg3: #1a1a2e;
+      --glass: rgba(26, 26, 46, 0.55);
+      --border: rgba(0, 212, 255, 0.13);
+      --border-h: rgba(0, 212, 255, 0.28);
+      --cyan: #00d4ff;
+      --violet: #8b5cf6;
+      --magenta: #ff47d1;
+      --grad: linear-gradient(135deg, var(--cyan), var(--violet));
+      --text: #e0e6ff;
+      --text2: #9ca3ff;
+      --white: #ffffff;
+      --card-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
     }
 
-    /* Menú hamburguesa para admin - CORREGIDO */
+    [data-theme="light"] {
+      --bg: #f0f4f8;
+      --bg2: #ffffff;
+      --bg3: #e8edf5;
+      --border: rgba(0, 0, 0, 0.08);
+      --cyan: #0066cc;
+      --violet: #7c3aed;
+      --magenta: #db2777;
+      --grad: linear-gradient(135deg, #0066cc, #7c3aed);
+      --text: #1e293b;
+      --text2: #475569;
+      --white: #0f172a;
+      --card-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Outfit', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+    .wrap { max-width: 1400px; margin: 0 auto; padding: 0 20px; }
+    
+    /* Topbar */
+    .topbar {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(10,10,15,0.92);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+    }
+    .topbar__inner {
+      min-height: 64px;
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+      flex-wrap: wrap;
+    }
+    .brand__title { font-weight: 900; font-size: 1.3rem; }
+    .brand__subtitle { font-size: 0.7rem; color: var(--cyan); }
+    .topbar__right { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+
+    /* Botones */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 10px 18px; border: none; border-radius: 12px;
+      font-weight: 600; transition: all 0.2s; cursor: pointer;
+      min-height: 44px;
+    }
+    .btn--primary { background: var(--grad); color: white; }
+    .btn--ghost { background: transparent; border: 1px solid var(--border); color: var(--text); }
+    .btn--danger { background: #ef4444; color: white; }
+    .btn--success { background: #22c55e; color: white; }
+    .btn--small { padding: 6px 12px; font-size: 0.75rem; min-height: 36px; }
+    .btn--block { width: 100%; }
+    .btn--frontend { background: var(--grad); color: white; margin-bottom: 1rem; }
+    .btn:active { transform: scale(0.98); }
+
+    /* Sidebar */
+    .adminLayout { display: grid; grid-template-columns: 280px 1fr; gap: 20px; margin: 20px 0; }
+    .sidebar {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 20px;
+      position: sticky;
+      top: 80px;
+      height: fit-content;
+    }
+    .sidebar__nav { display: flex; flex-direction: column; gap: 8px; margin: 16px 0; }
+    .sidebar__nav-section {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--cyan);
+      margin-top: 16px;
+      margin-bottom: 8px;
+      padding-left: 8px;
+    }
+    .sidebar__nav-section:first-of-type { margin-top: 0; }
+    .navBtn {
+      text-align: left;
+      padding: 12px 16px;
+      border-radius: 14px;
+      background: transparent;
+      border: none;
+      color: var(--text2);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .navBtn:hover { background: var(--bg3); color: var(--white); }
+    .navBtn.is-active { background: var(--grad); color: white; }
+
+    /* Paneles */
+    .viewPanel {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+    .statsGrid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 16px;
+      margin: 20px 0;
+    }
+    .statCard {
+      background: var(--bg3);
+      border-radius: 16px;
+      padding: 16px;
+      text-align: center;
+    }
+    .statCard span { font-size: 0.7rem; color: var(--text2); display: block; }
+    .statCard strong { font-size: 1.8rem; display: block; background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+    /* Cards */
+    .stackList { display: flex; flex-direction: column; gap: 12px; }
+    .listCard {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 16px;
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      transition: all 0.2s;
+    }
+    .listCard:hover { transform: translateY(-2px); border-color: var(--cyan); }
+    .listCard__thumb { width: 80px; height: 60px; border-radius: 12px; overflow: hidden; flex-shrink: 0; }
+    .listCard__thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .listCard__body { flex: 1; }
+    .listCard__title { font-weight: bold; margin-bottom: 4px; }
+    .listCard__meta { font-size: 0.75rem; color: var(--text2); }
+    .listCard__badges { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+    .listCard__actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    .miniTag { background: var(--bg); padding: 4px 8px; border-radius: 20px; font-size: 0.7rem; }
+
+    /* Grids */
+    .grid2, .grid3 { display: grid; gap: 16px; }
+    .grid2 { grid-template-columns: repeat(2, 1fr); }
+    .grid3 { grid-template-columns: repeat(3, 1fr); }
+    .filtersGrid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap: 12px; margin: 16px 0; }
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .field input, .field select, .field textarea {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 14px;
+      color: var(--text);
+    }
+    .msg { margin-top: 12px; padding: 8px; border-radius: 10px; }
+    .msg--success { background: rgba(34,197,94,0.2); color: #22c55e; }
+    .msg--error { background: rgba(239,68,68,0.2); color: #ef4444; }
+
+    /* Modales */
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(8px);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 1000;
+    }
+    .modal-container {
+      background: var(--bg2);
+      border-radius: 24px;
+      max-width: 550px;
+      width: 90%;
+      max-height: 85vh;
+      overflow: auto;
+      padding: 24px;
+      border: 1px solid var(--cyan);
+    }
+
+    /* Destacados */
+    .featured-projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 16px;
+      margin-top: 16px;
+    }
+    .featured-project-card {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 16px;
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+    .featured-project-card:hover { border-color: var(--cyan); transform: translateY(-2px); }
+    .featured-project-card img { width: 60px; height: 60px; border-radius: 12px; object-fit: cover; }
+    .featured-project-info { flex: 1; }
+    .featured-project-title { font-weight: bold; }
+    .featured-project-cat { font-size: 0.7rem; color: var(--text2); }
+    .star-btn { background: transparent; border: none; font-size: 1.8rem; cursor: pointer; transition: transform 0.2s; }
+    .star-btn.active { color: #f5b042; text-shadow: 0 0 5px #f5b042; }
+    .star-btn:active { transform: scale(1.1); }
+
+    /* Planes */
+    .plan-card {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 16px;
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+    .plan-card:hover { border-color: var(--cyan); transform: translateY(-2px); }
+
+    /* Tabla reseñas */
+    .reviews-table { width: 100%; border-collapse: collapse; }
+    .reviews-table th, .reviews-table td { padding: 12px; text-align: left; border-bottom: 1px solid var(--border); }
+    .reviews-table th { color: var(--cyan); font-size: 0.75rem; }
+    .action-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+    .pending-reviews-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+    .stat-card-pending { background: var(--bg2); border-radius: 16px; padding: 1rem; text-align: center; border: 1px solid var(--border); }
+    .stat-card-pending strong { font-size: 2rem; display: block; background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+    /* Paginación */
+    .pagination { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 8px; margin-top: 24px; }
+    .pagination button {
+      min-width: 40px; min-height: 40px;
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      background: var(--bg3);
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .pagination button.active { background: var(--grad); color: white; border-color: transparent; }
+    .pagination button:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    /* MENÚ HAMBURGUESA - MEJORADO */
     .sidebar-toggle {
       position: fixed;
-      bottom: 20px;
-      left: 20px;
+      bottom: 24px;
+      left: 24px;
       z-index: 1000;
       background: var(--grad);
       border: none;
       border-radius: 50%;
-      width: 54px;
-      height: 54px;
-      font-size: 26px;
+      width: 60px;
+      height: 60px;
+      font-size: 30px;
       cursor: pointer;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
       display: none;
       align-items: center;
       justify-content: center;
+      transition: all 0.2s ease;
     }
+    .sidebar-toggle:active { transform: scale(0.95); }
 
-    /* Separadores de sección en el menú */
-    .sidebar__nav-section {
-      margin-top: 1rem;
-      margin-bottom: 0.5rem;
-      padding-left: 0.5rem;
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      color: var(--cyan);
-      opacity: 0.7;
-    }
-
-    .sidebar__nav-section:first-of-type {
-      margin-top: 0;
-    }
-
-    /* Estilos para la sección de destacados */
-    .featured-projects-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 1rem;
-      margin-top: 1rem;
-    }
-    .featured-project-card {
-      background: var(--bg2);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 1rem;
-      display: flex;
-      gap: 1rem;
-      align-items: center;
-      transition: all 0.2s;
-      cursor: pointer;
-    }
-    .featured-project-card:hover {
-      border-color: var(--cyan);
-      transform: translateY(-2px);
-    }
-    .featured-project-card img {
-      width: 60px;
-      height: 60px;
-      object-fit: cover;
-      border-radius: 8px;
-    }
-    .featured-project-info {
-      flex: 1;
-    }
-    .featured-project-title {
-      font-weight: bold;
-      margin-bottom: 0.25rem;
-    }
-    .featured-project-cat {
-      font-size: 0.7rem;
-      color: var(--text2);
-    }
-    .featured-project-actions {
-      display: flex;
-      gap: 0.5rem;
-    }
-    .star-btn {
-      background: transparent;
-      border: none;
-      font-size: 1.5rem;
-      cursor: pointer;
-      transition: transform 0.2s;
-    }
-    .star-btn:hover {
-      transform: scale(1.1);
-    }
-    .star-btn.active {
-      color: #f5b042;
-      text-shadow: 0 0 5px #f5b042;
-    }
-
-    /* Estilos para cards de planes - EDITABLES AL TOCAR */
-    .plan-card {
-      background: var(--bg2);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 1rem;
-      display: flex;
-      gap: 1rem;
-      align-items: center;
-      transition: all 0.2s;
-      cursor: pointer;
-    }
-    .plan-card:hover {
-      border-color: var(--cyan);
-      transform: translateY(-2px);
-    }
-    .plan-card .plan-info {
-      flex: 1;
-    }
-    .plan-card .plan-title {
-      font-weight: bold;
-      margin-bottom: 4px;
-    }
-    .plan-card .plan-meta {
-      font-size: 0.75rem;
-      color: var(--text2);
-    }
-    .plan-card .plan-actions {
-      display: flex;
-      gap: 8px;
-    }
-    .plan-card .plan-actions button {
-      background: transparent;
-      border: none;
-      font-size: 1.2rem;
-      cursor: pointer;
-      padding: 8px;
-      border-radius: 8px;
-      transition: all 0.2s;
-    }
-    .plan-card .plan-actions button:hover {
-      background: var(--bg3);
-    }
-
-    /* Responsive para móvil */
+    /* ===== RESPONSIVE MÓVIL MEJORADO ===== */
     @media (max-width: 980px) {
+      .sidebar-toggle { display: flex; }
       .sidebar {
         position: fixed;
-        left: -300px;
+        left: -320px;
         top: 0;
+        width: 280px;
         height: 100%;
         z-index: 1001;
-        transition: left 0.3s ease;
-        width: 280px;
         border-radius: 0;
+        transition: left 0.3s ease;
         overflow-y: auto;
       }
-      .sidebar.open {
-        left: 0;
-      }
-      .sidebar-toggle {
-        display: flex;
-      }
-      .adminLayout {
-        grid-template-columns: 1fr;
-      }
-      .statsGrid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 10px;
-      }
-      .filtersGrid, .filtersGrid--5 {
-        grid-template-columns: 1fr;
-      }
+      .sidebar.open { left: 0; }
+      .adminLayout { grid-template-columns: 1fr; }
+      .statsGrid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+      .filtersGrid, .filtersGrid--5 { grid-template-columns: 1fr; gap: 12px; }
+      .grid2, .grid3 { grid-template-columns: 1fr; gap: 12px; }
+      .listCard { flex-direction: column; text-align: center; }
+      .listCard__thumb { width: 100%; height: 140px; }
+      .listCard__actions { justify-content: center; margin-top: 8px; }
+      .btn, .btn--small, .navBtn, .modeBtn, .themeBtn { min-height: 48px; padding: 12px 16px; font-size: 1rem; }
+      .featured-projects-grid { grid-template-columns: 1fr; }
+      .plan-card { flex-direction: column; text-align: center; }
+      .plan-card .plan-actions { justify-content: center; }
+      .viewPanel { padding: 16px; }
+      h2 { font-size: 1.4rem; }
+      h3 { font-size: 1.2rem; }
+      .modal-container { width: 95%; padding: 20px; }
       .reviews-table, .reviews-table tbody, .reviews-table tr, .reviews-table td {
         display: block;
         width: 100%;
       }
-      .reviews-table thead {
-        display: none;
-      }
+      .reviews-table thead { display: none; }
       .reviews-table tr {
         margin-bottom: 1rem;
         border: 1px solid var(--border);
@@ -272,58 +339,24 @@
         font-weight: 800;
         font-size: 0.7rem;
         text-transform: uppercase;
-        color: var(--text-secondary);
+        color: var(--cyan);
         min-width: 100px;
       }
-      .featured-projects-grid {
-        grid-template-columns: 1fr;
-      }
-      .btn, .btn--small {
-        padding: 10px 16px;
-        min-height: 44px;
-      }
-      .action-btns {
-        justify-content: flex-end;
-        width: 100%;
-      }
-      .pagination {
-        flex-wrap: wrap;
-        justify-content: center;
-      }
-      .pagination button {
-        min-width: 40px;
-        min-height: 40px;
-      }
-      .plan-card {
-        flex-direction: column;
-        text-align: center;
-      }
-      .plan-card .plan-actions {
-        justify-content: center;
+      .action-btns { justify-content: flex-end; width: 100%; }
+      .listCard:active, .featured-project-card:active, .btn:active, .plan-card:active {
+        transform: scale(0.98);
+        transition: transform 0.05s;
       }
     }
 
     @media (max-width: 600px) {
-      .statsGrid {
-        grid-template-columns: 1fr;
-      }
-      .row {
-        flex-direction: column;
-        align-items: stretch;
-      }
-      .row .btn {
-        width: 100%;
-      }
-      .subPanel {
-        padding: 12px;
-      }
-      .listCard {
-        grid-template-columns: 1fr;
-      }
-      .listCard__thumb {
-        width: 100%;
-        height: 150px;
-      }
+      .statsGrid { grid-template-columns: 1fr; }
+      .row { flex-direction: column; align-items: stretch; }
+      .row .btn { width: 100%; margin-bottom: 8px; }
+      .action-btns { justify-content: center; }
+      .action-btns .btn { flex: 1; text-align: center; }
+      .topbar__inner { flex-direction: column; align-items: flex-start; }
+      .topbar__right { width: 100%; justify-content: space-between; }
     }
   </style>
 </head>
@@ -419,6 +452,7 @@
     </aside>
 
     <section class="contentArea">
+      <!-- Dashboard -->
       <section class="panel viewPanel" data-panel="dashboard">
         <div class="row row--between row--wrap">
           <div><h2>Dashboard</h2><p class="muted">Resumen general del sistema</p></div>
@@ -442,7 +476,7 @@
         </div>
       </section>
 
-      <!-- PANEL DE PROYECTOS DESTACADOS -->
+      <!-- Destacados -->
       <section class="panel viewPanel" data-panel="featured-projects" style="display:none">
         <div class="row row--between row--wrap">
           <div><h2>⭐ Proyectos Destacados</h2><p class="muted">Gestioná qué proyectos aparecen como destacados en el frontend.</p></div>
@@ -455,12 +489,13 @@
         <div id="featuredProjectsPagination" class="pagination" style="display:none; margin-top: 1rem;"></div>
       </section>
 
+      <!-- Proyectos -->
       <section class="panel viewPanel" data-panel="projects" style="display:none">
         <div class="row row--between row--wrap"><div><h2>📁 Todos los Proyectos</h2><p class="muted">Listado completo</p></div><div class="row row--wrap"><button id="projectsRefreshBtn" class="btn btn--ghost" type="button">Actualizar</button><button id="projectsNewBtn" class="btn btn--primary" type="button">Nueva web</button></div></div>
         <div class="filtersGrid filtersGrid--5">
           <div class="field"><label for="projectSearchInput">Buscar</label><input id="projectSearchInput" type="search" placeholder="Título..." /></div>
           <div class="field"><label for="projectCategoryFilter">Categoría</label><select id="projectCategoryFilter"><option value="__all__">Todas</option></select></div>
-          <div class="field"><label for="projectTypeFilter">Tipo de solución</label><select id="projectTypeFilter"><option value="__all__">Todos</option><option value="Landing Pages">Landing Pages</option><option value="Webs Profesionales">Webs Profesionales</option><option value="Webs Autoadministrables">Webs Autoadministrables</option><option value="Sistemas / Soluciones Especiales">Sistemas / Soluciones Especiales</option></select></div>
+          <div class="field"><label for="projectTypeFilter">Tipo</label><select id="projectTypeFilter"><option value="__all__">Todos</option><option value="Landing Pages">Landing Pages</option><option value="Webs Profesionales">Webs Profesionales</option><option value="Webs Autoadministrables">Webs Autoadministrables</option><option value="Sistemas / Soluciones Especiales">Sistemas</option></select></div>
           <div class="field"><label for="projectStatusFilter">Estado</label><select id="projectStatusFilter"><option value="__all__">Todos</option><option value="published">Publicados</option><option value="draft">Borradores</option><option value="featured">Destacados</option><option value="archived">Archivados</option><option value="new">Nuevos</option></select></div>
           <div class="field"><label for="projectTagFilter">Tag</label><select id="projectTagFilter"><option value="__all__">Todos</option></select></div>
         </div>
@@ -469,28 +504,30 @@
         <div id="projectsPagination" class="pagination" style="display:none"></div>
       </section>
 
+      <!-- Nueva web -->
       <section class="panel viewPanel" data-panel="new-project" style="display:none">
         <div class="row row--between row--wrap"><div><h2 id="projectFormTitle">✨ Nueva web</h2><p class="muted">Cargá una demo nueva o editá una existente.</p></div><div class="row row--wrap"><button id="projectFormResetBtn" class="btn btn--ghost" type="button">Limpiar</button><button id="projectDuplicateBtn" class="btn btn--ghost" type="button" style="display:none">Duplicar</button></div></div>
         <div class="grid2"><div class="field"><label for="projectImageUrlInput">URL de imagen</label><input id="projectImageUrlInput" type="url" placeholder="https://..." /><small class="muted">Podés pegar URL manual o subir imagen.</small></div><div class="field"><label>Preview</label><div class="preview preview--large"><img id="projectPreviewImg" alt="Preview" /></div></div></div>
         <div class="subPanel"><h3>Subida de imagen</h3><div class="grid2"><div class="field"><label for="projectImageFileInput">Elegir imagen</label><input id="projectImageFileInput" type="file" accept="image/*" /><small class="muted">Seleccioná una imagen y tocá subir.</small></div><div class="field"><label>&nbsp;</label><button id="projectUploadBtn" class="btn btn--ghost" type="button">Subir imagen</button></div></div><div id="projectUploadMsg" class="msg"></div></div>
         <div class="grid2"><div class="field"><label for="projectTitleInput">Título</label><input id="projectTitleInput" type="text" placeholder="Nombre de la web/demo" /></div><div class="field"><label for="projectDemoUrlInput">Link demo</label><input id="projectDemoUrlInput" type="url" placeholder="https://..." /></div></div>
-        <div class="grid3"><div class="field"><label for="projectCategorySelect">Categoría</label><select id="projectCategorySelect"><option value="">Elegir...</option></select></div><div class="field"><label for="projectTypeSelect">Tipo de solución</label><select id="projectTypeSelect"><option value="">Elegir...</option><option value="Landing Pages">Landing Pages</option><option value="Webs Profesionales">Webs Profesionales</option><option value="Webs Autoadministrables">Webs Autoadministrables</option><option value="Sistemas / Soluciones Especiales">Sistemas / Soluciones Especiales</option></select></div><div class="field"><label for="projectStatusSelect">Status</label><select id="projectStatusSelect"><option value="published">Publicado</option><option value="draft">Borrador</option><option value="featured">Destacado</option><option value="archived">Archivado</option><option value="new">Nuevo</option></select></div></div>
+        <div class="grid3"><div class="field"><label for="projectCategorySelect">Categoría</label><select id="projectCategorySelect"><option value="">Elegir...</option></select></div><div class="field"><label for="projectTypeSelect">Tipo</label><select id="projectTypeSelect"><option value="">Elegir...</option><option value="Landing Pages">Landing Pages</option><option value="Webs Profesionales">Webs Profesionales</option><option value="Webs Autoadministrables">Webs Autoadministrables</option><option value="Sistemas / Soluciones Especiales">Sistemas</option></select></div><div class="field"><label for="projectStatusSelect">Status</label><select id="projectStatusSelect"><option value="published">Publicado</option><option value="draft">Borrador</option><option value="featured">Destacado</option><option value="archived">Archivado</option><option value="new">Nuevo</option></select></div></div>
         <div class="field"><label for="projectShortDescInput">Descripción corta</label><textarea id="projectShortDescInput" rows="3" placeholder="Texto corto para cards..."></textarea></div>
         <div class="field"><label for="projectTagsInput">Tags</label><input id="projectTagsInput" type="text" placeholder="Ej: Web nueva, Destacada" /><small class="muted">Separalos por coma.</small><div id="projectTagsPreview" class="tagEditorPreview"></div></div>
-        <div class="togglesGrid"><label class="switchRow"><input id="projectActiveInput" type="checkbox" checked /><span>Activo</span></label><label class="switchRow"><input id="projectHighlightInput" type="checkbox" /><span>Destacado clásico</span></label><label class="switchRow"><input id="projectFeaturedHomeInput" type="checkbox" /><span>Mostrar en home</span></label><label class="switchRow"><input id="projectFeaturedPortfolioInput" type="checkbox" /><span>Mostrar en portfolio destacado</span></label></div>
+        <div class="togglesGrid"><label class="switchRow"><input id="projectActiveInput" type="checkbox" checked /><span>Activo</span></label><label class="switchRow"><input id="projectHighlightInput" type="checkbox" /><span>Destacado</span></label><label class="switchRow"><input id="projectFeaturedHomeInput" type="checkbox" /><span>Mostrar en home</span></label><label class="switchRow"><input id="projectFeaturedPortfolioInput" type="checkbox" /><span>Mostrar en portfolio destacado</span></label></div>
         <div class="actions"><button id="projectAdvancedToggleBtn" class="btn btn--ghost" type="button">Abrir ajustes avanzados</button></div>
-        <div id="projectAdvancedBox" class="advancedBox" style="display:none"><div class="field"><label for="projectFullDescInput">Descripción larga</label><textarea id="projectFullDescInput" rows="5" placeholder="Texto ampliado para modal..."></textarea></div><div class="grid2"><div class="field"><label for="projectPreviewTypeSelect">Tipo de preview</label><select id="projectPreviewTypeSelect"><option value="image">image</option><option value="embed">embed</option><option value="video">video</option></select></div><div class="field"><label for="projectOrderInput">Orden manual</label><input id="projectOrderInput" type="number" step="1" value="0" /></div></div></div>
+        <div id="projectAdvancedBox" class="advancedBox" style="display:none"><div class="field"><label for="projectFullDescInput">Descripción larga</label><textarea id="projectFullDescInput" rows="5" placeholder="Texto ampliado para modal..."></textarea></div><div class="grid2"><div class="field"><label for="projectPreviewTypeSelect">Tipo preview</label><select id="projectPreviewTypeSelect"><option value="image">image</option><option value="embed">embed</option><option value="video">video</option></select></div><div class="field"><label for="projectOrderInput">Orden</label><input id="projectOrderInput" type="number" step="1" value="0" /></div></div></div>
         <div class="actions"><button id="projectSaveBtn" class="btn btn--primary" type="button">Publicar</button><button id="projectDeleteBtn" class="btn btn--danger" type="button" style="display:none">Archivar</button></div>
         <div id="projectFormMsg" class="msg"></div>
       </section>
 
+      <!-- Categorías -->
       <section class="panel viewPanel" data-panel="categories" style="display:none">
         <div class="row row--between row--wrap"><div><h2>📂 Categorías</h2><p class="muted">Administrá las categorías del portfolio.</p></div><div class="row row--wrap"><button id="categoriesRefreshBtn" class="btn btn--ghost" type="button">Actualizar</button></div></div>
-        <div class="subPanel"><h3>Nueva categoría</h3><div class="grid3"><div class="field"><label for="categoryNameInput">Nombre</label><input id="categoryNameInput" type="text" placeholder="Ej: Estética" /></div><div class="field"><label for="categorySlugInput">Slug</label><input id="categorySlugInput" type="text" placeholder="ej-estetica" /></div><div class="field"><label for="categoryOrderInput">Orden</label><input id="categoryOrderInput" type="number" step="1" value="0" /></div></div><div class="togglesGrid togglesGrid--single"><label class="switchRow"><input id="categoryActiveInput" type="checkbox" checked /><span>Activa</span></label></div><div class="actions"><button id="categorySaveBtn" class="btn btn--primary" type="button">Guardar categoría</button><button id="categoryResetBtn" class="btn btn--ghost" type="button">Limpiar</button></div><div id="categoriesMsg" class="msg"></div></div>
-        <div class="subPanel"><h3>Listado de categorías</h3><div id="categoriesList" class="stackList"></div></div>
+        <div class="subPanel"><h3>Nueva categoría</h3><div class="grid3"><div class="field"><label for="categoryNameInput">Nombre</label><input id="categoryNameInput" type="text" placeholder="Ej: Estética" /></div><div class="field"><label for="categorySlugInput">Slug</label><input id="categorySlugInput" type="text" placeholder="ej-estetica" /></div><div class="field"><label for="categoryOrderInput">Orden</label><input id="categoryOrderInput" type="number" step="1" value="0" /></div></div><div class="togglesGrid togglesGrid--single"><label class="switchRow"><input id="categoryActiveInput" type="checkbox" checked /><span>Activa</span></label></div><div class="actions"><button id="categorySaveBtn" class="btn btn--primary" type="button">Guardar</button><button id="categoryResetBtn" class="btn btn--ghost" type="button">Limpiar</button></div><div id="categoriesMsg" class="msg"></div></div>
+        <div class="subPanel"><h3>Listado</h3><div id="categoriesList" class="stackList"></div></div>
       </section>
 
-      <!-- PANEL DE PLANES - MODIFICADO CON CARDS EDITABLES -->
+      <!-- Planes -->
       <section class="panel viewPanel" data-panel="plans" style="display:none">
         <div class="row row--between row--wrap">
           <div><h2>💰 Planes y Precios</h2><p class="muted">Administrá los planes que se muestran en el frontend.</p></div>
@@ -504,17 +541,20 @@
         <div id="plansPagination" class="pagination" style="display:none"></div>
       </section>
 
+      <!-- Contenido global -->
       <section class="panel viewPanel" data-panel="site-content" style="display:none">
         <div class="row row--between row--wrap"><div><h2>📄 Contenido global</h2><p class="muted">Editá los bloques fijos editoriales del frente A.</p></div><div class="row row--wrap"><button id="siteContentRefreshBtn" class="btn btn--ghost" type="button">Actualizar</button></div></div>
-        <div class="subPanel"><div class="field"><label for="siteContentSelect">Bloque</label><select id="siteContentSelect"><option value="">Elegir bloque...</option></select></div><div class="grid2"><div class="field"><label for="siteContentTitleInput">Título</label><input id="siteContentTitleInput" type="text" /></div><div class="field"><label for="siteContentSubtitleInput">Subtítulo</label><input id="siteContentSubtitleInput" type="text" /></div></div><div class="field"><label for="siteContentBodyInput">Contenido</label><textarea id="siteContentBodyInput" rows="5"></textarea></div><div class="grid3"><div class="field"><label for="siteContentImageUrlInput">URL de imagen</label><input id="siteContentImageUrlInput" type="url" placeholder="https://..." /></div><div class="field"><label for="siteContentCtaLabelInput">Texto CTA</label><input id="siteContentCtaLabelInput" type="text" /></div><div class="field"><label for="siteContentCtaUrlInput">URL CTA</label><input id="siteContentCtaUrlInput" type="text" /></div></div><div class="grid2"><div class="field"><label for="siteContentOrderInput">Orden</label><input id="siteContentOrderInput" type="number" step="1" value="0" /></div><div class="togglesGrid togglesGrid--single"><label class="switchRow"><input id="siteContentActiveInput" type="checkbox" checked /><span>Activo</span></label></div></div><div class="actions"><button id="siteContentSaveBtn" class="btn btn--primary" type="button">Guardar bloque</button></div><div id="siteContentMsg" class="msg"></div></div>
+        <div class="subPanel"><div class="field"><label for="siteContentSelect">Bloque</label><select id="siteContentSelect"><option value="">Elegir bloque...</option></select></div><div class="grid2"><div class="field"><label for="siteContentTitleInput">Título</label><input id="siteContentTitleInput" type="text" /></div><div class="field"><label for="siteContentSubtitleInput">Subtítulo</label><input id="siteContentSubtitleInput" type="text" /></div></div><div class="field"><label for="siteContentBodyInput">Contenido</label><textarea id="siteContentBodyInput" rows="5"></textarea></div><div class="grid3"><div class="field"><label for="siteContentImageUrlInput">URL imagen</label><input id="siteContentImageUrlInput" type="url" placeholder="https://..." /></div><div class="field"><label for="siteContentCtaLabelInput">Texto CTA</label><input id="siteContentCtaLabelInput" type="text" /></div><div class="field"><label for="siteContentCtaUrlInput">URL CTA</label><input id="siteContentCtaUrlInput" type="text" /></div></div><div class="grid2"><div class="field"><label for="siteContentOrderInput">Orden</label><input id="siteContentOrderInput" type="number" step="1" value="0" /></div><div class="togglesGrid togglesGrid--single"><label class="switchRow"><input id="siteContentActiveInput" type="checkbox" checked /><span>Activo</span></label></div></div><div class="actions"><button id="siteContentSaveBtn" class="btn btn--primary" type="button">Guardar</button></div><div id="siteContentMsg" class="msg"></div></div>
       </section>
 
+      <!-- Settings -->
       <section class="panel viewPanel" data-panel="site-settings" style="display:none">
-        <div class="row row--between row--wrap"><div><h2>⚙️ Settings visuales</h2><p class="muted">Configuración global visual y de contacto del frente A.</p></div><div class="row row--wrap"><button id="siteSettingsRefreshBtn" class="btn btn--ghost" type="button">Actualizar</button></div></div>
-        <div class="subPanel"><h3>Marca y hero</h3><div class="grid2"><div class="field"><label for="siteTitleInput">Título del sitio</label><input id="siteTitleInput" type="text" /></div><div class="field"><label for="siteTaglineInput">Tagline</label><input id="siteTaglineInput" type="text" /></div></div><div class="grid2"><div class="field"><label for="heroBadgeInput">Badge hero</label><input id="heroBadgeInput" type="text" /></div><div class="field"><label for="heroTitleInput">Título hero</label><input id="heroTitleInput" type="text" /></div></div><div class="field"><label for="heroSubtitleInput">Subtítulo hero</label><textarea id="heroSubtitleInput" rows="3"></textarea></div><div class="grid2"><div class="field"><label for="heroCtaLabelInput">Texto CTA hero</label><input id="heroCtaLabelInput" type="text" /></div><div class="field"><label for="heroCtaUrlInput">URL CTA hero</label><input id="heroCtaUrlInput" type="text" /></div></div></div>
-        <div class="subPanel"><h3>Assets y contacto</h3><div class="grid2"><div class="field"><label for="logoUrlInput">Logo principal</label><input id="logoUrlInput" type="url" /></div><div class="field"><label for="heroLogoUrlInput">Logo hero</label><input id="heroLogoUrlInput" type="url" /></div></div><div class="grid2"><div class="field"><label for="footerLogoUrlInput">Logo footer</label><input id="footerLogoUrlInput" type="url" /></div><div class="field"><label for="faviconUrlInput">Favicon</label><input id="faviconUrlInput" type="url" /></div></div><div class="grid2"><div class="field"><label for="backgroundImageUrlInput">Background general</label><input id="backgroundImageUrlInput" type="url" /></div><div class="field"><label for="heroImageUrlInput">Imagen hero</label><input id="heroImageUrlInput" type="url" /></div></div><div class="grid2"><div class="field"><label for="heroOverlayUrlInput">Overlay hero</label><input id="heroOverlayUrlInput" type="url" /></div><div class="field"><label for="heroVideoUrlInput">Video hero</label><input id="heroVideoUrlInput" type="url" /></div></div><div class="grid2"><div class="field"><label for="whatsappNumberInput">WhatsApp</label><input id="whatsappNumberInput" type="text" placeholder="54911..." /></div><div class="field"><label for="emailContactInput">Email</label><input id="emailContactInput" type="email" /></div></div><div class="grid3"><div class="field"><label for="instagramUrlInput">Instagram</label><input id="instagramUrlInput" type="url" /></div><div class="field"><label for="facebookUrlInput">Facebook</label><input id="facebookUrlInput" type="url" /></div><div class="field"><label for="tiktokUrlInput">TikTok</label><input id="tiktokUrlInput" type="url" /></div></div><div class="togglesGrid togglesGrid--single"><label class="switchRow"><input id="useHeroVideoInput" type="checkbox" /><span>Usar video en hero</span></label><label class="switchRow"><input id="useBackgroundImageInput" type="checkbox" /><span>Usar background global</span></label></div><div class="actions"><button id="siteSettingsSaveBtn" class="btn btn--primary" type="button">Guardar settings</button></div><div id="siteSettingsMsg" class="msg"></div></div>
+        <div class="row row--between row--wrap"><div><h2>⚙️ Settings visuales</h2><p class="muted">Configuración global visual y de contacto.</p></div><div class="row row--wrap"><button id="siteSettingsRefreshBtn" class="btn btn--ghost" type="button">Actualizar</button></div></div>
+        <div class="subPanel"><h3>Marca y hero</h3><div class="grid2"><div class="field"><label for="siteTitleInput">Título sitio</label><input id="siteTitleInput" type="text" /></div><div class="field"><label for="siteTaglineInput">Tagline</label><input id="siteTaglineInput" type="text" /></div></div><div class="grid2"><div class="field"><label for="heroBadgeInput">Badge hero</label><input id="heroBadgeInput" type="text" /></div><div class="field"><label for="heroTitleInput">Título hero</label><input id="heroTitleInput" type="text" /></div></div><div class="field"><label for="heroSubtitleInput">Subtítulo hero</label><textarea id="heroSubtitleInput" rows="3"></textarea></div><div class="grid2"><div class="field"><label for="heroCtaLabelInput">Texto CTA</label><input id="heroCtaLabelInput" type="text" /></div><div class="field"><label for="heroCtaUrlInput">URL CTA</label><input id="heroCtaUrlInput" type="text" /></div></div></div>
+        <div class="subPanel"><h3>Assets y contacto</h3><div class="grid2"><div class="field"><label for="logoUrlInput">Logo</label><input id="logoUrlInput" type="url" /></div><div class="field"><label for="heroLogoUrlInput">Logo hero</label><input id="heroLogoUrlInput" type="url" /></div></div><div class="grid2"><div class="field"><label for="footerLogoUrlInput">Logo footer</label><input id="footerLogoUrlInput" type="url" /></div><div class="field"><label for="faviconUrlInput">Favicon</label><input id="faviconUrlInput" type="url" /></div></div><div class="grid2"><div class="field"><label for="whatsappNumberInput">WhatsApp</label><input id="whatsappNumberInput" type="text" placeholder="54911..." /></div><div class="field"><label for="emailContactInput">Email</label><input id="emailContactInput" type="email" /></div></div><div class="grid3"><div class="field"><label for="instagramUrlInput">Instagram</label><input id="instagramUrlInput" type="url" /></div><div class="field"><label for="facebookUrlInput">Facebook</label><input id="facebookUrlInput" type="url" /></div><div class="field"><label for="tiktokUrlInput">TikTok</label><input id="tiktokUrlInput" type="url" /></div></div><div class="togglesGrid togglesGrid--single"><label class="switchRow"><input id="useHeroVideoInput" type="checkbox" /><span>Usar video hero</span></label><label class="switchRow"><input id="useBackgroundImageInput" type="checkbox" /><span>Usar background global</span></label></div><div class="actions"><button id="siteSettingsSaveBtn" class="btn btn--primary" type="button">Guardar</button></div><div id="siteSettingsMsg" class="msg"></div></div>
       </section>
 
+      <!-- Reseñas pendientes -->
       <section class="panel viewPanel" data-panel="reviews-pending" style="display:none">
         <div class="row row--between row--wrap">
           <div><h2>⏳ Reseñas Pendientes</h2><p class="muted">Moderá las reseñas que los usuarios envían desde el frontend.</p></div>
@@ -525,53 +565,46 @@
         <div id="reviewsPendingList" class="stackList"></div>
       </section>
 
+      <!-- Reseñas aprobadas -->
       <section class="panel viewPanel" data-panel="reviews-approved" style="display:none">
         <div class="row row--between row--wrap">
           <div><h2>✅ Reseñas Aprobadas</h2><p class="muted">Historial completo de reseñas publicadas.</p></div>
-          <div class="row row--wrap"><button id="reviewsApprovedRefreshBtn" class="btn btn--ghost" type="button">Actualizar</button><button id="exportReviewsBtn" class="btn btn--primary" type="button">📥 Exportar a CSV</button></div>
+          <div class="row row--wrap"><button id="reviewsApprovedRefreshBtn" class="btn btn--ghost" type="button">Actualizar</button><button id="exportReviewsBtn" class="btn btn--primary" type="button">📥 Exportar CSV</button></div>
         </div>
         <div class="filtersGrid filtersGrid--3" style="margin-top:1rem;">
           <div class="field"><label>🔍 Buscar</label><input type="text" id="approvedSearchInput" placeholder="Usuario o comentario..." /></div>
-          <div class="field"><label>⭐ Calificación</label><select id="approvedRatingFilter"><option value="all">Todas</option><option value="5">5 estrellas</option><option value="4">4 estrellas</option><option value="3">3 estrellas</option><option value="2">2 estrellas</option><option value="1">1 estrella</option></select></div>
-          <div class="field"><label>📅 Ordenar</label><select id="approvedSortFilter"><option value="recent">Más recientes</option><option value="oldest">Más antiguas</option><option value="rating_high">Mayor calificación</option><option value="rating_low">Menor calificación</option></select></div>
+          <div class="field"><label>⭐ Calificación</label><select id="approvedRatingFilter"><option value="all">Todas</option><option value="5">5⭐</option><option value="4">4⭐</option><option value="3">3⭐</option><option value="2">2⭐</option><option value="1">1⭐</option></select></div>
+          <div class="field"><label>📅 Ordenar</label><select id="approvedSortFilter"><option value="recent">Más recientes</option><option value="oldest">Más antiguas</option><option value="rating_high">Mayor rating</option><option value="rating_low">Menor rating</option></select></div>
         </div>
         <div id="reviewsApprovedMsg" class="msg"></div>
         <div id="reviewsApprovedList" class="stackList"></div>
         <div id="reviewsApprovedPagination" class="pagination" style="display:none"></div>
       </section>
 
+      <!-- Historial -->
       <section class="panel viewPanel" data-panel="history" style="display:none">
         <div class="row row--between row--wrap">
           <div><h2>📜 Historial</h2><p class="muted">Versiones previas y restauración segura.</p></div>
-          <div class="row row--wrap">
-            <button id="historyRefreshBtn" class="btn btn--ghost" type="button">Actualizar</button>
-          </div>
+          <div class="row row--wrap"><button id="historyRefreshBtn" class="btn btn--ghost" type="button">Actualizar</button></div>
         </div>
         <div id="historyMsg" class="msg"></div>
-        
         <div class="subPanel">
-          <div class="row row--between row--wrap">
-            <h3>Historial de proyectos</h3>
-            <button id="clearProjectHistoryBtn" class="btn btn--danger btn--small" type="button">🗑️ Limpiar historial</button>
-          </div>
+          <div class="row row--between row--wrap"><h3>Historial de proyectos</h3><button id="clearProjectHistoryBtn" class="btn btn--danger btn--small" type="button">🗑️ Limpiar</button></div>
           <div id="projectHistoryList" class="stackList"></div>
           <div id="projectHistoryPagination" class="pagination" style="display:none"></div>
         </div>
-        
         <div class="subPanel">
-          <div class="row row--between row--wrap">
-            <h3>Historial de settings</h3>
-            <button id="clearSettingsHistoryBtn" class="btn btn--danger btn--small" type="button">🗑️ Limpiar historial</button>
-          </div>
+          <div class="row row--between row--wrap"><h3>Historial de settings</h3><button id="clearSettingsHistoryBtn" class="btn btn--danger btn--small" type="button">🗑️ Limpiar</button></div>
           <div id="settingsHistoryList" class="stackList"></div>
           <div id="settingsHistoryPagination" class="pagination" style="display:none"></div>
         </div>
       </section>
 
+      <!-- FAQs -->
       <section class="panel viewPanel" data-panel="faqs" style="display:none">
         <div class="row row--between row--wrap"><div><h2>❓ FAQs</h2><p class="muted">Preguntas frecuentes del sitio.</p></div><div class="row row--wrap"><button id="faqsRefreshBtn" class="btn btn--ghost" type="button">Actualizar</button></div></div>
-        <div class="subPanel"><h3>Nueva FAQ</h3><div class="field"><label for="faqQuestionInput">Pregunta</label><input id="faqQuestionInput" type="text" placeholder="¿Cómo trabajás?" /></div><div class="field"><label for="faqAnswerInput">Respuesta</label><textarea id="faqAnswerInput" rows="4" placeholder="Respuesta..."></textarea></div><div class="grid2"><div class="field"><label for="faqOrderInput">Orden</label><input id="faqOrderInput" type="number" step="1" value="0" /></div><div class="togglesGrid togglesGrid--single"><label class="switchRow"><input id="faqActiveInput" type="checkbox" checked /><span>Activa</span></label></div></div><div class="actions"><button id="faqSaveBtn" class="btn btn--primary" type="button">Guardar FAQ</button><button id="faqResetBtn" class="btn btn--ghost" type="button">Limpiar</button></div><div id="faqsMsg" class="msg"></div></div>
-        <div class="subPanel"><h3>Listado de FAQs</h3><div id="faqsList" class="stackList"></div></div>
+        <div class="subPanel"><h3>Nueva FAQ</h3><div class="field"><label for="faqQuestionInput">Pregunta</label><input id="faqQuestionInput" type="text" placeholder="¿Cómo trabajás?" /></div><div class="field"><label for="faqAnswerInput">Respuesta</label><textarea id="faqAnswerInput" rows="4" placeholder="Respuesta..."></textarea></div><div class="grid2"><div class="field"><label for="faqOrderInput">Orden</label><input id="faqOrderInput" type="number" step="1" value="0" /></div><label class="switchRow"><input id="faqActiveInput" type="checkbox" checked /><span>Activa</span></label></div><div class="actions"><button id="faqSaveBtn" class="btn btn--primary" type="button">Guardar</button><button id="faqResetBtn" class="btn btn--ghost" type="button">Limpiar</button></div><div id="faqsMsg" class="msg"></div></div>
+        <div class="subPanel"><h3>Listado</h3><div id="faqsList" class="stackList"></div></div>
       </section>
     </section>
   </section>
@@ -588,23 +621,19 @@
   <div style="background:var(--bg-card); border-radius:24px; max-width:600px; width:90%; max-height:85vh; overflow:auto; padding:24px; border:1px solid var(--cyan);">
     <h3 id="planModalTitle" style="margin-bottom:1rem;">📝 Nuevo Plan</h3>
     <input type="hidden" id="planId">
-    
     <div class="field"><label>Nombre del plan *</label><input type="text" id="planName" placeholder="Ej: Plan Básico"></div>
-    <div class="field"><label>Slug (identificador único)</label><input type="text" id="planSlug" placeholder="plan-basico"><small class="muted">Se genera automáticamente si lo dejás vacío</small></div>
-    <div class="field"><label>Descripción corta</label><textarea id="planDescription" rows="2" placeholder="Descripción del plan..."></textarea></div>
+    <div class="field"><label>Slug</label><input type="text" id="planSlug" placeholder="plan-basico"><small>Se genera automáticamente</small></div>
+    <div class="field"><label>Descripción</label><textarea id="planDescription" rows="2" placeholder="Descripción..."></textarea></div>
     <div class="field"><label>Precio</label><input type="text" id="planPrice" placeholder="$199/mes"></div>
     <div class="field"><label>Ícono (emoji)</label><input type="text" id="planIcon" placeholder="📦" maxlength="2"></div>
-    <div class="field"><label>Características (separadas por coma)</label><input type="text" id="planFeaturesInput" placeholder="Web de 5 páginas, Formulario, SEO básico"><small class="muted">Separalas por coma</small></div>
+    <div class="field"><label>Características (separadas por coma)</label><input id="planFeaturesInput" type="text" placeholder="Web, Formulario, SEO"></div>
     <div class="grid2">
-      <div class="field"><label>Texto del botón</label><input type="text" id="planCtaText" placeholder="Consultar →"></div>
-      <div class="field"><label>Orden</label><input type="number" id="planOrder" value="0" step="1"></div>
+      <div class="field"><label>Texto botón</label><input id="planCtaText" type="text" placeholder="Consultar →"></div>
+      <div class="field"><label>Orden</label><input id="planOrder" type="number" value="0"></div>
     </div>
-    <div class="togglesGrid togglesGrid--single">
-      <label class="switchRow"><input type="checkbox" id="planActive" checked><span>Activo (se muestra en frontend)</span></label>
-    </div>
-    
+    <label class="switchRow"><input type="checkbox" id="planActive" checked><span>Activo</span></label>
     <div style="display:flex; gap:12px; margin-top:1.5rem;">
-      <button id="planSaveBtn" class="btn btn--primary">💾 Guardar plan</button>
+      <button id="planSaveBtn" class="btn btn--primary">💾 Guardar</button>
       <button id="planCancelBtn" class="btn btn--ghost">Cancelar</button>
     </div>
   </div>
@@ -617,17 +646,15 @@
     <div class="field"><label>Usuario</label><input type="text" id="editReviewName" readonly style="background:var(--bg3);" /></div>
     <div class="field"><label>⭐ Calificación</label>
       <div style="display:flex; gap:8px; font-size:24px;" id="editRatingStars">
-        <span data-rating="1" style="cursor:pointer;">☆</span>
-        <span data-rating="2" style="cursor:pointer;">☆</span>
-        <span data-rating="3" style="cursor:pointer;">☆</span>
-        <span data-rating="4" style="cursor:pointer;">☆</span>
+        <span data-rating="1" style="cursor:pointer;">☆</span><span data-rating="2" style="cursor:pointer;">☆</span>
+        <span data-rating="3" style="cursor:pointer;">☆</span><span data-rating="4" style="cursor:pointer;">☆</span>
         <span data-rating="5" style="cursor:pointer;">☆</span>
       </div>
     </div>
     <div class="field"><label>Comentario</label><textarea id="editReviewComment" rows="4" style="width:100%;"></textarea></div>
     <input type="hidden" id="editReviewId" />
     <div style="display:flex; gap:12px; margin-top:1rem;">
-      <button id="saveEditReviewBtn" class="btn btn--primary">✅ Aprobar después de editar</button>
+      <button id="saveEditReviewBtn" class="btn btn--primary">✅ Aprobar</button>
       <button id="cancelEditReviewBtn" class="btn btn--ghost">Cancelar</button>
     </div>
   </div>
@@ -689,17 +716,13 @@
   window.clearProjectHistory = async function() {
     const ok = confirm("⚠️ ¿Eliminar TODO el historial de proyectos? Esta acción no se puede deshacer.");
     if (!ok) return;
-    
-    const confirm2 = confirm("⚠️ Confirmación final: ¿Estás seguro de eliminar todo el historial de proyectos?");
+    const confirm2 = confirm("⚠️ Confirmación final: ¿Estás seguro?");
     if (!confirm2) return;
-    
     const msgEl = document.getElementById("historyMsg");
     if (msgEl) msgEl.textContent = "⏳ Eliminando historial de proyectos...";
-    
     try {
       const { error } = await sb.from("project_history").delete().neq("id", "00000000-0000-0000-0000-000000000000");
       if (error) throw error;
-      
       if (msgEl) {
         msgEl.textContent = "✅ Historial de proyectos eliminado correctamente.";
         msgEl.classList.add("msg--success");
@@ -723,17 +746,13 @@
   window.clearSettingsHistory = async function() {
     const ok = confirm("⚠️ ¿Eliminar TODO el historial de settings? Esta acción no se puede deshacer.");
     if (!ok) return;
-    
-    const confirm2 = confirm("⚠️ Confirmación final: ¿Estás seguro de eliminar todo el historial de settings?");
+    const confirm2 = confirm("⚠️ Confirmación final: ¿Estás seguro?");
     if (!confirm2) return;
-    
     const msgEl = document.getElementById("historyMsg");
     if (msgEl) msgEl.textContent = "⏳ Eliminando historial de settings...";
-    
     try {
       const { error } = await sb.from("site_settings_history").delete().neq("id", "00000000-0000-0000-0000-000000000000");
       if (error) throw error;
-      
       if (msgEl) {
         msgEl.textContent = "✅ Historial de settings eliminado correctamente.";
         msgEl.classList.add("msg--success");
@@ -757,7 +776,7 @@
   document.getElementById("clearProjectHistoryBtn")?.addEventListener("click", window.clearProjectHistory);
   document.getElementById("clearSettingsHistoryBtn")?.addEventListener("click", window.clearSettingsHistory);
 
-  // Menú hamburguesa - CORREGIDO
+  // Menú hamburguesa - MEJORADO
   function initSidebarToggle() {
     const toggleBtn = document.getElementById("sidebarToggleBtn");
     const sidebar = document.querySelector(".sidebar");
@@ -783,6 +802,12 @@
           sidebar.classList.remove("open");
         }
       });
+    });
+    
+    window.addEventListener("resize", () => {
+      if (window.innerWidth > 980 && sidebar.classList.contains("open")) {
+        sidebar.classList.remove("open");
+      }
     });
   }
   initSidebarToggle();
