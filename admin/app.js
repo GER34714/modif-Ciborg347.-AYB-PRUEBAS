@@ -1,3 +1,19 @@
+// Inicializacion de Supabase con autenticacion
+if (window.CIBORG_CONFIG && window.supabase) {
+  const SUPABASE_URL = window.CIBORG_CONFIG.SUPABASE_URL;
+  const SUPABASE_KEY = window.CIBORG_CONFIG.SUPABASE_KEY;
+  
+  // Reemplazar el supabase existente por uno con auth
+  window.supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true
+    }
+  });
+  
+  console.log("✅ Supabase reinicializado con autenticacion");
+}
 /* =========================
    STATE
 ========================= */
