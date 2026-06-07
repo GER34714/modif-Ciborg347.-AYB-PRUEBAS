@@ -182,6 +182,83 @@
       }
     }
     
+    /* ========== MODAL CORREGIDO ========== */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.92);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20px;
+      overflow-y: auto;
+    }
+    .modal-container {
+      background: var(--bg2);
+      border-radius: 24px;
+      max-width: 550px;
+      width: 100%;
+      max-height: 85vh;
+      overflow-y: auto;
+      border: 1px solid var(--border);
+      animation: modalFade 0.25s ease;
+    }
+    @keyframes modalFade {
+      from { opacity: 0; transform: scale(0.96); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .modal-header {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .modal-header h3 { font-family: 'Syne', sans-serif; font-size: 1.3rem; color: var(--white); margin: 0; }
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 1.8rem;
+      cursor: pointer;
+      color: var(--text2);
+      transition: color 0.2s;
+      line-height: 1;
+    }
+    .modal-close:hover { color: var(--cyan); }
+    .modal-body { padding: 1.5rem; }
+    .modal-img {
+      width: 100%;
+      border-radius: 16px;
+      margin-bottom: 1rem;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+    .modal-img:hover { transform: scale(1.02); }
+    .modal-cat {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: var(--cyan);
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+    .modal-desc {
+      color: var(--text2);
+      line-height: 1.7;
+      margin: 1rem 0;
+    }
+    .modal-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .modal-actions .btn { flex: 1; justify-content: center; }
+    
     /* ========== RESTO DE TU CSS ORIGINAL ========== */
     .topbar { position: sticky; top: 0; z-index: 100; background: rgba(10,10,15,0.82); backdrop-filter: blur(14px); border-bottom: 1px solid var(--border); }
     .topbar__inner { min-height: 68px; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
@@ -788,12 +865,44 @@ function typeWriter() {
 }
 setTimeout(typeWriter, 500);
 
+// ========== MODAL CORREGIDO (NO SE CUELGA) ==========
 function openModal(project) {
-  const modalHTML = `<div class="modal-overlay" id="modalOverlay"><div class="modal-container"><div class="modal-header"><h3>${esc(project.title)}</h3><button class="modal-close" onclick="closeModal()">×</button></div><div class="modal-body">${project.image_url ? `<img src="${esc(project.image_url)}" alt="${esc(project.title)}" class="modal-img" onclick="openLightbox('${esc(project.image_url)}')" />` : ''}<div class="modal-cat">${esc(project.categories?.name || "Proyecto")}</div><div class="modal-desc">${esc(project.full_description || project.short_description || "Sin descripción adicional.")}</div><div class="modal-actions"><a href="${esc(project.demo_url || "#")}" target="_blank" class="btn btn--primary">Ver demo →</a><a href="${waUrl(`Hola, vi la demo "${project.title}" y quiero algo así.`)}" class="btn btn--wa">Consultar por WhatsApp</a></div></div></div></div>`;
+  if (document.getElementById('modalOverlay')) return;
+  
+  const modalHTML = `
+    <div class="modal-overlay" id="modalOverlay">
+      <div class="modal-container">
+        <div class="modal-header">
+          <h3>${esc(project.title)}</h3>
+          <button class="modal-close" onclick="closeModal()">×</button>
+        </div>
+        <div class="modal-body">
+          ${project.image_url ? `<img src="${esc(project.image_url)}" alt="${esc(project.title)}" class="modal-img" onclick="openLightbox('${esc(project.image_url)}')" />` : ''}
+          <div class="modal-cat">${esc(project.categories?.name || "Proyecto")}</div>
+          <div class="modal-desc">${esc(project.full_description || project.short_description || "Sin descripción adicional.")}</div>
+          <div class="modal-actions">
+            <a href="${esc(project.demo_url || "#")}" target="_blank" class="btn btn--primary">Ver demo →</a>
+            <a href="${waUrl(`Hola, vi la demo "${project.title}" y quiero algo así.`)}" class="btn btn--wa">Consultar por WhatsApp</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+  
   document.body.insertAdjacentHTML("beforeend", modalHTML);
   document.body.style.overflow = "hidden";
+  
+  const overlay = document.getElementById('modalOverlay');
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) closeModal();
+  });
 }
-window.closeModal = function() { const modal = document.getElementById("modalOverlay"); if (modal) modal.remove(); document.body.style.overflow = ""; }
+
+window.closeModal = function() {
+  const modal = document.getElementById("modalOverlay");
+  if (modal) modal.remove();
+  document.body.style.overflow = "";
+}
 
 function renderFeatured() {
   const featuredProjects = projectsData.filter(p => p.featured === true);
@@ -1042,7 +1151,7 @@ function setupWhatsAppVisibility() {
   observerFooter.observe(footer);
 }
 
-// ========== MATRIX CANVAS (EFECTO COMPLETO) ==========
+// ========== MATRIX CANVAS ==========
 (function() {
   const canvas = document.getElementById('matrixCanvas');
   if (!canvas) return;
