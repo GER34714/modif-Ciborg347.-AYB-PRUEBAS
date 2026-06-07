@@ -16,6 +16,16 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-Z2S0VWZCNY"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-Z2S0VWZCNY');
+  </script>
+  
   <style>
     :root {
       --bg: #0a0a0f;
@@ -122,7 +132,9 @@
     }
     .hero {
       position: relative;
-      min-height: 88vh; display: flex; align-items: center;
+      min-height: 88vh;
+      display: flex;
+      align-items: center;
       background-image: url('https://fhxcumwhgtfirznnznjx.supabase.co/storage/v1/object/public/Imagenes/710478090_921107700943207_8371047012180220047_n.jpg');
       background-size: cover;
       background-position: center right;
@@ -130,7 +142,8 @@
     }
     .hero::before {
       content: '';
-      position: absolute; inset: 0;
+      position: absolute;
+      inset: 0;
       background: linear-gradient(to right, var(--bg) 0%, rgba(10,10,15,0.85) 35%, rgba(10,10,15,0.5) 52%, transparent 100%);
       z-index: 1;
     }
@@ -223,13 +236,18 @@
     .section__head { margin-bottom: 3rem; }
     .section__head.center { text-align: center; }
     .section__label {
-      font-family: 'JetBrains Mono', monospace; font-size: 11px;
-      color: var(--cyan); margin-bottom: 0.6rem; display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--cyan);
+      margin-bottom: 0.6rem;
+      display: inline-block;
       text-transform: uppercase;
     }
     .section__head h2 {
-      font-family: 'Syne', sans-serif; font-size: clamp(2rem, 4.5vw, 3.2rem);
-      font-weight: 800; color: var(--white);
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(2rem, 4.5vw, 3.2rem);
+      font-weight: 800;
+      color: var(--white);
     }
     .section__head h2 em { background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
     .servicesGrid {
@@ -496,32 +514,55 @@
       .featuredGrid { grid-template-columns: 1fr; }
     }
     .controls-bar {
-      display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center;
-      gap: 1rem; margin-bottom: 2rem;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
     }
     .filters { display: flex; gap: 8px; flex-wrap: wrap; }
     .filter-btn {
-      font-family: 'JetBrains Mono', monospace; font-size: 11px;
-      padding: 7px 16px; border: 1px solid var(--border); background: transparent;
-      color: var(--text2); border-radius: 100px; cursor: pointer;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      padding: 7px 16px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text2);
+      border-radius: 100px;
+      cursor: pointer;
       transition: all 0.2s;
     }
     .filter-btn:hover, .filter-btn.active { border-color: var(--cyan); color: var(--cyan); background: rgba(0,212,255,0.07); box-shadow: 0 0 8px var(--cyan); }
     .search-sort { display: flex; gap: 10px; flex-wrap: wrap; }
     .search-box {
-      display: flex; align-items: center; gap: 8px;
-      background: var(--bg3); border: 1px solid var(--border); border-radius: 40px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 40px;
       padding: 5px 15px;
     }
     .search-box input {
-      background: none; border: none; padding: 8px 0; color: var(--text);
-      font-family: inherit; outline: none; width: 180px;
+      background: none;
+      border: none;
+      padding: 8px 0;
+      color: var(--text);
+      font-family: inherit;
+      outline: none;
+      width: 180px;
     }
     .search-box input::placeholder { color: var(--text2); }
     .sort-select {
-      background: var(--bg3); border: 1px solid var(--border); border-radius: 40px;
-      padding: 5px 15px; color: var(--text); font-family: 'JetBrains Mono', monospace;
-      font-size: 12px; cursor: pointer;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 40px;
+      padding: 5px 15px;
+      color: var(--text);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      cursor: pointer;
     }
     .projectsGrid {
       display: grid;
@@ -690,16 +731,24 @@
       box-shadow: 0 0 30px rgba(0,212,255,0.3);
     }
     .faqGrid {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      background: var(--border);
     }
     .faqItem {
-      background: var(--bg); padding: 1.75rem 2rem; cursor: pointer;
+      background: var(--bg);
+      padding: 1.75rem 2rem;
+      cursor: pointer;
       transition: all 0.25s;
     }
     .faqItem:hover { background: var(--bg2); box-shadow: inset 0 0 0 1px var(--cyan); }
     .faqQ {
-      font-size: 15px; font-weight: 500; color: var(--white);
-      display: flex; justify-content: space-between;
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--white);
+      display: flex;
+      justify-content: space-between;
     }
     .faqQ::after { content: '+'; color: var(--cyan); font-size: 1.4rem; }
     .faqA { font-size: 14px; color: var(--text2); display: none; padding-top: 1rem; }
@@ -754,6 +803,8 @@
     .footer__links a { font-size: 12px; color: var(--text2); transition: color 0.2s; }
     .footer__links a:hover { color: var(--cyan); }
     .footer__copy { font-size: 11px; color: var(--text2); text-align: center; }
+    
+    /* ✅ BOTÓN WHATSAPP CORREGIDO - ESTILO ORIGINAL */
     .waFloat {
       position: fixed;
       bottom: 24px;
@@ -771,8 +822,14 @@
       visibility: visible;
       box-shadow: 0 4px 12px rgba(0,0,0,0.3);
     }
+    .waFloat svg {
+      width: 28px;
+      height: 28px;
+      fill: white;
+    }
     .waFloat.hidden { opacity: 0; visibility: hidden; }
     .waFloat:hover { transform: scale(1.08) rotate(5deg); box-shadow: 0 0 20px #25d366; }
+    
     .toast {
       position: fixed;
       bottom: 100px;
@@ -895,8 +952,6 @@
       .hero__stats { display: flex; }
       .projectsGrid { gap: 20px; }
     }
-
-    /* ===== CORRECCIÓN DE VISIBILIDAD ===== */
     .fade-in-up,
     .fade-in-left,
     .fade-in-right,
@@ -1125,13 +1180,11 @@
       <h2>Hablemos de <em>tu proyecto</em></h2>
     </div>
     <div class="contact-form-section fade-in-right">
-      <form class="contact-form" id="contactForm" action="https://formsubmit.co/ciborg347@gmail.com" method="POST">
-        <input type="hidden" name="_subject" value="Nuevo lead desde Ciborg 347">
-        <input type="hidden" name="_captcha" value="false">
-        <input type="text" name="nombre" placeholder="Tu nombre *" required>
-        <input type="email" name="email" placeholder="Tu email *" required>
-        <input type="tel" name="telefono" placeholder="Tu WhatsApp (opcional)">
-        <textarea name="mensaje" rows="3" placeholder="Contame sobre tu proyecto..." required></textarea>
+      <form class="contact-form" id="contactFormWhatsapp">
+        <input type="text" id="waNombre" placeholder="Tu nombre *" required>
+        <input type="email" id="waEmail" placeholder="Tu email *" required>
+        <input type="tel" id="waTelefono" placeholder="Tu WhatsApp (opcional)">
+        <textarea id="waMensaje" rows="3" placeholder="Contame sobre tu proyecto..." required></textarea>
         <button type="submit" class="btn btn--primary">Enviar mensaje →</button>
       </form>
     </div>
@@ -1156,8 +1209,16 @@
     </div>
   </div>
 </footer>
-<a href="#" class="waFloat" id="waFloat" target="_blank"><svg width="26" height="26" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg></a>
+
+<!-- ✅ BOTÓN WHATSAPP CORREGIDO - SVG ORIGINAL -->
+<a href="#" class="waFloat" id="waFloat" target="_blank">
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="white">
+    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+  </svg>
+</a>
+
 <div class="toast" id="toast">Enlace copiado</div>
+
 <script>
 // Configuración
 const SUPABASE_URL = "https://fhxcumwhgtfirznnznjx.supabase.co";
@@ -1166,6 +1227,19 @@ const DEFAULT_WA = "5491164499481";
 const sb = window.supabase?.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 console.log("🔌 Conectando a Supabase...");
+
+// Formulario WhatsApp
+document.getElementById('contactFormWhatsapp')?.addEventListener('submit', function(e) {
+  e.preventDefault();
+  const nombre = document.getElementById('waNombre').value;
+  const email = document.getElementById('waEmail').value;
+  const telefono = document.getElementById('waTelefono').value;
+  const mensaje = document.getElementById('waMensaje').value;
+  const texto = `Hola CIBORG 347! 👋\n\n*Nombre:* ${nombre}\n*Email:* ${email}\n*WhatsApp:* ${telefono || "No especificado"}\n\n*Consulta:*\n${mensaje}`;
+  const url = `https://wa.me/${DEFAULT_WA}?text=${encodeURIComponent(texto)}`;
+  window.open(url, '_blank');
+  this.reset();
+});
 
 // Variables globales
 let projectsData = [];
@@ -1237,15 +1311,26 @@ function openModal(project) {
 window.closeModal = function() { const modal = document.getElementById("modalOverlay"); if (modal) modal.remove(); document.body.style.overflow = ""; }
 
 function renderFeatured() {
-  // SOLO proyectos destacados que además sean published
-  const featuredProjects = projectsData.filter(p => p.featured === true && p.status === "published");
+  const featuredProjects = projectsData.filter(p => p.featured === true);
   const featuredSection = document.getElementById("featuredSection");
   const featuredGrid = document.getElementById("featuredGrid");
-  if (featuredProjects.length === 0) { if (featuredSection) featuredSection.style.display = "none"; return; }
-  if (featuredSection) featuredSection.style.display = "block";
-  if (featuredGrid) { featuredGrid.innerHTML = featuredProjects.slice(0, 6).map(p => `<div class="featuredCard" data-project='${JSON.stringify(p)}'><img class="featuredCard__image" src="${esc(p.image_url)}" alt="${esc(p.title)}" loading="lazy" /><div class="featuredCard__content"><div class="featuredCard__cat">${esc(p.categories?.name || "Destacado")}</div><div class="featuredCard__title">${esc(p.title)}</div><div class="featuredCard__desc">${esc(p.short_description || "").substring(0, 80)}${(p.short_description || "").length > 80 ? '...' : ''}</div></div></div>`).join("");
-    document.querySelectorAll(".featuredCard").forEach(card => { const project = JSON.parse(card.getAttribute("data-project")); card.addEventListener("click", () => openModal(project)); });
-  }
+  if (!featuredSection || !featuredGrid) return;
+  if (featuredProjects.length === 0) { featuredSection.style.display = "none"; return; }
+  featuredSection.style.display = "block";
+  featuredGrid.innerHTML = featuredProjects.slice(0, 6).map(p => `
+    <div class="featuredCard" data-project='${JSON.stringify(p)}'>
+      <img class="featuredCard__image" src="${esc(p.image_url)}" alt="${esc(p.title)}" loading="lazy" />
+      <div class="featuredCard__content">
+        <div class="featuredCard__cat">${esc(p.categories?.name || "Destacado")}</div>
+        <div class="featuredCard__title">${esc(p.title)}</div>
+        <div class="featuredCard__desc">${esc(p.short_description || "").substring(0, 80)}${(p.short_description || "").length > 80 ? '...' : ''}</div>
+      </div>
+    </div>
+  `).join("");
+  document.querySelectorAll(".featuredCard").forEach(card => { 
+    const project = JSON.parse(card.getAttribute("data-project")); 
+    card.addEventListener("click", () => openModal(project)); 
+  });
 }
 
 function getFilteredAndSortedProjects(excludeFeatured = true) {
@@ -1302,7 +1387,6 @@ async function loadProjects() {
   if (!sb) { console.error("❌ Supabase no inicializado"); if (skeleton) skeleton.style.display = "none"; if (projectsGrid) projectsGrid.style.display = "grid"; return; }
   try {
     console.log("🔄 Cargando proyectos desde Supabase...");
-    // SOLO proyectos con active = true Y status = 'published' o 'featured'
     const { data: projects, error } = await sb.from("projects")
       .select(`*, categories(name,slug)`)
       .eq("active", true)
@@ -1426,14 +1510,12 @@ const footerLogo = document.getElementById("footerLogo");
 if (brandLogo) brandLogo.addEventListener('dblclick', () => window.location.href = 'https://admin-ciborg.onrender.com/');
 if (footerLogo) footerLogo.addEventListener('dblclick', () => window.location.href = 'https://admin-ciborg.onrender.com/');
 
-// Forzar visibilidad inmediata de todos los elementos
 document.querySelectorAll(".fade-in-left, .fade-in-right, .fade-in-up, .projectCard, .faqItem, .featuredCard, .serviceCard").forEach(el => {
   el.classList.add("visible");
   el.style.opacity = "1";
   el.style.transform = "translateX(0) translateY(0)";
 });
 
-// Observer opcional
 const observer = new IntersectionObserver((entries) => { 
   entries.forEach(e => { 
     if (e.isIntersecting) { 
@@ -1459,11 +1541,28 @@ setWaLinks();
 const heroObserver = new IntersectionObserver((entries) => { entries.forEach(e => { if (e.isIntersecting && !countersStarted && projectsData.length > 0) { countersStarted = true; animateCounter(document.getElementById("statProjects"), projectsData.length, '+'); animateCounter(document.getElementById("statHours"), 24, 'hs'); animateCounter(document.getElementById("statCode"), 100, '%'); } }); }, { threshold: 0.3 });
 if (document.querySelector(".hero")) heroObserver.observe(document.querySelector(".hero"));
 
-// Inicializar todo
+function setupWhatsAppVisibility() {
+  const whatsappButton = document.querySelector('.waFloat');
+  const footer = document.querySelector('footer');
+  if (!whatsappButton || !footer) return;
+  const observerFooter = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        whatsappButton.classList.add('hidden');
+      } else {
+        whatsappButton.classList.remove('hidden');
+      }
+    });
+  }, { threshold: 0.1 });
+  observerFooter.observe(footer);
+}
+
+// Inicialización
 loadProjects();
 loadPlans();
 loadFaqs();
 loadReviews();
+setupWhatsAppVisibility();
 
 // Matrix canvas
 (function() {
@@ -1532,4 +1631,3 @@ loadReviews();
 </script>
 </body>
 </html>
- 
