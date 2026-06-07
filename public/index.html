@@ -27,6 +27,7 @@
   </script>
   
   <style>
+    /* ========== TU CSS ORIGINAL COMPLETO (sin cambios) ========== */
     :root {
       --bg: #0a0a0f;
       --bg2: #0f0f1a;
@@ -812,7 +813,7 @@
       }
     }
     
-    /* ========== NUEVO DISEÑO FAQ (sin eliminar nada original) ========== */
+    /* ========== NUEVO DISEÑO FAQ ========== */
     .faqGrid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -1070,7 +1071,6 @@
       .hero__stats { display: flex; }
       .projectsGrid { gap: 20px; }
     }
-
     .fade-in-up,
     .fade-in-left,
     .fade-in-right,
@@ -1475,7 +1475,7 @@ let activeFilter = "all";
 let currentSearch = "";
 let currentSort = "recent";
 let currentPage = 1;
-const PROJECTS_PER_PAGE = 9; // ✅ AHORA 9 PROYECTOS POR PÁGINA
+const PROJECTS_PER_PAGE = 9;
 let filteredProjectsCache = [];
 let reviewsData = [];
 let currentReviewIndex = 0;
@@ -1600,31 +1600,45 @@ function renderPagination(totalPages) {
   pagesDiv.innerHTML = pagesHTML;
   infoDiv.textContent = `Mostrando ${(currentPage-1)*PROJECTS_PER_PAGE+1} - ${Math.min(currentPage*PROJECTS_PER_PAGE, filteredProjectsCache.length)} de ${filteredProjectsCache.length} proyectos`;
   
-  // ✅ MEJORA: la paginación NO sube hasta arriba, se queda en la sección portfolio
-  const portfolioSection = document.getElementById("portfolio");
-  prevBtn.onclick = () => {
+  // ✅ CORRECCIÓN FINAL: Subir hasta la PRIMER IMAGEN de los 9 proyectos (el inicio de projectsGrid)
+  const grid = document.getElementById('projectsGrid');
+  const gridPosition = grid?.getBoundingClientRect().top + window.scrollY;
+  
+  const scrollToGrid = () => {
+    if (grid) {
+      const finalPosition = grid.getBoundingClientRect().top + window.scrollY;
+      window.scrollTo({ top: finalPosition - 20, behavior: "smooth" });
+    }
+  };
+  
+  const newPrevHandler = () => {
     if (currentPage > 1) {
       currentPage--;
       renderProjects();
-      if (portfolioSection) portfolioSection.scrollIntoView({ behavior: "smooth" });
+      setTimeout(scrollToGrid, 100);
     }
   };
-  nextBtn.onclick = () => {
+  const newNextHandler = () => {
     if (currentPage < totalPages) {
       currentPage++;
       renderProjects();
-      if (portfolioSection) portfolioSection.scrollIntoView({ behavior: "smooth" });
+      setTimeout(scrollToGrid, 100);
     }
   };
+  prevBtn.onclick = newPrevHandler;
+  nextBtn.onclick = newNextHandler;
   document.querySelectorAll(".page-number").forEach(btn => {
-    btn.addEventListener("click", () => {
+    btn.removeEventListener("click", btn._listener);
+    const handler = () => {
       const page = parseInt(btn.dataset.page);
       if (page !== currentPage) {
         currentPage = page;
         renderProjects();
-        if (portfolioSection) portfolioSection.scrollIntoView({ behavior: "smooth" });
+        setTimeout(scrollToGrid, 100);
       }
-    });
+    };
+    btn._listener = handler;
+    btn.addEventListener("click", handler);
   });
 }
 
@@ -1689,7 +1703,6 @@ async function loadFaqs() {
     if (error) throw error;
     if (!data || data.length === 0) { grid.innerHTML = '<div class="faqItem" style="grid-column:1/-1; text-align:center;">No hay preguntas frecuentes cargadas.</div>'; return; }
     console.log(`📋 FAQs cargadas: ${data.length}`);
-    // ✅ NUEVO RENDER con diseño de contenedor elegante
     grid.innerHTML = data.map((faq, idx) => `
       <div class="faqItem fade-in-up" style="transition-delay: ${idx * 0.05}s">
         <div class="faqQ">${esc(faq.question)}</div>
@@ -1842,7 +1855,7 @@ loadFaqs();
 loadReviews();
 setupWhatsAppVisibility();
 
-// Matrix canvas (original, intacto)
+// Matrix canvas (completo, original)
 (function() {
   const canvas = document.getElementById('matrixCanvas');
   if (!canvas) return;
