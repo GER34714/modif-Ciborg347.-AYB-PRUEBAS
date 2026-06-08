@@ -53,6 +53,18 @@ let lastPendingCount = 0;
 let plansData = [];
 let editingPlanId = null;
 
+// ========== NUEVAS VARIABLES PARA MARCAS ==========
+let brandsData = [];
+let editingBrandId = null;
+let brandsPaginator = null;
+
+// ========== NUEVAS VARIABLES PARA ASISTENTE ==========
+let assistantQuestionsData = [];
+let editingAssistantQuestionId = null;
+let assistantQuestionsPaginator = null;
+let assistantResponsesData = [];
+let assistantResponsesPaginator = null;
+
 // Elementos DOM (declarados ANTES de usarlos)
 const navBtns = document.querySelectorAll(".navBtn");
 const viewPanels = document.querySelectorAll(".viewPanel");
@@ -218,6 +230,30 @@ function setCategoriesMsg(msg = "") { if (categoriesMsg) categoriesMsg.textConte
 function setFaqsMsg(msg = "") { if (faqsMsg) faqsMsg.textContent = msg; }
 function setSiteContentMsg(msg = "") { if (siteContentMsg) siteContentMsg.textContent = msg; }
 function setSiteSettingsMsg(msg = "") { if (siteSettingsMsg) siteSettingsMsg.textContent = msg; }
+function setBrandsMsg(msg = "", isError = false) {
+  const msgEl = document.getElementById("brandsMsg");
+  if (!msgEl) return;
+  msgEl.textContent = msg;
+  msgEl.classList.remove("msg--success", "msg--error");
+  msgEl.classList.add(isError ? "msg--error" : "msg--success");
+  setTimeout(() => { if (msgEl.textContent === msg) { msgEl.textContent = ""; msgEl.classList.remove("msg--success", "msg--error"); } }, 4000);
+}
+function setAssistantQuestionsMsg(msg = "", isError = false) {
+  const msgEl = document.getElementById("assistantQuestionsMsg");
+  if (!msgEl) return;
+  msgEl.textContent = msg;
+  msgEl.classList.remove("msg--success", "msg--error");
+  msgEl.classList.add(isError ? "msg--error" : "msg--success");
+  setTimeout(() => { if (msgEl.textContent === msg) { msgEl.textContent = ""; msgEl.classList.remove("msg--success", "msg--error"); } }, 4000);
+}
+function setAssistantResponsesMsg(msg = "", isError = false) {
+  const msgEl = document.getElementById("assistantResponsesMsg");
+  if (!msgEl) return;
+  msgEl.textContent = msg;
+  msgEl.classList.remove("msg--success", "msg--error");
+  msgEl.classList.add(isError ? "msg--error" : "msg--success");
+  setTimeout(() => { if (msgEl.textContent === msg) { msgEl.textContent = ""; msgEl.classList.remove("msg--success", "msg--error"); } }, 4000);
+}
 
 function escapeHtml(s) {
   return String(s ?? "")
@@ -252,6 +288,11 @@ function switchView(view) {
   currentView = view;
   navBtns.forEach(btn => btn.classList.toggle("is-active", btn.dataset.view === view));
   viewPanels.forEach(panel => { panel.style.display = panel.dataset.panel === view ? "" : "none"; });
+  
+  // Cargar datos específicos según la vista
+  if (view === "brands" && typeof loadBrandsAdmin === "function") loadBrandsAdmin();
+  if (view === "assistant-questions" && typeof loadAssistantQuestionsAdmin === "function") loadAssistantQuestionsAdmin();
+  if (view === "assistant-responses" && typeof loadAssistantResponsesAdmin === "function") loadAssistantResponsesAdmin();
 }
 
 function fillCategorySelects() {
@@ -380,12 +421,11 @@ async function getCurrentUserEmail() {
   return data?.user?.email || "";
 }
 
-function buildStorageFilePath(file) {
+function buildStorageFilePath(file, folder = "brands") {
   const ext = (file.name.split(".").pop() || "jpg").toLowerCase().replace(/[^a-z0-9]/g, "");
-  const titleSlug = slugify(projectTitleInput?.value || "proyecto");
   const stamp = Date.now();
   const random = Math.random().toString(36).slice(2, 8);
-  return `projects/${titleSlug || "proyecto"}-${stamp}-${random}.${ext || "jpg"}`;
+  return `${folder}/${stamp}-${random}.${ext || "jpg"}`;
 }
 
 function showLoading(elementId, show = true) {
@@ -745,7 +785,11 @@ async function loadAll() {
     loadHistory(),
   ]);
   if (document.getElementById("plansList")) await loadPlansAdmin();
-}/* =========================
+  if (document.getElementById("brandsList")) await loadBrandsAdmin();
+  if (document.getElementById("assistantQuestionsList")) await loadAssistantQuestionsAdmin();
+}
+
+/* =========================
    RENDER (con paginación)
 ========================= */
 function updateDashboardStats() {
@@ -1362,7 +1406,7 @@ async function uploadImageToStorage() {
   setProjectUploadMsg("📤 Subiendo imagen...", "success");
 
   try {
-    const filePath = buildStorageFilePath(file);
+    const filePath = buildStorageFilePath(file, "projects");
 
     const { error: uploadError } = await sb
       .storage
@@ -1976,25 +2020,25 @@ function renderPendingReviews() {
             <td data-label="Usuario">
               <strong>${escapeHtml(review.user_name || "Anónimo")}</strong>
               ${review.user_email ? `<br/><small>${escapeHtml(review.user_email)}</small>` : ""}
-             </td>
+              </td>
             <td data-label="Calificación">
               ${"⭐".repeat(review.rating)} (${review.rating}/5)
-             </td>
+              </td>
             <td data-label="Reseña">
               ${review.title ? `<strong>${escapeHtml(review.title)}</strong><br/>` : ""}
               ${escapeHtml((review.comment || "").substring(0, 200))}${(review.comment || "").length > 200 ? "..." : ""}
-             </td>
+              </td>
             <td data-label="Proyecto">
               ${review.project_id ? escapeHtml(review.project_title || `Proyecto ${review.project_id}`) : "Opinión general"}
-             </td>
+              </td>
             <td data-label="Fecha">
               <small>${formatDate(review.created_at)}</small>
-             </td>
+              </td>
             <td data-label="Acciones" class="action-btns">
               <button class="btn btn--small btn--ghost" data-edit-review="${review.id}" style="border-color:var(--cyan);">✏️ Editar</button>
               <button class="btn btn--success btn--small" data-approve-review="${review.id}">✅ Aprobar</button>
               <button class="btn btn--danger btn--small" data-reject-review="${review.id}">❌ Rechazar</button>
-            </td>
+             </td>
           </tr>
         `).join("")}
       </tbody>
@@ -2664,173 +2708,582 @@ function setPlansMsg(msg, isError = false) {
 }
 
 /* =========================
-   MENÚ HAMBURGUESA PARA ADMIN (VERSIÓN CORREGIDA)
+   ========== NUEVO: ADMINISTRACIÓN DE MARCAS ==========
 ========================= */
-function initSidebarToggle() {
-  const toggleBtn = document.getElementById("sidebarToggleBtn");
-  const sidebar = document.querySelector(".sidebar");
+
+async function loadBrandsAdmin() {
+  const container = document.getElementById("brandsList");
+  if (!container) return;
   
-  if (!toggleBtn || !sidebar) {
-    console.warn("Botón o sidebar no encontrados");
+  container.innerHTML = '<div class="loading-skeleton"><div class="skeleton-line"></div><div class="skeleton-line"></div></div>';
+  
+  try {
+    const { data, error } = await sb
+      .from("trusted_brands")
+      .select("*")
+      .order("order_index", { ascending: true });
+    
+    if (error) throw error;
+    
+    brandsData = data || [];
+    renderBrandsList();
+  } catch (err) {
+    console.error("Error loading brands:", err);
+    container.innerHTML = `<div class="emptyState">⚠️ Error al cargar marcas: ${err.message}</div>`;
+  }
+}
+
+function renderBrandsList() {
+  const container = document.getElementById("brandsList");
+  if (!container) return;
+  
+  if (!brandsData.length) {
+    container.innerHTML = `<div class="emptyState">🏷️ No hay marcas cargadas. Creá una nueva.</div>`;
+    if (brandsPaginator) brandsPaginator.updateItems([]);
     return;
   }
   
-  // Abrir/cerrar al hacer clic en el botón
-  toggleBtn.addEventListener("click", (e) => {
-    e.stopPropagation();
-    sidebar.classList.toggle("open");
-  });
-  
-  // Cerrar al hacer clic fuera
-  document.addEventListener("click", (e) => {
-    if (window.innerWidth <= 980 && sidebar.classList.contains("open")) {
-      if (!sidebar.contains(e.target) && !toggleBtn.contains(e.target)) {
-        sidebar.classList.remove("open");
-      }
-    }
-  });
-  
-  // Cerrar al hacer clic en cualquier navBtn (en móvil)
-  document.querySelectorAll(".navBtn").forEach(btn => {
-    btn.addEventListener("click", () => {
-      if (window.innerWidth <= 980) {
-        sidebar.classList.remove("open");
-      }
+  if (!brandsPaginator) {
+    brandsPaginator = new Paginator({
+      items: brandsData,
+      itemsPerPage: 10,
+      currentPage: 1,
+      onPageChange: (paginatedItems) => {
+        renderBrandsListPage(paginatedItems);
+      },
+      containerId: "brandsPagination",
     });
-  });
+  } else {
+    brandsPaginator.updateItems(brandsData);
+  }
   
-  // Cerrar automáticamente al redimensionar a desktop
-  window.addEventListener("resize", () => {
-    if (window.innerWidth > 980 && sidebar.classList.contains("open")) {
-      sidebar.classList.remove("open");
-    }
-  });
+  brandsPaginator.setPage(1);
+}
+
+function renderBrandsListPage(brands) {
+  const container = document.getElementById("brandsList");
+  if (!container) return;
   
-  console.log("✅ Menú hamburguesa inicializado correctamente");
-}
-
-/* =========================
-   INTEGRACIÓN CON LOADALL Y SWITCHVIEW
-========================= */
-const originalLoadAll = window.loadAll;
-window.loadAll = async function() {
-  if (originalLoadAll) await originalLoadAll();
-  if (document.getElementById("plansList")) {
-    await loadPlansAdmin();
+  if (!brands.length) {
+    container.innerHTML = `<div class="emptyState">🏷️ No hay marcas para mostrar.</div>`;
+    return;
   }
-  if (document.getElementById("reviewsApprovedList")) {
-    await loadApprovedReviews();
+  
+  container.innerHTML = brands.map(brand => `
+    <article class="listCard listCard--compact">
+      <div class="listCard__thumb">
+        <img src="${escapeHtml(brand.logo_url)}" alt="${escapeHtml(brand.name)}" style="width:60px; height:60px; object-fit:contain;" />
+      </div>
+      <div class="listCard__body">
+        <div class="listCard__title">🏷️ ${escapeHtml(brand.name)}</div>
+        <div class="listCard__meta">${brand.website_url ? `🔗 ${escapeHtml(brand.website_url)}` : 'Sin web'} · Orden: ${brand.order_index || 0}</div>
+        <div class="listCard__meta">${brand.active ? '🟢 Activo' : '🔴 Inactivo'}</div>
+      </div>
+      <div class="listCard__actions">
+        <button class="btn btn--ghost btn--small" data-edit-brand="${brand.id}" data-tooltip="Editar marca">✏️</button>
+        <button class="btn btn--danger btn--small" data-delete-brand="${brand.id}" data-tooltip="Eliminar marca">🗑️</button>
+      </div>
+    </article>
+  `).join("");
+  
+  container.querySelectorAll("[data-edit-brand]").forEach(btn => {
+    btn.addEventListener("click", () => openBrandModal(btn.getAttribute("data-edit-brand")));
+  });
+  container.querySelectorAll("[data-delete-brand]").forEach(btn => {
+    btn.addEventListener("click", () => deleteBrand(btn.getAttribute("data-delete-brand")));
+  });
+}
+
+function openBrandModal(id = null) {
+  editingBrandId = id;
+  const modal = document.getElementById("brandModal");
+  const title = document.getElementById("brandModalTitle");
+  
+  const brandId = document.getElementById("brandId");
+  const brandName = document.getElementById("brandName");
+  const brandLogoUrl = document.getElementById("brandLogoUrl");
+  const brandWebsite = document.getElementById("brandWebsite");
+  const brandOrder = document.getElementById("brandOrder");
+  const brandActive = document.getElementById("brandActive");
+  const brandLogoFile = document.getElementById("brandLogoFile");
+  
+  if (!id) {
+    if (title) title.textContent = "🏷️ Nueva Marca";
+    if (brandId) brandId.value = "";
+    if (brandName) brandName.value = "";
+    if (brandLogoUrl) brandLogoUrl.value = "";
+    if (brandWebsite) brandWebsite.value = "";
+    if (brandOrder) brandOrder.value = "0";
+    if (brandActive) brandActive.checked = true;
+    if (brandLogoFile) brandLogoFile.value = "";
+  } else {
+    const brand = brandsData.find(b => String(b.id) === String(id));
+    if (!brand) return;
+    if (title) title.textContent = `✏️ Editar: ${brand.name}`;
+    if (brandId) brandId.value = brand.id;
+    if (brandName) brandName.value = brand.name || "";
+    if (brandLogoUrl) brandLogoUrl.value = brand.logo_url || "";
+    if (brandWebsite) brandWebsite.value = brand.website_url || "";
+    if (brandOrder) brandOrder.value = brand.order_index || 0;
+    if (brandActive) brandActive.checked = brand.active !== false;
+    if (brandLogoFile) brandLogoFile.value = "";
   }
-  iniciarNotificaciones();
-};
+  
+  if (modal) modal.style.display = "flex";
+}
 
-const originalSwitchView = window.switchView;
-window.switchView = function(view) {
-  if (originalSwitchView) originalSwitchView(view);
-  if (view === "reviews-pending" && document.getElementById("reviewsPendingList")) {
-    setTimeout(() => loadPendingReviews(), 100);
+async function uploadBrandLogo() {
+  const fileInput = document.getElementById("brandLogoFile");
+  const logoUrlInput = document.getElementById("brandLogoUrl");
+  if (!fileInput || !logoUrlInput) return;
+  
+  const file = fileInput.files?.[0];
+  if (!file) return;
+  
+  if (!file.type.startsWith("image/")) {
+    setBrandsMsg("❌ El archivo debe ser una imagen", true);
+    return;
   }
-  if (view === "reviews-approved" && document.getElementById("reviewsApprovedList")) {
-    setTimeout(() => loadApprovedReviews(), 100);
+  if (file.size > 2 * 1024 * 1024) {
+    setBrandsMsg("❌ La imagen no debe superar 2MB", true);
+    return;
   }
-  if (view === "plans" && document.getElementById("plansList")) {
-    setTimeout(() => loadPlansAdmin(), 100);
+  
+  setBrandsMsg("📤 Subiendo logo...");
+  
+  try {
+    const filePath = buildStorageFilePath(file, "brands");
+    const { error: uploadError } = await sb
+      .storage
+      .from("project-images")
+      .upload(filePath, file, {
+        cacheControl: "3600",
+        upsert: true,
+        contentType: file.type,
+      });
+    
+    if (uploadError) throw new Error(uploadError.message);
+    
+    const { data: publicData } = sb.storage.from("project-images").getPublicUrl(filePath);
+    const publicUrl = publicData?.publicUrl || "";
+    
+    if (!publicUrl) throw new Error("No se pudo obtener la URL pública");
+    
+    logoUrlInput.value = publicUrl;
+    setBrandsMsg("✅ Logo subido correctamente");
+  } catch (err) {
+    setBrandsMsg(`❌ Error: ${err.message}`, true);
   }
-};
+}
 
-/* =========================
-   EVENT LISTENERS EXTRA
-========================= */
-const reviewsApprovedRefreshBtn = document.getElementById("reviewsApprovedRefreshBtn");
-if (reviewsApprovedRefreshBtn) {
-  reviewsApprovedRefreshBtn.addEventListener("click", () => {
-    loadApprovedReviews();
+async function saveBrand() {
+  const id = document.getElementById("brandId")?.value;
+  const name = document.getElementById("brandName")?.value.trim();
+  const logo_url = document.getElementById("brandLogoUrl")?.value.trim();
+  const website_url = document.getElementById("brandWebsite")?.value.trim() || null;
+  const order_index = parseInt(document.getElementById("brandOrder")?.value) || 0;
+  const active = document.getElementById("brandActive")?.checked || false;
+  
+  if (!name) {
+    setBrandsMsg("❌ El nombre de la marca es obligatorio", true);
+    return;
+  }
+  if (!logo_url) {
+    setBrandsMsg("❌ La URL del logo es obligatoria", true);
+    return;
+  }
+  
+  const payload = { name, logo_url, website_url, order_index, active, updated_at: new Date().toISOString() };
+  
+  const ok = await confirmAction({
+    message: id ? `¿Guardar cambios en "${name}"?` : `¿Crear la marca "${name}"?`,
+    type: "generic",
   });
-}
-
-const exportReviewsBtn = document.getElementById("exportReviewsBtn");
-if (exportReviewsBtn) {
-  exportReviewsBtn.addEventListener("click", () => {
-    exportReviewsToCSV();
-  });
-}
-
-const approvedSearchInput = document.getElementById("approvedSearchInput");
-if (approvedSearchInput) {
-  approvedSearchInput.addEventListener("input", () => {
-    renderApprovedReviews();
-  });
-}
-
-const approvedRatingFilter = document.getElementById("approvedRatingFilter");
-if (approvedRatingFilter) {
-  approvedRatingFilter.addEventListener("change", () => {
-    renderApprovedReviews();
-  });
-}
-
-const approvedSortFilter = document.getElementById("approvedSortFilter");
-if (approvedSortFilter) {
-  approvedSortFilter.addEventListener("change", () => {
-    renderApprovedReviews();
-  });
-}
-
-const saveEditReviewBtn = document.getElementById("saveEditReviewBtn");
-if (saveEditReviewBtn) {
-  saveEditReviewBtn.addEventListener("click", saveEditedReviewAndApprove);
-}
-
-const cancelEditReviewBtn = document.getElementById("cancelEditReviewBtn");
-if (cancelEditReviewBtn) {
-  cancelEditReviewBtn.addEventListener("click", () => {
-    const modal = document.getElementById("editReviewModal");
-    if (modal) modal.style.display = "none";
-  });
-}
-
-const plansRefreshBtn = document.getElementById("plansRefreshBtn");
-if (plansRefreshBtn) {
-  plansRefreshBtn.addEventListener("click", () => loadPlansAdmin());
-}
-
-const plansNewBtn = document.getElementById("plansNewBtn");
-if (plansNewBtn) {
-  plansNewBtn.addEventListener("click", () => openPlanModal());
-}
-
-const planSaveBtn = document.getElementById("planSaveBtn");
-if (planSaveBtn) {
-  planSaveBtn.addEventListener("click", () => savePlan());
-}
-
-const planCancelBtn = document.getElementById("planCancelBtn");
-if (planCancelBtn) {
-  planCancelBtn.addEventListener("click", () => {
-    const modal = document.getElementById("planModal");
-    if (modal) modal.style.display = "none";
-  });
-}
-
-const planName = document.getElementById("planName");
-if (planName) {
-  planName.addEventListener("input", function() {
-    const slugInput = document.getElementById("planSlug");
-    if (slugInput && !slugInput.dataset.manuallyEdited) {
-      slugInput.value = this.value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+  if (!ok) return;
+  
+  setBrandsMsg("⏳ Guardando...");
+  
+  try {
+    if (id) {
+      const { error } = await sb.from("trusted_brands").update(payload).eq("id", id);
+      if (error) throw error;
+      setBrandsMsg("✅ Marca actualizada correctamente.");
+    } else {
+      const { error } = await sb.from("trusted_brands").insert([payload]);
+      if (error) throw error;
+      setBrandsMsg("✅ Marca creada correctamente.");
     }
-  });
+    
+    const modal = document.getElementById("brandModal");
+    if (modal) modal.style.display = "none";
+    await loadBrandsAdmin();
+  } catch (err) {
+    setBrandsMsg(`❌ Error: ${err.message}`, true);
+  }
 }
 
-const planSlug = document.getElementById("planSlug");
-if (planSlug) {
-  planSlug.addEventListener("input", function() {
-    this.dataset.manuallyEdited = "true";
+async function deleteBrand(id) {
+  const brand = brandsData.find(b => String(b.id) === String(id));
+  if (!brand) return;
+  
+  const ok = await confirmAction({
+    message: `⚠️ ¿Eliminar la marca "${brand.name}"? Esta acción no se puede deshacer.`,
+    type: "delete",
+    double: true,
   });
+  if (!ok) return;
+  
+  setBrandsMsg("⏳ Eliminando...");
+  
+  try {
+    const { error } = await sb.from("trusted_brands").delete().eq("id", id);
+    if (error) throw error;
+    setBrandsMsg("✅ Marca eliminada correctamente.");
+    await loadBrandsAdmin();
+  } catch (err) {
+    setBrandsMsg(`❌ Error al eliminar: ${err.message}`, true);
+  }
 }
 
 /* =========================
-   PROYECTOS DESTACADOS
+   ========== NUEVO: ADMINISTRACIÓN DE PREGUNTAS DEL ASISTENTE ==========
+========================= */
+
+async function loadAssistantQuestionsAdmin() {
+  const container = document.getElementById("assistantQuestionsList");
+  if (!container) return;
+  
+  container.innerHTML = '<div class="loading-skeleton"><div class="skeleton-line"></div><div class="skeleton-line"></div></div>';
+  
+  try {
+    const { data, error } = await sb
+      .from("assistant_questions")
+      .select("*")
+      .order("order_index", { ascending: true });
+    
+    if (error) throw error;
+    
+    assistantQuestionsData = data || [];
+    renderAssistantQuestionsList();
+  } catch (err) {
+    console.error("Error loading assistant questions:", err);
+    container.innerHTML = `<div class="emptyState">❌ Error al cargar preguntas: ${err.message}</div>`;
+  }
+}
+
+function renderAssistantQuestionsList() {
+  const container = document.getElementById("assistantQuestionsList");
+  if (!container) return;
+  
+  if (!assistantQuestionsData.length) {
+    container.innerHTML = `<div class="emptyState">❓ No hay preguntas cargadas. Creá una nueva.</div>`;
+    if (assistantQuestionsPaginator) assistantQuestionsPaginator.updateItems([]);
+    return;
+  }
+  
+  if (!assistantQuestionsPaginator) {
+    assistantQuestionsPaginator = new Paginator({
+      items: assistantQuestionsData,
+      itemsPerPage: 10,
+      currentPage: 1,
+      onPageChange: (paginatedItems) => {
+        renderAssistantQuestionsListPage(paginatedItems);
+      },
+      containerId: "assistantQuestionsPagination",
+    });
+  } else {
+    assistantQuestionsPaginator.updateItems(assistantQuestionsData);
+  }
+  
+  assistantQuestionsPaginator.setPage(1);
+}
+
+function renderAssistantQuestionsListPage(questions) {
+  const container = document.getElementById("assistantQuestionsList");
+  if (!container) return;
+  
+  if (!questions.length) {
+    container.innerHTML = `<div class="emptyState">❓ No hay preguntas para mostrar.</div>`;
+    return;
+  }
+  
+  container.innerHTML = questions.map(q => {
+    let optionsPreview = '';
+    if (q.question_type === 'options' && q.options) {
+      try {
+        const opts = JSON.parse(q.options);
+        optionsPreview = `<div class="listCard__meta">📋 Opciones: ${opts.slice(0, 3).join(', ')}${opts.length > 3 ? '...' : ''}</div>`;
+      } catch(e) {}
+    }
+    return `
+      <article class="listCard listCard--compact">
+        <div class="listCard__body">
+          <div class="listCard__title">❓ ${escapeHtml(q.question)}</div>
+          <div class="listCard__meta">📝 Tipo: ${q.question_type === 'options' ? 'Opciones múltiples' : 'Texto libre'}</div>
+          ${optionsPreview}
+          <div class="listCard__meta">🔢 Orden: ${q.order_index || 0} · ${q.active ? '🟢 Activa' : '🔴 Inactiva'} · ${q.required ? '⚠️ Requerida' : 'Opcional'}</div>
+        </div>
+        <div class="listCard__actions">
+          <button class="btn btn--ghost btn--small" data-edit-question="${q.id}" data-tooltip="Editar pregunta">✏️</button>
+          <button class="btn btn--danger btn--small" data-delete-question="${q.id}" data-tooltip="Eliminar pregunta">🗑️</button>
+        </div>
+      </article>
+    `;
+  }).join("");
+  
+  container.querySelectorAll("[data-edit-question]").forEach(btn => {
+    btn.addEventListener("click", () => openAssistantQuestionModal(btn.getAttribute("data-edit-question")));
+  });
+  container.querySelectorAll("[data-delete-question]").forEach(btn => {
+    btn.addEventListener("click", () => deleteAssistantQuestion(btn.getAttribute("data-delete-question")));
+  });
+}
+
+function openAssistantQuestionModal(id = null) {
+  editingAssistantQuestionId = id;
+  const modal = document.getElementById("assistantQuestionModal");
+  const title = document.getElementById("assistantQuestionModalTitle");
+  
+  const questionId = document.getElementById("assistantQuestionId");
+  const questionText = document.getElementById("assistantQuestionText");
+  const questionType = document.getElementById("assistantQuestionType");
+  const optionsInput = document.getElementById("assistantOptionsInput");
+  const placeholder = document.getElementById("assistantPlaceholder");
+  const order = document.getElementById("assistantQuestionOrder");
+  const required = document.getElementById("assistantQuestionRequired");
+  const active = document.getElementById("assistantQuestionActive");
+  const optionsField = document.getElementById("assistantOptionsField");
+  const placeholderField = document.getElementById("assistantPlaceholderField");
+  
+  const toggleFields = () => {
+    if (questionType.value === 'options') {
+      if (optionsField) optionsField.style.display = "";
+      if (placeholderField) placeholderField.style.display = "none";
+    } else {
+      if (optionsField) optionsField.style.display = "none";
+      if (placeholderField) placeholderField.style.display = "";
+    }
+  };
+  
+  if (questionType) {
+    questionType.addEventListener("change", toggleFields);
+  }
+  
+  if (!id) {
+    if (title) title.textContent = "❓ Nueva Pregunta";
+    if (questionId) questionId.value = "";
+    if (questionText) questionText.value = "";
+    if (questionType) questionType.value = "options";
+    if (optionsInput) optionsInput.value = "";
+    if (placeholder) placeholder.value = "";
+    if (order) order.value = "0";
+    if (required) required.checked = true;
+    if (active) active.checked = true;
+    toggleFields();
+  } else {
+    const question = assistantQuestionsData.find(q => String(q.id) === String(id));
+    if (!question) return;
+    if (title) title.textContent = `✏️ Editar: ${question.question.substring(0, 50)}`;
+    if (questionId) questionId.value = question.id;
+    if (questionText) questionText.value = question.question || "";
+    if (questionType) questionType.value = question.question_type || "options";
+    if (optionsInput && question.options) {
+      try {
+        const opts = JSON.parse(question.options);
+        optionsInput.value = opts.join(", ");
+      } catch(e) { optionsInput.value = ""; }
+    }
+    if (placeholder) placeholder.value = question.placeholder || "";
+    if (order) order.value = question.order_index || 0;
+    if (required) required.checked = question.required !== false;
+    if (active) active.checked = question.active !== false;
+    toggleFields();
+  }
+  
+  if (modal) modal.style.display = "flex";
+}
+
+async function saveAssistantQuestion() {
+  const id = document.getElementById("assistantQuestionId")?.value;
+  const question = document.getElementById("assistantQuestionText")?.value.trim();
+  const question_type = document.getElementById("assistantQuestionType")?.value;
+  const optionsValue = document.getElementById("assistantOptionsInput")?.value;
+  const placeholder = document.getElementById("assistantPlaceholder")?.value.trim() || null;
+  const order_index = parseInt(document.getElementById("assistantQuestionOrder")?.value) || 0;
+  const required = document.getElementById("assistantQuestionRequired")?.checked || false;
+  const active = document.getElementById("assistantQuestionActive")?.checked || false;
+  
+  if (!question) {
+    setAssistantQuestionsMsg("❌ La pregunta es obligatoria", true);
+    return;
+  }
+  
+  let options = null;
+  if (question_type === 'options' && optionsValue) {
+    const opts = optionsValue.split(",").map(o => o.trim()).filter(Boolean);
+    if (opts.length === 0) {
+      setAssistantQuestionsMsg("❌ Debes ingresar al menos una opción", true);
+      return;
+    }
+    options = JSON.stringify(opts);
+  }
+  
+  const payload = { question, question_type, options, placeholder, order_index, required, active, updated_at: new Date().toISOString() };
+  
+  const ok = await confirmAction({
+    message: id ? `¿Guardar cambios en la pregunta?` : `¿Crear la pregunta?`,
+    type: "generic",
+  });
+  if (!ok) return;
+  
+  setAssistantQuestionsMsg("⏳ Guardando...");
+  
+  try {
+    if (id) {
+      const { error } = await sb.from("assistant_questions").update(payload).eq("id", id);
+      if (error) throw error;
+      setAssistantQuestionsMsg("✅ Pregunta actualizada correctamente.");
+    } else {
+      const { error } = await sb.from("assistant_questions").insert([payload]);
+      if (error) throw error;
+      setAssistantQuestionsMsg("✅ Pregunta creada correctamente.");
+    }
+    
+    const modal = document.getElementById("assistantQuestionModal");
+    if (modal) modal.style.display = "none";
+    await loadAssistantQuestionsAdmin();
+  } catch (err) {
+    setAssistantQuestionsMsg(`❌ Error: ${err.message}`, true);
+  }
+}
+
+async function deleteAssistantQuestion(id) {
+  const question = assistantQuestionsData.find(q => String(q.id) === String(id));
+  if (!question) return;
+  
+  const ok = await confirmAction({
+    message: `⚠️ ¿Eliminar la pregunta "${question.question.substring(0, 50)}"? Esta acción no se puede deshacer.`,
+    type: "delete",
+    double: true,
+  });
+  if (!ok) return;
+  
+  setAssistantQuestionsMsg("⏳ Eliminando...");
+  
+  try {
+    const { error } = await sb.from("assistant_questions").delete().eq("id", id);
+    if (error) throw error;
+    setAssistantQuestionsMsg("✅ Pregunta eliminada correctamente.");
+    await loadAssistantQuestionsAdmin();
+  } catch (err) {
+    setAssistantQuestionsMsg(`❌ Error al eliminar: ${err.message}`, true);
+  }
+}
+
+/* =========================
+   ========== NUEVO: RESPUESTAS DEL ASISTENTE ==========
+========================= */
+
+async function loadAssistantResponsesAdmin() {
+  const container = document.getElementById("assistantResponsesList");
+  if (!container) return;
+  
+  container.innerHTML = '<div class="loading-skeleton"><div class="skeleton-line"></div><div class="skeleton-line"></div></div>';
+  
+  try {
+    const { data, error } = await sb
+      .from("assistant_responses")
+      .select("*, assistant_questions(question)")
+      .order("created_at", { ascending: false });
+    
+    if (error) throw error;
+    
+    assistantResponsesData = data || [];
+    renderAssistantResponsesList();
+  } catch (err) {
+    console.error("Error loading assistant responses:", err);
+    container.innerHTML = `<div class="emptyState">❌ Error al cargar respuestas: ${err.message}</div>`;
+  }
+}
+
+function renderAssistantResponsesList() {
+  const container = document.getElementById("assistantResponsesList");
+  if (!container) return;
+  
+  if (!assistantResponsesData.length) {
+    container.innerHTML = `<div class="emptyState">📊 No hay respuestas de usuarios registradas.</div>`;
+    if (assistantResponsesPaginator) assistantResponsesPaginator.updateItems([]);
+    return;
+  }
+  
+  if (!assistantResponsesPaginator) {
+    assistantResponsesPaginator = new Paginator({
+      items: assistantResponsesData,
+      itemsPerPage: 10,
+      currentPage: 1,
+      onPageChange: (paginatedItems) => {
+        renderAssistantResponsesListPage(paginatedItems);
+      },
+      containerId: "assistantResponsesPagination",
+    });
+  } else {
+    assistantResponsesPaginator.updateItems(assistantResponsesData);
+  }
+  
+  assistantResponsesPaginator.setPage(1);
+}
+
+function renderAssistantResponsesListPage(responses) {
+  const container = document.getElementById("assistantResponsesList");
+  if (!container) return;
+  
+  if (!responses.length) {
+    container.innerHTML = `<div class="emptyState">📊 No hay respuestas para mostrar.</div>`;
+    return;
+  }
+  
+  container.innerHTML = responses.map(r => `
+    <article class="listCard listCard--compact">
+      <div class="listCard__body">
+        <div class="listCard__title">${escapeHtml(r.assistant_questions?.question || 'Pregunta eliminada')}</div>
+        <div class="listCard__meta">💬 Respuesta: <strong>${escapeHtml(r.answer)}</strong></div>
+        <div class="listCard__meta">📅 ${formatDate(r.created_at)} · 🆔 Sesión: ${escapeHtml(r.session_id?.substring(0, 8))}...</div>
+      </div>
+    </article>
+  `).join("");
+}
+
+function exportResponsesToCSV() {
+  if (!assistantResponsesData.length) {
+    setAssistantResponsesMsg("No hay respuestas para exportar.", true);
+    return;
+  }
+  
+  const headers = ["ID", "Sesión", "Pregunta", "Respuesta", "Fecha"];
+  const rows = assistantResponsesData.map(r => [
+    r.id,
+    r.session_id || "",
+    r.assistant_questions?.question || "Pregunta eliminada",
+    `"${(r.answer || "").replace(/"/g, '""')}"`,
+    r.created_at
+  ]);
+  
+  const csvContent = [headers, ...rows].map(row => row.join(",")).join("\n");
+  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+  const link = document.createElement("a");
+  const url = URL.createObjectURL(blob);
+  link.href = url;
+  link.setAttribute("download", `respuestas_asistente_${new Date().toISOString().split("T")[0]}.csv`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+  
+  setAssistantResponsesMsg("✅ CSV exportado correctamente.");
+}
+
+/* =========================
+   ========== NUEVO: PROYECTOS DESTACADOS ==========
 ========================= */
 let featuredProjectsPaginator = null;
 let allFeaturedProjects = [];
@@ -3026,7 +3479,248 @@ function setHistoryMsg(msg, isError = false) {
   }, 4000);
 }
 
-// Event listeners para botones de limpiar historial
+/* =========================
+   MENÚ HAMBURGUESA PARA ADMIN (VERSIÓN CORREGIDA)
+========================= */
+function initSidebarToggle() {
+  const toggleBtn = document.getElementById("sidebarToggleBtn");
+  const sidebar = document.querySelector(".sidebar");
+  
+  if (!toggleBtn || !sidebar) {
+    console.warn("Botón o sidebar no encontrados");
+    return;
+  }
+  
+  toggleBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    sidebar.classList.toggle("open");
+  });
+  
+  document.addEventListener("click", (e) => {
+    if (window.innerWidth <= 980 && sidebar.classList.contains("open")) {
+      if (!sidebar.contains(e.target) && !toggleBtn.contains(e.target)) {
+        sidebar.classList.remove("open");
+      }
+    }
+  });
+  
+  document.querySelectorAll(".navBtn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      if (window.innerWidth <= 980) {
+        sidebar.classList.remove("open");
+      }
+    });
+  });
+  
+  window.addEventListener("resize", () => {
+    if (window.innerWidth > 980 && sidebar.classList.contains("open")) {
+      sidebar.classList.remove("open");
+    }
+  });
+  
+  console.log("✅ Menú hamburguesa inicializado correctamente");
+}
+
+/* =========================
+   INTEGRACIÓN CON LOADALL Y SWITCHVIEW
+========================= */
+const originalLoadAll = window.loadAll;
+window.loadAll = async function() {
+  if (originalLoadAll) await originalLoadAll();
+  if (document.getElementById("plansList")) {
+    await loadPlansAdmin();
+  }
+  if (document.getElementById("brandsList")) {
+    await loadBrandsAdmin();
+  }
+  if (document.getElementById("assistantQuestionsList")) {
+    await loadAssistantQuestionsAdmin();
+  }
+  if (document.getElementById("reviewsApprovedList")) {
+    await loadApprovedReviews();
+  }
+  iniciarNotificaciones();
+};
+
+const originalSwitchView = window.switchView;
+window.switchView = function(view) {
+  if (originalSwitchView) originalSwitchView(view);
+  if (view === "reviews-pending" && document.getElementById("reviewsPendingList")) {
+    setTimeout(() => loadPendingReviews(), 100);
+  }
+  if (view === "reviews-approved" && document.getElementById("reviewsApprovedList")) {
+    setTimeout(() => loadApprovedReviews(), 100);
+  }
+  if (view === "plans" && document.getElementById("plansList")) {
+    setTimeout(() => loadPlansAdmin(), 100);
+  }
+  if (view === "brands" && document.getElementById("brandsList")) {
+    setTimeout(() => loadBrandsAdmin(), 100);
+  }
+  if (view === "assistant-questions" && document.getElementById("assistantQuestionsList")) {
+    setTimeout(() => loadAssistantQuestionsAdmin(), 100);
+  }
+  if (view === "assistant-responses" && document.getElementById("assistantResponsesList")) {
+    setTimeout(() => loadAssistantResponsesAdmin(), 100);
+  }
+};
+
+/* =========================
+   EVENT LISTENERS EXTRA
+========================= */
+const reviewsApprovedRefreshBtn = document.getElementById("reviewsApprovedRefreshBtn");
+if (reviewsApprovedRefreshBtn) {
+  reviewsApprovedRefreshBtn.addEventListener("click", () => {
+    loadApprovedReviews();
+  });
+}
+
+const exportReviewsBtn = document.getElementById("exportReviewsBtn");
+if (exportReviewsBtn) {
+  exportReviewsBtn.addEventListener("click", () => {
+    exportReviewsToCSV();
+  });
+}
+
+const approvedSearchInput = document.getElementById("approvedSearchInput");
+if (approvedSearchInput) {
+  approvedSearchInput.addEventListener("input", () => {
+    renderApprovedReviews();
+  });
+}
+
+const approvedRatingFilter = document.getElementById("approvedRatingFilter");
+if (approvedRatingFilter) {
+  approvedRatingFilter.addEventListener("change", () => {
+    renderApprovedReviews();
+  });
+}
+
+const approvedSortFilter = document.getElementById("approvedSortFilter");
+if (approvedSortFilter) {
+  approvedSortFilter.addEventListener("change", () => {
+    renderApprovedReviews();
+  });
+}
+
+const saveEditReviewBtn = document.getElementById("saveEditReviewBtn");
+if (saveEditReviewBtn) {
+  saveEditReviewBtn.addEventListener("click", saveEditedReviewAndApprove);
+}
+
+const cancelEditReviewBtn = document.getElementById("cancelEditReviewBtn");
+if (cancelEditReviewBtn) {
+  cancelEditReviewBtn.addEventListener("click", () => {
+    const modal = document.getElementById("editReviewModal");
+    if (modal) modal.style.display = "none";
+  });
+}
+
+const plansRefreshBtn = document.getElementById("plansRefreshBtn");
+if (plansRefreshBtn) {
+  plansRefreshBtn.addEventListener("click", () => loadPlansAdmin());
+}
+
+const plansNewBtn = document.getElementById("plansNewBtn");
+if (plansNewBtn) {
+  plansNewBtn.addEventListener("click", () => openPlanModal());
+}
+
+const planSaveBtn = document.getElementById("planSaveBtn");
+if (planSaveBtn) {
+  planSaveBtn.addEventListener("click", () => savePlan());
+}
+
+const planCancelBtn = document.getElementById("planCancelBtn");
+if (planCancelBtn) {
+  planCancelBtn.addEventListener("click", () => {
+    const modal = document.getElementById("planModal");
+    if (modal) modal.style.display = "none";
+  });
+}
+
+const planName = document.getElementById("planName");
+if (planName) {
+  planName.addEventListener("input", function() {
+    const slugInput = document.getElementById("planSlug");
+    if (slugInput && !slugInput.dataset.manuallyEdited) {
+      slugInput.value = this.value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+    }
+  });
+}
+
+const planSlug = document.getElementById("planSlug");
+if (planSlug) {
+  planSlug.addEventListener("input", function() {
+    this.dataset.manuallyEdited = "true";
+  });
+}
+
+// Event listeners para marcas
+const brandsRefreshBtn = document.getElementById("brandsRefreshBtn");
+if (brandsRefreshBtn) {
+  brandsRefreshBtn.addEventListener("click", () => loadBrandsAdmin());
+}
+
+const brandsNewBtn = document.getElementById("brandsNewBtn");
+if (brandsNewBtn) {
+  brandsNewBtn.addEventListener("click", () => openBrandModal());
+}
+
+const brandSaveBtn = document.getElementById("brandSaveBtn");
+if (brandSaveBtn) {
+  brandSaveBtn.addEventListener("click", () => saveBrand());
+}
+
+const brandCancelBtn = document.getElementById("brandCancelBtn");
+if (brandCancelBtn) {
+  brandCancelBtn.addEventListener("click", () => {
+    const modal = document.getElementById("brandModal");
+    if (modal) modal.style.display = "none";
+  });
+}
+
+const brandLogoFile = document.getElementById("brandLogoFile");
+if (brandLogoFile) {
+  brandLogoFile.addEventListener("change", () => uploadBrandLogo());
+}
+
+// Event listeners para preguntas del asistente
+const assistantRefreshBtn = document.getElementById("assistantRefreshBtn");
+if (assistantRefreshBtn) {
+  assistantRefreshBtn.addEventListener("click", () => loadAssistantQuestionsAdmin());
+}
+
+const assistantNewBtn = document.getElementById("assistantNewBtn");
+if (assistantNewBtn) {
+  assistantNewBtn.addEventListener("click", () => openAssistantQuestionModal());
+}
+
+const assistantQuestionSaveBtn = document.getElementById("assistantQuestionSaveBtn");
+if (assistantQuestionSaveBtn) {
+  assistantQuestionSaveBtn.addEventListener("click", () => saveAssistantQuestion());
+}
+
+const assistantQuestionCancelBtn = document.getElementById("assistantQuestionCancelBtn");
+if (assistantQuestionCancelBtn) {
+  assistantQuestionCancelBtn.addEventListener("click", () => {
+    const modal = document.getElementById("assistantQuestionModal");
+    if (modal) modal.style.display = "none";
+  });
+}
+
+// Event listeners para respuestas del asistente
+const assistantResponsesRefreshBtn = document.getElementById("assistantResponsesRefreshBtn");
+if (assistantResponsesRefreshBtn) {
+  assistantResponsesRefreshBtn.addEventListener("click", () => loadAssistantResponsesAdmin());
+}
+
+const exportResponsesBtn = document.getElementById("exportResponsesBtn");
+if (exportResponsesBtn) {
+  exportResponsesBtn.addEventListener("click", () => exportResponsesToCSV());
+}
+
+// Event listeners para historial
 document.getElementById("clearProjectHistoryBtn")?.addEventListener("click", clearProjectHistory);
 document.getElementById("clearSettingsHistoryBtn")?.addEventListener("click", clearSettingsHistory);
 document.getElementById("featuredRefreshBtn")?.addEventListener("click", loadFeaturedProjects);
@@ -3038,4 +3732,4 @@ if (document.readyState === 'loading') {
   initSidebarToggle();
 }
 
-console.log("✅ Admin panel completamente cargado");
+console.log("✅ Admin panel completamente cargado con Marcas y Asistente");
