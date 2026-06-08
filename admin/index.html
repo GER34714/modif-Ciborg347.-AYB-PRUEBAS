@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover" />
   <title>Admin | CIBORG 347</title>
-  <meta name="description" content="Panel admin de CIBORG 347 para gestionar proyectos, categorias, contenido global, settings visuales, FAQs, planes y reseñas." />
+  <meta name="description" content="Panel admin de CIBORG 347 para gestionar proyectos, categorias, contenido global, settings visuales, FAQs, planes, marcas y asistente." />
   <link rel="stylesheet" href="./styles.css" />
   <link rel="icon" href="data:," />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -376,6 +376,15 @@
         <button class="navBtn" data-view="plans" type="button">💰 Planes</button>
         <button class="navBtn" data-view="faqs" type="button">❓ FAQs</button>
         
+        <!-- NUEVA SECCIÓN: MARCAS -->
+        <div class="sidebar__nav-section">🏢 MARCAS</div>
+        <button class="navBtn" data-view="brands" type="button">🏷️ Marcas que confían</button>
+        
+        <!-- NUEVA SECCIÓN: ASISTENTE -->
+        <div class="sidebar__nav-section">🤖 ASISTENTE</div>
+        <button class="navBtn" data-view="assistant-questions" type="button">❓ Preguntas del asistente</button>
+        <button class="navBtn" data-view="assistant-responses" type="button">📊 Respuestas</button>
+        
         <div class="sidebar__nav-section">🎨 APARIENCIA</div>
         <button class="navBtn" data-view="site-content" type="button">📄 Contenido global</button>
         <button class="navBtn" data-view="site-settings" type="button">⚙️ Settings visuales</button>
@@ -421,9 +430,7 @@
       <section class="panel viewPanel" data-panel="featured-projects" style="display:none">
         <div class="row row--between row--wrap">
           <div><h2>⭐ Proyectos Destacados</h2><p class="muted">Gestioná qué proyectos aparecen como destacados en el frontend.</p></div>
-          <div class="row row--wrap">
-            <button id="featuredRefreshBtn" class="btn btn--ghost" type="button">Actualizar</button>
-          </div>
+          <div class="row row--wrap"><button id="featuredRefreshBtn" class="btn btn--ghost" type="button">Actualizar</button></div>
         </div>
         <div id="featuredProjectsMsg" class="msg"></div>
         <div id="featuredProjectsList" class="featured-projects-grid"></div>
@@ -495,6 +502,48 @@
         <div class="subPanel"><h3>Assets y contacto</h3><div class="grid2"><div class="field"><label for="logoUrlInput">Logo</label><input id="logoUrlInput" type="url" /></div><div class="field"><label for="heroLogoUrlInput">Logo hero</label><input id="heroLogoUrlInput" type="url" /></div></div><div class="grid2"><div class="field"><label for="footerLogoUrlInput">Logo footer</label><input id="footerLogoUrlInput" type="url" /></div><div class="field"><label for="faviconUrlInput">Favicon</label><input id="faviconUrlInput" type="url" /></div></div><div class="grid2"><div class="field"><label for="whatsappNumberInput">WhatsApp</label><input id="whatsappNumberInput" type="text" placeholder="54911..." /></div><div class="field"><label for="emailContactInput">Email</label><input id="emailContactInput" type="email" /></div></div><div class="grid3"><div class="field"><label for="instagramUrlInput">Instagram</label><input id="instagramUrlInput" type="url" /></div><div class="field"><label for="facebookUrlInput">Facebook</label><input id="facebookUrlInput" type="url" /></div><div class="field"><label for="tiktokUrlInput">TikTok</label><input id="tiktokUrlInput" type="url" /></div></div><div class="togglesGrid togglesGrid--single"><label class="switchRow"><input id="useHeroVideoInput" type="checkbox" /><span>Usar video hero</span></label><label class="switchRow"><input id="useBackgroundImageInput" type="checkbox" /><span>Usar background global</span></label></div><div class="actions"><button id="siteSettingsSaveBtn" class="btn btn--primary" type="button">Guardar</button></div><div id="siteSettingsMsg" class="msg"></div></div>
       </section>
 
+      <!-- ========== NUEVA SECCIÓN: MARCAS ========== -->
+      <section class="panel viewPanel" data-panel="brands" style="display:none">
+        <div class="row row--between row--wrap">
+          <div><h2>🏷️ Marcas que confían en nosotros</h2><p class="muted">Gestioná los logos de las marcas que aparecen en el frontend.</p></div>
+          <div class="row row--wrap">
+            <button id="brandsRefreshBtn" class="btn btn--ghost" type="button">Actualizar</button>
+            <button id="brandsNewBtn" class="btn btn--primary" type="button">➕ Nueva marca</button>
+          </div>
+        </div>
+        <div id="brandsMsg" class="msg"></div>
+        <div id="brandsList" class="stackList"></div>
+        <div id="brandsPagination" class="pagination" style="display:none"></div>
+      </section>
+
+      <!-- ========== NUEVA SECCIÓN: PREGUNTAS DEL ASISTENTE ========== -->
+      <section class="panel viewPanel" data-panel="assistant-questions" style="display:none">
+        <div class="row row--between row--wrap">
+          <div><h2>❓ Preguntas del Asistente Virtual</h2><p class="muted">Configurá las preguntas que hará el asistente a los usuarios.</p></div>
+          <div class="row row--wrap">
+            <button id="assistantRefreshBtn" class="btn btn--ghost" type="button">Actualizar</button>
+            <button id="assistantNewBtn" class="btn btn--primary" type="button">➕ Nueva pregunta</button>
+          </div>
+        </div>
+        <div id="assistantQuestionsMsg" class="msg"></div>
+        <div id="assistantQuestionsList" class="stackList"></div>
+        <div id="assistantQuestionsPagination" class="pagination" style="display:none"></div>
+      </section>
+
+      <!-- ========== NUEVA SECCIÓN: RESPUESTAS DEL ASISTENTE ========== -->
+      <section class="panel viewPanel" data-panel="assistant-responses" style="display:none">
+        <div class="row row--between row--wrap">
+          <div><h2>📊 Respuestas de usuarios</h2><p class="muted">Historial de respuestas recolectadas por el asistente.</p></div>
+          <div class="row row--wrap">
+            <button id="assistantResponsesRefreshBtn" class="btn btn--ghost" type="button">Actualizar</button>
+            <button id="exportResponsesBtn" class="btn btn--primary" type="button">📥 Exportar CSV</button>
+          </div>
+        </div>
+        <div id="assistantResponsesMsg" class="msg"></div>
+        <div id="assistantResponsesList" class="stackList"></div>
+        <div id="assistantResponsesPagination" class="pagination" style="display:none"></div>
+      </section>
+
       <!-- Reseñas pendientes -->
       <section class="panel viewPanel" data-panel="reviews-pending" style="display:none">
         <div class="row row--between row--wrap">
@@ -557,25 +606,52 @@
   </div>
 </footer>
 
-<!-- Modal para editar/crear planes -->
-<div id="planModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:1000; justify-content:center; align-items:center;">
-  <div style="background:var(--bg-card); border-radius:24px; max-width:600px; width:90%; max-height:85vh; overflow:auto; padding:24px; border:1px solid var(--cyan);">
-    <h3 id="planModalTitle" style="margin-bottom:1rem;">📝 Nuevo Plan</h3>
-    <input type="hidden" id="planId">
-    <div class="field"><label>Nombre del plan *</label><input type="text" id="planName" placeholder="Ej: Plan Básico"></div>
-    <div class="field"><label>Slug</label><input type="text" id="planSlug" placeholder="plan-basico"><small>Se genera automáticamente</small></div>
-    <div class="field"><label>Descripción</label><textarea id="planDescription" rows="2" placeholder="Descripción..."></textarea></div>
-    <div class="field"><label>Precio</label><input type="text" id="planPrice" placeholder="$199/mes"></div>
-    <div class="field"><label>Ícono (emoji)</label><input type="text" id="planIcon" placeholder="📦" maxlength="2"></div>
-    <div class="field"><label>Características (separadas por coma)</label><input id="planFeaturesInput" type="text" placeholder="Web, Formulario, SEO"></div>
-    <div class="grid2">
-      <div class="field"><label>Texto botón</label><input id="planCtaText" type="text" placeholder="Consultar →"></div>
-      <div class="field"><label>Orden</label><input id="planOrder" type="number" value="0"></div>
-    </div>
-    <label class="switchRow"><input type="checkbox" id="planActive" checked><span>Activo</span></label>
+<!-- Modal para editar/crear marcas -->
+<div id="brandModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:1000; justify-content:center; align-items:center;">
+  <div style="background:var(--bg-card); border-radius:24px; max-width:500px; width:90%; max-height:85vh; overflow:auto; padding:24px; border:1px solid var(--cyan);">
+    <h3 id="brandModalTitle" style="margin-bottom:1rem;">🏷️ Nueva Marca</h3>
+    <input type="hidden" id="brandId">
+    <div class="field"><label>Nombre de la marca *</label><input type="text" id="brandName" placeholder="Ej: Google"></div>
+    <div class="field"><label>URL del logo *</label><input type="url" id="brandLogoUrl" placeholder="https://..."><small>Podés subir una imagen</small></div>
+    <div class="field"><label>Subir logo</label><input type="file" id="brandLogoFile" accept="image/*"></div>
+    <div class="field"><label>Sitio web (opcional)</label><input type="url" id="brandWebsite" placeholder="https://..."></div>
+    <div class="field"><label>Orden</label><input type="number" id="brandOrder" value="0"></div>
+    <label class="switchRow"><input type="checkbox" id="brandActive" checked><span>Activo</span></label>
     <div style="display:flex; gap:12px; margin-top:1.5rem;">
-      <button id="planSaveBtn" class="btn btn--primary">💾 Guardar</button>
-      <button id="planCancelBtn" class="btn btn--ghost">Cancelar</button>
+      <button id="brandSaveBtn" class="btn btn--primary">💾 Guardar</button>
+      <button id="brandCancelBtn" class="btn btn--ghost">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal para editar/crear preguntas del asistente -->
+<div id="assistantQuestionModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:1000; justify-content:center; align-items:center;">
+  <div style="background:var(--bg-card); border-radius:24px; max-width:550px; width:90%; max-height:85vh; overflow:auto; padding:24px; border:1px solid var(--cyan);">
+    <h3 id="assistantQuestionModalTitle" style="margin-bottom:1rem;">❓ Nueva Pregunta</h3>
+    <input type="hidden" id="assistantQuestionId">
+    <div class="field"><label>Pregunta *</label><input type="text" id="assistantQuestionText" placeholder="Ej: ¿Qué tipo de proyecto necesitas?"></div>
+    <div class="field">
+      <label>Tipo de respuesta</label>
+      <select id="assistantQuestionType">
+        <option value="options">Opciones múltiples</option>
+        <option value="text">Texto libre</option>
+      </select>
+    </div>
+    <div class="field" id="assistantOptionsField">
+      <label>Opciones (separadas por coma)</label>
+      <input type="text" id="assistantOptionsInput" placeholder="Ej: Tienda online, Web institucional, Panel admin">
+      <small>Estas opciones aparecerán como botones clickeables</small>
+    </div>
+    <div class="field" id="assistantPlaceholderField" style="display:none;">
+      <label>Placeholder</label>
+      <input type="text" id="assistantPlaceholder" placeholder="Ej: Escribe tu respuesta...">
+    </div>
+    <div class="field"><label>Orden</label><input type="number" id="assistantQuestionOrder" value="0"></div>
+    <label class="switchRow"><input type="checkbox" id="assistantQuestionRequired" checked><span>Requerido</span></label>
+    <label class="switchRow"><input type="checkbox" id="assistantQuestionActive" checked><span>Activo</span></label>
+    <div style="display:flex; gap:12px; margin-top:1.5rem;">
+      <button id="assistantQuestionSaveBtn" class="btn btn--primary">💾 Guardar</button>
+      <button id="assistantQuestionCancelBtn" class="btn btn--ghost">Cancelar</button>
     </div>
   </div>
 </div>
@@ -660,6 +736,8 @@
           if (typeof loadPendingReviews === 'function') loadPendingReviews();
           if (typeof loadPlansAdmin === 'function') loadPlansAdmin();
           if (typeof loadFeaturedProjects === 'function') loadFeaturedProjects();
+          if (typeof loadBrandsAdmin === 'function') loadBrandsAdmin();
+          if (typeof loadAssistantQuestionsAdmin === 'function') loadAssistantQuestionsAdmin();
         }
       }).catch(err => console.error("Error de sesión:", err));
     } else {
