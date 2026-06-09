@@ -27,7 +27,7 @@
   </script>
   
   <style>
-    /* ========== TU CSS ORIGINAL COMPLETO (se mantiene igual) ========== */
+    /* ========== CSS ORIGINAL ========== */
     :root {
       --bg: #0a0a0f;
       --bg2: #0f0f1a;
@@ -271,6 +271,31 @@
       color: var(--white);
       margin-bottom: 0.8rem;
     }
+    .serviceCard__price {
+      display: inline-block;
+      background: rgba(0, 212, 255, 0.15);
+      border-radius: 40px;
+      padding: 6px 16px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--cyan);
+      margin: 12px 0;
+    }
+    .serviceCard__offer-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, #ff47d1, #ff8c00);
+      border-radius: 40px;
+      padding: 4px 12px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: white;
+      margin-left: 8px;
+    }
+    .serviceCard__price strike {
+      color: var(--text2);
+      opacity: 0.7;
+      margin-right: 8px;
+    }
     .serviceCard__desc { font-size: 0.9rem; color: var(--text2); line-height: 1.6; margin-bottom: 1.2rem; }
     .serviceCard__btn {
       display: inline-block;
@@ -306,15 +331,19 @@
       margin: 2rem 0;
       border: 1px solid var(--border);
     }
-    .brands-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      gap: 2rem;
-      align-items: center;
-      justify-items: center;
+    .brands-carousel-container {
+      position: relative;
+      overflow: hidden;
       margin-top: 2rem;
     }
+    .brands-carousel {
+      display: flex;
+      transition: transform 0.5s ease;
+      gap: 2rem;
+    }
     .brand-item {
+      flex: 0 0 auto;
+      width: 140px;
       text-align: center;
       transition: all 0.3s ease;
       filter: grayscale(0.3);
@@ -329,15 +358,39 @@
       max-width: 100px;
       max-height: 60px;
       object-fit: contain;
-      margin-bottom: 0.5rem;
+      margin: 0 auto 0.5rem auto;
+      display: block;
     }
     .brand-item span {
       display: block;
       font-size: 0.7rem;
       color: var(--text2);
+      text-align: center;
     }
+    .brands-carousel-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s;
+      z-index: 10;
+    }
+    .brands-carousel-btn:hover {
+      border-color: var(--cyan);
+      background: rgba(0, 212, 255, 0.2);
+    }
+    .brands-carousel-btn.prev { left: 0; }
+    .brands-carousel-btn.next { right: 0; }
     @media (max-width: 600px) {
-      .brands-grid { grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+      .brand-item { width: 120px; }
       .brand-item img { max-width: 80px; max-height: 50px; }
     }
 
@@ -1214,7 +1267,7 @@
       display: grid !important;
     }
 
-    /* ===== ROBOT FLOTANTE CON ANIMACIÓN DE ENCOGIMIENTO ===== */
+    /* ===== ROBOT FLOTANTE (abre asistente.html en nueva pestaña) ===== */
     .robot-help {
       position: fixed;
       right: 20px;
@@ -1233,56 +1286,42 @@
       opacity: 0;
       visibility: hidden;
     }
-
-    /* Estado normal (expandido) */
     .robot-help .robot-img {
       width: 130px;
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    
-    /* Estado encogido */
     .robot-help.shrink .robot-img {
       width: 55px;
     }
-    
-    /* Efecto hover - se agranda al pasar el mouse (si está encogido o no) */
     .robot-help:hover .robot-img {
       width: 130px !important;
     }
-    
-    /* Aseguramos que la burbuja también se adapte */
     .robot-help.shrink .robot-bubble {
       font-size: 0.7rem;
       padding: 6px 12px;
       white-space: nowrap;
     }
-    
     .robot-help:hover .robot-bubble {
       font-size: 0.85rem;
       padding: 10px 18px;
     }
-
     @keyframes neonPulseRobot {
       0% { filter: drop-shadow(0 0 2px var(--cyan)) drop-shadow(0 0 5px var(--cyan)); }
       50% { filter: drop-shadow(0 0 10px var(--cyan)) drop-shadow(0 0 20px var(--cyan)) drop-shadow(0 0 30px var(--violet)); }
       100% { filter: drop-shadow(0 0 2px var(--cyan)) drop-shadow(0 0 5px var(--cyan)); }
     }
-    
     .robot-help.neon-pulse .robot-img {
       animation: neonPulseRobot 2s ease-in-out infinite;
     }
-
     @keyframes vibrateRobot {
       0% { transform: translateX(0) rotate(0deg); }
       25% { transform: translateX(-3px) rotate(-2deg); }
       75% { transform: translateX(3px) rotate(2deg); }
       100% { transform: translateX(0) rotate(0deg); }
     }
-    
     .robot-help.vibrate {
       animation: vibrateRobot 0.3s ease-in-out 3;
     }
-
     .robot-bubble {
       position: absolute;
       bottom: 100%;
@@ -1323,86 +1362,12 @@
     .robot-help.bubble-visible .robot-bubble::after {
       border-top-color: #8b5cf6;
     }
-
     @media (max-width: 600px) {
       .robot-help { bottom: 80px; right: 10px; }
       .robot-help .robot-img { width: 90px; }
       .robot-help.shrink .robot-img { width: 50px; }
       .robot-help:hover .robot-img { width: 90px !important; }
       .robot-bubble { padding: 5px 10px; font-size: 0.65rem; right: 5px; white-space: nowrap; }
-    }
-
-    /* ===== MODAL PARA ASISTENTE ===== */
-    .asistente-modal {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.92);
-      backdrop-filter: blur(12px);
-      z-index: 10000;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      opacity: 0;
-      transition: opacity 0.3s ease;
-    }
-    .asistente-modal.open {
-      display: flex;
-      opacity: 1;
-    }
-    .asistente-modal-contenido {
-      background: #0a0a0f;
-      width: 90%;
-      max-width: 500px;
-      height: 85%;
-      max-height: 650px;
-      border-radius: 20px;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      border: 1px solid rgba(0, 212, 255, 0.2);
-      animation: modalEntrada 0.3s ease;
-    }
-    @keyframes modalEntrada {
-      from { opacity: 0; transform: scale(0.95) translateY(20px); }
-      to { opacity: 1; transform: scale(1) translateY(0); }
-    }
-    .asistente-modal-header {
-      background: #0a0a0f;
-      padding: 12px 16px;
-      display: flex;
-      justify-content: flex-end;
-      border-bottom: 1px solid rgba(0, 212, 255, 0.2);
-      flex-shrink: 0;
-    }
-    .asistente-modal-cerrar {
-      background: none;
-      border: none;
-      font-size: 1.5rem;
-      cursor: pointer;
-      color: #9ca3ff;
-      transition: all 0.2s ease;
-      width: 30px;
-      height: 30px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 50%;
-    }
-    .asistente-modal-cerrar:hover {
-      color: #00d4ff;
-      background: rgba(0, 212, 255, 0.1);
-    }
-    .asistente-modal-iframe {
-      width: 100%;
-      height: 100%;
-      border: none;
-      background: #0a0a0f;
-    }
-    @media (max-width: 600px) {
-      .asistente-modal-contenido { width: 95%; height: 90%; }
     }
   </style>
 </head>
@@ -1418,7 +1383,6 @@
       <a href="#servicios">Servicios</a>
       <a href="#casos-exito">Casos de éxito</a>
       <a href="#marcas">Marcas</a>
-      <a href="#planes">Planes</a>
       <a href="#faq">FAQ</a>
       <a href="#contacto">Contacto</a>
     </nav>
@@ -1433,7 +1397,6 @@
   <a href="#servicios">Servicios</a>
   <a href="#casos-exito">Casos de éxito</a>
   <a href="#marcas">Marcas</a>
-  <a href="#planes">Planes</a>
   <a href="#faq">FAQ</a>
   <a href="#contacto">Contacto</a>
   <a href="#" class="btn btn--wa" id="mobileWhatsAppBtn">WhatsApp</a>
@@ -1444,16 +1407,6 @@
   <div class="robot-container">
     <div class="robot-bubble" id="robotBubble">🤖 Hola, ¿necesitas ayuda?</div>
     <img class="robot-img" id="robotImg" src="https://fhxcumwhgtfirznnznjx.supabase.co/storage/v1/object/public/Imagenes/8f4b1793-1886-4dee-9445-b9570c2047ea.png" alt="Asistente">
-  </div>
-</div>
-
-<!-- ===== MODAL PARA ASISTENTE.HTML ===== -->
-<div class="asistente-modal" id="asistenteModal">
-  <div class="asistente-modal-contenido">
-    <div class="asistente-modal-header">
-      <button class="asistente-modal-cerrar" id="cerrarAsistenteModalBtn">&times;</button>
-    </div>
-    <iframe class="asistente-modal-iframe" id="asistenteIframe" src="asistente.html"></iframe>
   </div>
 </div>
 
@@ -1491,50 +1444,17 @@
   <div class="banner-controls" id="bannerControls"></div>
 </div>
 
-<!-- ========== 2. SERVICIOS ========== -->
+<!-- ========== 2. SERVICIOS (con precios dinámicos) ========== -->
 <section class="section" id="servicios">
   <div class="wrap">
     <div class="section__head fade-in-left">
       <span class="section__label">Qué construimos</span>
       <h2>Soluciones <em>a medida</em></h2>
     </div>
-    <div class="servicesGrid">
-      <div class="serviceCard fade-in-up" style="transition-delay: 0s">
-        <div class="serviceCard__icon">🛒</div>
-        <div class="serviceCard__title">Tiendas Online</div>
-        <div class="serviceCard__desc">Carrito, stock, ofertas y pedidos por WhatsApp. Experiencia de compra fluida.</div>
-        <a href="servicio.html?tipo=tienda" class="serviceCard__btn">Ver más →</a>
-      </div>
-      <div class="serviceCard fade-in-up" style="transition-delay: 0.05s">
-        <div class="serviceCard__icon">📦</div>
-        <div class="serviceCard__title">Sistemas de Pedidos</div>
-        <div class="serviceCard__desc">Flujo guiado con cálculo de costos. Ideal para delivery y comidas.</div>
-        <a href="servicio.html?tipo=pedidos" class="serviceCard__btn">Ver más →</a>
-      </div>
-      <div class="serviceCard fade-in-up" style="transition-delay: 0.1s">
-        <div class="serviceCard__icon">⚙️</div>
-        <div class="serviceCard__title">Panel Admin</div>
-        <div class="serviceCard__desc">Gestioná productos, ventas y usuarios desde cualquier dispositivo.</div>
-        <a href="servicio.html?tipo=admin" class="serviceCard__btn">Ver más →</a>
-      </div>
-      <div class="serviceCard fade-in-up" style="transition-delay: 0.15s">
-        <div class="serviceCard__icon">🎯</div>
-        <div class="serviceCard__title">Landings de Conversión</div>
-        <div class="serviceCard__desc">Diseñadas para convertir visitas en clientes. Alto impacto visual.</div>
-        <a href="servicio.html?tipo=landing" class="serviceCard__btn">Ver más →</a>
-      </div>
-      <div class="serviceCard fade-in-up" style="transition-delay: 0.2s">
-        <div class="serviceCard__icon">🏢</div>
-        <div class="serviceCard__title">Webs Institucionales</div>
-        <div class="serviceCard__desc">Galería, servicios, SEO y presencia profesional para tu empresa.</div>
-        <a href="servicio.html?tipo=institucional" class="serviceCard__btn">Ver más →</a>
-      </div>
-      <div class="serviceCard fade-in-up" style="transition-delay: 0.25s">
-        <div class="serviceCard__icon">📋</div>
-        <div class="serviceCard__title">Catálogos Digitales</div>
-        <div class="serviceCard__desc">Vitrina profesional con botón de consulta. Ideal para mayoristas.</div>
-        <a href="servicio.html?tipo=catalogo" class="serviceCard__btn">Ver más →</a>
-      </div>
+    <div class="servicesGrid" id="servicesGrid">
+      <div class="skeleton-card"></div>
+      <div class="skeleton-card"></div>
+      <div class="skeleton-card"></div>
     </div>
   </div>
 </section>
@@ -1622,7 +1542,7 @@
   </div>
 </section>
 
-<!-- ========== 6. MARCAS QUE CONFÍAN ========== -->
+<!-- ========== 6. MARCAS QUE CONFÍAN (CARRUSEL) ========== -->
 <section class="section" id="marcas">
   <div class="wrap">
     <div class="section__head center fade-in-up">
@@ -1631,33 +1551,16 @@
       <p>Empresas y emprendedores que confiaron en Ciborg 347</p>
     </div>
     <div class="brands-section">
-      <div class="brands-grid" id="brandsGrid">
-        <div class="skeleton-card" style="height: 80px;"></div>
+      <div class="brands-carousel-container" id="brandsCarouselContainer">
+        <button class="brands-carousel-btn prev" id="brandsPrevBtn">‹</button>
+        <div class="brands-carousel" id="brandsCarousel"></div>
+        <button class="brands-carousel-btn next" id="brandsNextBtn">›</button>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ========== 7. PLANES ========== -->
-<section class="section section--alt" id="planes">
-  <div class="wrap">
-    <div class="section__head center fade-in-up">
-      <span class="section__label">Inversión</span>
-      <h2>Planes <em>a medida</em></h2>
-      <p>Precios de referencia. Primero trabajamos, después pagás.</p>
-    </div>
-    <div class="servicesGrid" id="plansGrid">
-      <div class="skeleton-card"></div>
-      <div class="skeleton-card"></div>
-      <div class="skeleton-card"></div>
-    </div>
-    <div class="featured-badge" style="display: block; text-align: center; margin-top: 2rem;">
-      🔥 Primero te muestro el proyecto funcionando. Pagás solo cuando estés conforme.
-    </div>
-  </div>
-</section>
-
-<!-- ========== 8. FAQ ========== -->
+<!-- ========== 7. FAQ ========== -->
 <section class="section" id="faq">
   <div class="wrap">
     <div class="section__head center fade-in-up">
@@ -1668,7 +1571,7 @@
   </div>
 </section>
 
-<!-- ========== 9. DEJANOS TU OPINIÓN ========== -->
+<!-- ========== 8. DEJANOS TU OPINIÓN ========== -->
 <section class="section section--alt" id="opinion">
   <div class="wrap">
     <div class="section__head center fade-in-up">
@@ -1699,6 +1602,27 @@
   </div>
 </section>
 
+<!-- ========== 9. CONTACTO ========== -->
+<section class="section" id="contacto">
+  <div class="wrap">
+    <div class="section__head center fade-in-up">
+      <span class="section__label">Contacto</span>
+      <h2>Hablemos de tu <em>proyecto</em></h2>
+      <p>Contanos qué necesitas y te responderemos a la brevedad.</p>
+    </div>
+    <div class="contact-form-section">
+      <form class="contact-form" id="contactForm">
+        <input type="text" id="contactNombre" placeholder="Tu nombre *" required>
+        <input type="email" id="contactEmail" placeholder="Tu email *" required>
+        <input type="tel" id="contactWhatsapp" placeholder="WhatsApp (opcional)">
+        <textarea id="contactMensaje" rows="4" placeholder="Contanos sobre tu proyecto..." required></textarea>
+        <button type="submit" class="btn btn--primary">Enviar consulta →</button>
+      </form>
+      <div id="contactMessage" style="text-align: center; margin-top: 1rem; font-size: 12px;"></div>
+    </div>
+  </div>
+</section>
+
 <!-- ========== 10. FOOTER ========== -->
 <footer>
   <div class="wrap">
@@ -1712,7 +1636,6 @@
         <a href="#servicios">Servicios</a>
         <a href="#casos-exito">Casos de éxito</a>
         <a href="#marcas">Marcas</a>
-        <a href="#planes">Planes</a>
         <a href="#faq">FAQ</a>
         <a href="#contacto">Contacto</a>
       </div>
@@ -1749,10 +1672,91 @@ const sb = window.supabase?.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 console.log("🔌 Conectando a Supabase...");
 
-// ========== CARGAR MARCAS ==========
-async function loadBrands() {
-  const container = document.getElementById('brandsGrid');
+// ========== CARGAR SERVICIOS CON PRECIOS ==========
+async function loadServices() {
+  const container = document.getElementById('servicesGrid');
   if (!container) return;
+  
+  container.innerHTML = '<div class="skeleton-card"></div><div class="skeleton-card"></div><div class="skeleton-card"></div>';
+  
+  try {
+    // 1. Traer todos los tipos de servicio activos
+    const { data: services, error: servicesError } = await sb
+      .from('service_types')
+      .select('*')
+      .eq('active', true)
+      .order('order_index', { ascending: true });
+    
+    if (servicesError) throw servicesError;
+    
+    if (!services || services.length === 0) {
+      container.innerHTML = '<div style="grid-column:1/-1; text-align:center; color:var(--text2);">Próximamente más servicios</div>';
+      return;
+    }
+    
+    // 2. Traer los precios activos para estos servicios
+    const serviceIds = services.map(s => s.id);
+    const { data: prices, error: pricesError } = await sb
+      .from('service_prices')
+      .select('*')
+      .in('service_type_id', serviceIds)
+      .eq('active', true);
+    
+    if (pricesError) throw pricesError;
+    
+    // 3. Armar un mapa de precios por service_type_id
+    const priceMap = new Map();
+    if (prices) {
+      prices.forEach(price => {
+        priceMap.set(price.service_type_id, price);
+      });
+    }
+    
+    // 4. Renderizar
+    container.innerHTML = services.map(service => {
+      const price = priceMap.get(service.id);
+      const hasOffer = price?.offer_price && price?.offer_price !== '';
+      const displayPrice = hasOffer ? price.offer_price : price?.price_from;
+      const originalPrice = hasOffer ? price.price_from : null;
+      const badge = price?.offer_badge || null;
+      
+      const priceHtml = price ? `
+        <div class="serviceCard__price">
+          ${hasOffer ? `<strike>${escapeHtml(originalPrice)}</strike>` : ''}
+          ${escapeHtml(displayPrice)}
+          ${badge ? `<span class="serviceCard__offer-badge">${escapeHtml(badge)}</span>` : ''}
+        </div>
+      ` : '';
+      
+      return `
+        <div class="serviceCard fade-in-up">
+          <div class="serviceCard__icon">${service.icon || '📦'}</div>
+          <div class="serviceCard__title">${escapeHtml(service.name)}</div>
+          <div class="serviceCard__desc">${escapeHtml(service.description || '')}</div>
+          ${priceHtml}
+          <a href="servicio.html?tipo=${service.slug}" class="serviceCard__btn">Ver más →</a>
+        </div>
+      `;
+    }).join('');
+    
+  } catch(e) { 
+    console.error("Error loading services:", e);
+    container.innerHTML = '<div style="grid-column:1/-1; text-align:center; color:var(--text2);">Error al cargar servicios</div>';
+  }
+}
+
+// ========== CARGAR MARCAS CON CARRUSEL ==========
+let brandsData = [];
+let currentBrandIndex = 0;
+let brandsPerPage = 4;
+let brandsInterval = null;
+
+async function loadBrands() {
+  const container = document.getElementById('brandsCarousel');
+  if (!container) return;
+  
+  container.innerHTML = '<div class="skeleton-card" style="height: 100px;"></div>';
+  
   try {
     const { data, error } = await sb
       .from('trusted_brands')
@@ -1763,25 +1767,98 @@ async function loadBrands() {
     if (error) throw error;
     
     if (!data || data.length === 0) {
-      container.innerHTML = '<div style="grid-column:1/-1; text-align:center; color:var(--text2);">Próximamente marcas que confían en nosotros</div>';
+      container.innerHTML = '<div style="text-align:center; color:var(--text2);">Próximamente marcas que confían en nosotros</div>';
       return;
     }
     
-    container.innerHTML = data.map(brand => `
-      <div class="brand-item">
-        ${brand.website_url ? `<a href="${brand.website_url}" target="_blank">` : ''}
-          <img src="${brand.logo_url}" alt="${brand.name}" loading="lazy" />
-          <span>${brand.name}</span>
-        ${brand.website_url ? '</a>' : ''}
-      </div>
-    `).join('');
+    brandsData = data;
+    updateBrandsPerPage();
+    renderBrandsCarousel();
+    startBrandsCarousel();
+    
+    window.addEventListener('resize', () => {
+      updateBrandsPerPage();
+      renderBrandsCarousel();
+    });
+    
   } catch(e) { console.error("Error loading brands:", e); }
 }
+
+function updateBrandsPerPage() {
+  if (window.innerWidth < 600) brandsPerPage = 2;
+  else if (window.innerWidth < 900) brandsPerPage = 3;
+  else brandsPerPage = 4;
+}
+
+function renderBrandsCarousel() {
+  const container = document.getElementById('brandsCarousel');
+  if (!container || !brandsData.length) return;
+  
+  const start = currentBrandIndex;
+  const end = Math.min(start + brandsPerPage, brandsData.length);
+  const visibleBrands = brandsData.slice(start, end);
+  
+  container.innerHTML = visibleBrands.map(brand => `
+    <div class="brand-item">
+      ${brand.website_url ? `<a href="${brand.website_url}" target="_blank">` : ''}
+        <img src="${escapeHtml(brand.logo_url)}" alt="${escapeHtml(brand.name)}" loading="lazy" />
+        <span>${escapeHtml(brand.name)}</span>
+      ${brand.website_url ? '</a>' : ''}
+    </div>
+  `).join('');
+}
+
+function startBrandsCarousel() {
+  if (brandsInterval) clearInterval(brandsInterval);
+  if (brandsData.length <= brandsPerPage) return;
+  
+  brandsInterval = setInterval(() => {
+    if (currentBrandIndex + brandsPerPage >= brandsData.length) {
+      currentBrandIndex = 0;
+    } else {
+      currentBrandIndex += 1;
+    }
+    renderBrandsCarousel();
+  }, 5000);
+}
+
+function stopBrandsCarousel() {
+  if (brandsInterval) clearInterval(brandsInterval);
+}
+
+document.getElementById('brandsPrevBtn')?.addEventListener('click', () => {
+  stopBrandsCarousel();
+  if (currentBrandIndex > 0) {
+    currentBrandIndex -= 1;
+  } else {
+    currentBrandIndex = Math.max(0, brandsData.length - brandsPerPage);
+  }
+  renderBrandsCarousel();
+  startBrandsCarousel();
+});
+
+document.getElementById('brandsNextBtn')?.addEventListener('click', () => {
+  stopBrandsCarousel();
+  if (currentBrandIndex + brandsPerPage < brandsData.length) {
+    currentBrandIndex += 1;
+  } else {
+    currentBrandIndex = 0;
+  }
+  renderBrandsCarousel();
+  startBrandsCarousel();
+});
+
+const brandsSection = document.getElementById('marcas');
+brandsSection?.addEventListener('mouseenter', stopBrandsCarousel);
+brandsSection?.addEventListener('mouseleave', startBrandsCarousel);
 
 // ========== CARGAR CASOS DE ÉXITO ==========
 async function loadSuccessStories() {
   const container = document.getElementById('storiesGrid');
   if (!container) return;
+  
+  container.innerHTML = '<div class="skeleton-card"></div><div class="skeleton-card"></div><div class="skeleton-card"></div>';
+  
   try {
     const { data, error } = await sb
       .from('success_stories')
@@ -1800,17 +1877,17 @@ async function loadSuccessStories() {
       let resultsHtml = '';
       if (story.results) {
         try {
-          const results = JSON.parse(story.results);
+          const results = typeof story.results === 'string' ? JSON.parse(story.results) : story.results;
           resultsHtml = '<div class="story-results">';
           for (const [key, value] of Object.entries(results)) {
-            resultsHtml += `<span class="story-result-badge">${key}: ${value}</span>`;
+            resultsHtml += `<span class="story-result-badge">${escapeHtml(key)}: ${escapeHtml(value)}</span>`;
           }
           resultsHtml += '</div>';
         } catch(e) {}
       }
       return `
         <div class="story-card">
-          <img class="story-card__image" src="${story.image_url || 'https://placehold.co/400x225?text=Proyecto'}" alt="${story.title}" loading="lazy" />
+          <img class="story-card__image" src="${escapeHtml(story.image_url || 'https://placehold.co/400x225?text=Proyecto')}" alt="${escapeHtml(story.title)}" loading="lazy" />
           <div class="story-card__content">
             <h3 class="story-card__title">${escapeHtml(story.title)}</h3>
             <p class="story-card__desc">${escapeHtml(story.short_description || '')}</p>
@@ -1833,14 +1910,11 @@ function escapeHtml(str) {
   });
 }
 
-// ===== ROBOT FLOTANTE CON ENCOGIMIENTO Y MODAL =====
+// ===== ROBOT FLOTANTE (abre asistente.html en nueva pestaña) =====
 const robotBtn = document.getElementById('robotHelpBtn');
 const robotImg = document.getElementById('robotImg');
 const robotBubble = document.getElementById('robotBubble');
-const asistenteModal = document.getElementById('asistenteModal');
-const cerrarModalBtn = document.getElementById('cerrarAsistenteModalBtn');
 
-// URLs de las imágenes
 const IMG1 = "https://fhxcumwhgtfirznnznjx.supabase.co/storage/v1/object/public/Imagenes/8f4b1793-1886-4dee-9445-b9570c2047ea.png";
 const IMG2 = "https://fhxcumwhgtfirznnznjx.supabase.co/storage/v1/object/public/Imagenes/a586d88b-93c0-4fac-b28d-4f5758af46f0.png";
 const IMG3 = "https://fhxcumwhgtfirznnznjx.supabase.co/storage/v1/object/public/Imagenes/ciborg%20sentado%20.png";
@@ -1853,38 +1927,30 @@ let isRobotHiddenByFooter = false;
 let shrinkTimeout = null;
 let bubbleTimeout = null;
 
-// Función para ocultar la burbuja
 function hideBubble() {
   robotBtn.classList.remove('bubble-visible');
   if (bubbleTimeout) clearTimeout(bubbleTimeout);
   bubbleTimeout = null;
 }
 
-// Función para mostrar la burbuja temporalmente (solo durante vibración)
 function showTemporaryBubble() {
   robotBtn.classList.add('bubble-visible');
   if (bubbleTimeout) clearTimeout(bubbleTimeout);
-  bubbleTimeout = setTimeout(() => {
-    hideBubble();
-  }, 2000); // La burbuja se muestra por 2 segundos
+  bubbleTimeout = setTimeout(() => hideBubble(), 2000);
 }
 
-// Función para encoger el robot
 function shrinkRobot() {
   if (robotBtn && !robotBtn.classList.contains('shrink')) {
     robotBtn.classList.add('shrink');
   }
 }
 
-// Función que ejecuta la secuencia (paso 1 → paso 2 → paso 3)
 function startSequence() {
   if (sequenceTimeout) clearTimeout(sequenceTimeout);
   if (vibrationInterval) clearInterval(vibrationInterval);
   if (shrinkTimeout) clearTimeout(shrinkTimeout);
   
-  // Aseguramos que no esté encogido durante la secuencia
   robotBtn.classList.remove('shrink');
-  
   isInSequence = true;
   currentStep = 1;
   
@@ -1895,92 +1961,60 @@ function startSequence() {
   
   sequenceTimeout = setTimeout(() => {
     if (!isInSequence) return;
-    
     robotImg.src = IMG2;
     robotBubble.textContent = "💙 Cualquier duda o consulta, aquí estaré";
     
     sequenceTimeout = setTimeout(() => {
       if (!isInSequence) return;
-      
       robotImg.src = IMG3;
-      // NO mostramos la burbuja automáticamente aquí - solo aparece cuando vibra
       robotBubble.textContent = "🤖 ¿Ayuda?";
       isInSequence = false;
       currentStep = 3;
       sequenceTimeout = null;
       
-      // Programar el encogimiento después de 5 segundos
-      shrinkTimeout = setTimeout(() => {
-        shrinkRobot();
-      }, 5000);
+      shrinkTimeout = setTimeout(() => shrinkRobot(), 5000);
       
-      // Iniciar vibración cada 20 segundos cuando está en IMG3
       vibrationInterval = setInterval(() => {
         if (currentStep === 3 && robotBtn.classList.contains('show') && !isRobotHiddenByFooter) {
           robotBtn.classList.add('vibrate');
-          // Mostrar burbuja solo cuando vibra
           showTemporaryBubble();
-          setTimeout(() => {
-            robotBtn.classList.remove('vibrate');
-          }, 300);
+          setTimeout(() => robotBtn.classList.remove('vibrate'), 300);
         }
       }, 20000);
-      
     }, 7000);
   }, 6000);
 }
 
-// Reiniciar secuencia desde paso 1
 function resetSequence() {
-  if (sequenceTimeout) {
-    clearTimeout(sequenceTimeout);
-    sequenceTimeout = null;
-  }
-  if (vibrationInterval) {
-    clearInterval(vibrationInterval);
-    vibrationInterval = null;
-  }
-  if (shrinkTimeout) {
-    clearTimeout(shrinkTimeout);
-    shrinkTimeout = null;
-  }
+  if (sequenceTimeout) clearTimeout(sequenceTimeout);
+  if (vibrationInterval) clearInterval(vibrationInterval);
+  if (shrinkTimeout) clearTimeout(shrinkTimeout);
   startSequence();
 }
 
-// Mostrar/ocultar robot según scroll
 function setupRobotScroll() {
   const faqSection = document.getElementById('faq');
   const footer = document.querySelector('footer');
   if (!faqSection || !footer) return;
   
-  // Observer para mostrar robot cuando llega a FAQ
   const faqObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting && !isRobotHiddenByFooter) {
         robotBtn.classList.add('show');
-        // Si no está en paso 3 y no está en medio de secuencia, iniciar
         if (currentStep !== 3 && !isInSequence) {
           startSequence();
         } else if (currentStep === 3 && !isInSequence) {
-          // Asegurar que se vea la imagen 3 con su texto y neón
           robotImg.src = IMG3;
-          // NO mostramos burbuja automáticamente
           robotBtn.classList.add('neon-pulse');
-          // Programar encogimiento si no está ya encogido
           if (!robotBtn.classList.contains('shrink') && !shrinkTimeout) {
-            shrinkTimeout = setTimeout(() => {
-              shrinkRobot();
-            }, 5000);
+            shrinkTimeout = setTimeout(() => shrinkRobot(), 5000);
           }
-          // Reiniciar vibración si estaba detenida
           if (!vibrationInterval) {
             vibrationInterval = setInterval(() => {
               if (currentStep === 3 && robotBtn.classList.contains('show') && !isRobotHiddenByFooter) {
                 robotBtn.classList.add('vibrate');
                 showTemporaryBubble();
-                setTimeout(() => {
-                  robotBtn.classList.remove('vibrate');
-                }, 300);
+                setTimeout(() => robotBtn.classList.remove('vibrate'), 300);
               }
             }, 20000);
           }
@@ -1988,22 +2022,17 @@ function setupRobotScroll() {
       }
     });
   }, { threshold: 0.3 });
-  
   faqObserver.observe(faqSection);
   
-  // Observer para ocultar/mostrar robot con el footer
   const footerObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
-        // Footer visible → ocultar robot
         robotBtn.classList.remove('show');
         robotBtn.classList.add('hide-robot');
         isRobotHiddenByFooter = true;
       } else {
-        // Footer no visible → mostrar robot si corresponde
         robotBtn.classList.remove('hide-robot');
         isRobotHiddenByFooter = false;
-        // Verificar si FAQ sigue siendo visible
         const faqRect = faqSection.getBoundingClientRect();
         if (faqRect.top < window.innerHeight && faqRect.bottom > 0) {
           robotBtn.classList.add('show');
@@ -2011,141 +2040,101 @@ function setupRobotScroll() {
       }
     });
   }, { threshold: 0.1 });
-  
   footerObserver.observe(footer);
 }
 
-// Abrir modal del asistente
-function openAsistenteModal() {
-  asistenteModal.classList.add('open');
-  document.body.style.overflow = 'hidden';
-}
-
-// Cerrar modal
-function closeAsistenteModal() {
-  asistenteModal.classList.remove('open');
-  document.body.style.overflow = '';
-}
-
-// Al hacer clic en el robot - Abrir el asistente modal
 if (robotBtn) {
   robotBtn.addEventListener('click', (e) => {
     e.stopPropagation();
-    
-    // Expandir momentáneamente para mejor UX
     robotBtn.classList.remove('shrink');
-    
-    // Si está en paso 3 (imagen sentado.png), reiniciar secuencia
-    if (currentStep === 3 && robotImg.src.includes('sentado')) {
-      resetSequence();
-    }
-    
-    // Abrir el modal con asistente.html
-    openAsistenteModal();
-    
-    // Volver a encoger después de 3 segundos si no hay hover
+    if (currentStep === 3 && robotImg.src.includes('sentado')) resetSequence();
+    window.open('asistente.html', '_blank');
     setTimeout(() => {
-      if (robotBtn && !robotBtn.matches(':hover')) {
-        shrinkRobot();
-      }
+      if (robotBtn && !robotBtn.matches(':hover')) shrinkRobot();
     }, 3000);
   });
   
-  // Si el mouse sale, volver a encoger (si está en paso 3 y no está en hover)
   robotBtn.addEventListener('mouseleave', () => {
-    if (currentStep === 3 && !isInSequence) {
-      shrinkRobot();
-    }
+    if (currentStep === 3 && !isInSequence) shrinkRobot();
   });
 }
 
-// Cerrar modal con botón
-if (cerrarModalBtn) {
-  cerrarModalBtn.addEventListener('click', closeAsistenteModal);
-}
-
-// Cerrar modal al hacer clic fuera del contenido
-asistenteModal?.addEventListener('click', (e) => {
-  if (e.target === asistenteModal) {
-    closeAsistenteModal();
-  }
-});
-
-// Cerrar modal con tecla ESC
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape' && asistenteModal?.classList.contains('open')) {
-    closeAsistenteModal();
-  }
-});
-
-// Inicializar
 setupRobotScroll();
 
-// ========== FIN ROBOT ==========
+// ========== CARGAR RESEÑAS ==========
+let reviewsData = [];
+let currentReviewIndex = 0;
+let reviewsPerPage = 3;
 
-// ========== CARRUSEL DE BANNERS ==========
-let banners = [];
-let currentBannerIndex = 0;
-let bannerInterval;
-
-async function loadBanners() {
-  const container = document.getElementById('bannerCarousel');
-  if (!container) return;
+async function loadReviews() {
+  if (!sb) return;
   try {
-    const { data, error } = await sb.from('banners').select('*').eq('active', true).order('order_index', { ascending: true });
+    const { data, error } = await sb.from("reviews").select("*").eq("status", "approved").order("created_at", { ascending: false });
     if (error) throw error;
-    if (!data || data.length === 0) { container.style.display = 'none'; return; }
-    banners = data;
-    renderBanners();
-    container.style.display = 'block';
-    startBannerRotation();
-  } catch(e) { console.error("Error cargando banners:", e); }
+    if (data && data.length > 0) { reviewsData = data.map(review => ({ nombre: review.user_name, texto: review.comment, rating: review.rating })); }
+    else { reviewsData = [{ nombre: "Martín", texto: "Excelente trabajo. La tienda online que me hicieron es increíble.", rating: 5 }, { nombre: "Laura G.", texto: "Muy contenta con el desarrollo de mi web institucional.", rating: 5 }, { nombre: "Carlos D.", texto: "El sistema de pedidos por WhatsApp transformó mi negocio.", rating: 4 }]; }
+  } catch(e) { console.error(e); }
+  renderReviews();
 }
 
-function renderBanners() {
-  const slidesContainer = document.getElementById('bannerSlides');
-  const controlsContainer = document.getElementById('bannerControls');
-  if (!slidesContainer) return;
-  slidesContainer.innerHTML = banners.map(banner => `
-    <div class="banner-slide">
-      ${banner.type === 'image' && banner.image_url ? `<div class="banner-slide-image"><img src="${banner.image_url}" alt="Banner"></div>` : ''}
-      <div class="banner-slide-text">${banner.title || ''} ${banner.description || ''}${banner.button_text && banner.button_link ? `<a href="${banner.button_link}" target="_blank">${banner.button_text}</a>` : ''}</div>
-    </div>
-  `).join('');
-  controlsContainer.innerHTML = banners.map((_, idx) => `<div class="banner-dot ${idx === currentBannerIndex ? 'active' : ''}" data-index="${idx}"></div>`).join('');
-  document.querySelectorAll('.banner-dot').forEach(dot => {
-    dot.addEventListener('click', (e) => {
-      const index = parseInt(e.target.dataset.index);
-      if (!isNaN(index) && index !== currentBannerIndex) {
-        stopBannerRotation();
-        currentBannerIndex = index;
-        updateBannerSlide();
-        startBannerRotation();
+function renderReviews() {
+  const track = document.getElementById("reviewsTrack");
+  if (!track) return;
+  if (reviewsData.length === 0) { track.innerHTML = '<div class="review-card" style="width:100%; text-align:center;">No hay reseñas aún. ¡Sé el primero en dejar tu opinión!</div>'; return; }
+  const starsMap = (r) => { let s = ''; for (let i=1;i<=5;i++) s += `<svg viewBox="0 0 24 24" fill="${i<=r?'#f5b042':'#4a4a6a'}"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>`; return s; };
+  track.innerHTML = reviewsData.map(r => `<div class="review-card"><div class="review-stars">${starsMap(r.rating)}</div><div class="review-text">"${escapeHtml(r.texto)}"</div><div class="review-author">— ${escapeHtml(r.nombre)}</div></div>`).join('');
+  updateReviewCarousel();
+}
+
+function updateReviewCarousel() {
+  const track = document.getElementById("reviewsTrack");
+  if (!track) return;
+  const cards = track.children;
+  const totalCards = cards.length;
+  const visibleCards = Math.min(reviewsPerPage, totalCards);
+  if (totalCards === 0) return;
+  const cardWidth = cards[0]?.offsetWidth || 0;
+  const slideWidth = cardWidth + 24;
+  const maxIndex = Math.max(0, totalCards - visibleCards);
+  if (currentReviewIndex > maxIndex) currentReviewIndex = maxIndex;
+  track.style.transform = `translateX(-${currentReviewIndex * slideWidth}px)`;
+  const prevBtn = document.getElementById("prevReviewBtn");
+  const nextBtn = document.getElementById("nextReviewBtn");
+  if (prevBtn) prevBtn.disabled = currentReviewIndex === 0;
+  if (nextBtn) nextBtn.disabled = currentReviewIndex >= maxIndex;
+}
+
+document.getElementById("prevReviewBtn")?.addEventListener("click", () => { const track = document.getElementById("reviewsTrack"); const total = track?.children.length || 0; const visible = Math.min(reviewsPerPage, total); const maxIdx = Math.max(0, total - visible); if (currentReviewIndex > 0) { currentReviewIndex--; updateReviewCarousel(); } });
+document.getElementById("nextReviewBtn")?.addEventListener("click", () => { const track = document.getElementById("reviewsTrack"); const total = track?.children.length || 0; const visible = Math.min(reviewsPerPage, total); const maxIdx = Math.max(0, total - visible); if (currentReviewIndex < maxIdx) { currentReviewIndex++; updateReviewCarousel(); } });
+window.addEventListener('resize', () => updateReviewCarousel());
+
+// ========== CARGAR FAQS ==========
+async function loadFaqs() {
+  const grid = document.getElementById("faqGrid");
+  if (!grid || !sb) return;
+  try {
+    const { data, error } = await sb.from("faqs").select("*").eq("active", true).order("order_index", { ascending: true });
+    if (error) throw error;
+    if (!data || data.length === 0) { grid.innerHTML = '<div class="faqItem" style="grid-column:1/-1; text-align:center;">No hay preguntas frecuentes cargadas.</div>'; return; }
+    grid.innerHTML = data.map((faq, idx) => `<div class="faqItem fade-in-up" style="transition-delay: ${idx * 0.05}s"><div class="faqQ">${escapeHtml(faq.question)}</div><div class="faqA">${escapeHtml(faq.answer)}</div></div>`).join("");
+    document.querySelectorAll(".faqItem").forEach(item => {
+      const q = item.querySelector(".faqQ");
+      const a = item.querySelector(".faqA");
+      if (q && a) {
+        a.style.display = "none";
+        item.classList.remove("active");
+        q.addEventListener("click", (e) => {
+          e.stopPropagation();
+          const isOpen = item.classList.contains("active");
+          document.querySelectorAll(".faqItem").forEach(other => { other.classList.remove("active"); const otherAnswer = other.querySelector(".faqA"); if (otherAnswer) otherAnswer.style.display = "none"; });
+          if (!isOpen) { item.classList.add("active"); a.style.display = "block"; }
+        });
       }
     });
-  });
+  } catch(e) { console.error("Error loadFaqs:", e); }
 }
 
-function updateBannerSlide() {
-  const slides = document.querySelector('.banner-slides');
-  if (slides) slides.style.transform = `translateX(-${currentBannerIndex * 100}%)`;
-  document.querySelectorAll('.banner-dot').forEach((dot, idx) => dot.classList.toggle('active', idx === currentBannerIndex));
-}
-
-function startBannerRotation() {
-  if (bannerInterval) clearInterval(bannerInterval);
-  if (banners.length <= 1) return;
-  const duracion = (banners[currentBannerIndex]?.duracion_segundos || 5) * 1000;
-  bannerInterval = setInterval(() => {
-    currentBannerIndex = (currentBannerIndex + 1) % banners.length;
-    updateBannerSlide();
-    startBannerRotation();
-  }, duracion);
-}
-
-function stopBannerRotation() { if (bannerInterval) clearInterval(bannerInterval); }
-
-// ========== VARIABLES GLOBALES ==========
+// ========== CARGAR PROYECTOS ==========
 let projectsData = [];
 let allCategories = [];
 let activeFilter = "all";
@@ -2154,9 +2143,6 @@ let currentSort = "recent";
 let currentPage = 1;
 const PROJECTS_PER_PAGE = 9;
 let filteredProjectsCache = [];
-let reviewsData = [];
-let currentReviewIndex = 0;
-let reviewsPerPage = 3;
 let countersStarted = false;
 
 function esc(s) { return String(s ?? "").replace(/[&<>]/g, function(m) { return m === '&' ? '&amp;' : m === '<' ? '&lt;' : '&gt;'; }); }
@@ -2325,83 +2311,16 @@ function buildFilters() {
 
 function shareProject(id, title) { navigator.clipboard.writeText(window.location.href); showToast(`"${title}" - Enlace copiado`); }
 
-async function loadPlans() {
-  const container = document.getElementById("plansGrid");
-  if (!container) return;
-  container.innerHTML = '<div class="skeleton-card"></div><div class="skeleton-card"></div><div class="skeleton-card"></div>';
-  if (!sb) return;
-  try {
-    const { data, error } = await sb.from("service_plans").select("*").eq("active", true).order("order_index", { ascending: true });
-    if (error) throw error;
-    if (!data || data.length === 0) { container.innerHTML = '<div style="text-align:center; grid-column:1/-1;">🌟 Próximamente más planes. Consultanos por WhatsApp.</div>'; return; }
-    container.innerHTML = data.map(plan => `<div class="serviceCard"><div class="serviceCard__icon">${esc(plan.icon || '📦')}</div><div class="serviceCard__title">${esc(plan.name)}</div><div class="serviceCard__desc">${esc(plan.description || '')}</div><div class="serviceCard__price"><strong>${esc(plan.price)}</strong></div><ul class="serviceCard__features">${plan.features?.map(f => `<li>${esc(f)}</li>`).join('') || '<li>Consulta por detalles personalizados</li>'}</ul><a href="#contacto" class="serviceCard__btn">${esc(plan.cta_text || 'Consultar →')}</a></div>`).join('');
-  } catch(e) { console.error("Error cargando planes:", e); container.innerHTML = '<div style="text-align:center; grid-column:1/-1;">⚠️ Error al cargar planes. Consultanos por WhatsApp.</div>'; }
-}
+function animateCounter(element, target, suffix = '') { if (!element) return; let start = 0; const increment = target / (2000 / 16); function update() { start += increment; if (start < target) { element.textContent = Math.floor(start) + suffix; requestAnimationFrame(update); } else { element.textContent = target + suffix; } } update(); }
 
-async function loadFaqs() {
-  const grid = document.getElementById("faqGrid");
-  if (!grid || !sb) return;
-  try {
-    const { data, error } = await sb.from("faqs").select("*").eq("active", true).order("order_index", { ascending: true });
-    if (error) throw error;
-    if (!data || data.length === 0) { grid.innerHTML = '<div class="faqItem" style="grid-column:1/-1; text-align:center;">No hay preguntas frecuentes cargadas.</div>'; return; }
-    grid.innerHTML = data.map((faq, idx) => `<div class="faqItem fade-in-up" style="transition-delay: ${idx * 0.05}s"><div class="faqQ">${esc(faq.question)}</div><div class="faqA">${esc(faq.answer)}</div></div>`).join("");
-    document.querySelectorAll(".faqItem").forEach(item => {
-      const q = item.querySelector(".faqQ");
-      const a = item.querySelector(".faqA");
-      if (q && a) {
-        a.style.display = "none";
-        item.classList.remove("active");
-        q.addEventListener("click", (e) => {
-          e.stopPropagation();
-          const isOpen = item.classList.contains("active");
-          document.querySelectorAll(".faqItem").forEach(other => { other.classList.remove("active"); const otherAnswer = other.querySelector(".faqA"); if (otherAnswer) otherAnswer.style.display = "none"; });
-          if (!isOpen) { item.classList.add("active"); a.style.display = "block"; }
-        });
-      }
-    });
-  } catch(e) { console.error("Error loadFaqs:", e); }
-}
+const brandLogo = document.getElementById("brandLogo");
+const footerLogo = document.getElementById("footerLogo");
+if (brandLogo) brandLogo.addEventListener('dblclick', () => window.location.href = 'https://admin-ciborg.onrender.com/');
+if (footerLogo) footerLogo.addEventListener('dblclick', () => window.location.href = 'https://admin-ciborg.onrender.com/');
 
-async function loadReviews() {
-  if (!sb) return;
-  try {
-    const { data, error } = await sb.from("reviews").select("*").eq("status", "approved").order("created_at", { ascending: false });
-    if (error) throw error;
-    if (data && data.length > 0) { reviewsData = data.map(review => ({ nombre: review.user_name, texto: review.comment, rating: review.rating })); }
-    else { reviewsData = [{ nombre: "Martín", texto: "Excelente trabajo. La tienda online que me hicieron es increíble.", rating: 5 }, { nombre: "Laura G.", texto: "Muy contenta con el desarrollo de mi web institucional.", rating: 5 }, { nombre: "Carlos D.", texto: "El sistema de pedidos por WhatsApp transformó mi negocio.", rating: 4 }]; }
-  } catch(e) { console.error(e); }
-  renderReviews();
-}
-
-function renderReviews() {
-  const track = document.getElementById("reviewsTrack");
-  if (!track) return;
-  if (reviewsData.length === 0) { track.innerHTML = '<div class="review-card" style="width:100%; text-align:center;">No hay reseñas aún. ¡Sé el primero en dejar tu opinión!</div>'; return; }
-  const starsMap = (r) => { let s = ''; for (let i=1;i<=5;i++) s += `<svg viewBox="0 0 24 24" fill="${i<=r?'#f5b042':'#4a4a6a'}"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>`; return s; };
-  track.innerHTML = reviewsData.map(r => `<div class="review-card"><div class="review-stars">${starsMap(r.rating)}</div><div class="review-text">"${esc(r.texto)}"</div><div class="review-author">— ${esc(r.nombre)}</div></div>`).join('');
-  updateReviewCarousel();
-}
-
-function updateReviewCarousel() {
-  const track = document.getElementById("reviewsTrack");
-  if (!track) return;
-  const cards = track.children;
-  const totalCards = cards.length;
-  const visibleCards = Math.min(reviewsPerPage, totalCards);
-  if (totalCards === 0) return;
-  const cardWidth = cards[0]?.offsetWidth || 0;
-  const slideWidth = cardWidth + 24;
-  const maxIndex = Math.max(0, totalCards - visibleCards);
-  if (currentReviewIndex > maxIndex) currentReviewIndex = maxIndex;
-  track.style.transform = `translateX(-${currentReviewIndex * slideWidth}px)`;
-  const prevBtn = document.getElementById("prevReviewBtn");
-  const nextBtn = document.getElementById("nextReviewBtn");
-  if (prevBtn) prevBtn.disabled = currentReviewIndex === 0;
-  if (nextBtn) nextBtn.disabled = currentReviewIndex >= maxIndex;
-}
-
-async function submitReview(e) {
+document.getElementById("searchInput")?.addEventListener("input", e => { currentSearch = e.target.value; resetPagination(); });
+document.getElementById("sortSelect")?.addEventListener("change", e => { currentSort = e.target.value; resetPagination(); });
+document.getElementById("reviewForm")?.addEventListener("submit", async (e) => {
   e.preventDefault();
   const nombre = document.getElementById("reviewNombre")?.value.trim();
   const rating = parseInt(document.getElementById("reviewRating")?.value);
@@ -2417,36 +2336,29 @@ async function submitReview(e) {
     document.getElementById("reviewMessage").innerHTML = '<span style="color: var(--cyan);">✅ ¡Gracias! Tu reseña será revisada y publicada pronto.</span>';
     setTimeout(() => { document.getElementById("reviewMessage").innerHTML = ''; }, 5000);
   } catch(err) { console.error(err); showToast("Error al enviar la reseña"); }
-}
+});
+
+document.getElementById("contactForm")?.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const nombre = document.getElementById("contactNombre")?.value.trim();
+  const email = document.getElementById("contactEmail")?.value.trim();
+  const whatsapp = document.getElementById("contactWhatsapp")?.value.trim();
+  const mensaje = document.getElementById("contactMensaje")?.value.trim();
+  if (!nombre || !email || !mensaje) { showToast("Completá nombre, email y mensaje"); return; }
+  const waMsg = `Hola CIBORG 347! 👋\n\n📝 *Nuevo contacto desde la web*\n\n👤 *Nombre:* ${nombre}\n📧 *Email:* ${email}\n📱 *WhatsApp:* ${whatsapp || 'No especificado'}\n💬 *Mensaje:* ${mensaje}`;
+  window.open(waUrl(waMsg), '_blank');
+  document.getElementById("contactForm").reset();
+  document.getElementById("contactMessage").innerHTML = '<span style="color: var(--cyan);">✅ ¡Consulta enviada! Te contactaremos pronto.</span>';
+  setTimeout(() => { document.getElementById("contactMessage").innerHTML = ''; }, 5000);
+});
 
 const starsInputs = document.querySelectorAll(".rating-star-input");
 const ratingInput = document.getElementById("reviewRating");
 starsInputs.forEach(star => { star.addEventListener("click", () => { const value = parseInt(star.dataset.value); ratingInput.value = value; starsInputs.forEach((s, idx) => { if (idx < value) s.classList.add("active"); else s.classList.remove("active"); }); }); });
 
-function animateCounter(element, target, suffix = '') { if (!element) return; let start = 0; const increment = target / (2000 / 16); function update() { start += increment; if (start < target) { element.textContent = Math.floor(start) + suffix; requestAnimationFrame(update); } else { element.textContent = target + suffix; } } update(); }
-
-const brandLogo = document.getElementById("brandLogo");
-const footerLogo = document.getElementById("footerLogo");
-if (brandLogo) brandLogo.addEventListener('dblclick', () => window.location.href = 'https://admin-ciborg.onrender.com/');
-if (footerLogo) footerLogo.addEventListener('dblclick', () => window.location.href = 'https://admin-ciborg.onrender.com/');
-
-document.querySelectorAll(".fade-in-left, .fade-in-right, .fade-in-up, .projectCard, .faqItem, .featuredCard, .serviceCard").forEach(el => { el.classList.add("visible"); el.style.opacity = "1"; el.style.transform = "translateX(0) translateY(0)"; });
-
-const observer = new IntersectionObserver((entries) => { entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add("visible"); e.target.style.opacity = "1"; e.target.style.transform = "translateX(0) translateY(0)"; observer.unobserve(e.target); } }); }, { threshold: 0.1 });
-document.querySelectorAll(".fade-in-left, .fade-in-right, .fade-in-up").forEach(el => observer.observe(el));
-
-document.getElementById("searchInput")?.addEventListener("input", e => { currentSearch = e.target.value; resetPagination(); });
-document.getElementById("sortSelect")?.addEventListener("change", e => { currentSort = e.target.value; resetPagination(); });
-document.getElementById("prevReviewBtn")?.addEventListener("click", () => { const track = document.getElementById("reviewsTrack"); const total = track?.children.length || 0; const visible = Math.min(reviewsPerPage, total); const maxIdx = Math.max(0, total - visible); if (currentReviewIndex > 0) { currentReviewIndex--; updateReviewCarousel(); } });
-document.getElementById("nextReviewBtn")?.addEventListener("click", () => { const track = document.getElementById("reviewsTrack"); const total = track?.children.length || 0; const visible = Math.min(reviewsPerPage, total); const maxIdx = Math.max(0, total - visible); if (currentReviewIndex < maxIdx) { currentReviewIndex++; updateReviewCarousel(); } });
-window.addEventListener('resize', () => updateReviewCarousel());
-document.getElementById("reviewForm")?.addEventListener("submit", submitReview);
 document.getElementById("burgerBtn")?.addEventListener("click", () => document.getElementById("mobileMenu")?.classList.toggle("isOpen"));
 document.querySelectorAll(".mobileMenu a").forEach(a => a.addEventListener("click", () => document.getElementById("mobileMenu")?.classList.remove("isOpen")));
 setWaLinks();
-
-const heroObserver = new IntersectionObserver((entries) => { entries.forEach(e => { if (e.isIntersecting && !countersStarted && projectsData.length > 0) { countersStarted = true; animateCounter(document.getElementById("statProjects"), projectsData.length, '+'); animateCounter(document.getElementById("statHours"), 24, 'hs'); animateCounter(document.getElementById("statCode"), 100, '%'); } }); }, { threshold: 0.3 });
-if (document.querySelector(".hero")) heroObserver.observe(document.querySelector(".hero"));
 
 function setupWhatsAppVisibility() {
   const whatsappButton = document.querySelector('.waFloat');
@@ -2462,9 +2374,8 @@ function setupWhatsAppVisibility() {
 }
 
 // Inicializar todo
-loadBanners();
+loadServices();
 loadProjects();
-loadPlans();
 loadFaqs();
 loadReviews();
 loadBrands();
