@@ -14,8 +14,10 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 
   <style>
+    /* ========== ESTILOS ========== */
     :root {
       --bg: #0a0a0f;
       --bg2: #0f0f1a;
@@ -74,6 +76,9 @@
       background: rgba(10,10,15,0.82);
       backdrop-filter: blur(14px);
       border-bottom: 1px solid var(--border);
+    }
+    [data-theme="light"] .topbar {
+      background: rgba(255,255,255,0.9);
     }
     .topbar__inner {
       min-height: 68px;
@@ -136,6 +141,9 @@
       background: rgba(10,10,15,0.97); backdrop-filter: blur(16px);
       padding: 1.5rem 24px; gap: 0.75rem; z-index: 99;
     }
+    [data-theme="light"] .mobileMenu {
+      background: rgba(255,255,255,0.97);
+    }
     .mobileMenu.isOpen { display: flex; }
     .mobileMenu a {
       font-family: 'JetBrains Mono', monospace; font-size: 13px;
@@ -165,6 +173,35 @@
       background-clip: text;
       color: transparent;
       margin-bottom: 1.5rem;
+    }
+    .service-price-card {
+      background: rgba(0, 212, 255, 0.1);
+      border-radius: 20px;
+      padding: 20px;
+      margin: 24px 0;
+      text-align: center;
+      border: 1px solid rgba(0, 212, 255, 0.2);
+    }
+    .service-price-card .price {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--cyan);
+    }
+    .service-price-card .offer-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, #ff47d1, #ff8c00);
+      border-radius: 40px;
+      padding: 4px 12px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: white;
+      margin-left: 12px;
+    }
+    .service-price-card strike {
+      color: var(--text2);
+      opacity: 0.7;
+      margin-right: 8px;
+      font-size: 1.2rem;
     }
     .service-detail .intro {
       font-size: 1.1rem;
@@ -248,6 +285,7 @@
     .footer__links { display: flex; gap: 1.5rem; }
     .footer__links a { font-size: 12px; color: var(--text2); transition: color 0.2s; }
     .footer__links a:hover { color: var(--cyan); }
+    .footer__copy { font-size: 11px; color: var(--text2); }
 
     @media (max-width: 900px) {
       .nav { display: none; }
@@ -321,6 +359,110 @@
 
 <script src="config.js"></script>
 <script>
+  // Configuración de Supabase
+  const SUPABASE_URL = "https://fhxcumwhgtfirznnznjx.supabase.co";
+  const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZoeGN1bXdoZ3RmaXJ6bm56bmp4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc5OTYyNzEsImV4cCI6MjA4MzU3MjI3MX0.7z1B099L4yrA9k1JxwvYGCABzqiqYtkUClI3E8wQ2zA";
+  const sb = window.supabase?.createClient(SUPABASE_URL, SUPABASE_KEY);
+  const DEFAULT_WA = "5491164499481";
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str).replace(/[&<>]/g, function(m) {
+      if (m === '&') return '&amp;';
+      if (m === '<') return '&lt;';
+      if (m === '>') return '&gt;';
+      return m;
+    });
+  }
+
+  function formatFeatures(features) {
+    if (!features) return [];
+    if (Array.isArray(features)) return features;
+    return [];
+  }
+
+  async function loadServiceDetail() {
+    const container = document.getElementById('serviceContent');
+    if (!container) return;
+    
+    container.innerHTML = '<div class="skeleton-card" style="height: 400px;"></div>';
+    
+    const urlParams = new URLSearchParams(window.location.search);
+    let slug = urlParams.get('tipo');
+    
+    if (!slug) {
+      container.innerHTML = '<div style="text-align:center; padding:40px;">Servicio no encontrado</div>';
+      return;
+    }
+    
+    try {
+      // Buscar el servicio por slug
+      const { data: service, error: serviceError } = await sb
+        .from('service_types')
+        .select('*')
+        .eq('slug', slug)
+        .eq('active', true)
+        .single();
+      
+      if (serviceError || !service) {
+        container.innerHTML = '<div style="text-align:center; padding:40px;">Servicio no encontrado</div>';
+        return;
+      }
+      
+      // Buscar el precio asociado
+      const { data: price, error: priceError } = await sb
+        .from('service_prices')
+        .select('*')
+        .eq('service_type_id', service.id)
+        .eq('active', true)
+        .single();
+      
+      const hasOffer = price?.offer_price && price?.offer_price !== '';
+      const displayPrice = hasOffer ? price.offer_price : price?.price_from;
+      const originalPrice = hasOffer ? price.price_from : null;
+      const badge = price?.offer_badge || null;
+      const features = formatFeatures(price?.features);
+      
+      // Mensaje para WhatsApp
+      const waMsg = `Hola, quiero consultar por el servicio: ${service.name}`;
+      const waUrl = (msg) => `https://wa.me/${DEFAULT_WA}?text=${encodeURIComponent(msg)}`;
+      
+      // Renderizar
+      container.innerHTML = `
+        <div class="breadcrumb">
+          <a href="index.html">Inicio</a> / <a href="index.html#servicios">Servicios</a> / <span style="color:var(--cyan)">${escapeHtml(service.name)}</span>
+        </div>
+        <h1>${escapeHtml(service.name)}</h1>
+        ${price ? `
+          <div class="service-price-card">
+            <div class="price">
+              ${hasOffer ? `<strike>${escapeHtml(originalPrice)}</strike> → ` : ''}
+              ${escapeHtml(displayPrice)}
+              ${badge ? `<span class="offer-badge">${escapeHtml(badge)}</span>` : ''}
+            </div>
+            <div class="price-note" style="font-size:0.7rem; color:var(--text2); margin-top:8px;">*Precio estimado · Pago único, sin mensualidades</div>
+          </div>
+        ` : ''}
+        <div class="intro">${escapeHtml(service.description || '')}</div>
+        ${features.length > 0 ? `
+          <h2>✨ ¿Qué incluye?</h2>
+          <ul>
+            ${features.map(f => `<li>${escapeHtml(f)}</li>`).join('')}
+          </ul>
+        ` : ''}
+        <div class="action-buttons">
+          <a href="${waUrl(waMsg)}" target="_blank" class="btn btn--wa">Consultar por WhatsApp →</a>
+          <a href="index.html#servicios" class="btn btn-back">← Volver a servicios</a>
+        </div>
+      `;
+      
+    } catch(e) {
+      console.error("Error loading service:", e);
+      container.innerHTML = '<div style="text-align:center; padding:40px;">Error al cargar el servicio</div>';
+    }
+  }
+
+  // ========== TEMA DARK/LIGHT ==========
   const themeToggle = document.getElementById("themeToggle");
   const savedTheme = localStorage.getItem("theme") || "dark";
   document.documentElement.setAttribute("data-theme", savedTheme);
@@ -333,128 +475,8 @@
     themeToggle.textContent = newTheme === "dark" ? "☀️" : "🌙";
   });
 
-  const waNumber = window.CIBORG_CONFIG.WHATSAPP_NUMBER;
-  const waUrl = (msg) => `https://wa.me/${waNumber}?text=${encodeURIComponent(msg)}`;
-
-  const serviciosData = {
-    tienda: {
-      titulo: "Tiendas Online",
-      descripcionLarga: "Desarrollamos ecommerce completos, adaptados a tu negocio. Integramos carrito de compras, pasarelas de pago (Mercado Pago, Stripe), panel de administración de productos, gestión de stock, cupones de descuento y sistema de pedidos automático por WhatsApp.",
-      ideal: "Emprendedores, pymes y marcas que quieran vender sus productos por internet con una plataforma profesional, sin depender de soluciones genéricas.",
-      incluye: [
-        "Catálogo de productos con filtros y búsqueda",
-        "Carrito de compras y checkout optimizado",
-        "Integración con Mercado Pago / Stripe",
-        "Panel de administración desde cualquier dispositivo",
-        "Gestión de stock y cupones de descuento",
-        "Notificaciones de pedidos por WhatsApp y email",
-        "Diseño responsive y SEO básico"
-      ],
-      waMsg: "Hola, quiero consultar por el desarrollo de una Tienda Online profesional."
-    },
-    pedidos: {
-      titulo: "Sistemas de Pedidos",
-      descripcionLarga: "Creamos sistemas de pedidos a medida: configuradores de productos, cálculo automático de costos (envíos, opciones), generación de órdenes y envío directo a WhatsApp. Ideal para restaurantes, rotiserías, comercios con delivery o venta por catálogo.",
-      ideal: "Negocios que reciben pedidos por WhatsApp y desean automatizar el proceso, reduciendo errores y agilizando la atención.",
-      incluye: [
-        "Formulario inteligente de pedido",
-        "Cálculo de totales y costos de envío",
-        "Mensaje predefinido listo para enviar por WhatsApp",
-        "Panel de gestión de pedidos (opcional)",
-        "Historial de órdenes para el cliente",
-        "Diseño mobile first"
-      ],
-      waMsg: "Hola, necesito un Sistema de Pedidos a medida para mi negocio."
-    },
-    admin: {
-      titulo: "Panel Admin",
-      descripcionLarga: "Desarrollamos paneles administrativos completos para que puedas gestionar tu negocio desde cualquier lugar. Control de usuarios, productos, ventas, reportes, y más. Todo desde una interfaz clara, segura y adaptada a tus necesidades.",
-      ideal: "Empresas que requieren un sistema interno para administrar datos, inventario, empleados o clientes sin depender de software de terceros.",
-      incluye: [
-        "Autenticación de usuarios (roles: admin, editor, etc.)",
-        "CRUD completo de las entidades de tu negocio",
-        "Dashboard con métricas y gráficos",
-        "Exportación de datos a Excel/PDF",
-        "Diseño responsive (funciona en móvil)",
-        "Código fuente 100% tuyo"
-      ],
-      waMsg: "Hola, quiero un Panel Admin personalizado para gestionar mi negocio."
-    },
-    landing: {
-      titulo: "Landings de Conversión",
-      descripcionLarga: "Creamos landing pages de alto impacto visual y orientadas a la conversión. Diseñadas para captar leads, vender un producto o servicio específico, o promocionar un evento. Incluyen formularios, integración con WhatsApp, y seguimiento de métricas.",
-      ideal: "Empresas que lanzan campañas publicitarias (Google Ads, Facebook) y necesitan una página que convierta visitas en consultas o ventas.",
-      incluye: [
-        "Diseño persuasivo con jerarquía visual",
-        "Formulario de captación de leads",
-        "Botones de WhatsApp estratégicamente ubicados",
-        "Optimización de carga (Google PageSpeed)",
-        "SEO on-page para la campaña",
-        "Integración con Google Analytics y Facebook Pixel"
-      ],
-      waMsg: "Hola, necesito una Landing Page de alta conversión para mi campaña."
-    },
-    institucional: {
-      titulo: "Webs Institucionales",
-      descripcionLarga: "Desarrollamos sitios web corporativos que reflejan la identidad de tu marca. Con diseño moderno, galerías de trabajos, presentación de servicios, blog, mapa de ubicación y formulario de contacto. Totalmente adaptables a cualquier dispositivo.",
-      ideal: "Empresas, estudios profesionales, clínicas, ONGs que necesitan presencia online profesional y confiable.",
-      incluye: [
-        "Páginas: Inicio, Nosotros, Servicios, Contacto, Blog (opcional)",
-        "Galería de imágenes o proyectos",
-        "Formulario de contacto con validación",
-        "Integración con WhatsApp",
-        "Mapa de ubicación",
-        "SEO básico y estructura amigable"
-      ],
-      waMsg: "Hola, quiero una Web Institucional para mi empresa o emprendimiento."
-    },
-    catalogo: {
-      titulo: "Catálogos Digitales",
-      descripcionLarga: "Transformamos tus productos en un catálogo digital interactivo. Los clientes pueden navegar por categorías, ver detalles, precios y consultar directamente por WhatsApp. Ideal para negocios que no requieren carrito de compras pero sí una vitrina profesional.",
-      ideal: "Mayoristas, distribuidores, marcas que quieran mostrar sus productos sin vender online directamente.",
-      incluye: [
-        "Organización de productos por categorías",
-        "Filtros de búsqueda",
-        "Ficha de producto con descripción, precio e imágenes",
-        "Botón de consulta rápida por WhatsApp",
-        "Panel para actualizar catálogo fácilmente",
-        "Diseño responsive y rápido"
-      ],
-      waMsg: "Hola, necesito un Catálogo Digital para mostrar mis productos."
-    }
-  };
-
-  const urlParams = new URLSearchParams(window.location.search);
-  let tipo = urlParams.get('tipo');
-  if (!tipo || !serviciosData[tipo]) tipo = 'tienda';
-  const data = serviciosData[tipo];
-
-  document.title = `Ciborg 347 — ${data.titulo}`;
-  const metaDesc = document.querySelector('meta[name="description"]');
-  if (metaDesc) metaDesc.setAttribute('content', data.descripcionLarga.slice(0, 150));
-
-  const container = document.getElementById('serviceContent');
-  container.innerHTML = `
-    <div class="breadcrumb">
-      <a href="index.html">Inicio</a> / <a href="index.html#servicios">Servicios</a> / <span style="color:var(--cyan)">${data.titulo}</span>
-    </div>
-    <h1>${data.titulo}</h1>
-    <div class="intro">${data.descripcionLarga}</div>
-    <h2>🎯 ¿Para quién es ideal?</h2>
-    <p>${data.ideal}</p>
-    <h2>✨ ¿Qué incluye?</h2>
-    <ul>
-      ${data.incluye.map(item => `<li>${item}</li>`).join('')}
-    </ul>
-    <div class="action-buttons">
-      <a href="${waUrl(data.waMsg)}" target="_blank" class="btn btn--wa">Consultar por WhatsApp →</a>
-      <a href="index.html#servicios" class="btn btn-back">← Volver a servicios</a>
-    </div>
-  `;
-
+  // ========== WHATSAPP FLOAT ==========
   const waFloat = document.getElementById("waFloat");
-  if (waFloat) waFloat.href = waUrl(data.waMsg);
-
   const footer = document.querySelector("footer");
   function checkWaFloatVisibility() {
     if (!waFloat || !footer) return;
@@ -466,18 +488,23 @@
   window.addEventListener("resize", checkWaFloatVisibility);
   setTimeout(checkWaFloatVisibility, 100);
 
+  // ========== MOBILE MENU ==========
   const burgerBtn = document.getElementById("burgerBtn");
   const mobileMenu = document.getElementById("mobileMenu");
   burgerBtn?.addEventListener("click", () => mobileMenu.classList.toggle("isOpen"));
   document.querySelectorAll(".mobileMenu a").forEach(a => a.addEventListener("click", () => mobileMenu.classList.remove("isOpen")));
 
   const mobileWa = document.getElementById("mobileWhatsAppBtn");
-  if (mobileWa) mobileWa.href = waUrl(data.waMsg);
+  if (mobileWa) mobileWa.href = `https://wa.me/${DEFAULT_WA}?text=Hola, vengo de la web y quiero consultar por un servicio.`;
 
+  // ========== FADE IN ==========
   const observer = new IntersectionObserver(entries => {
     entries.forEach(e => { if(e.isIntersecting) { e.target.classList.add("visible"); observer.unobserve(e.target); } });
   }, { threshold: 0.1 });
   document.querySelectorAll(".fade-in").forEach(el => observer.observe(el));
+
+  // ========== INICIAR ==========
+  loadServiceDetail();
 </script>
 </body>
 </html>
