@@ -27,7 +27,7 @@
   </script>
   
   <style>
-    /* ========== TU CSS ORIGINAL COMPLETO ========== */
+    /* ========== TU CSS ORIGINAL COMPLETO (se mantiene igual) ========== */
     :root {
       --bg: #0a0a0f;
       --bg2: #0f0f1a;
@@ -1214,206 +1214,195 @@
       display: grid !important;
     }
 
-    /* ========== BOTÓN FLOTANTE CON ROBOT ========== */
-    .assistant-float {
+    /* ===== ROBOT FLOTANTE CON ANIMACIÓN DE ENCOGIMIENTO ===== */
+    .robot-help {
       position: fixed;
-      right: 24px;
-      bottom: 120px;
+      right: 20px;
+      bottom: 100px;
       z-index: 999;
-      background: linear-gradient(135deg, #00d4ff, #8b5cf6);
-      border: none;
-      border-radius: 50%;
-      width: 60px;
-      height: 60px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
       cursor: pointer;
-      box-shadow: 0 0 15px rgba(0, 212, 255, 0.6), inset 0 1px 0 rgba(255,255,255,0.3);
       transition: all 0.3s ease;
       opacity: 0;
       visibility: hidden;
-      transform: scale(0.8);
     }
-    .assistant-float.show {
+    .robot-help.show {
       opacity: 1;
       visibility: visible;
-      transform: scale(1);
     }
-    .assistant-float:hover {
-      transform: scale(1.1);
-      box-shadow: 0 0 30px rgba(0, 212, 255, 0.9), inset 0 1px 0 rgba(255,255,255,0.5);
+    .robot-help.hide-robot {
+      opacity: 0;
+      visibility: hidden;
     }
-    .assistant-float.vibrate {
-      animation: vibrate 0.4s ease-in-out 2;
+
+    /* Estado normal (expandido) */
+    .robot-help .robot-img {
+      width: 130px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    @keyframes vibrate {
-      0%, 100% { transform: scale(1); }
-      25% { transform: scale(1.15); }
-      50% { transform: scale(0.95); }
-      75% { transform: scale(1.05); }
+    
+    /* Estado encogido */
+    .robot-help.shrink .robot-img {
+      width: 55px;
     }
-    .assistant-float svg {
-      width: 32px;
-      height: 32px;
-      fill: white;
+    
+    /* Efecto hover - se agranda al pasar el mouse (si está encogido o no) */
+    .robot-help:hover .robot-img {
+      width: 130px !important;
     }
-    .assistant-float::after {
+    
+    /* Aseguramos que la burbuja también se adapte */
+    .robot-help.shrink .robot-bubble {
+      font-size: 0.7rem;
+      padding: 6px 12px;
+      white-space: nowrap;
+    }
+    
+    .robot-help:hover .robot-bubble {
+      font-size: 0.85rem;
+      padding: 10px 18px;
+    }
+
+    @keyframes neonPulseRobot {
+      0% { filter: drop-shadow(0 0 2px var(--cyan)) drop-shadow(0 0 5px var(--cyan)); }
+      50% { filter: drop-shadow(0 0 10px var(--cyan)) drop-shadow(0 0 20px var(--cyan)) drop-shadow(0 0 30px var(--violet)); }
+      100% { filter: drop-shadow(0 0 2px var(--cyan)) drop-shadow(0 0 5px var(--cyan)); }
+    }
+    
+    .robot-help.neon-pulse .robot-img {
+      animation: neonPulseRobot 2s ease-in-out infinite;
+    }
+
+    @keyframes vibrateRobot {
+      0% { transform: translateX(0) rotate(0deg); }
+      25% { transform: translateX(-3px) rotate(-2deg); }
+      75% { transform: translateX(3px) rotate(2deg); }
+      100% { transform: translateX(0) rotate(0deg); }
+    }
+    
+    .robot-help.vibrate {
+      animation: vibrateRobot 0.3s ease-in-out 3;
+    }
+
+    .robot-bubble {
+      position: absolute;
+      bottom: 100%;
+      right: 10px;
+      margin-bottom: 15px;
+      background: white;
+      color: #1a1a2e;
+      padding: 10px 18px;
+      border-radius: 30px;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 600;
+      font-size: 0.85rem;
+      white-space: nowrap;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+      border: 1px solid rgba(0,212,255,0.3);
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+    }
+    .robot-help.bubble-visible .robot-bubble {
+      opacity: 1 !important;
+      visibility: visible !important;
+      background: linear-gradient(135deg, #00d4ff, #8b5cf6);
+      color: white;
+      border: none;
+    }
+    .robot-bubble::after {
       content: '';
       position: absolute;
+      bottom: -8px;
+      right: 20px;
+      width: 0;
+      height: 0;
+      border-left: 8px solid transparent;
+      border-right: 8px solid transparent;
+      border-top: 8px solid white;
+    }
+    .robot-help.bubble-visible .robot-bubble::after {
+      border-top-color: #8b5cf6;
+    }
+
+    @media (max-width: 600px) {
+      .robot-help { bottom: 80px; right: 10px; }
+      .robot-help .robot-img { width: 90px; }
+      .robot-help.shrink .robot-img { width: 50px; }
+      .robot-help:hover .robot-img { width: 90px !important; }
+      .robot-bubble { padding: 5px 10px; font-size: 0.65rem; right: 5px; white-space: nowrap; }
+    }
+
+    /* ===== MODAL PARA ASISTENTE ===== */
+    .asistente-modal {
+      position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      border-radius: 50%;
-      background: radial-gradient(circle at 30% 25%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 60%);
-      pointer-events: none;
-    }
-    .assistant-modal {
-      position: fixed;
-      bottom: 100px;
-      right: 24px;
-      width: 380px;
-      max-width: calc(100vw - 48px);
-      background: var(--bg2);
-      border: 1px solid var(--border);
-      border-radius: 24px;
-      z-index: 1000;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+      background: rgba(0, 0, 0, 0.92);
+      backdrop-filter: blur(12px);
+      z-index: 10000;
       display: none;
-      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .asistente-modal.open {
+      display: flex;
+      opacity: 1;
+    }
+    .asistente-modal-contenido {
+      background: #0a0a0f;
+      width: 90%;
+      max-width: 500px;
+      height: 85%;
+      max-height: 650px;
+      border-radius: 20px;
       overflow: hidden;
-      backdrop-filter: blur(20px);
-      animation: slideUp 0.3s ease;
-    }
-    .assistant-modal.open {
       display: flex;
+      flex-direction: column;
+      border: 1px solid rgba(0, 212, 255, 0.2);
+      animation: modalEntrada 0.3s ease;
     }
-    @keyframes slideUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
+    @keyframes modalEntrada {
+      from { opacity: 0; transform: scale(0.95) translateY(20px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
     }
-    .assistant-header {
-      padding: 16px;
-      background: linear-gradient(135deg, rgba(0,212,255,0.2), rgba(139,92,246,0.2));
-      border-bottom: 1px solid var(--border);
+    .asistente-modal-header {
+      background: #0a0a0f;
+      padding: 12px 16px;
       display: flex;
-      align-items: center;
-      gap: 12px;
-      justify-content: space-between;
+      justify-content: flex-end;
+      border-bottom: 1px solid rgba(0, 212, 255, 0.2);
+      flex-shrink: 0;
     }
-    .assistant-header-left {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .assistant-logo {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      object-fit: cover;
-    }
-    .assistant-header h3 {
-      font-family: 'Syne', sans-serif;
-      font-size: 0.95rem;
-      margin: 0;
-      color: var(--cyan);
-    }
-    .assistant-header p {
-      font-size: 0.65rem;
-      margin: 0;
-      color: var(--text2);
-    }
-    .assistant-close {
+    .asistente-modal-cerrar {
       background: none;
       border: none;
       font-size: 1.5rem;
       cursor: pointer;
-      color: var(--text2);
-    }
-    .assistant-body {
-      padding: 20px;
-      min-height: 300px;
-      max-height: 480px;
-      overflow-y: auto;
-    }
-    .assistant-question {
-      font-size: 1rem;
-      font-weight: 600;
-      margin-bottom: 16px;
-      color: var(--cyan);
-      animation: fadeIn 0.3s ease;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateX(-10px); }
-      to { opacity: 1; transform: translateX(0); }
-    }
-    .assistant-options {
+      color: #9ca3ff;
+      transition: all 0.2s ease;
+      width: 30px;
+      height: 30px;
       display: flex;
-      flex-direction: column;
-      gap: 10px;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
     }
-    .assistant-option {
-      background: var(--bg3);
-      border: 1px solid var(--border);
-      border-radius: 50px;
-      padding: 12px 16px;
-      cursor: pointer;
-      transition: all 0.2s;
-      font-size: 0.9rem;
+    .asistente-modal-cerrar:hover {
+      color: #00d4ff;
+      background: rgba(0, 212, 255, 0.1);
     }
-    .assistant-option:hover {
-      border-color: var(--cyan);
-      transform: translateX(4px);
-      background: rgba(0,212,255,0.1);
-    }
-    .assistant-input {
+    .asistente-modal-iframe {
       width: 100%;
-      padding: 12px 16px;
-      border-radius: 50px;
-      background: var(--bg3);
-      border: 1px solid var(--border);
-      color: var(--text);
-      font-size: 0.9rem;
-    }
-    .assistant-next-btn {
-      margin-top: 16px;
-      background: var(--grad);
+      height: 100%;
       border: none;
-      border-radius: 50px;
-      padding: 12px;
-      color: white;
-      font-weight: 600;
-      cursor: pointer;
-      text-align: center;
-      display: block;
-      text-decoration: none;
-    }
-    .assistant-loading {
-      text-align: center;
-      padding: 20px;
-      color: var(--cyan);
-    }
-    .assistant-progress {
-      margin-top: 16px;
-      text-align: center;
-      font-size: 0.7rem;
-      color: var(--text2);
-    }
-    .assistant-answer-preview {
-      margin-top: 16px;
-      padding: 12px;
-      background: rgba(0,212,255,0.1);
-      border-radius: 12px;
-      font-size: 0.75rem;
-      color: var(--text2);
-      max-height: 150px;
-      overflow-y: auto;
+      background: #0a0a0f;
     }
     @media (max-width: 600px) {
-      .assistant-float { bottom: 100px; right: 16px; width: 50px; height: 50px; }
-      .assistant-float svg { width: 26px; height: 26px; }
-      .assistant-modal { bottom: 160px; right: 16px; left: 16px; width: auto; max-width: none; }
+      .asistente-modal-contenido { width: 95%; height: 90%; }
     }
   </style>
 </head>
@@ -1450,29 +1439,21 @@
   <a href="#" class="btn btn--wa" id="mobileWhatsAppBtn">WhatsApp</a>
 </nav>
 
-<!-- BOTÓN FLOTANTE -->
-<button class="assistant-float" id="assistantFloatBtn">
-  <svg viewBox="0 0 24 24" width="32" height="32" fill="white">
-    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 6c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"/>
-    <circle cx="8.5" cy="11.5" r="1.5"/>
-    <circle cx="15.5" cy="11.5" r="1.5"/>
-  </svg>
-</button>
-
-<!-- MODAL DEL ASISTENTE -->
-<div class="assistant-modal" id="assistantModal">
-  <div class="assistant-header">
-    <div class="assistant-header-left">
-      <img class="assistant-logo" src="https://fhxcumwhgtfirznnznjx.supabase.co/storage/v1/object/public/Imagenes/fETkPEv.md.png" alt="Logo Ciborg" />
-      <div>
-        <h3>🤖 Asesor Virtual Ciborg 347</h3>
-        <p>Te ayudo a encontrar lo que necesitas</p>
-      </div>
-    </div>
-    <button class="assistant-close" id="assistantCloseBtn">×</button>
+<!-- ===== ROBOT FLOTANTE ===== -->
+<div class="robot-help" id="robotHelpBtn">
+  <div class="robot-container">
+    <div class="robot-bubble" id="robotBubble">🤖 Hola, ¿necesitas ayuda?</div>
+    <img class="robot-img" id="robotImg" src="https://fhxcumwhgtfirznnznjx.supabase.co/storage/v1/object/public/Imagenes/8f4b1793-1886-4dee-9445-b9570c2047ea.png" alt="Asistente">
   </div>
-  <div class="assistant-body" id="assistantBody">
-    <div class="assistant-loading">Cargando asistente...</div>
+</div>
+
+<!-- ===== MODAL PARA ASISTENTE.HTML ===== -->
+<div class="asistente-modal" id="asistenteModal">
+  <div class="asistente-modal-contenido">
+    <div class="asistente-modal-header">
+      <button class="asistente-modal-cerrar" id="cerrarAsistenteModalBtn">&times;</button>
+    </div>
+    <iframe class="asistente-modal-iframe" id="asistenteIframe" src="asistente.html"></iframe>
   </div>
 </div>
 
@@ -1687,27 +1668,7 @@
   </div>
 </section>
 
-<!-- ========== 9. HABLEMOS DE TU PROYECTO (CTA FUERTE) ========== -->
-<section class="section" id="contacto">
-  <div class="wrap">
-    <div class="section__head center fade-in-left">
-      <span class="section__label">Contacto</span>
-      <h2>Hablemos de <em>tu proyecto</em></h2>
-      <p>Recibí asesoramiento personalizado sin compromiso</p>
-    </div>
-    <div class="contact-form-section fade-in-right">
-      <form class="contact-form" id="contactFormWhatsapp">
-        <input type="text" id="waNombre" placeholder="Tu nombre *" required>
-        <input type="email" id="waEmail" placeholder="Tu email *" required>
-        <input type="tel" id="waTelefono" placeholder="Tu WhatsApp (opcional)">
-        <textarea id="waMensaje" rows="3" placeholder="Contame sobre tu proyecto..." required></textarea>
-        <button type="submit" class="btn btn--primary">Enviar mensaje →</button>
-      </form>
-    </div>
-  </div>
-</section>
-
-<!-- ========== 10. DEJANOS TU OPINIÓN ========== -->
+<!-- ========== 9. DEJANOS TU OPINIÓN ========== -->
 <section class="section section--alt" id="opinion">
   <div class="wrap">
     <div class="section__head center fade-in-up">
@@ -1738,7 +1699,7 @@
   </div>
 </section>
 
-<!-- ========== 11. FOOTER ========== -->
+<!-- ========== 10. FOOTER ========== -->
 <footer>
   <div class="wrap">
     <div class="footer__inner">
@@ -1780,7 +1741,7 @@
 
 <script src="config.js"></script>
 <script>
-// Configuración
+// ========== CONFIGURACIÓN ==========
 const SUPABASE_URL = "https://fhxcumwhgtfirznnznjx.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZoeGN1bXdoZ3RmaXJ6bm56bmp4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc5OTYyNzEsImV4cCI6MjA4MzU3MjI3MX0.7z1B099L4yrA9k1JxwvYGCABzqiqYtkUClI3E8wQ2zA";
 const DEFAULT_WA = "5491164499481";
@@ -1862,160 +1823,6 @@ async function loadSuccessStories() {
   } catch(e) { console.error("Error loading stories:", e); }
 }
 
-// ========== ASISTENTE DIGITAL ==========
-let assistantQuestions = [];
-let currentQuestionIndex = 0;
-let userAnswers = [];
-let sessionId = null;
-
-async function loadAssistantQuestions() {
-  const body = document.getElementById('assistantBody');
-  if (!body) return;
-  try {
-    const { data, error } = await sb
-      .from('assistant_questions')
-      .select('*')
-      .eq('active', true)
-      .order('order_index', { ascending: true });
-    
-    if (error) throw error;
-    assistantQuestions = data || [];
-    
-    if (assistantQuestions.length === 0) {
-      body.innerHTML = '<div class="assistant-loading">⚠️ No hay preguntas configuradas. Contacta al administrador.</div>';
-    } else {
-      startAssistant();
-    }
-  } catch (err) {
-    console.error("Error loading assistant questions:", err);
-    body.innerHTML = '<div class="assistant-loading">❌ Error al cargar el asistente</div>';
-  }
-}
-
-function startAssistant() {
-  currentQuestionIndex = 0;
-  userAnswers = [];
-  sessionId = crypto.randomUUID ? crypto.randomUUID() : Date.now().toString();
-  showQuestion();
-}
-
-function showQuestion() {
-  if (currentQuestionIndex >= assistantQuestions.length) {
-    finishAssistant();
-    return;
-  }
-  
-  const question = assistantQuestions[currentQuestionIndex];
-  const body = document.getElementById('assistantBody');
-  
-  let answersPreviewHtml = '';
-  if (userAnswers.length > 0) {
-    answersPreviewHtml = `<div class="assistant-answer-preview"><strong>📋 Tus respuestas:</strong><br/>${userAnswers.map((ans, idx) => `${idx + 1}. ${ans.question.substring(0, 35)}... → ${ans.answer}`).join('<br/>')}</div>`;
-  }
-  
-  let html = `<div class="assistant-question">${escapeHtml(question.question)}</div>`;
-  
-  if (question.question_type === 'options' && question.options) {
-    let options = [];
-    try { options = JSON.parse(question.options); } catch(e) { options = []; }
-    html += `<div class="assistant-options">`;
-    options.forEach(opt => {
-      html += `<div class="assistant-option" data-value="${escapeHtml(opt)}">${opt}</div>`;
-    });
-    html += `</div>`;
-  } else {
-    html += `<input type="text" class="assistant-input" id="assistantTextInput" placeholder="${escapeHtml(question.placeholder || 'Escribe tu respuesta...')}" />`;
-    html += `<button class="assistant-next-btn" id="assistantNextBtn">Continuar →</button>`;
-  }
-  
-  html += `<div class="assistant-progress">Pregunta ${currentQuestionIndex + 1} de ${assistantQuestions.length}</div>`;
-  html += answersPreviewHtml;
-  
-  body.innerHTML = html;
-  
-  if (question.question_type === 'options') {
-    document.querySelectorAll('.assistant-option').forEach(opt => {
-      opt.addEventListener('click', () => {
-        const answer = opt.getAttribute('data-value');
-        userAnswers.push({ question: question.question, answer: answer });
-        saveAnswer(question.id, answer);
-        currentQuestionIndex++;
-        showQuestion();
-      });
-    });
-  } else {
-    const nextBtn = document.getElementById('assistantNextBtn');
-    const input = document.getElementById('assistantTextInput');
-    if (nextBtn) {
-      nextBtn.addEventListener('click', () => {
-        const answer = input.value.trim();
-        if (!answer && question.required) {
-          input.style.borderColor = '#ef4444';
-          return;
-        }
-        userAnswers.push({ question: question.question, answer: answer || '(No especificado)' });
-        saveAnswer(question.id, answer || '(No especificado)');
-        currentQuestionIndex++;
-        showQuestion();
-      });
-    }
-    if (input) {
-      input.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') nextBtn.click();
-      });
-    }
-  }
-}
-
-async function saveAnswer(questionId, answer) {
-  if (!sb) return;
-  try {
-    await sb.from('assistant_responses').insert([{
-      question_id: questionId,
-      session_id: sessionId,
-      answer: answer,
-      ip_address: null
-    }]);
-  } catch (err) { console.error("Error saving answer:", err); }
-}
-
-function finishAssistant() {
-  const body = document.getElementById('assistantBody');
-  
-  let mensaje = "Hola CIBORG 347! 👋\n\n*Completé el asistente virtual y esto es lo que necesito:*\n\n";
-  userAnswers.forEach((item, idx) => {
-    mensaje += `${idx + 1}. *${item.question}*\n   ➜ ${item.answer}\n\n`;
-  });
-  mensaje += "¿Podemos coordinar una consulta para avanzar con mi proyecto?";
-  
-  const waUrlFinal = `https://wa.me/${DEFAULT_WA}?text=${encodeURIComponent(mensaje)}`;
-  
-  let respuestasHtml = '<div class="assistant-answer-preview" style="margin-bottom:16px;"><strong>✅ Tus respuestas:</strong><br/>';
-  userAnswers.forEach((ans, idx) => {
-    respuestasHtml += `${idx + 1}. ${ans.question.substring(0, 40)}... → ${ans.answer}<br/>`;
-  });
-  respuestasHtml += '</div>';
-  
-  body.innerHTML = `
-    <div class="assistant-question" style="text-align:center;">✅ ¡Gracias por tu tiempo!</div>
-    ${respuestasHtml}
-    <div style="text-align:center; margin: 16px 0; color: var(--text2);">
-      He registrado tus respuestas. Ahora podés conversar conmigo directamente por WhatsApp.
-    </div>
-    <a href="${waUrlFinal}" target="_blank" class="assistant-next-btn" style="display:block; text-align:center; text-decoration:none;">
-      💬 Continuar por WhatsApp
-    </a>
-    <button id="restartAssistantBtn" class="assistant-next-btn" style="margin-top: 12px; background: transparent; border: 1px solid var(--cyan);">
-      🔄 Comenzar de nuevo
-    </button>
-  `;
-  
-  const restartBtn = document.getElementById('restartAssistantBtn');
-  if (restartBtn) {
-    restartBtn.addEventListener('click', () => { startAssistant(); });
-  }
-}
-
 function escapeHtml(str) {
   if (!str) return '';
   return String(str).replace(/[&<>]/g, function(m) {
@@ -2026,83 +1833,255 @@ function escapeHtml(str) {
   });
 }
 
-// ========== BOTÓN FLOTANTE ==========
-const assistantFloatBtn = document.getElementById("assistantFloatBtn");
-let hasShown = false;
-let periodicVibrationInterval = null;
-let footerObserver = null;
+// ===== ROBOT FLOTANTE CON ENCOGIMIENTO Y MODAL =====
+const robotBtn = document.getElementById('robotHelpBtn');
+const robotImg = document.getElementById('robotImg');
+const robotBubble = document.getElementById('robotBubble');
+const asistenteModal = document.getElementById('asistenteModal');
+const cerrarModalBtn = document.getElementById('cerrarAsistenteModalBtn');
 
-function setupFooterObserver() {
+// URLs de las imágenes
+const IMG1 = "https://fhxcumwhgtfirznnznjx.supabase.co/storage/v1/object/public/Imagenes/8f4b1793-1886-4dee-9445-b9570c2047ea.png";
+const IMG2 = "https://fhxcumwhgtfirznnznjx.supabase.co/storage/v1/object/public/Imagenes/a586d88b-93c0-4fac-b28d-4f5758af46f0.png";
+const IMG3 = "https://fhxcumwhgtfirznnznjx.supabase.co/storage/v1/object/public/Imagenes/ciborg%20sentado%20.png";
+
+let sequenceTimeout = null;
+let vibrationInterval = null;
+let isInSequence = false;
+let currentStep = 1;
+let isRobotHiddenByFooter = false;
+let shrinkTimeout = null;
+let bubbleTimeout = null;
+
+// Función para ocultar la burbuja
+function hideBubble() {
+  robotBtn.classList.remove('bubble-visible');
+  if (bubbleTimeout) clearTimeout(bubbleTimeout);
+  bubbleTimeout = null;
+}
+
+// Función para mostrar la burbuja temporalmente (solo durante vibración)
+function showTemporaryBubble() {
+  robotBtn.classList.add('bubble-visible');
+  if (bubbleTimeout) clearTimeout(bubbleTimeout);
+  bubbleTimeout = setTimeout(() => {
+    hideBubble();
+  }, 2000); // La burbuja se muestra por 2 segundos
+}
+
+// Función para encoger el robot
+function shrinkRobot() {
+  if (robotBtn && !robotBtn.classList.contains('shrink')) {
+    robotBtn.classList.add('shrink');
+  }
+}
+
+// Función que ejecuta la secuencia (paso 1 → paso 2 → paso 3)
+function startSequence() {
+  if (sequenceTimeout) clearTimeout(sequenceTimeout);
+  if (vibrationInterval) clearInterval(vibrationInterval);
+  if (shrinkTimeout) clearTimeout(shrinkTimeout);
+  
+  // Aseguramos que no esté encogido durante la secuencia
+  robotBtn.classList.remove('shrink');
+  
+  isInSequence = true;
+  currentStep = 1;
+  
+  robotImg.src = IMG1;
+  robotBubble.textContent = "🤖 Hola, ¿necesitas ayuda?";
+  robotBtn.classList.add('bubble-visible');
+  robotBtn.classList.add('neon-pulse');
+  
+  sequenceTimeout = setTimeout(() => {
+    if (!isInSequence) return;
+    
+    robotImg.src = IMG2;
+    robotBubble.textContent = "💙 Cualquier duda o consulta, aquí estaré";
+    
+    sequenceTimeout = setTimeout(() => {
+      if (!isInSequence) return;
+      
+      robotImg.src = IMG3;
+      // NO mostramos la burbuja automáticamente aquí - solo aparece cuando vibra
+      robotBubble.textContent = "🤖 ¿Ayuda?";
+      isInSequence = false;
+      currentStep = 3;
+      sequenceTimeout = null;
+      
+      // Programar el encogimiento después de 5 segundos
+      shrinkTimeout = setTimeout(() => {
+        shrinkRobot();
+      }, 5000);
+      
+      // Iniciar vibración cada 20 segundos cuando está en IMG3
+      vibrationInterval = setInterval(() => {
+        if (currentStep === 3 && robotBtn.classList.contains('show') && !isRobotHiddenByFooter) {
+          robotBtn.classList.add('vibrate');
+          // Mostrar burbuja solo cuando vibra
+          showTemporaryBubble();
+          setTimeout(() => {
+            robotBtn.classList.remove('vibrate');
+          }, 300);
+        }
+      }, 20000);
+      
+    }, 7000);
+  }, 6000);
+}
+
+// Reiniciar secuencia desde paso 1
+function resetSequence() {
+  if (sequenceTimeout) {
+    clearTimeout(sequenceTimeout);
+    sequenceTimeout = null;
+  }
+  if (vibrationInterval) {
+    clearInterval(vibrationInterval);
+    vibrationInterval = null;
+  }
+  if (shrinkTimeout) {
+    clearTimeout(shrinkTimeout);
+    shrinkTimeout = null;
+  }
+  startSequence();
+}
+
+// Mostrar/ocultar robot según scroll
+function setupRobotScroll() {
+  const faqSection = document.getElementById('faq');
   const footer = document.querySelector('footer');
-  if (!footer) return;
-  footerObserver = new IntersectionObserver((entries) => {
+  if (!faqSection || !footer) return;
+  
+  // Observer para mostrar robot cuando llega a FAQ
+  const faqObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting && !isRobotHiddenByFooter) {
+        robotBtn.classList.add('show');
+        // Si no está en paso 3 y no está en medio de secuencia, iniciar
+        if (currentStep !== 3 && !isInSequence) {
+          startSequence();
+        } else if (currentStep === 3 && !isInSequence) {
+          // Asegurar que se vea la imagen 3 con su texto y neón
+          robotImg.src = IMG3;
+          // NO mostramos burbuja automáticamente
+          robotBtn.classList.add('neon-pulse');
+          // Programar encogimiento si no está ya encogido
+          if (!robotBtn.classList.contains('shrink') && !shrinkTimeout) {
+            shrinkTimeout = setTimeout(() => {
+              shrinkRobot();
+            }, 5000);
+          }
+          // Reiniciar vibración si estaba detenida
+          if (!vibrationInterval) {
+            vibrationInterval = setInterval(() => {
+              if (currentStep === 3 && robotBtn.classList.contains('show') && !isRobotHiddenByFooter) {
+                robotBtn.classList.add('vibrate');
+                showTemporaryBubble();
+                setTimeout(() => {
+                  robotBtn.classList.remove('vibrate');
+                }, 300);
+              }
+            }, 20000);
+          }
+        }
+      }
+    });
+  }, { threshold: 0.3 });
+  
+  faqObserver.observe(faqSection);
+  
+  // Observer para ocultar/mostrar robot con el footer
+  const footerObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
-        if (assistantFloatBtn && assistantFloatBtn.classList.contains('show')) {
-          assistantFloatBtn.classList.remove('show');
-        }
+        // Footer visible → ocultar robot
+        robotBtn.classList.remove('show');
+        robotBtn.classList.add('hide-robot');
+        isRobotHiddenByFooter = true;
       } else {
-        if (hasShown && assistantFloatBtn && !assistantFloatBtn.classList.contains('show')) {
-          assistantFloatBtn.classList.add('show');
+        // Footer no visible → mostrar robot si corresponde
+        robotBtn.classList.remove('hide-robot');
+        isRobotHiddenByFooter = false;
+        // Verificar si FAQ sigue siendo visible
+        const faqRect = faqSection.getBoundingClientRect();
+        if (faqRect.top < window.innerHeight && faqRect.bottom > 0) {
+          robotBtn.classList.add('show');
         }
       }
     });
   }, { threshold: 0.1 });
+  
   footerObserver.observe(footer);
 }
 
-function startPeriodicVibration() {
-  if (periodicVibrationInterval) clearInterval(periodicVibrationInterval);
-  periodicVibrationInterval = setInterval(() => {
-    if (assistantFloatBtn && assistantFloatBtn.classList.contains('show') && !assistantFloatBtn.disabled) {
-      assistantFloatBtn.classList.add('vibrate');
-      setTimeout(() => {
-        if (assistantFloatBtn) assistantFloatBtn.classList.remove('vibrate');
-      }, 400);
+// Abrir modal del asistente
+function openAsistenteModal() {
+  asistenteModal.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+// Cerrar modal
+function closeAsistenteModal() {
+  asistenteModal.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// Al hacer clic en el robot - Abrir el asistente modal
+if (robotBtn) {
+  robotBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    
+    // Expandir momentáneamente para mejor UX
+    robotBtn.classList.remove('shrink');
+    
+    // Si está en paso 3 (imagen sentado.png), reiniciar secuencia
+    if (currentStep === 3 && robotImg.src.includes('sentado')) {
+      resetSequence();
     }
-  }, 10000);
-}
-
-function stopPeriodicVibration() {
-  if (periodicVibrationInterval) {
-    clearInterval(periodicVibrationInterval);
-    periodicVibrationInterval = null;
-  }
-}
-
-function checkScrollForAssistant() {
-  if (!assistantFloatBtn) return;
-  const scrollTop = window.scrollY;
-  const windowHeight = window.innerHeight;
-  const documentHeight = document.documentElement.scrollHeight;
-  const scrollPercent = (scrollTop + windowHeight) / documentHeight;
-  
-  if (scrollPercent > 0.3 && !hasShown) {
-    assistantFloatBtn.classList.add('show');
-    hasShown = true;
-    startPeriodicVibration();
-    assistantFloatBtn.classList.add('vibrate');
+    
+    // Abrir el modal con asistente.html
+    openAsistenteModal();
+    
+    // Volver a encoger después de 3 segundos si no hay hover
     setTimeout(() => {
-      if (assistantFloatBtn) assistantFloatBtn.classList.remove('vibrate');
-    }, 800);
-  }
-}
-
-function onUserInteraction() {
-  if (hasShown) {
-    stopPeriodicVibration();
-    if (assistantFloatBtn && assistantFloatBtn.classList.contains('show')) {
-      assistantFloatBtn.classList.remove('vibrate');
+      if (robotBtn && !robotBtn.matches(':hover')) {
+        shrinkRobot();
+      }
+    }, 3000);
+  });
+  
+  // Si el mouse sale, volver a encoger (si está en paso 3 y no está en hover)
+  robotBtn.addEventListener('mouseleave', () => {
+    if (currentStep === 3 && !isInSequence) {
+      shrinkRobot();
     }
-  }
+  });
 }
 
-window.addEventListener('scroll', checkScrollForAssistant);
-window.addEventListener('mousemove', onUserInteraction);
-window.addEventListener('click', onUserInteraction);
-window.addEventListener('keydown', onUserInteraction);
-setTimeout(checkScrollForAssistant, 500);
-setupFooterObserver();
+// Cerrar modal con botón
+if (cerrarModalBtn) {
+  cerrarModalBtn.addEventListener('click', closeAsistenteModal);
+}
+
+// Cerrar modal al hacer clic fuera del contenido
+asistenteModal?.addEventListener('click', (e) => {
+  if (e.target === asistenteModal) {
+    closeAsistenteModal();
+  }
+});
+
+// Cerrar modal con tecla ESC
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && asistenteModal?.classList.contains('open')) {
+    closeAsistenteModal();
+  }
+});
+
+// Inicializar
+setupRobotScroll();
+
+// ========== FIN ROBOT ==========
 
 // ========== CARRUSEL DE BANNERS ==========
 let banners = [];
@@ -2166,19 +2145,7 @@ function startBannerRotation() {
 
 function stopBannerRotation() { if (bannerInterval) clearInterval(bannerInterval); }
 
-// Formulario WhatsApp
-document.getElementById('contactFormWhatsapp')?.addEventListener('submit', function(e) {
-  e.preventDefault();
-  const nombre = document.getElementById('waNombre').value;
-  const email = document.getElementById('waEmail').value;
-  const telefono = document.getElementById('waTelefono').value;
-  const mensaje = document.getElementById('waMensaje').value;
-  const texto = `Hola CIBORG 347! 👋\n\n*Nombre:* ${nombre}\n*Email:* ${email}\n*WhatsApp:* ${telefono || "No especificado"}\n\n*Consulta:*\n${mensaje}`;
-  window.open(`https://wa.me/${DEFAULT_WA}?text=${encodeURIComponent(texto)}`, '_blank');
-  this.reset();
-});
-
-// Variables globales
+// ========== VARIABLES GLOBALES ==========
 let projectsData = [];
 let allCategories = [];
 let activeFilter = "all";
@@ -2477,27 +2444,6 @@ document.getElementById("reviewForm")?.addEventListener("submit", submitReview);
 document.getElementById("burgerBtn")?.addEventListener("click", () => document.getElementById("mobileMenu")?.classList.toggle("isOpen"));
 document.querySelectorAll(".mobileMenu a").forEach(a => a.addEventListener("click", () => document.getElementById("mobileMenu")?.classList.remove("isOpen")));
 setWaLinks();
-
-// Eventos del asistente
-const assistantModal = document.getElementById("assistantModal");
-const assistantCloseBtn = document.getElementById("assistantCloseBtn");
-if (assistantFloatBtn) {
-  assistantFloatBtn.addEventListener("click", () => {
-    assistantModal.classList.toggle("open");
-    if (assistantModal.classList.contains("open")) { loadAssistantQuestions(); }
-    onUserInteraction();
-  });
-}
-if (assistantCloseBtn) {
-  assistantCloseBtn.addEventListener("click", () => { assistantModal.classList.remove("open"); });
-}
-window.addEventListener("click", (e) => {
-  if (assistantModal && assistantModal.classList.contains("open")) {
-    if (!assistantModal.contains(e.target) && !assistantFloatBtn.contains(e.target)) {
-      assistantModal.classList.remove("open");
-    }
-  }
-});
 
 const heroObserver = new IntersectionObserver((entries) => { entries.forEach(e => { if (e.isIntersecting && !countersStarted && projectsData.length > 0) { countersStarted = true; animateCounter(document.getElementById("statProjects"), projectsData.length, '+'); animateCounter(document.getElementById("statHours"), 24, 'hs'); animateCounter(document.getElementById("statCode"), 100, '%'); } }); }, { threshold: 0.3 });
 if (document.querySelector(".hero")) heroObserver.observe(document.querySelector(".hero"));
