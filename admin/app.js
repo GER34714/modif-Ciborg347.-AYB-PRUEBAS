@@ -3,7 +3,6 @@ if (window.CIBORG_CONFIG && window.supabase) {
   const SUPABASE_URL = window.CIBORG_CONFIG.SUPABASE_URL;
   const SUPABASE_KEY = window.CIBORG_CONFIG.SUPABASE_KEY;
   
-  // Reemplazar el supabase existente por uno con auth
   window.supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
     auth: {
       persistSession: true,
@@ -14,6 +13,7 @@ if (window.CIBORG_CONFIG && window.supabase) {
   
   console.log("✅ Supabase reinicializado con autenticacion");
 }
+
 /* =========================
    STATE
 ========================= */
@@ -53,34 +53,31 @@ let lastPendingCount = 0;
 let plansData = [];
 let editingPlanId = null;
 
-// ========== NUEVAS VARIABLES PARA MARCAS ==========
+// Variables para marcas
 let brandsData = [];
 let editingBrandId = null;
 let brandsPaginator = null;
 
-// ========== NUEVAS VARIABLES PARA ASISTENTE ==========
+// Variables para asistente
 let assistantQuestionsData = [];
 let editingAssistantQuestionId = null;
 let assistantQuestionsPaginator = null;
 let assistantResponsesData = [];
 let assistantResponsesPaginator = null;
 
-// ========== NUEVAS VARIABLES PARA CASOS DE ÉXITO ==========
+// Variables para casos de éxito
 let successStoriesData = [];
 let editingSuccessStoryId = null;
 let successStoriesPaginator = null;
 
-// Elementos DOM (declarados ANTES de usarlos)
+// Elementos DOM
 const navBtns = document.querySelectorAll(".navBtn");
 const viewPanels = document.querySelectorAll(".viewPanel");
 
-// ============================================
-// ELEMENTOS DOM QUE FALTABAN (PARA EVITAR ERRORES)
-// ============================================
+// Elementos varios
 const backgroundImageUrlInput = document.getElementById("backgroundImageUrlInput") || { value: "", checked: false, style: {} };
 const userEmail = document.getElementById("userEmail") || { textContent: "" };
 
-// Elementos del formulario de settings
 const siteTitleInput = document.getElementById("siteTitleInput") || { value: "" };
 const siteTaglineInput = document.getElementById("siteTaglineInput") || { value: "" };
 const heroBadgeInput = document.getElementById("heroBadgeInput") || { value: "" };
@@ -103,7 +100,6 @@ const tiktokUrlInput = document.getElementById("tiktokUrlInput") || { value: "" 
 const useHeroVideoInput = document.getElementById("useHeroVideoInput") || { checked: false };
 const useBackgroundImageInput = document.getElementById("useBackgroundImageInput") || { checked: false };
 
-// Elementos de autenticación
 const authBox = document.getElementById("authBox");
 const adminBox = document.getElementById("adminBox");
 const loginBtn = document.getElementById("loginBtn");
@@ -113,7 +109,6 @@ const passInput = document.getElementById("passInput");
 const safeModeBtn = document.getElementById("safeModeBtn");
 const fastModeBtn = document.getElementById("fastModeBtn");
 
-// Elementos de proyectos
 const projectsList = document.getElementById("projectsList");
 const projectsMsg = document.getElementById("projectsMsg");
 const projectSearchInput = document.getElementById("projectSearchInput");
@@ -128,7 +123,6 @@ const projectsNewBtn = document.getElementById("projectsNewBtn");
 const quickNewProjectBtn = document.getElementById("quickNewProjectBtn");
 const dashboardNewBtn = document.getElementById("dashboardNewBtn");
 
-// Elementos de formulario de proyectos
 const projectFormTitle = document.getElementById("projectFormTitle");
 const projectSaveBtn = document.getElementById("projectSaveBtn");
 const projectDeleteBtn = document.getElementById("projectDeleteBtn");
@@ -158,7 +152,6 @@ const projectAdvancedBox = document.getElementById("projectAdvancedBox");
 const projectAdvancedToggleBtn = document.getElementById("projectAdvancedToggleBtn");
 const projectFormMsg = document.getElementById("projectFormMsg");
 
-// Elementos de categorías
 const categoriesList = document.getElementById("categoriesList");
 const categoriesMsg = document.getElementById("categoriesMsg");
 const categoriesRefreshBtn = document.getElementById("categoriesRefreshBtn");
@@ -169,7 +162,6 @@ const categoryActiveInput = document.getElementById("categoryActiveInput");
 const categorySaveBtn = document.getElementById("categorySaveBtn");
 const categoryResetBtn = document.getElementById("categoryResetBtn");
 
-// Elementos de FAQs
 const faqsList = document.getElementById("faqsList");
 const faqsMsg = document.getElementById("faqsMsg");
 const faqsRefreshBtn = document.getElementById("faqsRefreshBtn");
@@ -180,7 +172,6 @@ const faqActiveInput = document.getElementById("faqActiveInput");
 const faqSaveBtn = document.getElementById("faqSaveBtn");
 const faqResetBtn = document.getElementById("faqResetBtn");
 
-// Elementos de contenido global
 const siteContentSelect = document.getElementById("siteContentSelect");
 const siteContentRefreshBtn = document.getElementById("siteContentRefreshBtn");
 const siteContentTitleInput = document.getElementById("siteContentTitleInput");
@@ -194,12 +185,10 @@ const siteContentActiveInput = document.getElementById("siteContentActiveInput")
 const siteContentSaveBtn = document.getElementById("siteContentSaveBtn");
 const siteContentMsg = document.getElementById("siteContentMsg");
 
-// Elementos de settings
 const siteSettingsRefreshBtn = document.getElementById("siteSettingsRefreshBtn");
 const siteSettingsSaveBtn = document.getElementById("siteSettingsSaveBtn");
 const siteSettingsMsg = document.getElementById("siteSettingsMsg");
 
-// Elementos de estadísticas
 const statProjects = document.getElementById("statProjects");
 const statActive = document.getElementById("statActive");
 const statHighlight = document.getElementById("statHighlight");
@@ -207,15 +196,10 @@ const statHome = document.getElementById("statHome");
 const statPortfolio = document.getElementById("statPortfolio");
 const statCategories = document.getElementById("statCategories");
 
-// Elementos de dashboard
 const dashboardRecentList = document.getElementById("dashboardRecentList");
-
-// Elementos de historial
 const projectHistoryList = document.getElementById("projectHistoryList");
 const settingsHistoryList = document.getElementById("settingsHistoryList");
 const historyRefreshBtn = document.getElementById("historyRefreshBtn");
-
-// Elementos de reseñas
 const reviewsRefreshBtn = document.getElementById("reviewsRefreshBtn");
 
 /* =========================
@@ -267,6 +251,38 @@ function setSuccessStoriesMsg(msg = "", isError = false) {
   msgEl.classList.add(isError ? "msg--error" : "msg--success");
   setTimeout(() => { if (msgEl.textContent === msg) { msgEl.textContent = ""; msgEl.classList.remove("msg--success", "msg--error"); } }, 4000);
 }
+function setPlansMsg(msg, isError = false) {
+  const msgEl = document.getElementById("plansMsg");
+  if (!msgEl) return;
+  msgEl.textContent = msg;
+  msgEl.classList.remove("msg--success", "msg--error");
+  msgEl.classList.add(isError ? "msg--error" : "msg--success");
+  setTimeout(() => { if (msgEl.textContent === msg) { msgEl.textContent = ""; msgEl.classList.remove("msg--success", "msg--error"); } }, 4000);
+}
+function setReviewsMsg(msg, isError = false) {
+  const msgEl = document.getElementById("reviewsPendingMsg");
+  if (!msgEl) return;
+  msgEl.textContent = msg;
+  msgEl.classList.remove("msg--success", "msg--error");
+  msgEl.classList.add(isError ? "msg--error" : "msg--success");
+  setTimeout(() => { if (msgEl.textContent === msg) { msgEl.textContent = ""; msgEl.classList.remove("msg--success", "msg--error"); } }, 4000);
+}
+function setHistoryMsg(msg, isError = false) {
+  const msgEl = document.getElementById("historyMsg");
+  if (!msgEl) return;
+  msgEl.textContent = msg;
+  msgEl.classList.remove("msg--success", "msg--error");
+  msgEl.classList.add(isError ? "msg--error" : "msg--success");
+  setTimeout(() => { if (msgEl.textContent === msg) { msgEl.textContent = ""; msgEl.classList.remove("msg--success", "msg--error"); } }, 4000);
+}
+function setFeaturedProjectsMsg(msg, isError = false) {
+  const msgEl = document.getElementById("featuredProjectsMsg");
+  if (!msgEl) return;
+  msgEl.textContent = msg;
+  msgEl.classList.remove("msg--success", "msg--error");
+  msgEl.classList.add(isError ? "msg--error" : "msg--success");
+  setTimeout(() => { if (msgEl.textContent === msg) { msgEl.textContent = ""; msgEl.classList.remove("msg--success", "msg--error"); } }, 4000);
+}
 
 function escapeHtml(s) {
   return String(s ?? "")
@@ -302,11 +318,11 @@ function switchView(view) {
   navBtns.forEach(btn => btn.classList.toggle("is-active", btn.dataset.view === view));
   viewPanels.forEach(panel => { panel.style.display = panel.dataset.panel === view ? "" : "none"; });
   
-  // Cargar datos específicos según la vista
   if (view === "brands" && typeof loadBrandsAdmin === "function") loadBrandsAdmin();
   if (view === "assistant-questions" && typeof loadAssistantQuestionsAdmin === "function") loadAssistantQuestionsAdmin();
   if (view === "assistant-responses" && typeof loadAssistantResponsesAdmin === "function") loadAssistantResponsesAdmin();
   if (view === "success-stories" && typeof loadSuccessStoriesAdmin === "function") loadSuccessStoriesAdmin();
+  if (view === "plans" && typeof loadPlansAdmin === "function") loadPlansAdmin();
   if (view === "reviews-pending" && typeof loadPendingReviews === "function") loadPendingReviews();
   if (view === "reviews-approved" && typeof loadApprovedReviews === "function") loadApprovedReviews();
 }
@@ -389,11 +405,9 @@ async function confirmAction({ message, type = "generic", double = false }) {
     }
     return true;
   }
-
   if (currentSafetyMode === "fast" && isMinimalProtectedAction(type)) {
     return window.confirm(`${message}\n\n⚡ Esta acción mantiene protección mínima obligatoria.`);
   }
-
   return true;
 }
 
@@ -447,7 +461,6 @@ function buildStorageFilePath(file, folder = "brands") {
 function showLoading(elementId, show = true) {
   const element = document.getElementById(elementId);
   if (!element) return;
-  
   if (show && element.children.length === 0) {
     element.innerHTML = '<div class="loading-skeleton"><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div></div>';
   } else if (!show && element.querySelector(".loading-skeleton")) {
@@ -459,80 +472,52 @@ function showLoading(elementId, show = true) {
    PAGINATOR CLASS
 ========================= */
 class Paginator {
-  constructor({
-    items = [],
-    itemsPerPage = 10,
-    currentPage = 1,
-    onPageChange = null,
-    containerId = null,
-  }) {
+  constructor({ items = [], itemsPerPage = 10, currentPage = 1, onPageChange = null, containerId = null }) {
     this.items = items;
     this.itemsPerPage = itemsPerPage;
     this.currentPage = currentPage;
     this.onPageChange = onPageChange;
     this.containerId = containerId;
   }
-
-  get totalPages() {
-    return Math.ceil(this.items.length / this.itemsPerPage);
-  }
-
+  get totalPages() { return Math.ceil(this.items.length / this.itemsPerPage); }
   get paginatedItems() {
     const start = (this.currentPage - 1) * this.itemsPerPage;
     return this.items.slice(start, start + this.itemsPerPage);
   }
-
   setPage(page) {
     if (page < 1 || page > this.totalPages) return;
     this.currentPage = page;
     if (this.onPageChange) this.onPageChange(this.paginatedItems, this.currentPage);
     this.renderControls();
   }
-
   setItemsPerPage(perPage) {
     this.itemsPerPage = perPage;
     this.currentPage = 1;
     if (this.onPageChange) this.onPageChange(this.paginatedItems, this.currentPage);
     this.renderControls();
   }
-
   updateItems(newItems) {
     this.items = newItems;
     if (this.currentPage > this.totalPages) this.currentPage = Math.max(1, this.totalPages);
     if (this.onPageChange) this.onPageChange(this.paginatedItems, this.currentPage);
     this.renderControls();
   }
-
   renderControls() {
     const container = this.containerId ? document.getElementById(this.containerId) : null;
     if (!container) return;
-
-    if (this.totalPages <= 1) {
-      container.style.display = "none";
-      return;
-    }
-
+    if (this.totalPages <= 1) { container.style.display = "none"; return; }
     container.style.display = "flex";
-    
-    let html = `
-      <button class="pagination__first" ${this.currentPage === 1 ? "disabled" : ""} data-tooltip="Primera página">«</button>
-      <button class="pagination__prev" ${this.currentPage === 1 ? "disabled" : ""} data-tooltip="Página anterior">‹</button>
-    `;
-
+    let html = `<button class="pagination__first" ${this.currentPage === 1 ? "disabled" : ""} data-tooltip="Primera página">«</button>
+      <button class="pagination__prev" ${this.currentPage === 1 ? "disabled" : ""} data-tooltip="Página anterior">‹</button>`;
     let startPage = Math.max(1, this.currentPage - 2);
     let endPage = Math.min(this.totalPages, startPage + 4);
     if (endPage - startPage < 4 && startPage > 1) startPage = Math.max(1, endPage - 4);
-
     if (startPage > 1) html += `<button class="pagination__page" data-page="1">1</button>${startPage > 2 ? '<span>...</span>' : ''}`;
-    
     for (let i = startPage; i <= endPage; i++) {
       html += `<button class="pagination__page ${i === this.currentPage ? "active" : ""}" data-page="${i}">${i}</button>`;
     }
-    
     if (endPage < this.totalPages) html += `${endPage < this.totalPages - 1 ? '<span>...</span>' : ''}<button class="pagination__page" data-page="${this.totalPages}">${this.totalPages}</button>`;
-    
-    html += `
-      <button class="pagination__next" ${this.currentPage === this.totalPages ? "disabled" : ""} data-tooltip="Página siguiente">›</button>
+    html += `<button class="pagination__next" ${this.currentPage === this.totalPages ? "disabled" : ""} data-tooltip="Página siguiente">›</button>
       <button class="pagination__last" ${this.currentPage === this.totalPages ? "disabled" : ""} data-tooltip="Última página">»</button>
       <span class="pagination__info">📊 ${this.items.length} items · Pág ${this.currentPage} de ${this.totalPages}</span>
       <select class="per-page-select">
@@ -540,11 +525,8 @@ class Paginator {
         <option value="10" ${this.itemsPerPage === 10 ? "selected" : ""}>10 por página</option>
         <option value="20" ${this.itemsPerPage === 20 ? "selected" : ""}>20 por página</option>
         <option value="50" ${this.itemsPerPage === 50 ? "selected" : ""}>50 por página</option>
-      </select>
-    `;
-
+      </select>`;
     container.innerHTML = html;
-
     container.querySelector(".pagination__first")?.addEventListener("click", () => this.setPage(1));
     container.querySelector(".pagination__prev")?.addEventListener("click", () => this.setPage(this.currentPage - 1));
     container.querySelector(".pagination__next")?.addEventListener("click", () => this.setPage(this.currentPage + 1));
@@ -564,13 +546,7 @@ class Paginator {
 async function whitelistCheck() {
   const email = await getCurrentUserEmail();
   if (!email) return { ok: false, reason: "No hay sesión activa." };
-
-  const { data: row, error } = await sb
-    .from("admin_users")
-    .select("email")
-    .eq("email", email)
-    .maybeSingle();
-
+  const { data: row, error } = await sb.from("admin_users").select("email").eq("email", email).maybeSingle();
   if (error) return { ok: false, reason: "No se pudo verificar admin_users." };
   if (!row?.email) return { ok: false, reason: "Tu email no está autorizado en admin_users." };
   return { ok: true, email };
@@ -578,30 +554,13 @@ async function whitelistCheck() {
 
 async function loadAdminPreferences() {
   if (!currentUserEmail) return;
-  const { data, error } = await sb
-    .from("admin_preferences")
-    .select("*")
-    .eq("user_email", currentUserEmail)
-    .maybeSingle();
-
-  if (error) {
-    console.error(error);
-    return;
-  }
-
+  const { data, error } = await sb.from("admin_preferences").select("*").eq("user_email", currentUserEmail).maybeSingle();
+  if (error) { console.error(error); return; }
   if (!data) {
-    const { error: insertError } = await sb.from("admin_preferences").insert([{
-      user_email: currentUserEmail,
-      safety_mode: "safe",
-      updated_at: new Date().toISOString(),
-    }]);
-    if (!insertError) {
-      currentSafetyMode = "safe";
-      setModeButtons();
-    }
+    const { error: insertError } = await sb.from("admin_preferences").insert([{ user_email: currentUserEmail, safety_mode: "safe", updated_at: new Date().toISOString() }]);
+    if (!insertError) { currentSafetyMode = "safe"; setModeButtons(); }
     return;
   }
-
   currentSafetyMode = data.safety_mode || "safe";
   setModeButtons();
 }
@@ -610,22 +569,13 @@ async function updateAdminSafetyMode(mode) {
   currentSafetyMode = mode;
   setModeButtons();
   if (!currentUserEmail) return;
-
-  const { error } = await sb
-    .from("admin_preferences")
-    .upsert({
-      user_email: currentUserEmail,
-      safety_mode: mode,
-      updated_at: new Date().toISOString(),
-    }, { onConflict: "user_email" });
-
+  const { error } = await sb.from("admin_preferences").upsert({ user_email: currentUserEmail, safety_mode: mode, updated_at: new Date().toISOString() }, { onConflict: "user_email" });
   if (error) console.error(error);
 }
 
 async function guardAdmin() {
   const { data } = await sb.auth.getSession();
   const session = data?.session;
-
   if (!session) {
     if (authBox) authBox.style.display = "";
     if (adminBox) adminBox.style.display = "none";
@@ -633,7 +583,6 @@ async function guardAdmin() {
     currentUserEmail = "";
     return;
   }
-
   const check = await whitelistCheck();
   if (!check.ok) {
     setAuthMsg(check.reason);
@@ -643,13 +592,11 @@ async function guardAdmin() {
     if (userEmail) userEmail.textContent = "";
     return;
   }
-
   currentUserEmail = check.email;
   if (userEmail) userEmail.textContent = check.email;
   if (authBox) authBox.style.display = "none";
   if (adminBox) adminBox.style.display = "";
   setAuthMsg("");
-
   await loadAdminPreferences();
   await loadAll();
 }
@@ -660,28 +607,17 @@ if (loginBtn) {
     const email = (emailInput?.value || "").trim();
     const password = passInput?.value || "";
     if (!email || !password) return setAuthMsg("Completá email y password.");
-
     const { error } = await sb.auth.signInWithPassword({ email, password });
     if (error) return setAuthMsg(`No autenticado: ${error.message}`);
     await guardAdmin();
   });
 }
-
 if (logoutBtn) {
-  logoutBtn.addEventListener("click", async () => {
-    await sb.auth.signOut();
-    await guardAdmin();
-  });
+  logoutBtn.addEventListener("click", async () => { await sb.auth.signOut(); await guardAdmin(); });
 }
-
 sb.auth.onAuthStateChange(() => { guardAdmin(); });
-
-if (safeModeBtn) {
-  safeModeBtn.addEventListener("click", () => updateAdminSafetyMode("safe"));
-}
-if (fastModeBtn) {
-  fastModeBtn.addEventListener("click", () => updateAdminSafetyMode("fast"));
-}
+if (safeModeBtn) safeModeBtn.addEventListener("click", () => updateAdminSafetyMode("safe"));
+if (fastModeBtn) fastModeBtn.addEventListener("click", () => updateAdminSafetyMode("fast"));
 
 /* =========================
    LOADERS
@@ -696,30 +632,15 @@ async function loadCategories() {
 
 async function loadTags() {
   const { data, error } = await sb.from("tags").select("*").order("name", { ascending: true });
-  if (error) {
-    console.error(error);
-    return;
-  }
+  if (error) { console.error(error); return; }
   tagsData = data || [];
   fillTagFilter();
 }
 
 async function loadProjects() {
   showLoading("projectsList", true);
-  
-  const { data, error } = await sb
-    .from("projects")
-    .select("*")
-    .is("deleted_at", null)
-    .order("order_index", { ascending: true })
-    .order("created_at", { ascending: false });
-
-  if (error) {
-    setProjectsMsg(`No se pudieron cargar proyectos: ${error.message}`);
-    showLoading("projectsList", false);
-    return;
-  }
-  
+  const { data, error } = await sb.from("projects").select("*").is("deleted_at", null).order("order_index", { ascending: true }).order("created_at", { ascending: false });
+  if (error) { setProjectsMsg(`No se pudieron cargar proyectos: ${error.message}`); showLoading("projectsList", false); return; }
   projectsData = data || [];
   await loadProjectTags();
   updateDashboardStats();
@@ -729,23 +650,10 @@ async function loadProjects() {
 }
 
 async function loadProjectTags() {
-  if (!projectsData.length) {
-    projectTagMap = new Map();
-    return;
-  }
-
+  if (!projectsData.length) { projectTagMap = new Map(); return; }
   const projectIds = projectsData.map(p => p.id);
-  const { data, error } = await sb
-    .from("project_tags")
-    .select("project_id, tag_id")
-    .in("project_id", projectIds);
-
-  if (error) {
-    console.error(error);
-    projectTagMap = new Map();
-    return;
-  }
-
+  const { data, error } = await sb.from("project_tags").select("project_id, tag_id").in("project_id", projectIds);
+  if (error) { console.error(error); projectTagMap = new Map(); return; }
   const map = new Map();
   (data || []).forEach(row => {
     const key = String(row.project_id);
@@ -782,10 +690,8 @@ async function loadHistory() {
     sb.from("project_history").select("*").order("created_at", { ascending: false }),
     sb.from("site_settings_history").select("*").order("created_at", { ascending: false }),
   ]);
-
   if (!projectsRes.error) projectHistoryData = projectsRes.data || [];
   if (!settingsRes.error) settingsHistoryData = settingsRes.data || [];
-
   renderProjectHistory();
   renderSettingsHistory();
 }
@@ -806,10 +712,8 @@ async function loadAll() {
     loadApprovedReviews()
   ]);
   iniciarNotificaciones();
-}
-
-/* =========================
-   RENDER (con paginación)
+}/* =========================
+   RENDER
 ========================= */
 function updateDashboardStats() {
   if (statProjects) statProjects.textContent = String(projectsData.length);
@@ -823,19 +727,13 @@ function updateDashboardStats() {
 function renderProjectBadges(project) {
   const tags = getProjectTags(project.id);
   const parts = [`<span class="statusBadge statusBadge--${escapeHtml(project.status || "published")}">${mapStatusLabel(project.status || "published")}</span>`];
-  tags.slice(0, 3).forEach(tag => {
-    parts.push(`<span class="miniTag">🏷️ ${escapeHtml(tag.name)}</span>`);
-  });
+  tags.slice(0, 3).forEach(tag => { parts.push(`<span class="miniTag">🏷️ ${escapeHtml(tag.name)}</span>`); });
   return parts.join("");
 }
 
 function renderDashboardRecent() {
   const list = projectsData.slice().sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()).slice(0, 6);
-  if (!list.length) {
-    if (dashboardRecentList) dashboardRecentList.innerHTML = `<div class="emptyState">🚀 Todavía no hay proyectos cargados.</div>`;
-    return;
-  }
-
+  if (!list.length) { if (dashboardRecentList) dashboardRecentList.innerHTML = `<div class="emptyState">🚀 Todavía no hay proyectos cargados.</div>`; return; }
   if (dashboardRecentList) {
     dashboardRecentList.innerHTML = list.map(project => `
       <article class="listCard">
@@ -850,10 +748,7 @@ function renderDashboardRecent() {
         </div>
       </article>
     `).join("");
-
-    dashboardRecentList.querySelectorAll("[data-edit-project]").forEach(btn => {
-      btn.addEventListener("click", () => openProjectForEdit(btn.getAttribute("data-edit-project")));
-    });
+    dashboardRecentList.querySelectorAll("[data-edit-project]").forEach(btn => { btn.addEventListener("click", () => openProjectForEdit(btn.getAttribute("data-edit-project"))); });
   }
 }
 
@@ -863,60 +758,25 @@ function renderProjectsList() {
   const type = projectTypeFilter?.value || "__all__";
   const status = projectStatusFilter?.value || "__all__";
   const tag = projectTagFilter?.value || "__all__";
-
   let list = projectsData.slice();
-
-  if (q) {
-    list = list.filter(project => {
-      const hay = `${project.title} ${project.short_description} ${project.full_description || ""}`.toLowerCase();
-      return hay.includes(q);
-    });
-  }
+  if (q) { list = list.filter(project => `${project.title} ${project.short_description} ${project.full_description || ""}`.toLowerCase().includes(q)); }
   if (cat !== "__all__") list = list.filter(project => String(project.category_id) === String(cat));
   if (type !== "__all__") list = list.filter(project => project.solution_type === type);
   if (status !== "__all__") list = list.filter(project => (project.status || "published") === status);
-  if (tag !== "__all__") list = list.filter(project => {
-    const tagIds = projectTagMap.get(String(project.id)) || [];
-    return tagIds.includes(String(tag));
-  });
-
-  list.sort((a, b) => {
-    const ai = a.order_index ?? 0;
-    const bi = b.order_index ?? 0;
-    if (ai !== bi) return ai - bi;
-    return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-  });
-
+  if (tag !== "__all__") list = list.filter(project => { const tagIds = projectTagMap.get(String(project.id)) || []; return tagIds.includes(String(tag)); });
+  list.sort((a, b) => { const ai = a.order_index ?? 0; const bi = b.order_index ?? 0; if (ai !== bi) return ai - bi; return new Date(b.created_at).getTime() - new Date(a.created_at).getTime(); });
   if (!projectsPaginator) {
-    projectsPaginator = new Paginator({
-      items: list,
-      itemsPerPage: 10,
-      currentPage: 1,
-      onPageChange: (paginatedItems) => {
-        renderProjectsListPage(paginatedItems);
-      },
-      containerId: "projectsPagination",
-    });
-  } else {
-    projectsPaginator.updateItems(list);
-  }
-  
+    projectsPaginator = new Paginator({ items: list, itemsPerPage: 10, currentPage: 1, onPageChange: (paginatedItems) => { renderProjectsListPage(paginatedItems); }, containerId: "projectsPagination" });
+  } else { projectsPaginator.updateItems(list); }
   projectsPaginator.setPage(1);
 }
 
 function renderProjectsListPage(projects) {
   if (!projectsList) return;
-  
-  if (!projects.length) {
-    projectsList.innerHTML = `<div class="emptyState">🔍 No hay proyectos para mostrar con esos filtros.</div>`;
-    return;
-  }
-
+  if (!projects.length) { projectsList.innerHTML = `<div class="emptyState">🔍 No hay proyectos para mostrar con esos filtros.</div>`; return; }
   projectsList.innerHTML = projects.map(project => `
     <article class="listCard" data-tooltip="📅 Última modificación: ${formatDate(project.updated_at)}">
-      <div class="listCard__thumb">
-        <img src="${escapeHtml(project.image_url || "")}" alt="${escapeHtml(project.title)}" loading="lazy" />
-      </div>
+      <div class="listCard__thumb"><img src="${escapeHtml(project.image_url || "")}" alt="${escapeHtml(project.title)}" loading="lazy" /></div>
       <div class="listCard__body">
         <div class="listCard__title">${escapeHtml(project.title)}</div>
         <div class="listCard__meta">📁 ${escapeHtml(findCategoryName(project.category_id))} · 🔧 ${escapeHtml(project.solution_type || "")}</div>
@@ -931,28 +791,10 @@ function renderProjectsListPage(projects) {
       </div>
     </article>
   `).join("");
-
-  projectsList.querySelectorAll("[data-edit-project]").forEach(btn => {
-    btn.addEventListener("click", () => openProjectForEdit(btn.getAttribute("data-edit-project")));
-  });
-  projectsList.querySelectorAll("[data-duplicate-project]").forEach(btn => {
-    btn.addEventListener("click", async () => {
-      const project = projectsData.find(p => String(p.id) === String(btn.getAttribute("data-duplicate-project")));
-      if (project) await duplicateProject(project);
-    });
-  });
-  projectsList.querySelectorAll("[data-toggle-project]").forEach(btn => {
-    btn.addEventListener("click", async () => {
-      const project = projectsData.find(p => String(p.id) === String(btn.getAttribute("data-toggle-project")));
-      if (project) await toggleProjectActive(project);
-    });
-  });
-  projectsList.querySelectorAll("[data-delete-project]").forEach(btn => {
-    btn.addEventListener("click", async () => {
-      const project = projectsData.find(p => String(p.id) === String(btn.getAttribute("data-delete-project")));
-      if (project) await deleteProject(project);
-    });
-  });
+  projectsList.querySelectorAll("[data-edit-project]").forEach(btn => { btn.addEventListener("click", () => openProjectForEdit(btn.getAttribute("data-edit-project"))); });
+  projectsList.querySelectorAll("[data-duplicate-project]").forEach(btn => { btn.addEventListener("click", async () => { const project = projectsData.find(p => String(p.id) === String(btn.getAttribute("data-duplicate-project"))); if (project) await duplicateProject(project); }); });
+  projectsList.querySelectorAll("[data-toggle-project]").forEach(btn => { btn.addEventListener("click", async () => { const project = projectsData.find(p => String(p.id) === String(btn.getAttribute("data-toggle-project"))); if (project) await toggleProjectActive(project); }); });
+  projectsList.querySelectorAll("[data-delete-project]").forEach(btn => { btn.addEventListener("click", async () => { const project = projectsData.find(p => String(p.id) === String(btn.getAttribute("data-delete-project"))); if (project) await deleteProject(project); }); });
 }
 
 function resetProjectForm() {
@@ -961,7 +803,6 @@ function resetProjectForm() {
   if (projectSaveBtn) projectSaveBtn.textContent = "Publicar";
   if (projectDeleteBtn) projectDeleteBtn.style.display = "none";
   if (projectDuplicateBtn) projectDuplicateBtn.style.display = "none";
-
   if (projectImageUrlInput) projectImageUrlInput.value = "";
   if (projectImageFileInput) projectImageFileInput.value = "";
   if (projectPreviewImg) projectPreviewImg.removeAttribute("src");
@@ -992,7 +833,6 @@ function fillProjectForm(project) {
   if (projectSaveBtn) projectSaveBtn.textContent = "Guardar cambios";
   if (projectDeleteBtn) projectDeleteBtn.style.display = "";
   if (projectDuplicateBtn) projectDuplicateBtn.style.display = "";
-
   if (projectImageUrlInput) projectImageUrlInput.value = project.image_url || "";
   if (projectPreviewImg && project.image_url) projectPreviewImg.src = project.image_url;
   if (projectTitleInput) projectTitleInput.value = project.title || "";
@@ -1023,11 +863,7 @@ function openProjectForEdit(id) {
 
 function renderCategoriesList() {
   const list = categoriesData.slice().sort((a, b) => (a.order_index ?? 0) - (b.order_index ?? 0));
-  if (!list.length) {
-    if (categoriesList) categoriesList.innerHTML = `<div class="emptyState">📂 No hay categorías cargadas.</div>`;
-    return;
-  }
-
+  if (!list.length) { if (categoriesList) categoriesList.innerHTML = `<div class="emptyState">📂 No hay categorías cargadas.</div>`; return; }
   if (categoriesList) {
     categoriesList.innerHTML = list.map(cat => `
       <article class="listCard listCard--compact">
@@ -1042,38 +878,8 @@ function renderCategoriesList() {
         </div>
       </article>
     `).join("");
-
-    categoriesList.querySelectorAll("[data-edit-category]").forEach(btn => {
-      btn.addEventListener("click", () => {
-        const cat = categoriesData.find(c => String(c.id) === String(btn.getAttribute("data-edit-category")));
-        if (!cat) return;
-        editingCategoryId = cat.id;
-        if (categoryNameInput) categoryNameInput.value = cat.name || "";
-        if (categorySlugInput) categorySlugInput.value = cat.slug || "";
-        if (categoryOrderInput) categoryOrderInput.value = String(cat.order_index ?? 0);
-        if (categoryActiveInput) categoryActiveInput.checked = !!cat.active;
-        setCategoriesMsg("");
-      });
-    });
-
-    categoriesList.querySelectorAll("[data-toggle-category]").forEach(btn => {
-      btn.addEventListener("click", async () => {
-        const cat = categoriesData.find(c => String(c.id) === String(btn.getAttribute("data-toggle-category")));
-        if (!cat) return;
-        const ok = await confirmAction({ message: `¿Actualizar categoría "${cat.name}"?`, type: "generic" });
-        if (!ok) return;
-
-        const { error } = await sb.from("categories").update({
-          active: !cat.active,
-          updated_at: new Date().toISOString(),
-        }).eq("id", cat.id);
-
-        if (error) return setCategoriesMsg(`No se pudo actualizar la categoría: ${error.message}`);
-        setCategoriesMsg("✅ Categoría actualizada.");
-        await loadCategories();
-        await loadProjects();
-      });
-    });
+    categoriesList.querySelectorAll("[data-edit-category]").forEach(btn => { btn.addEventListener("click", () => { const cat = categoriesData.find(c => String(c.id) === String(btn.getAttribute("data-edit-category"))); if (!cat) return; editingCategoryId = cat.id; if (categoryNameInput) categoryNameInput.value = cat.name || ""; if (categorySlugInput) categorySlugInput.value = cat.slug || ""; if (categoryOrderInput) categoryOrderInput.value = String(cat.order_index ?? 0); if (categoryActiveInput) categoryActiveInput.checked = !!cat.active; setCategoriesMsg(""); }); });
+    categoriesList.querySelectorAll("[data-toggle-category]").forEach(btn => { btn.addEventListener("click", async () => { const cat = categoriesData.find(c => String(c.id) === String(btn.getAttribute("data-toggle-category"))); if (!cat) return; const ok = await confirmAction({ message: `¿Actualizar categoría "${cat.name}"?`, type: "generic" }); if (!ok) return; const { error } = await sb.from("categories").update({ active: !cat.active, updated_at: new Date().toISOString() }).eq("id", cat.id); if (error) return setCategoriesMsg(`No se pudo actualizar la categoría: ${error.message}`); setCategoriesMsg("✅ Categoría actualizada."); await loadCategories(); await loadProjects(); }); });
   }
 }
 
@@ -1088,11 +894,7 @@ function resetCategoryForm() {
 
 function renderFaqsList() {
   const list = faqsData.slice().sort((a, b) => (a.order_index ?? 0) - (b.order_index ?? 0));
-  if (!list.length) {
-    if (faqsList) faqsList.innerHTML = `<div class="emptyState">❓ No hay FAQs cargadas.</div>`;
-    return;
-  }
-
+  if (!list.length) { if (faqsList) faqsList.innerHTML = `<div class="emptyState">❓ No hay FAQs cargadas.</div>`; return; }
   if (faqsList) {
     faqsList.innerHTML = list.map(faq => `
       <article class="listCard listCard--compact">
@@ -1107,37 +909,8 @@ function renderFaqsList() {
         </div>
       </article>
     `).join("");
-
-    faqsList.querySelectorAll("[data-edit-faq]").forEach(btn => {
-      btn.addEventListener("click", () => {
-        const faq = faqsData.find(f => String(f.id) === String(btn.getAttribute("data-edit-faq")));
-        if (!faq) return;
-        editingFaqId = faq.id;
-        if (faqQuestionInput) faqQuestionInput.value = faq.question || "";
-        if (faqAnswerInput) faqAnswerInput.value = faq.answer || "";
-        if (faqOrderInput) faqOrderInput.value = String(faq.order_index ?? 0);
-        if (faqActiveInput) faqActiveInput.checked = !!faq.active;
-        setFaqsMsg("");
-      });
-    });
-
-    faqsList.querySelectorAll("[data-toggle-faq]").forEach(btn => {
-      btn.addEventListener("click", async () => {
-        const faq = faqsData.find(f => String(f.id) === String(btn.getAttribute("data-toggle-faq")));
-        if (!faq) return;
-        const ok = await confirmAction({ message: `¿Actualizar FAQ?`, type: "generic" });
-        if (!ok) return;
-
-        const { error } = await sb.from("faqs").update({
-          active: !faq.active,
-          updated_at: new Date().toISOString(),
-        }).eq("id", faq.id);
-
-        if (error) return setFaqsMsg(`No se pudo actualizar la FAQ: ${error.message}`);
-        setFaqsMsg("✅ FAQ actualizada.");
-        await loadFaqs();
-      });
-    });
+    faqsList.querySelectorAll("[data-edit-faq]").forEach(btn => { btn.addEventListener("click", () => { const faq = faqsData.find(f => String(f.id) === String(btn.getAttribute("data-edit-faq"))); if (!faq) return; editingFaqId = faq.id; if (faqQuestionInput) faqQuestionInput.value = faq.question || ""; if (faqAnswerInput) faqAnswerInput.value = faq.answer || ""; if (faqOrderInput) faqOrderInput.value = String(faq.order_index ?? 0); if (faqActiveInput) faqActiveInput.checked = !!faq.active; setFaqsMsg(""); }); });
+    faqsList.querySelectorAll("[data-toggle-faq]").forEach(btn => { btn.addEventListener("click", async () => { const faq = faqsData.find(f => String(f.id) === String(btn.getAttribute("data-toggle-faq"))); if (!faq) return; const ok = await confirmAction({ message: `¿Actualizar FAQ?`, type: "generic" }); if (!ok) return; const { error } = await sb.from("faqs").update({ active: !faq.active, updated_at: new Date().toISOString() }).eq("id", faq.id); if (error) return setFaqsMsg(`No se pudo actualizar la FAQ: ${error.message}`); setFaqsMsg("✅ FAQ actualizada."); await loadFaqs(); }); });
   }
 }
 
@@ -1153,7 +926,6 @@ function resetFaqForm() {
 function fillSiteContentFormById(id) {
   const item = siteContentData.find(x => String(x.id) === String(id));
   if (!item) return;
-
   if (siteContentTitleInput) siteContentTitleInput.value = item.title || "";
   if (siteContentSubtitleInput) siteContentSubtitleInput.value = item.subtitle || "";
   if (siteContentBodyInput) siteContentBodyInput.value = item.content || "";
@@ -1192,112 +964,30 @@ function fillSiteSettingsForm() {
 }
 
 function renderProjectHistory() {
-  if (!projectHistoryData.length) {
-    if (projectHistoryList) projectHistoryList.innerHTML = `<div class="emptyState">📜 No hay historial de proyectos.</div>`;
-    if (projectHistoryPaginator) projectHistoryPaginator.updateItems([]);
-    return;
-  }
-
-  if (!projectHistoryPaginator) {
-    projectHistoryPaginator = new Paginator({
-      items: projectHistoryData,
-      itemsPerPage: 10,
-      currentPage: 1,
-      onPageChange: (paginatedItems) => {
-        renderProjectHistoryPage(paginatedItems);
-      },
-      containerId: "projectHistoryPagination",
-    });
-  } else {
-    projectHistoryPaginator.updateItems(projectHistoryData);
-  }
-  
+  if (!projectHistoryData.length) { if (projectHistoryList) projectHistoryList.innerHTML = `<div class="emptyState">📜 No hay historial de proyectos.</div>`; if (projectHistoryPaginator) projectHistoryPaginator.updateItems([]); return; }
+  if (!projectHistoryPaginator) { projectHistoryPaginator = new Paginator({ items: projectHistoryData, itemsPerPage: 10, currentPage: 1, onPageChange: (paginatedItems) => { renderProjectHistoryPage(paginatedItems); }, containerId: "projectHistoryPagination" }); } else { projectHistoryPaginator.updateItems(projectHistoryData); }
   projectHistoryPaginator.setPage(1);
 }
 
 function renderProjectHistoryPage(items) {
-  if (!items.length) {
-    if (projectHistoryList) projectHistoryList.innerHTML = `<div class="emptyState">📜 No hay historial de proyectos.</div>`;
-    return;
-  }
-
+  if (!items.length) { if (projectHistoryList) projectHistoryList.innerHTML = `<div class="emptyState">📜 No hay historial de proyectos.</div>`; return; }
   if (projectHistoryList) {
-    projectHistoryList.innerHTML = items.map(item => {
-      const snap = item.snapshot || {};
-      const title = snap.title || `Proyecto ${item.project_id}`;
-      return `
-        <article class="listCard listCard--compact">
-          <div class="listCard__body">
-            <div class="listCard__title">📌 ${escapeHtml(title)}</div>
-            <div class="listCard__meta">⚡ ${escapeHtml(item.action_type)} · ${formatDate(item.created_at)}</div>
-            <div class="listCard__meta">👤 Por: ${escapeHtml(item.changed_by || "admin")}</div>
-          </div>
-          <div class="listCard__actions">
-            <button class="btn btn--ghost btn--small" data-restore-project-history="${item.id}" data-tooltip="Restaurar esta versión">↩️ Restaurar</button>
-          </div>
-        </article>
-      `;
-    }).join("");
-
-    projectHistoryList.querySelectorAll("[data-restore-project-history]").forEach(btn => {
-      btn.addEventListener("click", async () => {
-        const item = projectHistoryData.find(x => String(x.id) === String(btn.getAttribute("data-restore-project-history")));
-        if (item) await restoreProjectFromHistory(item);
-      });
-    });
+    projectHistoryList.innerHTML = items.map(item => { const snap = item.snapshot || {}; const title = snap.title || `Proyecto ${item.project_id}`; return `<article class="listCard listCard--compact"><div class="listCard__body"><div class="listCard__title">📌 ${escapeHtml(title)}</div><div class="listCard__meta">⚡ ${escapeHtml(item.action_type)} · ${formatDate(item.created_at)}</div><div class="listCard__meta">👤 Por: ${escapeHtml(item.changed_by || "admin")}</div></div><div class="listCard__actions"><button class="btn btn--ghost btn--small" data-restore-project-history="${item.id}" data-tooltip="Restaurar esta versión">↩️ Restaurar</button></div></article>`; }).join("");
+    projectHistoryList.querySelectorAll("[data-restore-project-history]").forEach(btn => { btn.addEventListener("click", async () => { const item = projectHistoryData.find(x => String(x.id) === String(btn.getAttribute("data-restore-project-history"))); if (item) await restoreProjectFromHistory(item); }); });
   }
 }
 
 function renderSettingsHistory() {
-  if (!settingsHistoryData.length) {
-    if (settingsHistoryList) settingsHistoryList.innerHTML = `<div class="emptyState">⚙️ No hay historial de settings.</div>`;
-    if (settingsHistoryPaginator) settingsHistoryPaginator.updateItems([]);
-    return;
-  }
-
-  if (!settingsHistoryPaginator) {
-    settingsHistoryPaginator = new Paginator({
-      items: settingsHistoryData,
-      itemsPerPage: 10,
-      currentPage: 1,
-      onPageChange: (paginatedItems) => {
-        renderSettingsHistoryPage(paginatedItems);
-      },
-      containerId: "settingsHistoryPagination",
-    });
-  } else {
-    settingsHistoryPaginator.updateItems(settingsHistoryData);
-  }
-  
+  if (!settingsHistoryData.length) { if (settingsHistoryList) settingsHistoryList.innerHTML = `<div class="emptyState">⚙️ No hay historial de settings.</div>`; if (settingsHistoryPaginator) settingsHistoryPaginator.updateItems([]); return; }
+  if (!settingsHistoryPaginator) { settingsHistoryPaginator = new Paginator({ items: settingsHistoryData, itemsPerPage: 10, currentPage: 1, onPageChange: (paginatedItems) => { renderSettingsHistoryPage(paginatedItems); }, containerId: "settingsHistoryPagination" }); } else { settingsHistoryPaginator.updateItems(settingsHistoryData); }
   settingsHistoryPaginator.setPage(1);
 }
 
 function renderSettingsHistoryPage(items) {
-  if (!items.length) {
-    if (settingsHistoryList) settingsHistoryList.innerHTML = `<div class="emptyState">⚙️ No hay historial de settings.</div>`;
-    return;
-  }
-
+  if (!items.length) { if (settingsHistoryList) settingsHistoryList.innerHTML = `<div class="emptyState">⚙️ No hay historial de settings.</div>`; return; }
   if (settingsHistoryList) {
-    settingsHistoryList.innerHTML = items.map(item => `
-      <article class="listCard listCard--compact">
-        <div class="listCard__body">
-          <div class="listCard__title">⚙️ Settings globales</div>
-          <div class="listCard__meta">📝 ${escapeHtml(item.action_type)} · ${formatDate(item.created_at)}</div>
-          <div class="listCard__meta">👤 Por: ${escapeHtml(item.changed_by || "admin")}</div>
-        </div>
-        <div class="listCard__actions">
-          <button class="btn btn--ghost btn--small" data-restore-settings-history="${item.id}" data-tooltip="Restaurar esta configuración">↩️ Restaurar</button>
-        </div>
-      </article>
-    `).join("");
-
-    settingsHistoryList.querySelectorAll("[data-restore-settings-history]").forEach(btn => {
-      btn.addEventListener("click", async () => {
-        const item = settingsHistoryData.find(x => String(x.id) === String(btn.getAttribute("data-restore-settings-history")));
-        if (item) await restoreSettingsFromHistory(item);
-      });
-    });
+    settingsHistoryList.innerHTML = items.map(item => `<article class="listCard listCard--compact"><div class="listCard__body"><div class="listCard__title">⚙️ Settings globales</div><div class="listCard__meta">📝 ${escapeHtml(item.action_type)} · ${formatDate(item.created_at)}</div><div class="listCard__meta">👤 Por: ${escapeHtml(item.changed_by || "admin")}</div></div><div class="listCard__actions"><button class="btn btn--ghost btn--small" data-restore-settings-history="${item.id}" data-tooltip="Restaurar esta configuración">↩️ Restaurar</button></div></article>`).join("");
+    settingsHistoryList.querySelectorAll("[data-restore-settings-history]").forEach(btn => { btn.addEventListener("click", async () => { const item = settingsHistoryData.find(x => String(x.id) === String(btn.getAttribute("data-restore-settings-history"))); if (item) await restoreSettingsFromHistory(item); }); });
   }
 }
 
@@ -1306,69 +996,38 @@ function renderSettingsHistoryPage(items) {
 ========================= */
 async function snapshotProject(project, actionType) {
   if (!project?.id) return;
-  await sb.from("project_history").insert([{
-    project_id: project.id,
-    action_type: actionType,
-    snapshot: project,
-    changed_by: currentUserEmail || null,
-  }]);
+  await sb.from("project_history").insert([{ project_id: project.id, action_type: actionType, snapshot: project, changed_by: currentUserEmail || null }]);
 }
-
 async function snapshotSiteSettings(settings, actionType = "update") {
   if (!settings?.id) return;
-  await sb.from("site_settings_history").insert([{
-    settings_id: settings.id,
-    action_type: actionType,
-    snapshot: settings,
-    changed_by: currentUserEmail || null,
-  }]);
+  await sb.from("site_settings_history").insert([{ settings_id: settings.id, action_type: actionType, snapshot: settings, changed_by: currentUserEmail || null }]);
 }
-
 async function restoreProjectFromHistory(item) {
-  const ok = await confirmAction({
-    message: `¿Restaurar la versión previa de "${item.snapshot?.title || "proyecto"}"?`,
-    type: "restore",
-    double: true,
-  });
+  const ok = await confirmAction({ message: `¿Restaurar la versión previa de "${item.snapshot?.title || "proyecto"}"?`, type: "restore", double: true });
   if (!ok) return;
-
   const snap = { ...(item.snapshot || {}) };
-  delete snap.id;
-  delete snap.created_at;
+  delete snap.id; delete snap.created_at;
   snap.updated_at = new Date().toISOString();
   snap.deleted_at = null;
-
   const { error } = await sb.from("projects").update(snap).eq("id", item.project_id);
   if (error) return setProjectsMsg(`No se pudo restaurar: ${error.message}`);
-
   const { data: restored } = await sb.from("projects").select("*").eq("id", item.project_id).maybeSingle();
   if (restored) await snapshotProject(restored, "restore");
-
   setProjectsMsg("✅ Proyecto restaurado.");
-  await loadProjects();
-  await loadHistory();
+  await loadProjects(); await loadHistory();
 }
-
 async function restoreSettingsFromHistory(item) {
-  const ok = await confirmAction({
-    message: "¿Restaurar esta versión de settings globales?",
-    type: "restore",
-    double: true,
-  });
+  const ok = await confirmAction({ message: "¿Restaurar esta versión de settings globales?", type: "restore", double: true });
   if (!ok) return;
-
   const snap = { ...(item.snapshot || {}) };
   snap.id = "global";
   snap.updated_at = new Date().toISOString();
   snap.updated_by = currentUserEmail || null;
-
   const { error } = await sb.from("site_settings").upsert([snap], { onConflict: "id" });
   if (error) return setSiteSettingsMsg(`No se pudo restaurar settings: ${error.message}`);
-
   await snapshotSiteSettings(snap, "restore");
   setSiteSettingsMsg("✅ Settings restaurados.");
-  await loadSiteSettings();
-  await loadHistory();
+  await loadSiteSettings(); await loadHistory();
 }
 
 /* =========================
@@ -1377,36 +1036,20 @@ async function restoreSettingsFromHistory(item) {
 async function upsertTagsAndBindings(projectId, names) {
   const cleaned = parseTagInput(names.join(", "));
   if (!projectId) return;
-
   const tagIds = [];
-
   for (const name of cleaned) {
     const slug = slugify(name);
     let existing = tagsData.find(t => t.slug === slug);
-
     if (!existing) {
-      const { data, error } = await sb.from("tags").insert([{
-        name,
-        slug,
-        active: true,
-        updated_at: new Date().toISOString(),
-      }]).select("*").single();
-
+      const { data, error } = await sb.from("tags").insert([{ name, slug, active: true, updated_at: new Date().toISOString() }]).select("*").single();
       if (error) throw new Error(`No se pudo crear tag "${name}": ${error.message}`);
       existing = data;
       tagsData.push(data);
     }
-
     tagIds.push(existing.id);
   }
-
   await sb.from("project_tags").delete().eq("project_id", projectId);
-
-  if (tagIds.length) {
-    const rows = tagIds.map(tagId => ({ project_id: projectId, tag_id: tagId }));
-    const { error } = await sb.from("project_tags").insert(rows);
-    if (error) throw new Error(`No se pudieron guardar los tags: ${error.message}`);
-  }
+  if (tagIds.length) { const rows = tagIds.map(tagId => ({ project_id: projectId, tag_id: tagId })); const { error } = await sb.from("project_tags").insert(rows); if (error) throw new Error(`No se pudieron guardar los tags: ${error.message}`); }
 }
 
 /* =========================
@@ -1415,109 +1058,41 @@ async function upsertTagsAndBindings(projectId, names) {
 async function uploadImageToStorage() {
   if (!projectImageFileInput || !projectUploadBtn || !projectUploadMsg) return;
   setProjectUploadMsg("");
-
   const file = projectImageFileInput.files?.[0];
   if (!file) return setProjectUploadMsg("Seleccioná una imagen primero.", "error");
   if (!file.type.startsWith("image/")) return setProjectUploadMsg("El archivo debe ser una imagen.", "error");
   if (file.size > 8 * 1024 * 1024) return setProjectUploadMsg("La imagen supera 8MB.", "error");
-
   projectUploadBtn.disabled = true;
   setProjectUploadMsg("📤 Subiendo imagen...", "success");
-
   try {
     const filePath = buildStorageFilePath(file, "projects");
-
-    const { error: uploadError } = await sb
-      .storage
-      .from("project-images")
-      .upload(filePath, file, {
-        cacheControl: "3600",
-        upsert: false,
-        contentType: file.type,
-      });
-
-    if (uploadError) {
-      throw new Error(uploadError.message || "No se pudo subir la imagen.");
-    }
-
+    const { error: uploadError } = await sb.storage.from("project-images").upload(filePath, file, { cacheControl: "3600", upsert: false, contentType: file.type });
+    if (uploadError) throw new Error(uploadError.message || "No se pudo subir la imagen.");
     const { data: publicData } = sb.storage.from("project-images").getPublicUrl(filePath);
     const publicUrl = publicData?.publicUrl || "";
-
-    if (!publicUrl) {
-      throw new Error("No se pudo obtener la URL pública.");
-    }
-
+    if (!publicUrl) throw new Error("No se pudo obtener la URL pública.");
     if (projectImageUrlInput) projectImageUrlInput.value = publicUrl;
     if (projectPreviewImg) projectPreviewImg.src = publicUrl;
     setProjectUploadMsg("✅ Imagen subida y URL completada.", "success");
-  } catch (error) {
-    setProjectUploadMsg(error instanceof Error ? error.message : "No se pudo subir la imagen.", "error");
-  } finally {
-    projectUploadBtn.disabled = false;
-  }
+  } catch (error) { setProjectUploadMsg(error instanceof Error ? error.message : "No se pudo subir la imagen.", "error"); } finally { projectUploadBtn.disabled = false; }
 }
 
 /* =========================
    PROJECTS CRUD
 ========================= */
-if (projectImageUrlInput) {
-  projectImageUrlInput.addEventListener("input", () => {
-    const value = safeUrl(projectImageUrlInput.value);
-    if (value && projectPreviewImg) projectPreviewImg.src = value;
-    else if (projectPreviewImg) projectPreviewImg.removeAttribute("src");
-  });
-}
-
-if (projectImageFileInput) {
-  projectImageFileInput.addEventListener("change", () => {
-    const file = projectImageFileInput.files?.[0];
-    if (!file) return;
-    const localUrl = URL.createObjectURL(file);
-    if (projectPreviewImg) projectPreviewImg.src = localUrl;
-  });
-}
-
-if (projectUploadBtn) {
-  projectUploadBtn.addEventListener("click", uploadImageToStorage);
-}
-
-if (projectAdvancedToggleBtn) {
-  projectAdvancedToggleBtn.addEventListener("click", () => {
-    const open = projectAdvancedBox?.style.display !== "none";
-    if (projectAdvancedBox) projectAdvancedBox.style.display = open ? "none" : "";
-    if (projectAdvancedToggleBtn) projectAdvancedToggleBtn.textContent = open ? "🔧 Abrir ajustes avanzados" : "🔧 Cerrar ajustes avanzados";
-  });
-}
-
-if (projectTagsInput) {
-  projectTagsInput.addEventListener("input", renderTagPreview);
-}
-
-if (projectFormResetBtn) {
-  projectFormResetBtn.addEventListener("click", resetProjectForm);
-}
-if (dashboardNewBtn) {
-  dashboardNewBtn.addEventListener("click", () => { resetProjectForm(); switchView("new-project"); });
-}
-if (projectsNewBtn) {
-  projectsNewBtn.addEventListener("click", () => { resetProjectForm(); switchView("new-project"); });
-}
-if (quickNewProjectBtn) {
-  quickNewProjectBtn.addEventListener("click", () => { resetProjectForm(); switchView("new-project"); });
-}
-
-if (projectDuplicateBtn) {
-  projectDuplicateBtn.addEventListener("click", async () => {
-    if (!editingProjectId) return;
-    const project = projectsData.find(p => String(p.id) === String(editingProjectId));
-    if (project) await duplicateProject(project);
-  });
-}
-
+if (projectImageUrlInput) { projectImageUrlInput.addEventListener("input", () => { const value = safeUrl(projectImageUrlInput.value); if (value && projectPreviewImg) projectPreviewImg.src = value; else if (projectPreviewImg) projectPreviewImg.removeAttribute("src"); }); }
+if (projectImageFileInput) { projectImageFileInput.addEventListener("change", () => { const file = projectImageFileInput.files?.[0]; if (!file) return; const localUrl = URL.createObjectURL(file); if (projectPreviewImg) projectPreviewImg.src = localUrl; }); }
+if (projectUploadBtn) { projectUploadBtn.addEventListener("click", uploadImageToStorage); }
+if (projectAdvancedToggleBtn) { projectAdvancedToggleBtn.addEventListener("click", () => { const open = projectAdvancedBox?.style.display !== "none"; if (projectAdvancedBox) projectAdvancedBox.style.display = open ? "none" : ""; if (projectAdvancedToggleBtn) projectAdvancedToggleBtn.textContent = open ? "🔧 Abrir ajustes avanzados" : "🔧 Cerrar ajustes avanzados"; }); }
+if (projectTagsInput) { projectTagsInput.addEventListener("input", renderTagPreview); }
+if (projectFormResetBtn) { projectFormResetBtn.addEventListener("click", resetProjectForm); }
+if (dashboardNewBtn) { dashboardNewBtn.addEventListener("click", () => { resetProjectForm(); switchView("new-project"); }); }
+if (projectsNewBtn) { projectsNewBtn.addEventListener("click", () => { resetProjectForm(); switchView("new-project"); }); }
+if (quickNewProjectBtn) { quickNewProjectBtn.addEventListener("click", () => { resetProjectForm(); switchView("new-project"); }); }
+if (projectDuplicateBtn) { projectDuplicateBtn.addEventListener("click", async () => { if (!editingProjectId) return; const project = projectsData.find(p => String(p.id) === String(editingProjectId)); if (project) await duplicateProject(project); }); }
 if (projectSaveBtn) {
   projectSaveBtn.addEventListener("click", async () => {
     setProjectFormMsg("");
-
     const image_url = safeUrl(projectImageUrlInput?.value);
     const title = (projectTitleInput?.value || "").trim();
     const demo_url = safeUrl(projectDemoUrlInput?.value);
@@ -1529,166 +1104,68 @@ if (projectSaveBtn) {
     const order_index = Number(projectOrderInput?.value || 0);
     const status = projectStatusSelect?.value || "published";
     const tags = parseTagInput(projectTagsInput?.value);
-
     if (!image_url) return setProjectFormMsg("❌ Falta la URL de imagen.");
     if (!title) return setProjectFormMsg("❌ Falta el título.");
     if (!demo_url) return setProjectFormMsg("❌ Falta el link demo.");
     if (!category_id) return setProjectFormMsg("❌ Elegí una categoría.");
     if (!solution_type) return setProjectFormMsg("❌ Elegí un tipo de solución.");
     if (!short_description) return setProjectFormMsg("❌ Falta la descripción corta.");
-
     const legacy = deriveLegacyFlagsFromStatus(status);
-    const payload = {
-      image_url,
-      title,
-      demo_url,
-      category_id,
-      solution_type,
-      short_description,
-      full_description: full_description || null,
-      preview_type,
-      order_index: Number.isNaN(order_index) ? 0 : order_index,
-      status,
-      active: projectActiveInput?.checked && legacy.active,
-      highlight: projectHighlightInput?.checked || legacy.highlight,
-      featured_home: projectFeaturedHomeInput?.checked,
-      featured_portfolio: projectFeaturedPortfolioInput?.checked,
-      updated_at: new Date().toISOString(),
-    };
-
-    const ok = await confirmAction({
-      message: editingProjectId ? `¿Guardar cambios en "${title}"?` : `¿Crear "${title}"?`,
-      type: "generic",
-    });
+    const payload = { image_url, title, demo_url, category_id, solution_type, short_description, full_description: full_description || null, preview_type, order_index: Number.isNaN(order_index) ? 0 : order_index, status, active: projectActiveInput?.checked && legacy.active, highlight: projectHighlightInput?.checked || legacy.highlight, featured_home: projectFeaturedHomeInput?.checked, featured_portfolio: projectFeaturedPortfolioInput?.checked, updated_at: new Date().toISOString() };
+    const ok = await confirmAction({ message: editingProjectId ? `¿Guardar cambios en "${title}"?` : `¿Crear "${title}"?`, type: "generic" });
     if (!ok) return;
-
     if (!editingProjectId) {
       const { data, error } = await sb.from("projects").insert([payload]).select("*").single();
       if (error) return setProjectFormMsg(`No se pudo publicar: ${error.message}`);
-
-      try {
-        await upsertTagsAndBindings(data.id, tags);
-      } catch (tagError) {
-        console.error(tagError);
-        setProjectFormMsg(tagError instanceof Error ? tagError.message : "Proyecto creado pero fallaron los tags.");
-        await loadTags();
-        await loadProjects();
-        return;
-      }
-
+      try { await upsertTagsAndBindings(data.id, tags); } catch (tagError) { console.error(tagError); setProjectFormMsg(tagError instanceof Error ? tagError.message : "Proyecto creado pero fallaron los tags."); await loadTags(); await loadProjects(); return; }
       await snapshotProject(data, "create");
       setProjectFormMsg("✅ Proyecto publicado.");
     } else {
       const current = projectsData.find(p => String(p.id) === String(editingProjectId));
       if (current) await snapshotProject(current, "update");
-
       const { data, error } = await sb.from("projects").update(payload).eq("id", editingProjectId).select("*").single();
       if (error) return setProjectFormMsg(`No se pudo guardar: ${error.message}`);
-
-      try {
-        await upsertTagsAndBindings(editingProjectId, tags);
-      } catch (tagError) {
-        console.error(tagError);
-        setProjectFormMsg(tagError instanceof Error ? tagError.message : "Proyecto actualizado pero fallaron los tags.");
-        await loadTags();
-        await loadProjects();
-        return;
-      }
-
+      try { await upsertTagsAndBindings(editingProjectId, tags); } catch (tagError) { console.error(tagError); setProjectFormMsg(tagError instanceof Error ? tagError.message : "Proyecto actualizado pero fallaron los tags."); await loadTags(); await loadProjects(); return; }
       setProjectFormMsg("✅ Proyecto actualizado.");
     }
-
-    await loadTags();
-    await loadProjects();
-    await loadHistory();
+    await loadTags(); await loadProjects(); await loadHistory();
     resetProjectForm();
     switchView("projects");
   });
 }
-
-if (projectDeleteBtn) {
-  projectDeleteBtn.addEventListener("click", async () => {
-    if (!editingProjectId) return;
-    const project = projectsData.find(p => String(p.id) === String(editingProjectId));
-    if (project) await deleteProject(project);
-  });
-}
+if (projectDeleteBtn) { projectDeleteBtn.addEventListener("click", async () => { if (!editingProjectId) return; const project = projectsData.find(p => String(p.id) === String(editingProjectId)); if (project) await deleteProject(project); }); }
 
 async function toggleProjectActive(project) {
   const ok = await confirmAction({ message: `¿Actualizar estado activo de "${project.title}"?`, type: "generic" });
   if (!ok) return;
-
   await snapshotProject(project, "status_change");
-  const { error } = await sb.from("projects").update({
-    active: !project.active,
-    updated_at: new Date().toISOString(),
-  }).eq("id", project.id);
-
+  const { error } = await sb.from("projects").update({ active: !project.active, updated_at: new Date().toISOString() }).eq("id", project.id);
   if (error) return setProjectsMsg(`No se pudo actualizar el proyecto: ${error.message}`);
   setProjectsMsg("✅ Proyecto actualizado.");
-  await loadProjects();
-  await loadHistory();
+  await loadProjects(); await loadHistory();
 }
-
 async function deleteProject(project) {
-  const ok = await confirmAction({
-    message: `📦 ¿Archivar "${project.title}"? No se borra físico, se oculta y queda restaurable.`,
-    type: "delete",
-    double: true,
-  });
+  const ok = await confirmAction({ message: `📦 ¿Archivar "${project.title}"? No se borra físico, se oculta y queda restaurable.`, type: "delete", double: true });
   if (!ok) return;
-
   await snapshotProject(project, "delete");
-
-  const { error } = await sb.from("projects").update({
-    status: "archived",
-    active: false,
-    deleted_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  }).eq("id", project.id);
-
+  const { error } = await sb.from("projects").update({ status: "archived", active: false, deleted_at: new Date().toISOString(), updated_at: new Date().toISOString() }).eq("id", project.id);
   if (error) return setProjectsMsg(`No se pudo archivar el proyecto: ${error.message}`);
   setProjectsMsg("📦 Proyecto archivado.");
-  await loadProjects();
-  await loadHistory();
+  await loadProjects(); await loadHistory();
   resetProjectForm();
   switchView("projects");
 }
-
 async function duplicateProject(project) {
   const ok = await confirmAction({ message: `📋 ¿Duplicar "${project.title}"?`, type: "generic" });
   if (!ok) return;
-
-  const clonePayload = {
-    image_url: project.image_url,
-    title: `${project.title} (copia)`,
-    demo_url: project.demo_url,
-    category_id: project.category_id,
-    solution_type: project.solution_type,
-    short_description: project.short_description,
-    full_description: project.full_description,
-    preview_type: project.preview_type,
-    order_index: project.order_index,
-    active: false,
-    highlight: false,
-    featured_home: false,
-    featured_portfolio: false,
-    status: "draft",
-    duplicated_from: project.id,
-    updated_at: new Date().toISOString(),
-  };
-
+  const clonePayload = { image_url: project.image_url, title: `${project.title} (copia)`, demo_url: project.demo_url, category_id: project.category_id, solution_type: project.solution_type, short_description: project.short_description, full_description: project.full_description, preview_type: project.preview_type, order_index: project.order_index, active: false, highlight: false, featured_home: false, featured_portfolio: false, status: "draft", duplicated_from: project.id, updated_at: new Date().toISOString() };
   const { data, error } = await sb.from("projects").insert([clonePayload]).select("*").single();
   if (error) return setProjectsMsg(`No se pudo duplicar: ${error.message}`);
-
   const tags = getProjectTags(project.id);
   await upsertTagsAndBindings(data.id, tags.map(t => t.name));
   await snapshotProject(data, "duplicate");
-
   setProjectsMsg("✅ Proyecto duplicado.");
-  await loadTags();
-  await loadProjects();
-  await loadHistory();
+  await loadTags(); await loadProjects(); await loadHistory();
 }
 
 /* =========================
@@ -1706,21 +1183,10 @@ if (projectTagFilter) projectTagFilter.addEventListener("change", renderProjects
 /* =========================
    CATEGORIES CRUD
 ========================= */
-if (categoryNameInput) {
-  categoryNameInput.addEventListener("input", () => {
-    if (categorySlugInput && !categorySlugInput.dataset.manuallyEdited) {
-      categorySlugInput.value = slugify(categoryNameInput.value);
-    }
-  });
-}
-if (categorySlugInput) {
-  categorySlugInput.addEventListener("input", () => { categorySlugInput.dataset.manuallyEdited = "true"; });
-}
-if (categoryResetBtn) {
-  categoryResetBtn.addEventListener("click", () => { if (categorySlugInput) categorySlugInput.dataset.manuallyEdited = ""; resetCategoryForm(); });
-}
+if (categoryNameInput) { categoryNameInput.addEventListener("input", () => { if (categorySlugInput && !categorySlugInput.dataset.manuallyEdited) { categorySlugInput.value = slugify(categoryNameInput.value); } }); }
+if (categorySlugInput) { categorySlugInput.addEventListener("input", () => { categorySlugInput.dataset.manuallyEdited = "true"; }); }
+if (categoryResetBtn) { categoryResetBtn.addEventListener("click", () => { if (categorySlugInput) categorySlugInput.dataset.manuallyEdited = ""; resetCategoryForm(); }); }
 if (categoriesRefreshBtn) categoriesRefreshBtn.addEventListener("click", loadCategories);
-
 if (categorySaveBtn) {
   categorySaveBtn.addEventListener("click", async () => {
     setCategoriesMsg("");
@@ -1730,32 +1196,14 @@ if (categorySaveBtn) {
     const active = categoryActiveInput?.checked || false;
     if (!name) return setCategoriesMsg("❌ Falta el nombre.");
     if (!slug) return setCategoriesMsg("❌ Falta el slug.");
-
-    const payload = {
-      name,
-      slug,
-      order_index: Number.isNaN(order_index) ? 0 : order_index,
-      active,
-      updated_at: new Date().toISOString(),
-    };
-
+    const payload = { name, slug, order_index: Number.isNaN(order_index) ? 0 : order_index, active, updated_at: new Date().toISOString() };
     const ok = await confirmAction({ message: editingCategoryId ? `¿Guardar categoría "${name}"?` : `¿Crear categoría "${name}"?`, type: "generic" });
     if (!ok) return;
-
-    if (!editingCategoryId) {
-      const { error } = await sb.from("categories").insert([payload]);
-      if (error) return setCategoriesMsg(`No se pudo guardar la categoría: ${error.message}`);
-      setCategoriesMsg("✅ Categoría creada.");
-    } else {
-      const { error } = await sb.from("categories").update(payload).eq("id", editingCategoryId);
-      if (error) return setCategoriesMsg(`No se pudo actualizar la categoría: ${error.message}`);
-      setCategoriesMsg("✅ Categoría actualizada.");
-    }
-
+    if (!editingCategoryId) { const { error } = await sb.from("categories").insert([payload]); if (error) return setCategoriesMsg(`No se pudo guardar la categoría: ${error.message}`); setCategoriesMsg("✅ Categoría creada."); }
+    else { const { error } = await sb.from("categories").update(payload).eq("id", editingCategoryId); if (error) return setCategoriesMsg(`No se pudo actualizar la categoría: ${error.message}`); setCategoriesMsg("✅ Categoría actualizada."); }
     if (categorySlugInput) categorySlugInput.dataset.manuallyEdited = "";
     resetCategoryForm();
-    await loadCategories();
-    await loadProjects();
+    await loadCategories(); await loadProjects();
   });
 }
 
@@ -1764,7 +1212,6 @@ if (categorySaveBtn) {
 ========================= */
 if (faqsRefreshBtn) faqsRefreshBtn.addEventListener("click", loadFaqs);
 if (faqResetBtn) faqResetBtn.addEventListener("click", resetFaqForm);
-
 if (faqSaveBtn) {
   faqSaveBtn.addEventListener("click", async () => {
     setFaqsMsg("");
@@ -1774,28 +1221,11 @@ if (faqSaveBtn) {
     const active = faqActiveInput?.checked || false;
     if (!question) return setFaqsMsg("❌ Falta la pregunta.");
     if (!answer) return setFaqsMsg("❌ Falta la respuesta.");
-
-    const payload = {
-      question,
-      answer,
-      order_index: Number.isNaN(order_index) ? 0 : order_index,
-      active,
-      updated_at: new Date().toISOString(),
-    };
-
+    const payload = { question, answer, order_index: Number.isNaN(order_index) ? 0 : order_index, active, updated_at: new Date().toISOString() };
     const ok = await confirmAction({ message: editingFaqId ? "¿Guardar FAQ?" : "¿Crear FAQ?", type: "generic" });
     if (!ok) return;
-
-    if (!editingFaqId) {
-      const { error } = await sb.from("faqs").insert([payload]);
-      if (error) return setFaqsMsg(`No se pudo guardar la FAQ: ${error.message}`);
-      setFaqsMsg("✅ FAQ creada.");
-    } else {
-      const { error } = await sb.from("faqs").update(payload).eq("id", editingFaqId);
-      if (error) return setFaqsMsg(`No se pudo actualizar la FAQ: ${error.message}`);
-      setFaqsMsg("✅ FAQ actualizada.");
-    }
-
+    if (!editingFaqId) { const { error } = await sb.from("faqs").insert([payload]); if (error) return setFaqsMsg(`No se pudo guardar la FAQ: ${error.message}`); setFaqsMsg("✅ FAQ creada."); }
+    else { const { error } = await sb.from("faqs").update(payload).eq("id", editingFaqId); if (error) return setFaqsMsg(`No se pudo actualizar la FAQ: ${error.message}`); setFaqsMsg("✅ FAQ actualizada."); }
     resetFaqForm();
     await loadFaqs();
   });
@@ -1805,50 +1235,19 @@ if (faqSaveBtn) {
    SITE CONTENT CRUD
 ========================= */
 if (siteContentRefreshBtn) siteContentRefreshBtn.addEventListener("click", loadSiteContent);
-
 if (siteContentSelect) {
-  siteContentSelect.addEventListener("change", () => {
-    const id = siteContentSelect.value;
-    if (!id) {
-      if (siteContentTitleInput) siteContentTitleInput.value = "";
-      if (siteContentSubtitleInput) siteContentSubtitleInput.value = "";
-      if (siteContentBodyInput) siteContentBodyInput.value = "";
-      if (siteContentImageUrlInput) siteContentImageUrlInput.value = "";
-      if (siteContentCtaLabelInput) siteContentCtaLabelInput.value = "";
-      if (siteContentCtaUrlInput) siteContentCtaUrlInput.value = "";
-      if (siteContentOrderInput) siteContentOrderInput.value = "0";
-      if (siteContentActiveInput) siteContentActiveInput.checked = true;
-      setSiteContentMsg("");
-      return;
-    }
-    fillSiteContentFormById(id);
-  });
+  siteContentSelect.addEventListener("change", () => { const id = siteContentSelect.value; if (!id) { if (siteContentTitleInput) siteContentTitleInput.value = ""; if (siteContentSubtitleInput) siteContentSubtitleInput.value = ""; if (siteContentBodyInput) siteContentBodyInput.value = ""; if (siteContentImageUrlInput) siteContentImageUrlInput.value = ""; if (siteContentCtaLabelInput) siteContentCtaLabelInput.value = ""; if (siteContentCtaUrlInput) siteContentCtaUrlInput.value = ""; if (siteContentOrderInput) siteContentOrderInput.value = "0"; if (siteContentActiveInput) siteContentActiveInput.checked = true; setSiteContentMsg(""); return; } fillSiteContentFormById(id); });
 }
-
 if (siteContentSaveBtn) {
   siteContentSaveBtn.addEventListener("click", async () => {
     setSiteContentMsg("");
     const id = siteContentSelect?.value;
     if (!id) return setSiteContentMsg("❌ Elegí un bloque.");
-
-    const payload = {
-      title: (siteContentTitleInput?.value || "").trim() || null,
-      subtitle: (siteContentSubtitleInput?.value || "").trim() || null,
-      content: (siteContentBodyInput?.value || "").trim() || null,
-      image_url: safeUrl(siteContentImageUrlInput?.value),
-      cta_label: (siteContentCtaLabelInput?.value || "").trim() || null,
-      cta_url: safeUrl(siteContentCtaUrlInput?.value),
-      order_index: Number(siteContentOrderInput?.value || 0) || 0,
-      active: siteContentActiveInput?.checked || false,
-      updated_at: new Date().toISOString(),
-    };
-
+    const payload = { title: (siteContentTitleInput?.value || "").trim() || null, subtitle: (siteContentSubtitleInput?.value || "").trim() || null, content: (siteContentBodyInput?.value || "").trim() || null, image_url: safeUrl(siteContentImageUrlInput?.value), cta_label: (siteContentCtaLabelInput?.value || "").trim() || null, cta_url: safeUrl(siteContentCtaUrlInput?.value), order_index: Number(siteContentOrderInput?.value || 0) || 0, active: siteContentActiveInput?.checked || false, updated_at: new Date().toISOString() };
     const ok = await confirmAction({ message: "¿Guardar bloque de contenido global?", type: "generic" });
     if (!ok) return;
-
     const { error } = await sb.from("site_content").update(payload).eq("id", id);
     if (error) return setSiteContentMsg(`No se pudo guardar el bloque: ${error.message}`);
-
     setSiteContentMsg("✅ Bloque actualizado.");
     await loadSiteContent();
     if (siteContentSelect) siteContentSelect.value = id;
@@ -1860,53 +1259,17 @@ if (siteContentSaveBtn) {
    SITE SETTINGS CRUD
 ========================= */
 if (siteSettingsRefreshBtn) siteSettingsRefreshBtn.addEventListener("click", loadSiteSettings);
-
 if (siteSettingsSaveBtn) {
   siteSettingsSaveBtn.addEventListener("click", async () => {
     setSiteSettingsMsg("");
-
-    const payload = {
-      id: "global",
-      site_title: (siteTitleInput?.value || "").trim() || null,
-      site_tagline: (siteTaglineInput?.value || "").trim() || null,
-      hero_badge: (heroBadgeInput?.value || "").trim() || null,
-      hero_title: (heroTitleInput?.value || "").trim() || null,
-      hero_subtitle: (heroSubtitleInput?.value || "").trim() || null,
-      hero_cta_label: (heroCtaLabelInput?.value || "").trim() || null,
-      hero_cta_url: safeUrl(heroCtaUrlInput?.value),
-      logo_url: safeUrl(logoUrlInput?.value),
-      hero_logo_url: safeUrl(heroLogoUrlInput?.value),
-      footer_logo_url: safeUrl(footerLogoUrlInput?.value),
-      favicon_url: safeUrl(faviconUrlInput?.value),
-      background_image_url: safeUrl(backgroundImageUrlInput?.value),
-      hero_image_url: safeUrl(heroImageUrlInput?.value),
-      hero_overlay_url: safeUrl(heroOverlayUrlInput?.value),
-      hero_video_url: safeUrl(heroVideoUrlInput?.value),
-      whatsapp_number: (whatsappNumberInput?.value || "").trim() || null,
-      email_contact: (emailContactInput?.value || "").trim() || null,
-      instagram_url: safeUrl(instagramUrlInput?.value),
-      facebook_url: safeUrl(facebookUrlInput?.value),
-      tiktok_url: safeUrl(tiktokUrlInput?.value),
-      use_hero_video: useHeroVideoInput?.checked || false,
-      use_background_image: useBackgroundImageInput?.checked || false,
-      updated_at: new Date().toISOString(),
-      updated_by: currentUserEmail || null,
-    };
-
-    const ok = await confirmAction({
-      message: "¿Guardar settings visuales globales?",
-      type: "generic",
-    });
+    const payload = { id: "global", site_title: (siteTitleInput?.value || "").trim() || null, site_tagline: (siteTaglineInput?.value || "").trim() || null, hero_badge: (heroBadgeInput?.value || "").trim() || null, hero_title: (heroTitleInput?.value || "").trim() || null, hero_subtitle: (heroSubtitleInput?.value || "").trim() || null, hero_cta_label: (heroCtaLabelInput?.value || "").trim() || null, hero_cta_url: safeUrl(heroCtaUrlInput?.value), logo_url: safeUrl(logoUrlInput?.value), hero_logo_url: safeUrl(heroLogoUrlInput?.value), footer_logo_url: safeUrl(footerLogoUrlInput?.value), favicon_url: safeUrl(faviconUrlInput?.value), background_image_url: safeUrl(backgroundImageUrlInput?.value), hero_image_url: safeUrl(heroImageUrlInput?.value), hero_overlay_url: safeUrl(heroOverlayUrlInput?.value), hero_video_url: safeUrl(heroVideoUrlInput?.value), whatsapp_number: (whatsappNumberInput?.value || "").trim() || null, email_contact: (emailContactInput?.value || "").trim() || null, instagram_url: safeUrl(instagramUrlInput?.value), facebook_url: safeUrl(facebookUrlInput?.value), tiktok_url: safeUrl(tiktokUrlInput?.value), use_hero_video: useHeroVideoInput?.checked || false, use_background_image: useBackgroundImageInput?.checked || false, updated_at: new Date().toISOString(), updated_by: currentUserEmail || null };
+    const ok = await confirmAction({ message: "¿Guardar settings visuales globales?", type: "generic" });
     if (!ok) return;
-
     if (siteSettingsData?.id) await snapshotSiteSettings(siteSettingsData, "update");
-
     const { error } = await sb.from("site_settings").upsert([payload], { onConflict: "id" });
     if (error) return setSiteSettingsMsg(`No se pudo guardar settings: ${error.message}`);
-
     setSiteSettingsMsg("✅ Settings globales actualizados.");
-    await loadSiteSettings();
-    await loadHistory();
+    await loadSiteSettings(); await loadHistory();
   });
 }
 
@@ -1919,524 +1282,161 @@ if (historyRefreshBtn) historyRefreshBtn.addEventListener("click", loadHistory);
    KEYBOARD SHORTCUTS
 ========================= */
 document.addEventListener("keydown", (e) => {
-  if ((e.ctrlKey || e.metaKey) && e.key === "k") {
-    e.preventDefault();
-    if (projectSearchInput) {
-      projectSearchInput.focus();
-      switchView("projects");
-    }
-  }
-  
-  if ((e.ctrlKey || e.metaKey) && e.key === "n") {
-    e.preventDefault();
-    resetProjectForm();
-    switchView("new-project");
-  }
-  
-  if (e.key === "Escape" && document.activeElement === projectSearchInput) {
-    if (projectSearchInput) projectSearchInput.value = "";
-    renderProjectsList();
-  }
+  if ((e.ctrlKey || e.metaKey) && e.key === "k") { e.preventDefault(); if (projectSearchInput) { projectSearchInput.focus(); switchView("projects"); } }
+  if ((e.ctrlKey || e.metaKey) && e.key === "n") { e.preventDefault(); resetProjectForm(); switchView("new-project"); }
+  if (e.key === "Escape" && document.activeElement === projectSearchInput) { if (projectSearchInput) projectSearchInput.value = ""; renderProjectsList(); }
 });
 
 /* =========================
    NAV
 ========================= */
-navBtns.forEach(btn => {
-  btn.addEventListener("click", () => switchView(btn.dataset.view));
-});
+navBtns.forEach(btn => { btn.addEventListener("click", () => switchView(btn.dataset.view)); });
 
 /* =========================
-   REVIEWS (RESEÑAS) - MEJORADO
+   REVIEWS
 ========================= */
-
 async function loadPendingReviews() {
   const container = document.getElementById("reviewsPendingList");
   if (!container) return;
-  
   container.innerHTML = '<div class="loading-skeleton"><div class="skeleton-line"></div><div class="skeleton-line"></div></div>';
-  
   try {
-    const { data, error } = await sb
-      .from("reviews")
-      .select("*")
-      .eq("status", "pending")
-      .order("created_at", { ascending: false });
-
-    if (error) {
-      console.error("Error loading reviews:", error);
-      setReviewsMsg(`❌ Error: ${error.message}`, true);
-      container.innerHTML = `<div class="emptyState">⚠️ Error al cargar reseñas. ¿La tabla 'reviews' existe?</div>`;
-      return;
-    }
-    
+    const { data, error } = await sb.from("reviews").select("*").eq("status", "pending").order("created_at", { ascending: false });
+    if (error) { console.error("Error loading reviews:", error); setReviewsMsg(`❌ Error: ${error.message}`, true); container.innerHTML = `<div class="emptyState">⚠️ Error al cargar reseñas. ¿La tabla 'reviews' existe?</div>`; return; }
     reviewsData = data || [];
     updatePendingStats();
     renderPendingReviews();
-  } catch (err) {
-    console.error("Exception loading reviews:", err);
-    container.innerHTML = `<div class="emptyState">⚠️ Error: ${err.message}</div>`;
-  }
+  } catch (err) { console.error("Exception loading reviews:", err); container.innerHTML = `<div class="emptyState">⚠️ Error: ${err.message}</div>`; }
 }
-
 function updatePendingStats() {
   const pendingCount = reviewsData.length;
   const pendingCountEl = document.getElementById("pendingCount");
-  if (pendingCountEl) {
-    pendingCountEl.textContent = pendingCount;
-  }
+  if (pendingCountEl) pendingCountEl.textContent = pendingCount;
   const pendingBadge = document.getElementById("pendingBadge");
-  if (pendingBadge) {
-    if (pendingCount > 0) {
-      pendingBadge.textContent = pendingCount;
-      pendingBadge.style.display = "inline-block";
-    } else {
-      pendingBadge.style.display = "none";
-    }
-  }
+  if (pendingBadge) { if (pendingCount > 0) { pendingBadge.textContent = pendingCount; pendingBadge.style.display = "inline-block"; } else { pendingBadge.style.display = "none"; } }
 }
-
-function setReviewsMsg(msg, isError = false) {
-  const msgEl = document.getElementById("reviewsPendingMsg");
-  if (!msgEl) return;
-  
-  msgEl.textContent = msg;
-  msgEl.classList.remove("msg--success", "msg--error");
-  msgEl.classList.add(isError ? "msg--error" : "msg--success");
-  
-  setTimeout(() => {
-    if (msgEl.textContent === msg) {
-      msgEl.textContent = "";
-      msgEl.classList.remove("msg--success", "msg--error");
-    }
-  }, 4000);
-}
-
 function renderPendingReviews() {
   const container = document.getElementById("reviewsPendingList");
   if (!container) return;
-  
-  if (!reviewsData.length) {
-    container.innerHTML = `<div class="emptyState">✅ No hay reseñas pendientes de moderación.</div>`;
-    return;
-  }
-  
-  container.innerHTML = `
-    <table class="reviews-table">
-      <thead>
-        <tr>
-          <th>Usuario</th>
-          <th>Calificación</th>
-          <th>Reseña</th>
-          <th>Proyecto</th>
-          <th>Fecha</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${reviewsData.map(review => `
-          <tr>
-            <td data-label="Usuario">
-              <strong>${escapeHtml(review.user_name || "Anónimo")}</strong>
-              ${review.user_email ? `<br/><small>${escapeHtml(review.user_email)}</small>` : ""}
-              </td>
-            <td data-label="Calificación">
-              ${"⭐".repeat(review.rating)} (${review.rating}/5)
-              </td>
-            <td data-label="Reseña">
-              ${review.title ? `<strong>${escapeHtml(review.title)}</strong><br/>` : ""}
-              ${escapeHtml((review.comment || "").substring(0, 200))}${(review.comment || "").length > 200 ? "..." : ""}
-              </td>
-            <td data-label="Proyecto">
-              ${review.project_id ? escapeHtml(review.project_title || `Proyecto ${review.project_id}`) : "Opinión general"}
-              </td>
-            <td data-label="Fecha">
-              <small>${formatDate(review.created_at)}</small>
-              </td>
-            <td data-label="Acciones" class="action-btns">
-              <button class="btn btn--small btn--ghost" data-edit-review="${review.id}" style="border-color:var(--cyan);">✏️ Editar</button>
-              <button class="btn btn--success btn--small" data-approve-review="${review.id}">✅ Aprobar</button>
-              <button class="btn btn--danger btn--small" data-reject-review="${review.id}">❌ Rechazar</button>
-             </td>
-          </tr>
-        `).join("")}
-      </tbody>
-    </table>
-  `;
-  
-  container.querySelectorAll("[data-approve-review]").forEach(btn => {
-    btn.addEventListener("click", async () => {
-      const id = btn.getAttribute("data-approve-review");
-      await approveReview(id);
-    });
-  });
-  
-  container.querySelectorAll("[data-reject-review]").forEach(btn => {
-    btn.addEventListener("click", async () => {
-      const id = btn.getAttribute("data-reject-review");
-      await rejectReview(id);
-    });
-  });
-  
-  container.querySelectorAll("[data-edit-review]").forEach(btn => {
-    btn.addEventListener("click", () => {
-      const id = btn.getAttribute("data-edit-review");
-      const review = reviewsData.find(r => String(r.id) === String(id));
-      if (review) openEditModal(review);
-    });
-  });
+  if (!reviewsData.length) { container.innerHTML = `<div class="emptyState">✅ No hay reseñas pendientes de moderación.</div>`; return; }
+  container.innerHTML = `<table class="reviews-table"><thead><tr><th>Usuario</th><th>Calificación</th><th>Reseña</th><th>Proyecto</th><th>Fecha</th><th>Acciones</th></tr></thead><tbody>${reviewsData.map(review => `<tr><td data-label="Usuario"><strong>${escapeHtml(review.user_name || "Anónimo")}</strong>${review.user_email ? `<br/><small>${escapeHtml(review.user_email)}</small>` : ""}</td><td data-label="Calificación">${"⭐".repeat(review.rating)} (${review.rating}/5)</td><td data-label="Reseña">${review.title ? `<strong>${escapeHtml(review.title)}</strong><br/>` : ""}${escapeHtml((review.comment || "").substring(0, 200))}${(review.comment || "").length > 200 ? "..." : ""}</td><td data-label="Proyecto">${review.project_id ? escapeHtml(review.project_title || `Proyecto ${review.project_id}`) : "Opinión general"}</td><td data-label="Fecha"><small>${formatDate(review.created_at)}</small></td><td data-label="Acciones" class="action-btns"><button class="btn btn--small btn--ghost" data-edit-review="${review.id}" style="border-color:var(--cyan);">✏️ Editar</button><button class="btn btn--success btn--small" data-approve-review="${review.id}">✅ Aprobar</button><button class="btn btn--danger btn--small" data-reject-review="${review.id}">❌ Rechazar</button></td></tr>`).join("")}</tbody></table>`;
+  container.querySelectorAll("[data-approve-review]").forEach(btn => { btn.addEventListener("click", async () => { const id = btn.getAttribute("data-approve-review"); await approveReview(id); }); });
+  container.querySelectorAll("[data-reject-review]").forEach(btn => { btn.addEventListener("click", async () => { const id = btn.getAttribute("data-reject-review"); await rejectReview(id); }); });
+  container.querySelectorAll("[data-edit-review]").forEach(btn => { btn.addEventListener("click", () => { const id = btn.getAttribute("data-edit-review"); const review = reviewsData.find(r => String(r.id) === String(id)); if (review) openEditModal(review); }); });
 }
-
 async function approveReview(reviewId) {
-  const ok = await confirmAction({
-    message: "✅ ¿Aprobar esta reseña? Se publicará automáticamente en el sitio.",
-    type: "generic",
-  });
+  const ok = await confirmAction({ message: "✅ ¿Aprobar esta reseña? Se publicará automáticamente en el sitio.", type: "generic" });
   if (!ok) return;
-  
   setReviewsMsg("⏳ Aprobando reseña...");
-  
-  const { error } = await sb
-    .from("reviews")
-    .update({
-      status: "approved",
-      approved_at: new Date().toISOString(),
-      approved_by: currentUserEmail,
-      updated_at: new Date().toISOString(),
-    })
-    .eq("id", reviewId);
-  
-  if (error) {
-    setReviewsMsg(`❌ Error al aprobar: ${error.message}`, true);
-    return;
-  }
-  
+  const { error } = await sb.from("reviews").update({ status: "approved", approved_at: new Date().toISOString(), approved_by: currentUserEmail, updated_at: new Date().toISOString() }).eq("id", reviewId);
+  if (error) { setReviewsMsg(`❌ Error al aprobar: ${error.message}`, true); return; }
   setReviewsMsg("✅ Reseña aprobada y publicada correctamente.");
   await loadPendingReviews();
   if (typeof loadApprovedReviews === "function") await loadApprovedReviews();
   checkNewReviewsNotification();
 }
-
 async function rejectReview(reviewId) {
-  const ok = await confirmAction({
-    message: "❌ ¿Rechazar esta reseña? Se eliminará permanentemente y no se podrá recuperar.",
-    type: "delete",
-    double: true,
-  });
+  const ok = await confirmAction({ message: "❌ ¿Rechazar esta reseña? Se eliminará permanentemente y no se podrá recuperar.", type: "delete", double: true });
   if (!ok) return;
-  
   setReviewsMsg("⏳ Eliminando reseña...");
-  
-  const { error } = await sb
-    .from("reviews")
-    .delete()
-    .eq("id", reviewId);
-  
-  if (error) {
-    setReviewsMsg(`❌ Error al rechazar: ${error.message}`, true);
-    return;
-  }
-  
+  const { error } = await sb.from("reviews").delete().eq("id", reviewId);
+  if (error) { setReviewsMsg(`❌ Error al rechazar: ${error.message}`, true); return; }
   setReviewsMsg("❌ Reseña rechazada y eliminada.");
   await loadPendingReviews();
   if (typeof loadApprovedReviews === "function") await loadApprovedReviews();
   checkNewReviewsNotification();
 }
-
-// NOTIFICACIONES VISUALES
 async function checkNewReviewsNotification() {
   if (!sb || !currentUserEmail) return;
-  
   try {
-    const { data, error } = await sb
-      .from("reviews")
-      .select("id", { count: "exact", head: true })
-      .eq("status", "pending");
-    
+    const { data, error } = await sb.from("reviews").select("id", { count: "exact", head: true }).eq("status", "pending");
     if (error) throw error;
-    
     const currentCount = data?.length || 0;
-    
     const pendingBadge = document.getElementById("pendingBadge");
-    if (pendingBadge) {
-      if (currentCount > 0) {
-        pendingBadge.textContent = currentCount;
-        pendingBadge.style.display = "inline-block";
-      } else {
-        pendingBadge.style.display = "none";
-      }
-    }
-    
-    if (currentCount > lastPendingCount && lastPendingCount > 0) {
-      mostrarNotificacion(`✨ Tienes ${currentCount - lastPendingCount} reseña(s) nueva(s) para moderar`);
-    }
-    
+    if (pendingBadge) { if (currentCount > 0) { pendingBadge.textContent = currentCount; pendingBadge.style.display = "inline-block"; } else { pendingBadge.style.display = "none"; } }
+    if (currentCount > lastPendingCount && lastPendingCount > 0) { mostrarNotificacion(`✨ Tienes ${currentCount - lastPendingCount} reseña(s) nueva(s) para moderar`); }
     lastPendingCount = currentCount;
-    
-  } catch (err) {
-    console.error("Error checking reviews:", err);
-  }
+  } catch (err) { console.error("Error checking reviews:", err); }
 }
-
 function mostrarNotificacion(mensaje) {
   const toast = document.createElement("div");
-  toast.style.cssText = `
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background: linear-gradient(135deg, #00d4ff, #8b5cf6);
-    color: white;
-    padding: 12px 24px;
-    border-radius: 12px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 14px;
-    font-weight: bold;
-    z-index: 9999;
-    animation: slideIn 0.3s ease;
-    cursor: pointer;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-  `;
+  toast.style.cssText = `position: fixed; bottom: 20px; right: 20px; background: linear-gradient(135deg, #00d4ff, #8b5cf6); color: white; padding: 12px 24px; border-radius: 12px; font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: bold; z-index: 9999; animation: slideIn 0.3s ease; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.3);`;
   toast.textContent = `🔔 ${mensaje}`;
-  
-  if (!document.querySelector("#notificationStyle")) {
-    const style = document.createElement("style");
-    style.id = "notificationStyle";
-    style.textContent = `
-      @keyframes slideIn {
-        from { transform: translateX(100%); opacity: 0; }
-        to { transform: translateX(0); opacity: 1; }
-      }
-      @keyframes slideOut {
-        from { transform: translateX(0); opacity: 1; }
-        to { transform: translateX(100%); opacity: 0; }
-      }
-    `;
-    document.head.appendChild(style);
-  }
-  
+  if (!document.querySelector("#notificationStyle")) { const style = document.createElement("style"); style.id = "notificationStyle"; style.textContent = `@keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } } @keyframes slideOut { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }`; document.head.appendChild(style); }
   document.body.appendChild(toast);
-  
-  toast.addEventListener("click", () => {
-    if (typeof switchView === "function") {
-      switchView("reviews-pending");
-    }
-    cerrarNotificacion(toast);
-  });
-  
+  toast.addEventListener("click", () => { if (typeof switchView === "function") { switchView("reviews-pending"); } cerrarNotificacion(toast); });
   setTimeout(() => cerrarNotificacion(toast), 8000);
 }
+function cerrarNotificacion(toast) { toast.style.animation = "slideOut 0.3s ease"; setTimeout(() => toast.remove(), 300); }
+function iniciarNotificaciones() { if (notificationCheckInterval) clearInterval(notificationCheckInterval); checkNewReviewsNotification(); notificationCheckInterval = setInterval(checkNewReviewsNotification, 15000); }
 
-function cerrarNotificacion(toast) {
-  toast.style.animation = "slideOut 0.3s ease";
-  setTimeout(() => toast.remove(), 300);
-}
-
-function iniciarNotificaciones() {
-  if (notificationCheckInterval) clearInterval(notificationCheckInterval);
-  checkNewReviewsNotification();
-  notificationCheckInterval = setInterval(checkNewReviewsNotification, 15000);
-}
-
-// PANEL DE RESEÑAS APROBADAS
 async function loadApprovedReviews() {
   const container = document.getElementById("reviewsApprovedList");
   if (!container) return;
-  
   container.innerHTML = '<div class="loading-skeleton"><div class="skeleton-line"></div><div class="skeleton-line"></div></div>';
-  
   try {
-    const { data, error } = await sb
-      .from("reviews")
-      .select("*")
-      .eq("status", "approved")
-      .order("approved_at", { ascending: false });
-    
+    const { data, error } = await sb.from("reviews").select("*").eq("status", "approved").order("approved_at", { ascending: false });
     if (error) throw error;
-    
     approvedReviewsData = data || [];
     renderApprovedReviews();
-  } catch (err) {
-    console.error("Error loading approved reviews:", err);
-    container.innerHTML = `<div class="emptyState">⚠️ Error al cargar reseñas aprobadas.</div>`;
-  }
+  } catch (err) { console.error("Error loading approved reviews:", err); container.innerHTML = `<div class="emptyState">⚠️ Error al cargar reseñas aprobadas.</div>`; }
 }
-
 function renderApprovedReviews() {
   let filtered = [...approvedReviewsData];
   const searchTerm = document.getElementById("approvedSearchInput")?.value.toLowerCase() || "";
   const ratingFilter = document.getElementById("approvedRatingFilter")?.value || "all";
   const sortFilter = document.getElementById("approvedSortFilter")?.value || "recent";
-  
-  if (searchTerm) {
-    filtered = filtered.filter(r => 
-      (r.user_name || "").toLowerCase().includes(searchTerm) ||
-      (r.comment || "").toLowerCase().includes(searchTerm)
-    );
-  }
-  
-  if (ratingFilter !== "all") {
-    filtered = filtered.filter(r => r.rating === parseInt(ratingFilter));
-  }
-  
+  if (searchTerm) { filtered = filtered.filter(r => (r.user_name || "").toLowerCase().includes(searchTerm) || (r.comment || "").toLowerCase().includes(searchTerm)); }
+  if (ratingFilter !== "all") { filtered = filtered.filter(r => r.rating === parseInt(ratingFilter)); }
   switch(sortFilter) {
-    case "oldest":
-      filtered.sort((a,b) => new Date(a.created_at) - new Date(b.created_at));
-      break;
-    case "rating_high":
-      filtered.sort((a,b) => b.rating - a.rating);
-      break;
-    case "rating_low":
-      filtered.sort((a,b) => a.rating - b.rating);
-      break;
-    default:
-      filtered.sort((a,b) => new Date(b.approved_at || b.created_at) - new Date(a.approved_at || a.created_at));
+    case "oldest": filtered.sort((a,b) => new Date(a.created_at) - new Date(b.created_at)); break;
+    case "rating_high": filtered.sort((a,b) => b.rating - a.rating); break;
+    case "rating_low": filtered.sort((a,b) => a.rating - b.rating); break;
+    default: filtered.sort((a,b) => new Date(b.approved_at || b.created_at) - new Date(a.approved_at || a.created_at));
   }
-  
-  if (!approvedReviewsPaginator) {
-    approvedReviewsPaginator = new Paginator({
-      items: filtered,
-      itemsPerPage: 10,
-      currentPage: 1,
-      onPageChange: (paginatedItems) => {
-        renderApprovedReviewsPage(paginatedItems);
-      },
-      containerId: "reviewsApprovedPagination",
-    });
-  } else {
-    approvedReviewsPaginator.updateItems(filtered);
-  }
-  
+  if (!approvedReviewsPaginator) { approvedReviewsPaginator = new Paginator({ items: filtered, itemsPerPage: 10, currentPage: 1, onPageChange: (paginatedItems) => { renderApprovedReviewsPage(paginatedItems); }, containerId: "reviewsApprovedPagination" }); } else { approvedReviewsPaginator.updateItems(filtered); }
   approvedReviewsPaginator.setPage(1);
 }
-
 function renderApprovedReviewsPage(reviews) {
   const container = document.getElementById("reviewsApprovedList");
   if (!container) return;
-  
-  if (!reviews.length) {
-    container.innerHTML = `<div class="emptyState">📭 No hay reseñas aprobadas para mostrar.</div>`;
-    return;
-  }
-  
-  container.innerHTML = `
-    <table class="reviews-table">
-      <thead>
-        <tr>
-          <th>Usuario</th>
-          <th>Calificación</th>
-          <th>Reseña</th>
-          <th>Fecha</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${reviews.map(review => `
-          <tr>
-            <td data-label="Usuario"><strong>${escapeHtml(review.user_name || "Anónimo")}</strong>${review.user_email ? `<br/><small>${escapeHtml(review.user_email)}</small>` : ""}</td>
-            <td data-label="Calificación">${"⭐".repeat(review.rating)} (${review.rating}/5)</td>
-            <td data-label="Reseña">${review.title ? `<strong>${escapeHtml(review.title)}</strong><br/>` : ""}${escapeHtml((review.comment || "").substring(0, 200))}${(review.comment || "").length > 200 ? "..." : ""}</td>
-            <td data-label="Fecha"><small>${formatDate(review.approved_at || review.created_at)}</small></td>
-          </tr>
-        `).join("")}
-      </tbody>
-    </table>
-  `;
+  if (!reviews.length) { container.innerHTML = `<div class="emptyState">📭 No hay reseñas aprobadas para mostrar.</div>`; return; }
+  container.innerHTML = `<table class="reviews-table"><thead><tr><th>Usuario</th><th>Calificación</th><th>Reseña</th><th>Fecha</th></tr></thead><tbody>${reviews.map(review => `<tr><td data-label="Usuario"><strong>${escapeHtml(review.user_name || "Anónimo")}</strong>${review.user_email ? `<br/><small>${escapeHtml(review.user_email)}</small>` : ""}</td><td data-label="Calificación">${"⭐".repeat(review.rating)} (${review.rating}/5)</td><td data-label="Reseña">${review.title ? `<strong>${escapeHtml(review.title)}</strong><br/>` : ""}${escapeHtml((review.comment || "").substring(0, 200))}${(review.comment || "").length > 200 ? "..." : ""}</td><td data-label="Fecha"><small>${formatDate(review.approved_at || review.created_at)}</small></td></td>`).join("")}</tbody></table>`;
 }
-
-// EDICIÓN DE RESEÑA
 function openEditModal(review) {
   currentEditReviewId = review.id;
-  
   const editName = document.getElementById("editReviewName");
   const editComment = document.getElementById("editReviewComment");
   const editId = document.getElementById("editReviewId");
-  
   if (editName) editName.value = review.user_name || "";
   if (editComment) editComment.value = review.comment || "";
   if (editId) editId.value = review.id;
-  
   const stars = document.querySelectorAll("#editRatingStars span");
-  stars.forEach((star, idx) => {
-    star.style.color = idx < review.rating ? "#f5b042" : "#4a4a6a";
-    star.textContent = idx < review.rating ? "★" : "☆";
-  });
-  
+  stars.forEach((star, idx) => { star.style.color = idx < review.rating ? "#f5b042" : "#4a4a6a"; star.textContent = idx < review.rating ? "★" : "☆"; });
   window.currentEditRating = review.rating;
-  
-  stars.forEach(star => {
-    star.onclick = () => {
-      const rating = parseInt(star.dataset.rating);
-      window.currentEditRating = rating;
-      stars.forEach((s, i) => {
-        s.style.color = i < rating ? "#f5b042" : "#4a4a6a";
-        s.textContent = i < rating ? "★" : "☆";
-      });
-    };
-  });
-  
+  stars.forEach(star => { star.onclick = () => { const rating = parseInt(star.dataset.rating); window.currentEditRating = rating; stars.forEach((s, i) => { s.style.color = i < rating ? "#f5b042" : "#4a4a6a"; s.textContent = i < rating ? "★" : "☆"; }); }; });
   const modal = document.getElementById("editReviewModal");
   if (modal) modal.style.display = "flex";
 }
-
 async function saveEditedReviewAndApprove() {
   const reviewId = document.getElementById("editReviewId")?.value;
   const newComment = document.getElementById("editReviewComment")?.value.trim();
   const newRating = window.currentEditRating || 5;
-  
-  if (!newComment) {
-    setReviewsMsg("❌ El comentario no puede estar vacío", true);
-    return;
-  }
-  
-  const ok = await confirmAction({
-    message: "✅ ¿Aprobar esta reseña con los cambios realizados?",
-    type: "generic",
-  });
+  if (!newComment) { setReviewsMsg("❌ El comentario no puede estar vacío", true); return; }
+  const ok = await confirmAction({ message: "✅ ¿Aprobar esta reseña con los cambios realizados?", type: "generic" });
   if (!ok) return;
-  
   setReviewsMsg("⏳ Guardando cambios y aprobando...");
-  
-  const { error } = await sb
-    .from("reviews")
-    .update({
-      comment: newComment,
-      rating: newRating,
-      status: "approved",
-      approved_at: new Date().toISOString(),
-      approved_by: currentUserEmail,
-      updated_at: new Date().toISOString(),
-    })
-    .eq("id", reviewId);
-  
-  if (error) {
-    setReviewsMsg(`❌ Error: ${error.message}`, true);
-    return;
-  }
-  
+  const { error } = await sb.from("reviews").update({ comment: newComment, rating: newRating, status: "approved", approved_at: new Date().toISOString(), approved_by: currentUserEmail, updated_at: new Date().toISOString() }).eq("id", reviewId);
+  if (error) { setReviewsMsg(`❌ Error: ${error.message}`, true); return; }
   setReviewsMsg("✅ Reseña editada y aprobada correctamente.");
   const modal = document.getElementById("editReviewModal");
   if (modal) modal.style.display = "none";
-  
   await loadPendingReviews();
   await loadApprovedReviews();
 }
-
 function exportReviewsToCSV() {
-  if (!approvedReviewsData.length) {
-    setReviewsMsg("No hay reseñas para exportar.", true);
-    return;
-  }
-  
+  if (!approvedReviewsData.length) { setReviewsMsg("No hay reseñas para exportar.", true); return; }
   const headers = ["ID", "Usuario", "Email", "Calificación", "Comentario", "Fecha de Aprobación", "Aprobado por"];
-  const rows = approvedReviewsData.map(r => [
-    r.id,
-    r.user_name || "",
-    r.user_email || "",
-    r.rating,
-    `"${(r.comment || "").replace(/"/g, '""')}"`,
-    r.approved_at || r.created_at,
-    r.approved_by || ""
-  ]);
-  
+  const rows = approvedReviewsData.map(r => [r.id, r.user_name || "", r.user_email || "", r.rating, `"${(r.comment || "").replace(/"/g, '""')}"`, r.approved_at || r.created_at, r.approved_by || ""]);
   const csvContent = [headers, ...rows].map(row => row.join(",")).join("\n");
   const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
   const link = document.createElement("a");
@@ -2447,77 +1447,46 @@ function exportReviewsToCSV() {
   link.click();
   document.body.removeChild(link);
   URL.revokeObjectURL(url);
-  
   setReviewsMsg("✅ CSV exportado correctamente.");
 }
 
 /* =========================
-   ADMINISTRACIÓN DE PLANES
+   ADMINISTRACIÓN DE PLANES (ACTUALIZADO CON OFERTAS E IMÁGENES)
 ========================= */
 
 async function loadPlansAdmin() {
   const container = document.getElementById("plansList");
   if (!container) return;
-  
   container.innerHTML = '<div class="loading-skeleton"><div class="skeleton-line"></div><div class="skeleton-line"></div></div>';
-  
   try {
-    const { data, error } = await sb
-      .from("service_plans")
-      .select("*")
-      .order("order_index", { ascending: true });
-    
+    const { data, error } = await sb.from("service_plans").select("*").order("order_index", { ascending: true });
     if (error) throw error;
-    
     plansData = data || [];
     renderPlansList();
-  } catch (err) {
-    console.error("Error loading plans:", err);
-    container.innerHTML = `<div class="emptyState">⚠️ Error al cargar planes: ${err.message}</div>`;
-  }
+  } catch (err) { console.error("Error loading plans:", err); container.innerHTML = `<div class="emptyState">⚠️ Error al cargar planes: ${err.message}</div>`; }
 }
 
 function renderPlansList() {
   const container = document.getElementById("plansList");
   if (!container) return;
-  
-  if (!plansData.length) {
-    container.innerHTML = `<div class="emptyState">💰 No hay planes cargados. Creá uno nuevo.</div>`;
-    if (plansPaginator) plansPaginator.updateItems([]);
-    return;
-  }
-  
-  if (!plansPaginator) {
-    plansPaginator = new Paginator({
-      items: plansData,
-      itemsPerPage: 10,
-      currentPage: 1,
-      onPageChange: (paginatedItems) => {
-        renderPlansListPage(paginatedItems);
-      },
-      containerId: "plansPagination",
-    });
-  } else {
-    plansPaginator.updateItems(plansData);
-  }
-  
+  if (!plansData.length) { container.innerHTML = `<div class="emptyState">💰 No hay planes cargados. Creá uno nuevo.</div>`; if (plansPaginator) plansPaginator.updateItems([]); return; }
+  if (!plansPaginator) { plansPaginator = new Paginator({ items: plansData, itemsPerPage: 10, currentPage: 1, onPageChange: (paginatedItems) => { renderPlansListPage(paginatedItems); }, containerId: "plansPagination" }); } else { plansPaginator.updateItems(plansData); }
   plansPaginator.setPage(1);
 }
 
 function renderPlansListPage(plans) {
   const container = document.getElementById("plansList");
   if (!container) return;
-  
-  if (!plans.length) {
-    container.innerHTML = `<div class="emptyState">💰 No hay planes para mostrar.</div>`;
-    return;
-  }
-  
+  if (!plans.length) { container.innerHTML = `<div class="emptyState">💰 No hay planes para mostrar.</div>`; return; }
   container.innerHTML = plans.map(plan => `
     <article class="listCard listCard--compact">
+      <div class="listCard__thumb">
+        <img src="${escapeHtml(plan.image_url || 'https://placehold.co/80x60/1a1a2e/00d4ff?text=No+image')}" alt="${escapeHtml(plan.name)}" style="width:80px; height:60px; object-fit:cover;" />
+      </div>
       <div class="listCard__body">
         <div class="listCard__title">💰 ${escapeHtml(plan.name)}</div>
         <div class="listCard__meta">${escapeHtml(plan.icon || '📦')} · ${escapeHtml(plan.price || 'Precio no definido')} · Orden: ${plan.order_index || 0}</div>
+        ${plan.offer_price ? `<div class="listCard__meta">🔥 Oferta: ${escapeHtml(plan.offer_price)} ${plan.offer_badge ? `· ${escapeHtml(plan.offer_badge)}` : ''}</div>` : ''}
         <div class="listCard__meta">${plan.active ? '🟢 Activo' : '🔴 Inactivo'}</div>
         <div class="listCard__badges">
           ${plan.features?.slice(0, 3).map(f => `<span class="miniTag">${escapeHtml(f)}</span>`).join('') || ''}
@@ -2531,74 +1500,100 @@ function renderPlansListPage(plans) {
       </div>
     </article>
   `).join("");
-  
-  container.querySelectorAll("[data-edit-plan]").forEach(btn => {
-    btn.addEventListener("click", () => openPlanModal(btn.getAttribute("data-edit-plan")));
-  });
-  container.querySelectorAll("[data-duplicate-plan]").forEach(btn => {
-    btn.addEventListener("click", () => duplicatePlan(btn.getAttribute("data-duplicate-plan")));
-  });
-  container.querySelectorAll("[data-delete-plan]").forEach(btn => {
-    btn.addEventListener("click", () => deletePlan(btn.getAttribute("data-delete-plan")));
-  });
+  container.querySelectorAll("[data-edit-plan]").forEach(btn => { btn.addEventListener("click", () => openPlanModal(btn.getAttribute("data-edit-plan"))); });
+  container.querySelectorAll("[data-duplicate-plan]").forEach(btn => { btn.addEventListener("click", () => duplicatePlan(btn.getAttribute("data-duplicate-plan"))); });
+  container.querySelectorAll("[data-delete-plan]").forEach(btn => { btn.addEventListener("click", () => deletePlan(btn.getAttribute("data-delete-plan"))); });
 }
 
 function openPlanModal(id = null) {
   editingPlanId = id;
   const modal = document.getElementById("planModal");
   const title = document.getElementById("planModalTitle");
-  
+  const planId = document.getElementById("planId");
+  const planName = document.getElementById("planName");
+  const planSlug = document.getElementById("planSlug");
+  const planDescription = document.getElementById("planDescription");
+  const planPrice = document.getElementById("planPrice");
+  const planIcon = document.getElementById("planIcon");
+  const planOfferPrice = document.getElementById("planOfferPrice");
+  const planOfferBadge = document.getElementById("planOfferBadge");
+  const planImageUrl = document.getElementById("planImageUrl");
+  const planFeaturesInput = document.getElementById("planFeaturesInput");
+  const planCtaText = document.getElementById("planCtaText");
+  const planOrder = document.getElementById("planOrder");
+  const planActive = document.getElementById("planActive");
+  const previewImg = document.getElementById("planImagePreviewImg");
+  const previewContainer = document.getElementById("planImagePreview");
   if (!id) {
     if (title) title.textContent = "📝 Nuevo Plan";
-    const planId = document.getElementById("planId");
-    const planName = document.getElementById("planName");
-    const planSlug = document.getElementById("planSlug");
-    const planDescription = document.getElementById("planDescription");
-    const planPrice = document.getElementById("planPrice");
-    const planIcon = document.getElementById("planIcon");
-    const planFeaturesInput = document.getElementById("planFeaturesInput");
-    const planCtaText = document.getElementById("planCtaText");
-    const planOrder = document.getElementById("planOrder");
-    const planActive = document.getElementById("planActive");
-    
     if (planId) planId.value = "";
     if (planName) planName.value = "";
     if (planSlug) planSlug.value = "";
     if (planDescription) planDescription.value = "";
     if (planPrice) planPrice.value = "";
     if (planIcon) planIcon.value = "📦";
+    if (planOfferPrice) planOfferPrice.value = "";
+    if (planOfferBadge) planOfferBadge.value = "";
+    if (planImageUrl) planImageUrl.value = "";
     if (planFeaturesInput) planFeaturesInput.value = "";
     if (planCtaText) planCtaText.value = "Consultar →";
     if (planOrder) planOrder.value = "0";
     if (planActive) planActive.checked = true;
+    if (previewContainer) previewContainer.style.display = "none";
+    if (previewImg) previewImg.src = "";
   } else {
     const plan = plansData.find(p => String(p.id) === String(id));
     if (!plan) return;
     if (title) title.textContent = `✏️ Editar: ${plan.name}`;
-    const planId = document.getElementById("planId");
-    const planName = document.getElementById("planName");
-    const planSlug = document.getElementById("planSlug");
-    const planDescription = document.getElementById("planDescription");
-    const planPrice = document.getElementById("planPrice");
-    const planIcon = document.getElementById("planIcon");
-    const planFeaturesInput = document.getElementById("planFeaturesInput");
-    const planCtaText = document.getElementById("planCtaText");
-    const planOrder = document.getElementById("planOrder");
-    const planActive = document.getElementById("planActive");
-    
     if (planId) planId.value = plan.id;
     if (planName) planName.value = plan.name || "";
     if (planSlug) planSlug.value = plan.slug || "";
     if (planDescription) planDescription.value = plan.description || "";
     if (planPrice) planPrice.value = plan.price || "";
     if (planIcon) planIcon.value = plan.icon || "📦";
+    if (planOfferPrice) planOfferPrice.value = plan.offer_price || "";
+    if (planOfferBadge) planOfferBadge.value = plan.offer_badge || "";
+    if (planImageUrl) planImageUrl.value = plan.image_url || "";
     if (planFeaturesInput) planFeaturesInput.value = (plan.features || []).join(", ");
     if (planCtaText) planCtaText.value = plan.cta_text || "Consultar →";
     if (planOrder) planOrder.value = plan.order_index || 0;
     if (planActive) planActive.checked = plan.active !== false;
+    if (plan.image_url && previewContainer && previewImg) {
+      previewImg.src = plan.image_url;
+      previewContainer.style.display = "block";
+    } else if (previewContainer) {
+      previewContainer.style.display = "none";
+    }
   }
-  
   if (modal) modal.style.display = "flex";
+}
+
+async function uploadPlanImage() {
+  const fileInput = document.getElementById("planImageFile");
+  const imageUrlInput = document.getElementById("planImageUrl");
+  const previewImg = document.getElementById("planImagePreviewImg");
+  const previewContainer = document.getElementById("planImagePreview");
+  if (!fileInput || !imageUrlInput) return;
+  const file = fileInput.files?.[0];
+  if (!file) return;
+  if (!file.type.startsWith("image/")) { setPlansMsg("❌ El archivo debe ser una imagen", true); return; }
+  if (file.size > 2 * 1024 * 1024) { setPlansMsg("❌ La imagen no debe superar 2MB", true); return; }
+  setPlansMsg("📤 Subiendo imagen...");
+  try {
+    const ext = (file.name.split(".").pop() || "jpg").toLowerCase();
+    const stamp = Date.now();
+    const random = Math.random().toString(36).slice(2, 8);
+    const filePath = `service-plans/${stamp}-${random}.${ext}`;
+    const { error: uploadError } = await sb.storage.from("project-images").upload(filePath, file, { cacheControl: "3600", upsert: true, contentType: file.type });
+    if (uploadError) throw new Error(uploadError.message);
+    const { data: publicData } = sb.storage.from("project-images").getPublicUrl(filePath);
+    const publicUrl = publicData?.publicUrl || "";
+    if (!publicUrl) throw new Error("No se pudo obtener la URL pública");
+    imageUrlInput.value = publicUrl;
+    if (previewImg) previewImg.src = publicUrl;
+    if (previewContainer) previewContainer.style.display = "block";
+    setPlansMsg("✅ Imagen subida correctamente");
+  } catch (err) { setPlansMsg(`❌ Error: ${err.message}`, true); }
 }
 
 async function savePlan() {
@@ -2608,108 +1603,47 @@ async function savePlan() {
   const description = document.getElementById("planDescription")?.value.trim();
   const price = document.getElementById("planPrice")?.value.trim();
   const icon = document.getElementById("planIcon")?.value.trim() || "📦";
+  const offer_price = document.getElementById("planOfferPrice")?.value.trim() || null;
+  const offer_badge = document.getElementById("planOfferBadge")?.value.trim() || null;
+  const image_url = document.getElementById("planImageUrl")?.value.trim() || null;
   const featuresInput = document.getElementById("planFeaturesInput")?.value || "";
   const features = featuresInput.split(",").map(f => f.trim()).filter(Boolean);
   const cta_text = document.getElementById("planCtaText")?.value.trim() || "Consultar →";
   const order_index = parseInt(document.getElementById("planOrder")?.value) || 0;
   const active = document.getElementById("planActive")?.checked || false;
-  
-  if (!name) {
-    setPlansMsg("❌ El nombre del plan es obligatorio", true);
-    return;
-  }
-  
-  if (!slug) {
-    slug = name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
-  }
-  
-  const payload = { name, slug, description, price, icon, features, cta_text, order_index, active, updated_at: new Date().toISOString() };
-  
-  const ok = await confirmAction({
-    message: id ? `¿Guardar cambios en "${name}"?` : `¿Crear el plan "${name}"?`,
-    type: "generic",
-  });
+  if (!name) { setPlansMsg("❌ El nombre del plan es obligatorio", true); return; }
+  if (!slug) { slug = name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""); }
+  const payload = { name, slug, description, price, icon, offer_price, offer_badge, image_url, features, cta_text, order_index, active, updated_at: new Date().toISOString() };
+  const ok = await confirmAction({ message: id ? `¿Guardar cambios en "${name}"?` : `¿Crear el plan "${name}"?`, type: "generic" });
   if (!ok) return;
-  
   setPlansMsg("⏳ Guardando...");
-  
   try {
-    if (id) {
-      const { error } = await sb.from("service_plans").update(payload).eq("id", id);
-      if (error) throw error;
-      setPlansMsg("✅ Plan actualizado correctamente.");
-    } else {
-      const { error } = await sb.from("service_plans").insert([payload]);
-      if (error) throw error;
-      setPlansMsg("✅ Plan creado correctamente.");
-    }
-    
+    if (id) { const { error } = await sb.from("service_plans").update(payload).eq("id", id); if (error) throw error; setPlansMsg("✅ Plan actualizado correctamente."); }
+    else { const { error } = await sb.from("service_plans").insert([payload]); if (error) throw error; setPlansMsg("✅ Plan creado correctamente."); }
     const modal = document.getElementById("planModal");
     if (modal) modal.style.display = "none";
     await loadPlansAdmin();
-  } catch (err) {
-    setPlansMsg(`❌ Error: ${err.message}`, true);
-  }
+  } catch (err) { setPlansMsg(`❌ Error: ${err.message}`, true); }
 }
 
 async function duplicatePlan(id) {
   const original = plansData.find(p => String(p.id) === String(id));
   if (!original) return;
-  
-  const ok = await confirmAction({
-    message: `📋 ¿Duplicar el plan "${original.name}"?`,
-    type: "generic",
-  });
+  const ok = await confirmAction({ message: `📋 ¿Duplicar el plan "${original.name}"?`, type: "generic" });
   if (!ok) return;
-  
   const newName = `${original.name} (copia)`;
   const newSlug = `${original.slug}-copia-${Date.now()}`;
-  
-  const payload = {
-    name: newName,
-    slug: newSlug,
-    description: original.description,
-    price: original.price,
-    icon: original.icon,
-    features: original.features,
-    cta_text: original.cta_text,
-    order_index: (original.order_index || 0) + 1,
-    active: false,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  };
-  
-  try {
-    const { error } = await sb.from("service_plans").insert([payload]);
-    if (error) throw error;
-    setPlansMsg("✅ Plan duplicado correctamente.");
-    await loadPlansAdmin();
-  } catch (err) {
-    setPlansMsg(`❌ Error al duplicar: ${err.message}`, true);
-  }
+  const payload = { name: newName, slug: newSlug, description: original.description, price: original.price, icon: original.icon, offer_price: original.offer_price, offer_badge: original.offer_badge, image_url: original.image_url, features: original.features, cta_text: original.cta_text, order_index: (original.order_index || 0) + 1, active: false, created_at: new Date().toISOString(), updated_at: new Date().toISOString() };
+  try { const { error } = await sb.from("service_plans").insert([payload]); if (error) throw error; setPlansMsg("✅ Plan duplicado correctamente."); await loadPlansAdmin(); } catch (err) { setPlansMsg(`❌ Error al duplicar: ${err.message}`, true); }
 }
 
 async function deletePlan(id) {
   const plan = plansData.find(p => String(p.id) === String(id));
   if (!plan) return;
-  
-  const ok = await confirmAction({
-    message: `⚠️ ¿Eliminar permanentemente el plan "${plan.name}"? Esta acción no se puede deshacer.`,
-    type: "delete",
-    double: true,
-  });
+  const ok = await confirmAction({ message: `⚠️ ¿Eliminar permanentemente el plan "${plan.name}"? Esta acción no se puede deshacer.`, type: "delete", double: true });
   if (!ok) return;
-  
   setPlansMsg("⏳ Eliminando...");
-  
-  try {
-    const { error } = await sb.from("service_plans").delete().eq("id", id);
-    if (error) throw error;
-    setPlansMsg("✅ Plan eliminado correctamente.");
-    await loadPlansAdmin();
-  } catch (err) {
-    setPlansMsg(`❌ Error al eliminar: ${err.message}`, true);
-  }
+  try { const { error } = await sb.from("service_plans").delete().eq("id", id); if (error) throw error; setPlansMsg("✅ Plan eliminado correctamente."); await loadPlansAdmin(); } catch (err) { setPlansMsg(`❌ Error al eliminar: ${err.message}`, true); }
 }
 
 function setPlansMsg(msg, isError = false) {
@@ -2718,81 +1652,37 @@ function setPlansMsg(msg, isError = false) {
   msgEl.textContent = msg;
   msgEl.classList.remove("msg--success", "msg--error");
   msgEl.classList.add(isError ? "msg--error" : "msg--success");
-  setTimeout(() => {
-    if (msgEl.textContent === msg) {
-      msgEl.textContent = "";
-      msgEl.classList.remove("msg--success", "msg--error");
-    }
-  }, 4000);
+  setTimeout(() => { if (msgEl.textContent === msg) { msgEl.textContent = ""; msgEl.classList.remove("msg--success", "msg--error"); } }, 4000);
 }
 
 /* =========================
-   ADMINISTRACIÓN DE MARCAS
+   ADMINISTRACIÓN DE MARCAS (resumido pero completo)
 ========================= */
-
 async function loadBrandsAdmin() {
   const container = document.getElementById("brandsList");
   if (!container) return;
-  
   container.innerHTML = '<div class="loading-skeleton"><div class="skeleton-line"></div><div class="skeleton-line"></div></div>';
-  
   try {
-    const { data, error } = await sb
-      .from("trusted_brands")
-      .select("*")
-      .order("order_index", { ascending: true });
-    
+    const { data, error } = await sb.from("trusted_brands").select("*").order("order_index", { ascending: true });
     if (error) throw error;
-    
     brandsData = data || [];
     renderBrandsList();
-  } catch (err) {
-    console.error("Error loading brands:", err);
-    container.innerHTML = `<div class="emptyState">⚠️ Error al cargar marcas: ${err.message}</div>`;
-  }
+  } catch (err) { console.error("Error loading brands:", err); container.innerHTML = `<div class="emptyState">⚠️ Error al cargar marcas: ${err.message}</div>`; }
 }
-
 function renderBrandsList() {
   const container = document.getElementById("brandsList");
   if (!container) return;
-  
-  if (!brandsData.length) {
-    container.innerHTML = `<div class="emptyState">🏷️ No hay marcas cargadas. Creá una nueva.</div>`;
-    if (brandsPaginator) brandsPaginator.updateItems([]);
-    return;
-  }
-  
-  if (!brandsPaginator) {
-    brandsPaginator = new Paginator({
-      items: brandsData,
-      itemsPerPage: 10,
-      currentPage: 1,
-      onPageChange: (paginatedItems) => {
-        renderBrandsListPage(paginatedItems);
-      },
-      containerId: "brandsPagination",
-    });
-  } else {
-    brandsPaginator.updateItems(brandsData);
-  }
-  
+  if (!brandsData.length) { container.innerHTML = `<div class="emptyState">🏷️ No hay marcas cargadas. Creá una nueva.</div>`; if (brandsPaginator) brandsPaginator.updateItems([]); return; }
+  if (!brandsPaginator) { brandsPaginator = new Paginator({ items: brandsData, itemsPerPage: 10, currentPage: 1, onPageChange: (paginatedItems) => { renderBrandsListPage(paginatedItems); }, containerId: "brandsPagination" }); } else { brandsPaginator.updateItems(brandsData); }
   brandsPaginator.setPage(1);
 }
-
 function renderBrandsListPage(brands) {
   const container = document.getElementById("brandsList");
   if (!container) return;
-  
-  if (!brands.length) {
-    container.innerHTML = `<div class="emptyState">🏷️ No hay marcas para mostrar.</div>`;
-    return;
-  }
-  
+  if (!brands.length) { container.innerHTML = `<div class="emptyState">🏷️ No hay marcas para mostrar.</div>`; return; }
   container.innerHTML = brands.map(brand => `
     <article class="listCard listCard--compact">
-      <div class="listCard__thumb">
-        <img src="${escapeHtml(brand.logo_url)}" alt="${escapeHtml(brand.name)}" style="width:60px; height:60px; object-fit:contain;" />
-      </div>
+      <div class="listCard__thumb"><img src="${escapeHtml(brand.logo_url)}" alt="${escapeHtml(brand.name)}" style="width:60px; height:60px; object-fit:contain;" /></div>
       <div class="listCard__body">
         <div class="listCard__title">🏷️ ${escapeHtml(brand.name)}</div>
         <div class="listCard__meta">${brand.website_url ? `🔗 ${escapeHtml(brand.website_url)}` : 'Sin web'} · Orden: ${brand.order_index || 0}</div>
@@ -2804,20 +1694,13 @@ function renderBrandsListPage(brands) {
       </div>
     </article>
   `).join("");
-  
-  container.querySelectorAll("[data-edit-brand]").forEach(btn => {
-    btn.addEventListener("click", () => openBrandModal(btn.getAttribute("data-edit-brand")));
-  });
-  container.querySelectorAll("[data-delete-brand]").forEach(btn => {
-    btn.addEventListener("click", () => deleteBrand(btn.getAttribute("data-delete-brand")));
-  });
+  container.querySelectorAll("[data-edit-brand]").forEach(btn => { btn.addEventListener("click", () => openBrandModal(btn.getAttribute("data-edit-brand"))); });
+  container.querySelectorAll("[data-delete-brand]").forEach(btn => { btn.addEventListener("click", () => deleteBrand(btn.getAttribute("data-delete-brand"))); });
 }
-
 function openBrandModal(id = null) {
   editingBrandId = id;
   const modal = document.getElementById("brandModal");
   const title = document.getElementById("brandModalTitle");
-  
   const brandId = document.getElementById("brandId");
   const brandName = document.getElementById("brandName");
   const brandLogoUrl = document.getElementById("brandLogoUrl");
@@ -2825,7 +1708,6 @@ function openBrandModal(id = null) {
   const brandOrder = document.getElementById("brandOrder");
   const brandActive = document.getElementById("brandActive");
   const brandLogoFile = document.getElementById("brandLogoFile");
-  
   if (!id) {
     if (title) title.textContent = "🏷️ Nueva Marca";
     if (brandId) brandId.value = "";
@@ -2847,54 +1729,28 @@ function openBrandModal(id = null) {
     if (brandActive) brandActive.checked = brand.active !== false;
     if (brandLogoFile) brandLogoFile.value = "";
   }
-  
   if (modal) modal.style.display = "flex";
 }
-
 async function uploadBrandLogo() {
   const fileInput = document.getElementById("brandLogoFile");
   const logoUrlInput = document.getElementById("brandLogoUrl");
   if (!fileInput || !logoUrlInput) return;
-  
   const file = fileInput.files?.[0];
   if (!file) return;
-  
-  if (!file.type.startsWith("image/")) {
-    setBrandsMsg("❌ El archivo debe ser una imagen", true);
-    return;
-  }
-  if (file.size > 2 * 1024 * 1024) {
-    setBrandsMsg("❌ La imagen no debe superar 2MB", true);
-    return;
-  }
-  
+  if (!file.type.startsWith("image/")) { setBrandsMsg("❌ El archivo debe ser una imagen", true); return; }
+  if (file.size > 2 * 1024 * 1024) { setBrandsMsg("❌ La imagen no debe superar 2MB", true); return; }
   setBrandsMsg("📤 Subiendo logo...");
-  
   try {
     const filePath = buildStorageFilePath(file, "brands");
-    const { error: uploadError } = await sb
-      .storage
-      .from("project-images")
-      .upload(filePath, file, {
-        cacheControl: "3600",
-        upsert: true,
-        contentType: file.type,
-      });
-    
+    const { error: uploadError } = await sb.storage.from("project-images").upload(filePath, file, { cacheControl: "3600", upsert: true, contentType: file.type });
     if (uploadError) throw new Error(uploadError.message);
-    
     const { data: publicData } = sb.storage.from("project-images").getPublicUrl(filePath);
     const publicUrl = publicData?.publicUrl || "";
-    
     if (!publicUrl) throw new Error("No se pudo obtener la URL pública");
-    
     logoUrlInput.value = publicUrl;
     setBrandsMsg("✅ Logo subido correctamente");
-  } catch (err) {
-    setBrandsMsg(`❌ Error: ${err.message}`, true);
-  }
+  } catch (err) { setBrandsMsg(`❌ Error: ${err.message}`, true); }
 }
-
 async function saveBrand() {
   const id = document.getElementById("brandId")?.value;
   const name = document.getElementById("brandName")?.value.trim();
@@ -2902,167 +1758,62 @@ async function saveBrand() {
   const website_url = document.getElementById("brandWebsite")?.value.trim() || null;
   const order_index = parseInt(document.getElementById("brandOrder")?.value) || 0;
   const active = document.getElementById("brandActive")?.checked || false;
-  
-  if (!name) {
-    setBrandsMsg("❌ El nombre de la marca es obligatorio", true);
-    return;
-  }
-  if (!logo_url) {
-    setBrandsMsg("❌ La URL del logo es obligatoria", true);
-    return;
-  }
-  
+  if (!name) { setBrandsMsg("❌ El nombre de la marca es obligatorio", true); return; }
+  if (!logo_url) { setBrandsMsg("❌ La URL del logo es obligatoria", true); return; }
   const payload = { name, logo_url, website_url, order_index, active, updated_at: new Date().toISOString() };
-  
-  const ok = await confirmAction({
-    message: id ? `¿Guardar cambios en "${name}"?` : `¿Crear la marca "${name}"?`,
-    type: "generic",
-  });
+  const ok = await confirmAction({ message: id ? `¿Guardar cambios en "${name}"?` : `¿Crear la marca "${name}"?`, type: "generic" });
   if (!ok) return;
-  
   setBrandsMsg("⏳ Guardando...");
-  
   try {
-    if (id) {
-      const { error } = await sb.from("trusted_brands").update(payload).eq("id", id);
-      if (error) throw error;
-      setBrandsMsg("✅ Marca actualizada correctamente.");
-    } else {
-      const { error } = await sb.from("trusted_brands").insert([payload]);
-      if (error) throw error;
-      setBrandsMsg("✅ Marca creada correctamente.");
-    }
-    
+    if (id) { const { error } = await sb.from("trusted_brands").update(payload).eq("id", id); if (error) throw error; setBrandsMsg("✅ Marca actualizada correctamente."); }
+    else { const { error } = await sb.from("trusted_brands").insert([payload]); if (error) throw error; setBrandsMsg("✅ Marca creada correctamente."); }
     const modal = document.getElementById("brandModal");
     if (modal) modal.style.display = "none";
     await loadBrandsAdmin();
-  } catch (err) {
-    setBrandsMsg(`❌ Error: ${err.message}`, true);
-  }
+  } catch (err) { setBrandsMsg(`❌ Error: ${err.message}`, true); }
 }
-
 async function deleteBrand(id) {
   const brand = brandsData.find(b => String(b.id) === String(id));
   if (!brand) return;
-  
-  const ok = await confirmAction({
-    message: `⚠️ ¿Eliminar la marca "${brand.name}"? Esta acción no se puede deshacer.`,
-    type: "delete",
-    double: true,
-  });
+  const ok = await confirmAction({ message: `⚠️ ¿Eliminar la marca "${brand.name}"? Esta acción no se puede deshacer.`, type: "delete", double: true });
   if (!ok) return;
-  
   setBrandsMsg("⏳ Eliminando...");
-  
-  try {
-    const { error } = await sb.from("trusted_brands").delete().eq("id", id);
-    if (error) throw error;
-    setBrandsMsg("✅ Marca eliminada correctamente.");
-    await loadBrandsAdmin();
-  } catch (err) {
-    setBrandsMsg(`❌ Error al eliminar: ${err.message}`, true);
-  }
+  try { const { error } = await sb.from("trusted_brands").delete().eq("id", id); if (error) throw error; setBrandsMsg("✅ Marca eliminada correctamente."); await loadBrandsAdmin(); } catch (err) { setBrandsMsg(`❌ Error al eliminar: ${err.message}`, true); }
 }
 
 /* =========================
-   ADMINISTRACIÓN DE PREGUNTAS DEL ASISTENTE
+   ADMINISTRACIÓN DE PREGUNTAS DEL ASISTENTE (resumido)
 ========================= */
-
 async function loadAssistantQuestionsAdmin() {
   const container = document.getElementById("assistantQuestionsList");
   if (!container) return;
-  
   container.innerHTML = '<div class="loading-skeleton"><div class="skeleton-line"></div><div class="skeleton-line"></div></div>';
-  
   try {
-    const { data, error } = await sb
-      .from("assistant_questions")
-      .select("*")
-      .order("order_index", { ascending: true });
-    
+    const { data, error } = await sb.from("assistant_questions").select("*").order("order_index", { ascending: true });
     if (error) throw error;
-    
     assistantQuestionsData = data || [];
     renderAssistantQuestionsList();
-  } catch (err) {
-    console.error("Error loading assistant questions:", err);
-    container.innerHTML = `<div class="emptyState">❌ Error al cargar preguntas: ${err.message}</div>`;
-  }
+  } catch (err) { console.error("Error loading assistant questions:", err); container.innerHTML = `<div class="emptyState">❌ Error al cargar preguntas: ${err.message}</div>`; }
 }
-
 function renderAssistantQuestionsList() {
   const container = document.getElementById("assistantQuestionsList");
   if (!container) return;
-  
-  if (!assistantQuestionsData.length) {
-    container.innerHTML = `<div class="emptyState">❓ No hay preguntas cargadas. Creá una nueva.</div>`;
-    if (assistantQuestionsPaginator) assistantQuestionsPaginator.updateItems([]);
-    return;
-  }
-  
-  if (!assistantQuestionsPaginator) {
-    assistantQuestionsPaginator = new Paginator({
-      items: assistantQuestionsData,
-      itemsPerPage: 10,
-      currentPage: 1,
-      onPageChange: (paginatedItems) => {
-        renderAssistantQuestionsListPage(paginatedItems);
-      },
-      containerId: "assistantQuestionsPagination",
-    });
-  } else {
-    assistantQuestionsPaginator.updateItems(assistantQuestionsData);
-  }
-  
+  if (!assistantQuestionsData.length) { container.innerHTML = `<div class="emptyState">❓ No hay preguntas cargadas. Creá una nueva.</div>`; if (assistantQuestionsPaginator) assistantQuestionsPaginator.updateItems([]); return; }
+  if (!assistantQuestionsPaginator) { assistantQuestionsPaginator = new Paginator({ items: assistantQuestionsData, itemsPerPage: 10, currentPage: 1, onPageChange: (paginatedItems) => { renderAssistantQuestionsListPage(paginatedItems); }, containerId: "assistantQuestionsPagination" }); } else { assistantQuestionsPaginator.updateItems(assistantQuestionsData); }
   assistantQuestionsPaginator.setPage(1);
 }
-
 function renderAssistantQuestionsListPage(questions) {
   const container = document.getElementById("assistantQuestionsList");
   if (!container) return;
-  
-  if (!questions.length) {
-    container.innerHTML = `<div class="emptyState">❓ No hay preguntas para mostrar.</div>`;
-    return;
-  }
-  
-  container.innerHTML = questions.map(q => {
-    let optionsPreview = '';
-    if (q.question_type === 'options' && q.options) {
-      try {
-        const opts = JSON.parse(q.options);
-        optionsPreview = `<div class="listCard__meta">📋 Opciones: ${opts.slice(0, 3).join(', ')}${opts.length > 3 ? '...' : ''}</div>`;
-      } catch(e) {}
-    }
-    return `
-      <article class="listCard listCard--compact">
-        <div class="listCard__body">
-          <div class="listCard__title">❓ ${escapeHtml(q.question)}</div>
-          <div class="listCard__meta">📝 Tipo: ${q.question_type === 'options' ? 'Opciones múltiples' : 'Texto libre'}</div>
-          ${optionsPreview}
-          <div class="listCard__meta">🔢 Orden: ${q.order_index || 0} · ${q.active ? '🟢 Activa' : '🔴 Inactiva'} · ${q.required ? '⚠️ Requerida' : 'Opcional'}</div>
-        </div>
-        <div class="listCard__actions">
-          <button class="btn btn--ghost btn--small" data-edit-question="${q.id}" data-tooltip="Editar pregunta">✏️</button>
-          <button class="btn btn--danger btn--small" data-delete-question="${q.id}" data-tooltip="Eliminar pregunta">🗑️</button>
-        </div>
-      </article>
-    `;
-  }).join("");
-  
-  container.querySelectorAll("[data-edit-question]").forEach(btn => {
-    btn.addEventListener("click", () => openAssistantQuestionModal(btn.getAttribute("data-edit-question")));
-  });
-  container.querySelectorAll("[data-delete-question]").forEach(btn => {
-    btn.addEventListener("click", () => deleteAssistantQuestion(btn.getAttribute("data-delete-question")));
-  });
+  if (!questions.length) { container.innerHTML = `<div class="emptyState">❓ No hay preguntas para mostrar.</div>`; return; }
+  container.innerHTML = questions.map(q => { let optionsPreview = ''; if (q.question_type === 'options' && q.options) { try { const opts = JSON.parse(q.options); optionsPreview = `<div class="listCard__meta">📋 Opciones: ${opts.slice(0, 3).join(', ')}${opts.length > 3 ? '...' : ''}</div>`; } catch(e) {} } return `<article class="listCard listCard--compact"><div class="listCard__body"><div class="listCard__title">❓ ${escapeHtml(q.question)}</div><div class="listCard__meta">📝 Tipo: ${q.question_type === 'options' ? 'Opciones múltiples' : 'Texto libre'}</div>${optionsPreview}<div class="listCard__meta">🔢 Orden: ${q.order_index || 0} · ${q.active ? '🟢 Activa' : '🔴 Inactiva'} · ${q.required ? '⚠️ Requerida' : 'Opcional'}</div></div><div class="listCard__actions"><button class="btn btn--ghost btn--small" data-edit-question="${q.id}" data-tooltip="Editar pregunta">✏️</button><button class="btn btn--danger btn--small" data-delete-question="${q.id}" data-tooltip="Eliminar pregunta">🗑️</button></div></article>`; }).join("");
+  container.querySelectorAll("[data-edit-question]").forEach(btn => { btn.addEventListener("click", () => openAssistantQuestionModal(btn.getAttribute("data-edit-question"))); });
+  container.querySelectorAll("[data-delete-question]").forEach(btn => { btn.addEventListener("click", () => deleteAssistantQuestion(btn.getAttribute("data-delete-question"))); });
 }
-
 function openAssistantQuestionModal(id = null) {
   editingAssistantQuestionId = id;
   const modal = document.getElementById("assistantQuestionModal");
   const title = document.getElementById("assistantQuestionModalTitle");
-  
   const questionId = document.getElementById("assistantQuestionId");
   const questionText = document.getElementById("assistantQuestionText");
   const questionType = document.getElementById("assistantQuestionType");
@@ -3073,21 +1824,8 @@ function openAssistantQuestionModal(id = null) {
   const active = document.getElementById("assistantQuestionActive");
   const optionsField = document.getElementById("assistantOptionsField");
   const placeholderField = document.getElementById("assistantPlaceholderField");
-  
-  const toggleFields = () => {
-    if (questionType.value === 'options') {
-      if (optionsField) optionsField.style.display = "";
-      if (placeholderField) placeholderField.style.display = "none";
-    } else {
-      if (optionsField) optionsField.style.display = "none";
-      if (placeholderField) placeholderField.style.display = "";
-    }
-  };
-  
-  if (questionType) {
-    questionType.addEventListener("change", toggleFields);
-  }
-  
+  const toggleFields = () => { if (questionType.value === 'options') { if (optionsField) optionsField.style.display = ""; if (placeholderField) placeholderField.style.display = "none"; } else { if (optionsField) optionsField.style.display = "none"; if (placeholderField) placeholderField.style.display = ""; } };
+  if (questionType) { questionType.addEventListener("change", toggleFields); }
   if (!id) {
     if (title) title.textContent = "❓ Nueva Pregunta";
     if (questionId) questionId.value = "";
@@ -3106,22 +1844,15 @@ function openAssistantQuestionModal(id = null) {
     if (questionId) questionId.value = question.id;
     if (questionText) questionText.value = question.question || "";
     if (questionType) questionType.value = question.question_type || "options";
-    if (optionsInput && question.options) {
-      try {
-        const opts = JSON.parse(question.options);
-        optionsInput.value = opts.join(", ");
-      } catch(e) { optionsInput.value = ""; }
-    }
+    if (optionsInput && question.options) { try { const opts = JSON.parse(question.options); optionsInput.value = opts.join(", "); } catch(e) { optionsInput.value = ""; } }
     if (placeholder) placeholder.value = question.placeholder || "";
     if (order) order.value = question.order_index || 0;
     if (required) required.checked = question.required !== false;
     if (active) active.checked = question.active !== false;
     toggleFields();
   }
-  
   if (modal) modal.style.display = "flex";
 }
-
 async function saveAssistantQuestion() {
   const id = document.getElementById("assistantQuestionId")?.value;
   const question = document.getElementById("assistantQuestionText")?.value.trim();
@@ -3131,162 +1862,61 @@ async function saveAssistantQuestion() {
   const order_index = parseInt(document.getElementById("assistantQuestionOrder")?.value) || 0;
   const required = document.getElementById("assistantQuestionRequired")?.checked || false;
   const active = document.getElementById("assistantQuestionActive")?.checked || false;
-  
-  if (!question) {
-    setAssistantQuestionsMsg("❌ La pregunta es obligatoria", true);
-    return;
-  }
-  
+  if (!question) { setAssistantQuestionsMsg("❌ La pregunta es obligatoria", true); return; }
   let options = null;
-  if (question_type === 'options' && optionsValue) {
-    const opts = optionsValue.split(",").map(o => o.trim()).filter(Boolean);
-    if (opts.length === 0) {
-      setAssistantQuestionsMsg("❌ Debes ingresar al menos una opción", true);
-      return;
-    }
-    options = JSON.stringify(opts);
-  }
-  
+  if (question_type === 'options' && optionsValue) { const opts = optionsValue.split(",").map(o => o.trim()).filter(Boolean); if (opts.length === 0) { setAssistantQuestionsMsg("❌ Debes ingresar al menos una opción", true); return; } options = JSON.stringify(opts); }
   const payload = { question, question_type, options, placeholder, order_index, required, active, updated_at: new Date().toISOString() };
-  
-  const ok = await confirmAction({
-    message: id ? `¿Guardar cambios en la pregunta?` : `¿Crear la pregunta?`,
-    type: "generic",
-  });
+  const ok = await confirmAction({ message: id ? `¿Guardar cambios en la pregunta?` : `¿Crear la pregunta?`, type: "generic" });
   if (!ok) return;
-  
   setAssistantQuestionsMsg("⏳ Guardando...");
-  
   try {
-    if (id) {
-      const { error } = await sb.from("assistant_questions").update(payload).eq("id", id);
-      if (error) throw error;
-      setAssistantQuestionsMsg("✅ Pregunta actualizada correctamente.");
-    } else {
-      const { error } = await sb.from("assistant_questions").insert([payload]);
-      if (error) throw error;
-      setAssistantQuestionsMsg("✅ Pregunta creada correctamente.");
-    }
-    
+    if (id) { const { error } = await sb.from("assistant_questions").update(payload).eq("id", id); if (error) throw error; setAssistantQuestionsMsg("✅ Pregunta actualizada correctamente."); }
+    else { const { error } = await sb.from("assistant_questions").insert([payload]); if (error) throw error; setAssistantQuestionsMsg("✅ Pregunta creada correctamente."); }
     const modal = document.getElementById("assistantQuestionModal");
     if (modal) modal.style.display = "none";
     await loadAssistantQuestionsAdmin();
-  } catch (err) {
-    setAssistantQuestionsMsg(`❌ Error: ${err.message}`, true);
-  }
+  } catch (err) { setAssistantQuestionsMsg(`❌ Error: ${err.message}`, true); }
 }
-
 async function deleteAssistantQuestion(id) {
   const question = assistantQuestionsData.find(q => String(q.id) === String(id));
   if (!question) return;
-  
-  const ok = await confirmAction({
-    message: `⚠️ ¿Eliminar la pregunta "${question.question.substring(0, 50)}"? Esta acción no se puede deshacer.`,
-    type: "delete",
-    double: true,
-  });
+  const ok = await confirmAction({ message: `⚠️ ¿Eliminar la pregunta "${question.question.substring(0, 50)}"? Esta acción no se puede deshacer.`, type: "delete", double: true });
   if (!ok) return;
-  
   setAssistantQuestionsMsg("⏳ Eliminando...");
-  
-  try {
-    const { error } = await sb.from("assistant_questions").delete().eq("id", id);
-    if (error) throw error;
-    setAssistantQuestionsMsg("✅ Pregunta eliminada correctamente.");
-    await loadAssistantQuestionsAdmin();
-  } catch (err) {
-    setAssistantQuestionsMsg(`❌ Error al eliminar: ${err.message}`, true);
-  }
+  try { const { error } = await sb.from("assistant_questions").delete().eq("id", id); if (error) throw error; setAssistantQuestionsMsg("✅ Pregunta eliminada correctamente."); await loadAssistantQuestionsAdmin(); } catch (err) { setAssistantQuestionsMsg(`❌ Error al eliminar: ${err.message}`, true); }
 }
 
 /* =========================
-   RESPUESTAS DEL ASISTENTE
+   RESPUESTAS DEL ASISTENTE (resumido)
 ========================= */
-
 async function loadAssistantResponsesAdmin() {
   const container = document.getElementById("assistantResponsesList");
   if (!container) return;
-  
   container.innerHTML = '<div class="loading-skeleton"><div class="skeleton-line"></div><div class="skeleton-line"></div></div>';
-  
   try {
-    const { data, error } = await sb
-      .from("assistant_responses")
-      .select("*, assistant_questions(question)")
-      .order("created_at", { ascending: false });
-    
+    const { data, error } = await sb.from("assistant_responses").select("*, assistant_questions(question)").order("created_at", { ascending: false });
     if (error) throw error;
-    
     assistantResponsesData = data || [];
     renderAssistantResponsesList();
-  } catch (err) {
-    console.error("Error loading assistant responses:", err);
-    container.innerHTML = `<div class="emptyState">❌ Error al cargar respuestas: ${err.message}</div>`;
-  }
+  } catch (err) { console.error("Error loading assistant responses:", err); container.innerHTML = `<div class="emptyState">❌ Error al cargar respuestas: ${err.message}</div>`; }
 }
-
 function renderAssistantResponsesList() {
   const container = document.getElementById("assistantResponsesList");
   if (!container) return;
-  
-  if (!assistantResponsesData.length) {
-    container.innerHTML = `<div class="emptyState">📊 No hay respuestas de usuarios registradas.</div>`;
-    if (assistantResponsesPaginator) assistantResponsesPaginator.updateItems([]);
-    return;
-  }
-  
-  if (!assistantResponsesPaginator) {
-    assistantResponsesPaginator = new Paginator({
-      items: assistantResponsesData,
-      itemsPerPage: 10,
-      currentPage: 1,
-      onPageChange: (paginatedItems) => {
-        renderAssistantResponsesListPage(paginatedItems);
-      },
-      containerId: "assistantResponsesPagination",
-    });
-  } else {
-    assistantResponsesPaginator.updateItems(assistantResponsesData);
-  }
-  
+  if (!assistantResponsesData.length) { container.innerHTML = `<div class="emptyState">📊 No hay respuestas de usuarios registradas.</div>`; if (assistantResponsesPaginator) assistantResponsesPaginator.updateItems([]); return; }
+  if (!assistantResponsesPaginator) { assistantResponsesPaginator = new Paginator({ items: assistantResponsesData, itemsPerPage: 10, currentPage: 1, onPageChange: (paginatedItems) => { renderAssistantResponsesListPage(paginatedItems); }, containerId: "assistantResponsesPagination" }); } else { assistantResponsesPaginator.updateItems(assistantResponsesData); }
   assistantResponsesPaginator.setPage(1);
 }
-
 function renderAssistantResponsesListPage(responses) {
   const container = document.getElementById("assistantResponsesList");
   if (!container) return;
-  
-  if (!responses.length) {
-    container.innerHTML = `<div class="emptyState">📊 No hay respuestas para mostrar.</div>`;
-    return;
-  }
-  
-  container.innerHTML = responses.map(r => `
-    <article class="listCard listCard--compact">
-      <div class="listCard__body">
-        <div class="listCard__title">${escapeHtml(r.assistant_questions?.question || 'Pregunta eliminada')}</div>
-        <div class="listCard__meta">💬 Respuesta: <strong>${escapeHtml(r.answer)}</strong></div>
-        <div class="listCard__meta">📅 ${formatDate(r.created_at)} · 🆔 Sesión: ${escapeHtml(r.session_id?.substring(0, 8))}...</div>
-      </div>
-    </article>
-  `).join("");
+  if (!responses.length) { container.innerHTML = `<div class="emptyState">📊 No hay respuestas para mostrar.</div>`; return; }
+  container.innerHTML = responses.map(r => `<article class="listCard listCard--compact"><div class="listCard__body"><div class="listCard__title">${escapeHtml(r.assistant_questions?.question || 'Pregunta eliminada')}</div><div class="listCard__meta">💬 Respuesta: <strong>${escapeHtml(r.answer)}</strong></div><div class="listCard__meta">📅 ${formatDate(r.created_at)} · 🆔 Sesión: ${escapeHtml(r.session_id?.substring(0, 8))}...</div></div></article>`).join("");
 }
-
 function exportResponsesToCSV() {
-  if (!assistantResponsesData.length) {
-    setAssistantResponsesMsg("No hay respuestas para exportar.", true);
-    return;
-  }
-  
+  if (!assistantResponsesData.length) { setAssistantResponsesMsg("No hay respuestas para exportar.", true); return; }
   const headers = ["ID", "Sesión", "Pregunta", "Respuesta", "Fecha"];
-  const rows = assistantResponsesData.map(r => [
-    r.id,
-    r.session_id || "",
-    r.assistant_questions?.question || "Pregunta eliminada",
-    `"${(r.answer || "").replace(/"/g, '""')}"`,
-    r.created_at
-  ]);
-  
+  const rows = assistantResponsesData.map(r => [r.id, r.session_id || "", r.assistant_questions?.question || "Pregunta eliminada", `"${(r.answer || "").replace(/"/g, '""')}"`, r.created_at]);
   const csvContent = [headers, ...rows].map(row => row.join(",")).join("\n");
   const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
   const link = document.createElement("a");
@@ -3297,160 +1927,65 @@ function exportResponsesToCSV() {
   link.click();
   document.body.removeChild(link);
   URL.revokeObjectURL(url);
-  
   setAssistantResponsesMsg("✅ CSV exportado correctamente.");
 }
 
 /* =========================
-   ADMINISTRACIÓN DE CASOS DE ÉXITO
+   ADMINISTRACIÓN DE CASOS DE ÉXITO (resumido)
 ========================= */
-
 async function uploadSuccessStoryImage() {
   const fileInput = document.getElementById("successStoryImageFile");
   const imageUrlInput = document.getElementById("successStoryImageUrl");
   if (!fileInput || !imageUrlInput) return;
-  
   const file = fileInput.files?.[0];
   if (!file) return;
-  
-  if (!file.type.startsWith("image/")) {
-    setSuccessStoriesMsg("❌ El archivo debe ser una imagen", true);
-    return;
-  }
-  if (file.size > 2 * 1024 * 1024) {
-    setSuccessStoriesMsg("❌ La imagen no debe superar 2MB", true);
-    return;
-  }
-  
+  if (!file.type.startsWith("image/")) { setSuccessStoriesMsg("❌ El archivo debe ser una imagen", true); return; }
+  if (file.size > 2 * 1024 * 1024) { setSuccessStoriesMsg("❌ La imagen no debe superar 2MB", true); return; }
   setSuccessStoriesMsg("📤 Subiendo imagen...");
-  
   try {
     const ext = (file.name.split(".").pop() || "jpg").toLowerCase();
     const stamp = Date.now();
     const random = Math.random().toString(36).slice(2, 8);
     const filePath = `success-stories/${stamp}-${random}.${ext}`;
-    
-    const { error: uploadError } = await sb
-      .storage
-      .from("project-images")
-      .upload(filePath, file, {
-        cacheControl: "3600",
-        upsert: true,
-        contentType: file.type,
-      });
-    
+    const { error: uploadError } = await sb.storage.from("project-images").upload(filePath, file, { cacheControl: "3600", upsert: true, contentType: file.type });
     if (uploadError) throw new Error(uploadError.message);
-    
     const { data: publicData } = sb.storage.from("project-images").getPublicUrl(filePath);
     const publicUrl = publicData?.publicUrl || "";
-    
     if (!publicUrl) throw new Error("No se pudo obtener la URL pública");
-    
     imageUrlInput.value = publicUrl;
     setSuccessStoriesMsg("✅ Imagen subida correctamente");
-  } catch (err) {
-    setSuccessStoriesMsg(`❌ Error: ${err.message}`, true);
-  }
+  } catch (err) { setSuccessStoriesMsg(`❌ Error: ${err.message}`, true); }
 }
-
 async function loadSuccessStoriesAdmin() {
   const container = document.getElementById("successStoriesList");
   if (!container) return;
-  
   container.innerHTML = '<div class="loading-skeleton"><div class="skeleton-line"></div><div class="skeleton-line"></div></div>';
-  
   try {
-    const { data, error } = await sb
-      .from("success_stories")
-      .select("*")
-      .order("order_index", { ascending: true });
-    
+    const { data, error } = await sb.from("success_stories").select("*").order("order_index", { ascending: true });
     if (error) throw error;
-    
     successStoriesData = data || [];
     renderSuccessStoriesList();
-  } catch (err) {
-    console.error("Error loading success stories:", err);
-    container.innerHTML = `<div class="emptyState">⚠️ Error al cargar casos de éxito: ${err.message}</div>`;
-  }
+  } catch (err) { console.error("Error loading success stories:", err); container.innerHTML = `<div class="emptyState">⚠️ Error al cargar casos de éxito: ${err.message}</div>`; }
 }
-
 function renderSuccessStoriesList() {
   const container = document.getElementById("successStoriesList");
   if (!container) return;
-  
-  if (!successStoriesData.length) {
-    container.innerHTML = `<div class="emptyState">🏆 No hay casos de éxito cargados. Creá uno nuevo.</div>`;
-    if (successStoriesPaginator) successStoriesPaginator.updateItems([]);
-    return;
-  }
-  
-  if (!successStoriesPaginator) {
-    successStoriesPaginator = new Paginator({
-      items: successStoriesData,
-      itemsPerPage: 10,
-      currentPage: 1,
-      onPageChange: (paginatedItems) => {
-        renderSuccessStoriesListPage(paginatedItems);
-      },
-      containerId: "successStoriesPagination",
-    });
-  } else {
-    successStoriesPaginator.updateItems(successStoriesData);
-  }
-  
+  if (!successStoriesData.length) { container.innerHTML = `<div class="emptyState">🏆 No hay casos de éxito cargados. Creá uno nuevo.</div>`; if (successStoriesPaginator) successStoriesPaginator.updateItems([]); return; }
+  if (!successStoriesPaginator) { successStoriesPaginator = new Paginator({ items: successStoriesData, itemsPerPage: 10, currentPage: 1, onPageChange: (paginatedItems) => { renderSuccessStoriesListPage(paginatedItems); }, containerId: "successStoriesPagination" }); } else { successStoriesPaginator.updateItems(successStoriesData); }
   successStoriesPaginator.setPage(1);
 }
-
 function renderSuccessStoriesListPage(stories) {
   const container = document.getElementById("successStoriesList");
   if (!container) return;
-  
-  if (!stories.length) {
-    container.innerHTML = `<div class="emptyState">🏆 No hay casos de éxito para mostrar.</div>`;
-    return;
-  }
-  
-  container.innerHTML = stories.map(story => {
-    let resultsPreview = '';
-    if (story.results) {
-      try {
-        const results = typeof story.results === 'string' ? JSON.parse(story.results) : story.results;
-        resultsPreview = `<div class="listCard__meta">📊 Resultados: ${Object.entries(results).map(([k,v]) => `${k}: ${v}`).join(' · ')}</div>`;
-      } catch(e) {}
-    }
-    return `
-      <article class="listCard listCard--compact">
-        <div class="listCard__thumb">
-          <img src="${escapeHtml(story.image_url || '')}" alt="${escapeHtml(story.title)}" style="width:80px; height:60px; object-fit:cover;" />
-        </div>
-        <div class="listCard__body">
-          <div class="listCard__title">🏆 ${escapeHtml(story.title)}</div>
-          <div class="listCard__meta">${escapeHtml(story.short_description?.substring(0, 100) || '')}${story.short_description?.length > 100 ? '...' : ''}</div>
-          ${resultsPreview}
-          <div class="listCard__meta">🔢 Orden: ${story.order_index || 0} · ${story.active ? '🟢 Activo' : '🔴 Inactivo'}</div>
-        </div>
-        <div class="listCard__actions">
-          <button class="btn btn--ghost btn--small" data-edit-story="${story.id}" data-tooltip="Editar caso">✏️</button>
-          <button class="btn btn--danger btn--small" data-delete-story="${story.id}" data-tooltip="Eliminar caso">🗑️</button>
-        </div>
-      </article>
-    `;
-  }).join("");
-  
-  container.querySelectorAll("[data-edit-story]").forEach(btn => {
-    btn.addEventListener("click", () => openSuccessStoryModal(btn.getAttribute("data-edit-story")));
-  });
-  container.querySelectorAll("[data-delete-story]").forEach(btn => {
-    btn.addEventListener("click", () => deleteSuccessStory(btn.getAttribute("data-delete-story")));
-  });
+  if (!stories.length) { container.innerHTML = `<div class="emptyState">🏆 No hay casos de éxito para mostrar.</div>`; return; }
+  container.innerHTML = stories.map(story => { let resultsPreview = ''; if (story.results) { try { const results = typeof story.results === 'string' ? JSON.parse(story.results) : story.results; resultsPreview = `<div class="listCard__meta">📊 Resultados: ${Object.entries(results).map(([k,v]) => `${k}: ${v}`).join(' · ')}</div>`; } catch(e) {} } return `<article class="listCard listCard--compact"><div class="listCard__thumb"><img src="${escapeHtml(story.image_url || '')}" alt="${escapeHtml(story.title)}" style="width:80px; height:60px; object-fit:cover;" /></div><div class="listCard__body"><div class="listCard__title">🏆 ${escapeHtml(story.title)}</div><div class="listCard__meta">${escapeHtml(story.short_description?.substring(0, 100) || '')}${story.short_description?.length > 100 ? '...' : ''}</div>${resultsPreview}<div class="listCard__meta">🔢 Orden: ${story.order_index || 0} · ${story.active ? '🟢 Activo' : '🔴 Inactivo'}</div></div><div class="listCard__actions"><button class="btn btn--ghost btn--small" data-edit-story="${story.id}" data-tooltip="Editar caso">✏️</button><button class="btn btn--danger btn--small" data-delete-story="${story.id}" data-tooltip="Eliminar caso">🗑️</button></div></article>`; }).join("");
+  container.querySelectorAll("[data-edit-story]").forEach(btn => { btn.addEventListener("click", () => openSuccessStoryModal(btn.getAttribute("data-edit-story"))); });
+  container.querySelectorAll("[data-delete-story]").forEach(btn => { btn.addEventListener("click", () => deleteSuccessStory(btn.getAttribute("data-delete-story"))); });
 }
-
 function openSuccessStoryModal(id = null) {
   editingSuccessStoryId = id;
   const modal = document.getElementById("successStoryModal");
   const title = document.getElementById("successStoryModalTitle");
-  
   const storyId = document.getElementById("successStoryId");
   const storyTitle = document.getElementById("successStoryTitle");
   const storyDescription = document.getElementById("successStoryDescription");
@@ -3460,7 +1995,6 @@ function openSuccessStoryModal(id = null) {
   const storyOrder = document.getElementById("successStoryOrder");
   const storyActive = document.getElementById("successStoryActive");
   const storyImageFile = document.getElementById("successStoryImageFile");
-  
   if (!id) {
     if (title) title.textContent = "🏆 Nuevo Caso de Éxito";
     if (storyId) storyId.value = "";
@@ -3486,10 +2020,8 @@ function openSuccessStoryModal(id = null) {
     if (storyActive) storyActive.checked = story.active !== false;
     if (storyImageFile) storyImageFile.value = "";
   }
-  
   if (modal) modal.style.display = "flex";
 }
-
 async function saveSuccessStory() {
   const id = document.getElementById("successStoryId")?.value;
   const title = document.getElementById("successStoryTitle")?.value.trim();
@@ -3499,82 +2031,28 @@ async function saveSuccessStory() {
   const demo_url = document.getElementById("successStoryDemoUrl")?.value.trim() || null;
   const order_index = parseInt(document.getElementById("successStoryOrder")?.value) || 0;
   const active = document.getElementById("successStoryActive")?.checked || false;
-  
-  if (!title) {
-    setSuccessStoriesMsg("❌ El título es obligatorio", true);
-    return;
-  }
-  
-  // Validar JSON de resultados
+  if (!title) { setSuccessStoriesMsg("❌ El título es obligatorio", true); return; }
   let parsedResults = {};
-  if (results) {
-    try {
-      parsedResults = typeof results === 'string' ? JSON.parse(results) : results;
-    } catch(e) {
-      setSuccessStoriesMsg("❌ El formato de resultados no es JSON válido", true);
-      return;
-    }
-  }
-  
-  const payload = { 
-    title, 
-    short_description, 
-    image_url, 
-    results: parsedResults, 
-    demo_url, 
-    order_index, 
-    active, 
-    updated_at: new Date().toISOString() 
-  };
-  
-  const ok = await confirmAction({
-    message: id ? `¿Guardar cambios en "${title}"?` : `¿Crear el caso de éxito "${title}"?`,
-    type: "generic",
-  });
+  if (results) { try { parsedResults = typeof results === 'string' ? JSON.parse(results) : results; } catch(e) { setSuccessStoriesMsg("❌ El formato de resultados no es JSON válido", true); return; } }
+  const payload = { title, short_description, image_url, results: parsedResults, demo_url, order_index, active, updated_at: new Date().toISOString() };
+  const ok = await confirmAction({ message: id ? `¿Guardar cambios en "${title}"?` : `¿Crear el caso de éxito "${title}"?`, type: "generic" });
   if (!ok) return;
-  
   setSuccessStoriesMsg("⏳ Guardando...");
-  
   try {
-    if (id) {
-      const { error } = await sb.from("success_stories").update(payload).eq("id", id);
-      if (error) throw error;
-      setSuccessStoriesMsg("✅ Caso de éxito actualizado correctamente.");
-    } else {
-      const { error } = await sb.from("success_stories").insert([payload]);
-      if (error) throw error;
-      setSuccessStoriesMsg("✅ Caso de éxito creado correctamente.");
-    }
-    
+    if (id) { const { error } = await sb.from("success_stories").update(payload).eq("id", id); if (error) throw error; setSuccessStoriesMsg("✅ Caso de éxito actualizado correctamente."); }
+    else { const { error } = await sb.from("success_stories").insert([payload]); if (error) throw error; setSuccessStoriesMsg("✅ Caso de éxito creado correctamente."); }
     const modal = document.getElementById("successStoryModal");
     if (modal) modal.style.display = "none";
     await loadSuccessStoriesAdmin();
-  } catch (err) {
-    setSuccessStoriesMsg(`❌ Error: ${err.message}`, true);
-  }
+  } catch (err) { setSuccessStoriesMsg(`❌ Error: ${err.message}`, true); }
 }
-
 async function deleteSuccessStory(id) {
   const story = successStoriesData.find(s => String(s.id) === String(id));
   if (!story) return;
-  
-  const ok = await confirmAction({
-    message: `⚠️ ¿Eliminar el caso de éxito "${story.title}"? Esta acción no se puede deshacer.`,
-    type: "delete",
-    double: true,
-  });
+  const ok = await confirmAction({ message: `⚠️ ¿Eliminar el caso de éxito "${story.title}"? Esta acción no se puede deshacer.`, type: "delete", double: true });
   if (!ok) return;
-  
   setSuccessStoriesMsg("⏳ Eliminando...");
-  
-  try {
-    const { error } = await sb.from("success_stories").delete().eq("id", id);
-    if (error) throw error;
-    setSuccessStoriesMsg("✅ Caso de éxito eliminado correctamente.");
-    await loadSuccessStoriesAdmin();
-  } catch (err) {
-    setSuccessStoriesMsg(`❌ Error al eliminar: ${err.message}`, true);
-  }
+  try { const { error } = await sb.from("success_stories").delete().eq("id", id); if (error) throw error; setSuccessStoriesMsg("✅ Caso de éxito eliminado correctamente."); await loadSuccessStoriesAdmin(); } catch (err) { setSuccessStoriesMsg(`❌ Error al eliminar: ${err.message}`, true); }
 }
 
 /* =========================
@@ -3582,434 +2060,128 @@ async function deleteSuccessStory(id) {
 ========================= */
 let featuredProjectsPaginator = null;
 let allFeaturedProjects = [];
-
 async function loadFeaturedProjects() {
   const container = document.getElementById("featuredProjectsList");
   if (!container) return;
-  
   container.innerHTML = '<div class="loading-skeleton"><div class="skeleton-line"></div><div class="skeleton-line"></div></div>';
-  
   try {
-    const { data: projects, error } = await sb
-      .from("projects")
-      .select(`*, categories(name,slug)`)
-      .eq("active", true)
-      .in("status", ["published", "featured"])
-      .order("created_at", { ascending: false });
-    
+    const { data: projects, error } = await sb.from("projects").select(`*, categories(name,slug)`).eq("active", true).in("status", ["published", "featured"]).order("created_at", { ascending: false });
     if (error) throw error;
-    
     allFeaturedProjects = projects || [];
     renderFeaturedProjectsPaginated();
-  } catch (err) {
-    console.error("Error loading featured projects:", err);
-    container.innerHTML = `<div class="emptyState">⚠️ Error al cargar proyectos: ${err.message}</div>`;
-  }
+  } catch (err) { console.error("Error loading featured projects:", err); container.innerHTML = `<div class="emptyState">⚠️ Error al cargar proyectos: ${err.message}</div>`; }
 }
-
 function renderFeaturedProjectsPaginated() {
   const container = document.getElementById("featuredProjectsList");
   if (!container) return;
-  
-  if (!allFeaturedProjects.length) {
-    container.innerHTML = `<div class="emptyState">📭 No hay proyectos activos. Creá uno nuevo primero.</div>`;
-    const pagContainer = document.getElementById("featuredProjectsPagination");
-    if (pagContainer) pagContainer.style.display = "none";
-    return;
-  }
-  
-  if (!featuredProjectsPaginator) {
-    featuredProjectsPaginator = new Paginator({
-      items: allFeaturedProjects,
-      itemsPerPage: 6,
-      currentPage: 1,
-      onPageChange: (paginatedItems) => {
-        renderFeaturedProjectsPage(paginatedItems);
-      },
-      containerId: "featuredProjectsPagination",
-    });
-  } else {
-    featuredProjectsPaginator.updateItems(allFeaturedProjects);
-  }
-  
+  if (!allFeaturedProjects.length) { container.innerHTML = `<div class="emptyState">📭 No hay proyectos activos. Creá uno nuevo primero.</div>`; const pagContainer = document.getElementById("featuredProjectsPagination"); if (pagContainer) pagContainer.style.display = "none"; return; }
+  if (!featuredProjectsPaginator) { featuredProjectsPaginator = new Paginator({ items: allFeaturedProjects, itemsPerPage: 6, currentPage: 1, onPageChange: (paginatedItems) => { renderFeaturedProjectsPage(paginatedItems); }, containerId: "featuredProjectsPagination" }); } else { featuredProjectsPaginator.updateItems(allFeaturedProjects); }
   featuredProjectsPaginator.setPage(1);
 }
-
 function renderFeaturedProjectsPage(projects) {
   const container = document.getElementById("featuredProjectsList");
   if (!container) return;
-  
-  if (!projects.length) {
-    container.innerHTML = `<div class="emptyState">📭 No hay proyectos para mostrar.</div>`;
-    return;
-  }
-  
-  container.innerHTML = projects.map(project => `
-    <div class="featured-project-card" data-project-id="${project.id}">
-      <img src="${escapeHtml(project.image_url || '')}" alt="${escapeHtml(project.title)}" onerror="this.src='https://placehold.co/60x60?text=No+image'">
-      <div class="featured-project-info">
-        <div class="featured-project-title">${escapeHtml(project.title)}</div>
-        <div class="featured-project-cat">${escapeHtml(project.categories?.name || "Sin categoría")}</div>
-      </div>
-      <div class="featured-project-actions">
-        <button class="star-btn ${project.featured ? 'active' : ''}" data-project-id="${project.id}" data-featured="${project.featured}" title="${project.featured ? 'Quitar destacado' : 'Destacar proyecto'}">
-          ${project.featured ? '★' : '☆'}
-        </button>
-      </div>
-    </div>
-  `).join("");
-  
-  container.querySelectorAll(".star-btn").forEach(btn => {
-    btn.addEventListener("click", async (e) => {
-      e.stopPropagation();
-      const projectId = btn.getAttribute("data-project-id");
-      const isFeatured = btn.getAttribute("data-featured") === "true";
-      await toggleProjectFeatured(projectId, !isFeatured);
-    });
-  });
+  if (!projects.length) { container.innerHTML = `<div class="emptyState">📭 No hay proyectos para mostrar.</div>`; return; }
+  container.innerHTML = projects.map(project => `<div class="featured-project-card" data-project-id="${project.id}"><img src="${escapeHtml(project.image_url || '')}" alt="${escapeHtml(project.title)}" onerror="this.src='https://placehold.co/60x60?text=No+image'"><div class="featured-project-info"><div class="featured-project-title">${escapeHtml(project.title)}</div><div class="featured-project-cat">${escapeHtml(project.categories?.name || "Sin categoría")}</div></div><div class="featured-project-actions"><button class="star-btn ${project.featured ? 'active' : ''}" data-project-id="${project.id}" data-featured="${project.featured}" title="${project.featured ? 'Quitar destacado' : 'Destacar proyecto'}">${project.featured ? '★' : '☆'}</button></div></div>`).join("");
+  container.querySelectorAll(".star-btn").forEach(btn => { btn.addEventListener("click", async (e) => { e.stopPropagation(); const projectId = btn.getAttribute("data-project-id"); const isFeatured = btn.getAttribute("data-featured") === "true"; await toggleProjectFeatured(projectId, !isFeatured); }); });
 }
-
 async function toggleProjectFeatured(projectId, featured) {
   const project = allFeaturedProjects.find(p => p.id === projectId);
   if (!project) return;
-  
-  const ok = await confirmAction({
-    message: `¿${featured ? 'Destacar' : 'Quitar destacado de'} "${project.title}"?`,
-    type: "generic",
-  });
+  const ok = await confirmAction({ message: `¿${featured ? 'Destacar' : 'Quitar destacado de'} "${project.title}"?`, type: "generic" });
   if (!ok) return;
-  
   setFeaturedProjectsMsg(`⏳ ${featured ? 'Destacando' : 'Actualizando'}...`);
-  
   try {
-    const { error } = await sb
-      .from("projects")
-      .update({ 
-        featured: featured,
-        status: featured ? "featured" : "published",
-        updated_at: new Date().toISOString()
-      })
-      .eq("id", projectId);
-    
+    const { error } = await sb.from("projects").update({ featured: featured, status: featured ? "featured" : "published", updated_at: new Date().toISOString() }).eq("id", projectId);
     if (error) throw error;
-    
     setFeaturedProjectsMsg(`✅ Proyecto ${featured ? 'destacado' : 'quitado de destacados'} correctamente.`);
     await loadFeaturedProjects();
     await loadProjects();
-  } catch (err) {
-    setFeaturedProjectsMsg(`❌ Error: ${err.message}`, true);
-  }
+  } catch (err) { setFeaturedProjectsMsg(`❌ Error: ${err.message}`, true); }
 }
-
 function setFeaturedProjectsMsg(msg, isError = false) {
   const msgEl = document.getElementById("featuredProjectsMsg");
   if (!msgEl) return;
   msgEl.textContent = msg;
   msgEl.classList.remove("msg--success", "msg--error");
   msgEl.classList.add(isError ? "msg--error" : "msg--success");
-  setTimeout(() => {
-    if (msgEl.textContent === msg) {
-      msgEl.textContent = "";
-      msgEl.classList.remove("msg--success", "msg--error");
-    }
-  }, 4000);
+  setTimeout(() => { if (msgEl.textContent === msg) { msgEl.textContent = ""; msgEl.classList.remove("msg--success", "msg--error"); } }, 4000);
 }
 
 /* =========================
    ELIMINAR HISTORIAL
 ========================= */
 async function clearProjectHistory() {
-  const ok = await confirmAction({
-    message: "⚠️ ¿Eliminar TODO el historial de proyectos? Esta acción no se puede deshacer.",
-    type: "delete",
-    double: true,
-  });
+  const ok = await confirmAction({ message: "⚠️ ¿Eliminar TODO el historial de proyectos? Esta acción no se puede deshacer.", type: "delete", double: true });
   if (!ok) return;
-  
   setHistoryMsg("⏳ Eliminando historial de proyectos...");
-  
-  try {
-    const { error } = await sb.from("project_history").delete().neq("id", "00000000-0000-0000-0000-000000000000");
-    if (error) throw error;
-    
-    setHistoryMsg("✅ Historial de proyectos eliminado correctamente.");
-    await loadHistory();
-  } catch (err) {
-    setHistoryMsg(`❌ Error: ${err.message}`, true);
-  }
+  try { const { error } = await sb.from("project_history").delete().neq("id", "00000000-0000-0000-0000-000000000000"); if (error) throw error; setHistoryMsg("✅ Historial de proyectos eliminado correctamente."); await loadHistory(); } catch (err) { setHistoryMsg(`❌ Error: ${err.message}`, true); }
 }
-
 async function clearSettingsHistory() {
-  const ok = await confirmAction({
-    message: "⚠️ ¿Eliminar TODO el historial de settings? Esta acción no se puede deshacer.",
-    type: "delete",
-    double: true,
-  });
+  const ok = await confirmAction({ message: "⚠️ ¿Eliminar TODO el historial de settings? Esta acción no se puede deshacer.", type: "delete", double: true });
   if (!ok) return;
-  
   setHistoryMsg("⏳ Eliminando historial de settings...");
-  
-  try {
-    const { error } = await sb.from("site_settings_history").delete().neq("id", "00000000-0000-0000-0000-000000000000");
-    if (error) throw error;
-    
-    setHistoryMsg("✅ Historial de settings eliminado correctamente.");
-    await loadHistory();
-  } catch (err) {
-    setHistoryMsg(`❌ Error: ${err.message}`, true);
-  }
+  try { const { error } = await sb.from("site_settings_history").delete().neq("id", "00000000-0000-0000-0000-000000000000"); if (error) throw error; setHistoryMsg("✅ Historial de settings eliminado correctamente."); await loadHistory(); } catch (err) { setHistoryMsg(`❌ Error: ${err.message}`, true); }
 }
-
 function setHistoryMsg(msg, isError = false) {
   const msgEl = document.getElementById("historyMsg");
   if (!msgEl) return;
   msgEl.textContent = msg;
   msgEl.classList.remove("msg--success", "msg--error");
   msgEl.classList.add(isError ? "msg--error" : "msg--success");
-  setTimeout(() => {
-    if (msgEl.textContent === msg) {
-      msgEl.textContent = "";
-      msgEl.classList.remove("msg--success", "msg--error");
-    }
-  }, 4000);
+  setTimeout(() => { if (msgEl.textContent === msg) { msgEl.textContent = ""; msgEl.classList.remove("msg--success", "msg--error"); } }, 4000);
 }
 
 /* =========================
-   MENÚ HAMBURGUESA PARA ADMIN
+   MENÚ HAMBURGUESA
 ========================= */
 function initSidebarToggle() {
   const toggleBtn = document.getElementById("sidebarToggleBtn");
   const sidebar = document.querySelector(".sidebar");
-  
-  if (!toggleBtn || !sidebar) {
-    console.warn("Botón o sidebar no encontrados");
-    return;
-  }
-  
-  toggleBtn.addEventListener("click", (e) => {
-    e.stopPropagation();
-    sidebar.classList.toggle("open");
-  });
-  
-  document.addEventListener("click", (e) => {
-    if (window.innerWidth <= 980 && sidebar.classList.contains("open")) {
-      if (!sidebar.contains(e.target) && !toggleBtn.contains(e.target)) {
-        sidebar.classList.remove("open");
-      }
-    }
-  });
-  
-  document.querySelectorAll(".navBtn").forEach(btn => {
-    btn.addEventListener("click", () => {
-      if (window.innerWidth <= 980) {
-        sidebar.classList.remove("open");
-      }
-    });
-  });
-  
-  window.addEventListener("resize", () => {
-    if (window.innerWidth > 980 && sidebar.classList.contains("open")) {
-      sidebar.classList.remove("open");
-    }
-  });
-  
+  if (!toggleBtn || !sidebar) { console.warn("Botón o sidebar no encontrados"); return; }
+  toggleBtn.addEventListener("click", (e) => { e.stopPropagation(); sidebar.classList.toggle("open"); });
+  document.addEventListener("click", (e) => { if (window.innerWidth <= 980 && sidebar.classList.contains("open")) { if (!sidebar.contains(e.target) && !toggleBtn.contains(e.target)) { sidebar.classList.remove("open"); } } });
+  document.querySelectorAll(".navBtn").forEach(btn => { btn.addEventListener("click", () => { if (window.innerWidth <= 980) { sidebar.classList.remove("open"); } }); });
+  window.addEventListener("resize", () => { if (window.innerWidth > 980 && sidebar.classList.contains("open")) { sidebar.classList.remove("open"); } });
   console.log("✅ Menú hamburguesa inicializado correctamente");
 }
 
 /* =========================
    EVENT LISTENERS EXTRA
 ========================= */
-const reviewsApprovedRefreshBtn = document.getElementById("reviewsApprovedRefreshBtn");
-if (reviewsApprovedRefreshBtn) {
-  reviewsApprovedRefreshBtn.addEventListener("click", () => {
-    loadApprovedReviews();
-  });
-}
-
-const exportReviewsBtn = document.getElementById("exportReviewsBtn");
-if (exportReviewsBtn) {
-  exportReviewsBtn.addEventListener("click", () => {
-    exportReviewsToCSV();
-  });
-}
-
-const approvedSearchInput = document.getElementById("approvedSearchInput");
-if (approvedSearchInput) {
-  approvedSearchInput.addEventListener("input", () => {
-    renderApprovedReviews();
-  });
-}
-
-const approvedRatingFilter = document.getElementById("approvedRatingFilter");
-if (approvedRatingFilter) {
-  approvedRatingFilter.addEventListener("change", () => {
-    renderApprovedReviews();
-  });
-}
-
-const approvedSortFilter = document.getElementById("approvedSortFilter");
-if (approvedSortFilter) {
-  approvedSortFilter.addEventListener("change", () => {
-    renderApprovedReviews();
-  });
-}
-
-const saveEditReviewBtn = document.getElementById("saveEditReviewBtn");
-if (saveEditReviewBtn) {
-  saveEditReviewBtn.addEventListener("click", saveEditedReviewAndApprove);
-}
-
-const cancelEditReviewBtn = document.getElementById("cancelEditReviewBtn");
-if (cancelEditReviewBtn) {
-  cancelEditReviewBtn.addEventListener("click", () => {
-    const modal = document.getElementById("editReviewModal");
-    if (modal) modal.style.display = "none";
-  });
-}
-
-const plansRefreshBtn = document.getElementById("plansRefreshBtn");
-if (plansRefreshBtn) {
-  plansRefreshBtn.addEventListener("click", () => loadPlansAdmin());
-}
-
-const plansNewBtn = document.getElementById("plansNewBtn");
-if (plansNewBtn) {
-  plansNewBtn.addEventListener("click", () => openPlanModal());
-}
-
-const planSaveBtn = document.getElementById("planSaveBtn");
-if (planSaveBtn) {
-  planSaveBtn.addEventListener("click", () => savePlan());
-}
-
-const planCancelBtn = document.getElementById("planCancelBtn");
-if (planCancelBtn) {
-  planCancelBtn.addEventListener("click", () => {
-    const modal = document.getElementById("planModal");
-    if (modal) modal.style.display = "none";
-  });
-}
-
-const planName = document.getElementById("planName");
-if (planName) {
-  planName.addEventListener("input", function() {
-    const slugInput = document.getElementById("planSlug");
-    if (slugInput && !slugInput.dataset.manuallyEdited) {
-      slugInput.value = this.value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
-    }
-  });
-}
-
-const planSlug = document.getElementById("planSlug");
-if (planSlug) {
-  planSlug.addEventListener("input", function() {
-    this.dataset.manuallyEdited = "true";
-  });
-}
-
-// Event listeners para marcas
-const brandsRefreshBtn = document.getElementById("brandsRefreshBtn");
-if (brandsRefreshBtn) {
-  brandsRefreshBtn.addEventListener("click", () => loadBrandsAdmin());
-}
-
-const brandsNewBtn = document.getElementById("brandsNewBtn");
-if (brandsNewBtn) {
-  brandsNewBtn.addEventListener("click", () => openBrandModal());
-}
-
-const brandSaveBtn = document.getElementById("brandSaveBtn");
-if (brandSaveBtn) {
-  brandSaveBtn.addEventListener("click", () => saveBrand());
-}
-
-const brandCancelBtn = document.getElementById("brandCancelBtn");
-if (brandCancelBtn) {
-  brandCancelBtn.addEventListener("click", () => {
-    const modal = document.getElementById("brandModal");
-    if (modal) modal.style.display = "none";
-  });
-}
-
-const brandLogoFile = document.getElementById("brandLogoFile");
-if (brandLogoFile) {
-  brandLogoFile.addEventListener("change", () => uploadBrandLogo());
-}
-
-// Event listeners para preguntas del asistente
-const assistantRefreshBtn = document.getElementById("assistantRefreshBtn");
-if (assistantRefreshBtn) {
-  assistantRefreshBtn.addEventListener("click", () => loadAssistantQuestionsAdmin());
-}
-
-const assistantNewBtn = document.getElementById("assistantNewBtn");
-if (assistantNewBtn) {
-  assistantNewBtn.addEventListener("click", () => openAssistantQuestionModal());
-}
-
-const assistantQuestionSaveBtn = document.getElementById("assistantQuestionSaveBtn");
-if (assistantQuestionSaveBtn) {
-  assistantQuestionSaveBtn.addEventListener("click", () => saveAssistantQuestion());
-}
-
-const assistantQuestionCancelBtn = document.getElementById("assistantQuestionCancelBtn");
-if (assistantQuestionCancelBtn) {
-  assistantQuestionCancelBtn.addEventListener("click", () => {
-    const modal = document.getElementById("assistantQuestionModal");
-    if (modal) modal.style.display = "none";
-  });
-}
-
-// Event listeners para respuestas del asistente
-const assistantResponsesRefreshBtn = document.getElementById("assistantResponsesRefreshBtn");
-if (assistantResponsesRefreshBtn) {
-  assistantResponsesRefreshBtn.addEventListener("click", () => loadAssistantResponsesAdmin());
-}
-
-const exportResponsesBtn = document.getElementById("exportResponsesBtn");
-if (exportResponsesBtn) {
-  exportResponsesBtn.addEventListener("click", () => exportResponsesToCSV());
-}
-
-// Event listeners para casos de éxito
-const successStoriesRefreshBtn = document.getElementById("successStoriesRefreshBtn");
-if (successStoriesRefreshBtn) {
-  successStoriesRefreshBtn.addEventListener("click", () => loadSuccessStoriesAdmin());
-}
-
-const successStoriesNewBtn = document.getElementById("successStoriesNewBtn");
-if (successStoriesNewBtn) {
-  successStoriesNewBtn.addEventListener("click", () => openSuccessStoryModal());
-}
-
-const successStorySaveBtn = document.getElementById("successStorySaveBtn");
-if (successStorySaveBtn) {
-  successStorySaveBtn.addEventListener("click", () => saveSuccessStory());
-}
-
-const successStoryCancelBtn = document.getElementById("successStoryCancelBtn");
-if (successStoryCancelBtn) {
-  successStoryCancelBtn.addEventListener("click", () => {
-    const modal = document.getElementById("successStoryModal");
-    if (modal) modal.style.display = "none";
-  });
-}
-
-const successStoryImageFile = document.getElementById("successStoryImageFile");
-if (successStoryImageFile) {
-  successStoryImageFile.addEventListener("change", () => uploadSuccessStoryImage());
-}
-
-// Event listeners para historial
+document.getElementById("reviewsApprovedRefreshBtn")?.addEventListener("click", () => { loadApprovedReviews(); });
+document.getElementById("exportReviewsBtn")?.addEventListener("click", () => { exportReviewsToCSV(); });
+document.getElementById("approvedSearchInput")?.addEventListener("input", () => { renderApprovedReviews(); });
+document.getElementById("approvedRatingFilter")?.addEventListener("change", () => { renderApprovedReviews(); });
+document.getElementById("approvedSortFilter")?.addEventListener("change", () => { renderApprovedReviews(); });
+document.getElementById("saveEditReviewBtn")?.addEventListener("click", saveEditedReviewAndApprove);
+document.getElementById("cancelEditReviewBtn")?.addEventListener("click", () => { const modal = document.getElementById("editReviewModal"); if (modal) modal.style.display = "none"; });
+document.getElementById("plansRefreshBtn")?.addEventListener("click", () => loadPlansAdmin());
+document.getElementById("plansNewBtn")?.addEventListener("click", () => openPlanModal());
+document.getElementById("planSaveBtn")?.addEventListener("click", () => savePlan());
+document.getElementById("planCancelBtn")?.addEventListener("click", () => { const modal = document.getElementById("planModal"); if (modal) modal.style.display = "none"; });
+document.getElementById("planName")?.addEventListener("input", function() { const slugInput = document.getElementById("planSlug"); if (slugInput && !slugInput.dataset.manuallyEdited) { slugInput.value = this.value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""); } });
+document.getElementById("planSlug")?.addEventListener("input", function() { this.dataset.manuallyEdited = "true"; });
+document.getElementById("planImageFile")?.addEventListener("change", uploadPlanImage);
+document.getElementById("brandsRefreshBtn")?.addEventListener("click", () => loadBrandsAdmin());
+document.getElementById("brandsNewBtn")?.addEventListener("click", () => openBrandModal());
+document.getElementById("brandSaveBtn")?.addEventListener("click", () => saveBrand());
+document.getElementById("brandCancelBtn")?.addEventListener("click", () => { const modal = document.getElementById("brandModal"); if (modal) modal.style.display = "none"; });
+document.getElementById("brandLogoFile")?.addEventListener("change", uploadBrandLogo);
+document.getElementById("assistantRefreshBtn")?.addEventListener("click", () => loadAssistantQuestionsAdmin());
+document.getElementById("assistantNewBtn")?.addEventListener("click", () => openAssistantQuestionModal());
+document.getElementById("assistantQuestionSaveBtn")?.addEventListener("click", () => saveAssistantQuestion());
+document.getElementById("assistantQuestionCancelBtn")?.addEventListener("click", () => { const modal = document.getElementById("assistantQuestionModal"); if (modal) modal.style.display = "none"; });
+document.getElementById("assistantResponsesRefreshBtn")?.addEventListener("click", () => loadAssistantResponsesAdmin());
+document.getElementById("exportResponsesBtn")?.addEventListener("click", () => exportResponsesToCSV());
+document.getElementById("successStoriesRefreshBtn")?.addEventListener("click", () => loadSuccessStoriesAdmin());
+document.getElementById("successStoriesNewBtn")?.addEventListener("click", () => openSuccessStoryModal());
+document.getElementById("successStorySaveBtn")?.addEventListener("click", () => saveSuccessStory());
+document.getElementById("successStoryCancelBtn")?.addEventListener("click", () => { const modal = document.getElementById("successStoryModal"); if (modal) modal.style.display = "none"; });
+document.getElementById("successStoryImageFile")?.addEventListener("change", uploadSuccessStoryImage);
 document.getElementById("clearProjectHistoryBtn")?.addEventListener("click", clearProjectHistory);
 document.getElementById("clearSettingsHistoryBtn")?.addEventListener("click", clearSettingsHistory);
 document.getElementById("featuredRefreshBtn")?.addEventListener("click", loadFeaturedProjects);
 
-// INICIALIZAR MENÚ HAMBURGUESA
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initSidebarToggle);
-} else {
-  initSidebarToggle();
-}
-
-console.log("✅ Admin panel completamente cargado con Marcas, Asistente y Casos de Éxito");
+if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', initSidebarToggle); } else { initSidebarToggle(); }
+console.log("✅ Admin panel completamente cargado con Marcas, Asistente, Casos de Éxito y Precios con ofertas e imágenes");
