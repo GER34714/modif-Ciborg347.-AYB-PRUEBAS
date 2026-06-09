@@ -65,6 +65,11 @@ let assistantQuestionsPaginator = null;
 let assistantResponsesData = [];
 let assistantResponsesPaginator = null;
 
+// ========== NUEVAS VARIABLES PARA CASOS DE ÉXITO ==========
+let successStoriesData = [];
+let editingSuccessStoryId = null;
+let successStoriesPaginator = null;
+
 // Elementos DOM (declarados ANTES de usarlos)
 const navBtns = document.querySelectorAll(".navBtn");
 const viewPanels = document.querySelectorAll(".viewPanel");
@@ -254,6 +259,14 @@ function setAssistantResponsesMsg(msg = "", isError = false) {
   msgEl.classList.add(isError ? "msg--error" : "msg--success");
   setTimeout(() => { if (msgEl.textContent === msg) { msgEl.textContent = ""; msgEl.classList.remove("msg--success", "msg--error"); } }, 4000);
 }
+function setSuccessStoriesMsg(msg = "", isError = false) {
+  const msgEl = document.getElementById("successStoriesMsg");
+  if (!msgEl) return;
+  msgEl.textContent = msg;
+  msgEl.classList.remove("msg--success", "msg--error");
+  msgEl.classList.add(isError ? "msg--error" : "msg--success");
+  setTimeout(() => { if (msgEl.textContent === msg) { msgEl.textContent = ""; msgEl.classList.remove("msg--success", "msg--error"); } }, 4000);
+}
 
 function escapeHtml(s) {
   return String(s ?? "")
@@ -293,6 +306,9 @@ function switchView(view) {
   if (view === "brands" && typeof loadBrandsAdmin === "function") loadBrandsAdmin();
   if (view === "assistant-questions" && typeof loadAssistantQuestionsAdmin === "function") loadAssistantQuestionsAdmin();
   if (view === "assistant-responses" && typeof loadAssistantResponsesAdmin === "function") loadAssistantResponsesAdmin();
+  if (view === "success-stories" && typeof loadSuccessStoriesAdmin === "function") loadSuccessStoriesAdmin();
+  if (view === "reviews-pending" && typeof loadPendingReviews === "function") loadPendingReviews();
+  if (view === "reviews-approved" && typeof loadApprovedReviews === "function") loadApprovedReviews();
 }
 
 function fillCategorySelects() {
@@ -783,10 +799,13 @@ async function loadAll() {
     loadSiteContent(),
     loadSiteSettings(),
     loadHistory(),
+    loadPlansAdmin(),
+    loadBrandsAdmin(),
+    loadAssistantQuestionsAdmin(),
+    loadSuccessStoriesAdmin(),
+    loadApprovedReviews()
   ]);
-  if (document.getElementById("plansList")) await loadPlansAdmin();
-  if (document.getElementById("brandsList")) await loadBrandsAdmin();
-  if (document.getElementById("assistantQuestionsList")) await loadAssistantQuestionsAdmin();
+  iniciarNotificaciones();
 }
 
 /* =========================
@@ -2708,7 +2727,7 @@ function setPlansMsg(msg, isError = false) {
 }
 
 /* =========================
-   ========== NUEVO: ADMINISTRACIÓN DE MARCAS ==========
+   ADMINISTRACIÓN DE MARCAS
 ========================= */
 
 async function loadBrandsAdmin() {
@@ -2946,7 +2965,7 @@ async function deleteBrand(id) {
 }
 
 /* =========================
-   ========== NUEVO: ADMINISTRACIÓN DE PREGUNTAS DEL ASISTENTE ==========
+   ADMINISTRACIÓN DE PREGUNTAS DEL ASISTENTE
 ========================= */
 
 async function loadAssistantQuestionsAdmin() {
@@ -3181,7 +3200,7 @@ async function deleteAssistantQuestion(id) {
 }
 
 /* =========================
-   ========== NUEVO: RESPUESTAS DEL ASISTENTE ==========
+   RESPUESTAS DEL ASISTENTE
 ========================= */
 
 async function loadAssistantResponsesAdmin() {
@@ -3283,7 +3302,283 @@ function exportResponsesToCSV() {
 }
 
 /* =========================
-   ========== NUEVO: PROYECTOS DESTACADOS ==========
+   ADMINISTRACIÓN DE CASOS DE ÉXITO
+========================= */
+
+async function uploadSuccessStoryImage() {
+  const fileInput = document.getElementById("successStoryImageFile");
+  const imageUrlInput = document.getElementById("successStoryImageUrl");
+  if (!fileInput || !imageUrlInput) return;
+  
+  const file = fileInput.files?.[0];
+  if (!file) return;
+  
+  if (!file.type.startsWith("image/")) {
+    setSuccessStoriesMsg("❌ El archivo debe ser una imagen", true);
+    return;
+  }
+  if (file.size > 2 * 1024 * 1024) {
+    setSuccessStoriesMsg("❌ La imagen no debe superar 2MB", true);
+    return;
+  }
+  
+  setSuccessStoriesMsg("📤 Subiendo imagen...");
+  
+  try {
+    const ext = (file.name.split(".").pop() || "jpg").toLowerCase();
+    const stamp = Date.now();
+    const random = Math.random().toString(36).slice(2, 8);
+    const filePath = `success-stories/${stamp}-${random}.${ext}`;
+    
+    const { error: uploadError } = await sb
+      .storage
+      .from("project-images")
+      .upload(filePath, file, {
+        cacheControl: "3600",
+        upsert: true,
+        contentType: file.type,
+      });
+    
+    if (uploadError) throw new Error(uploadError.message);
+    
+    const { data: publicData } = sb.storage.from("project-images").getPublicUrl(filePath);
+    const publicUrl = publicData?.publicUrl || "";
+    
+    if (!publicUrl) throw new Error("No se pudo obtener la URL pública");
+    
+    imageUrlInput.value = publicUrl;
+    setSuccessStoriesMsg("✅ Imagen subida correctamente");
+  } catch (err) {
+    setSuccessStoriesMsg(`❌ Error: ${err.message}`, true);
+  }
+}
+
+async function loadSuccessStoriesAdmin() {
+  const container = document.getElementById("successStoriesList");
+  if (!container) return;
+  
+  container.innerHTML = '<div class="loading-skeleton"><div class="skeleton-line"></div><div class="skeleton-line"></div></div>';
+  
+  try {
+    const { data, error } = await sb
+      .from("success_stories")
+      .select("*")
+      .order("order_index", { ascending: true });
+    
+    if (error) throw error;
+    
+    successStoriesData = data || [];
+    renderSuccessStoriesList();
+  } catch (err) {
+    console.error("Error loading success stories:", err);
+    container.innerHTML = `<div class="emptyState">⚠️ Error al cargar casos de éxito: ${err.message}</div>`;
+  }
+}
+
+function renderSuccessStoriesList() {
+  const container = document.getElementById("successStoriesList");
+  if (!container) return;
+  
+  if (!successStoriesData.length) {
+    container.innerHTML = `<div class="emptyState">🏆 No hay casos de éxito cargados. Creá uno nuevo.</div>`;
+    if (successStoriesPaginator) successStoriesPaginator.updateItems([]);
+    return;
+  }
+  
+  if (!successStoriesPaginator) {
+    successStoriesPaginator = new Paginator({
+      items: successStoriesData,
+      itemsPerPage: 10,
+      currentPage: 1,
+      onPageChange: (paginatedItems) => {
+        renderSuccessStoriesListPage(paginatedItems);
+      },
+      containerId: "successStoriesPagination",
+    });
+  } else {
+    successStoriesPaginator.updateItems(successStoriesData);
+  }
+  
+  successStoriesPaginator.setPage(1);
+}
+
+function renderSuccessStoriesListPage(stories) {
+  const container = document.getElementById("successStoriesList");
+  if (!container) return;
+  
+  if (!stories.length) {
+    container.innerHTML = `<div class="emptyState">🏆 No hay casos de éxito para mostrar.</div>`;
+    return;
+  }
+  
+  container.innerHTML = stories.map(story => {
+    let resultsPreview = '';
+    if (story.results) {
+      try {
+        const results = typeof story.results === 'string' ? JSON.parse(story.results) : story.results;
+        resultsPreview = `<div class="listCard__meta">📊 Resultados: ${Object.entries(results).map(([k,v]) => `${k}: ${v}`).join(' · ')}</div>`;
+      } catch(e) {}
+    }
+    return `
+      <article class="listCard listCard--compact">
+        <div class="listCard__thumb">
+          <img src="${escapeHtml(story.image_url || '')}" alt="${escapeHtml(story.title)}" style="width:80px; height:60px; object-fit:cover;" />
+        </div>
+        <div class="listCard__body">
+          <div class="listCard__title">🏆 ${escapeHtml(story.title)}</div>
+          <div class="listCard__meta">${escapeHtml(story.short_description?.substring(0, 100) || '')}${story.short_description?.length > 100 ? '...' : ''}</div>
+          ${resultsPreview}
+          <div class="listCard__meta">🔢 Orden: ${story.order_index || 0} · ${story.active ? '🟢 Activo' : '🔴 Inactivo'}</div>
+        </div>
+        <div class="listCard__actions">
+          <button class="btn btn--ghost btn--small" data-edit-story="${story.id}" data-tooltip="Editar caso">✏️</button>
+          <button class="btn btn--danger btn--small" data-delete-story="${story.id}" data-tooltip="Eliminar caso">🗑️</button>
+        </div>
+      </article>
+    `;
+  }).join("");
+  
+  container.querySelectorAll("[data-edit-story]").forEach(btn => {
+    btn.addEventListener("click", () => openSuccessStoryModal(btn.getAttribute("data-edit-story")));
+  });
+  container.querySelectorAll("[data-delete-story]").forEach(btn => {
+    btn.addEventListener("click", () => deleteSuccessStory(btn.getAttribute("data-delete-story")));
+  });
+}
+
+function openSuccessStoryModal(id = null) {
+  editingSuccessStoryId = id;
+  const modal = document.getElementById("successStoryModal");
+  const title = document.getElementById("successStoryModalTitle");
+  
+  const storyId = document.getElementById("successStoryId");
+  const storyTitle = document.getElementById("successStoryTitle");
+  const storyDescription = document.getElementById("successStoryDescription");
+  const storyImageUrl = document.getElementById("successStoryImageUrl");
+  const storyResults = document.getElementById("successStoryResults");
+  const storyDemoUrl = document.getElementById("successStoryDemoUrl");
+  const storyOrder = document.getElementById("successStoryOrder");
+  const storyActive = document.getElementById("successStoryActive");
+  const storyImageFile = document.getElementById("successStoryImageFile");
+  
+  if (!id) {
+    if (title) title.textContent = "🏆 Nuevo Caso de Éxito";
+    if (storyId) storyId.value = "";
+    if (storyTitle) storyTitle.value = "";
+    if (storyDescription) storyDescription.value = "";
+    if (storyImageUrl) storyImageUrl.value = "";
+    if (storyResults) storyResults.value = "";
+    if (storyDemoUrl) storyDemoUrl.value = "";
+    if (storyOrder) storyOrder.value = "0";
+    if (storyActive) storyActive.checked = true;
+    if (storyImageFile) storyImageFile.value = "";
+  } else {
+    const story = successStoriesData.find(s => String(s.id) === String(id));
+    if (!story) return;
+    if (title) title.textContent = `✏️ Editar: ${story.title}`;
+    if (storyId) storyId.value = story.id;
+    if (storyTitle) storyTitle.value = story.title || "";
+    if (storyDescription) storyDescription.value = story.short_description || "";
+    if (storyImageUrl) storyImageUrl.value = story.image_url || "";
+    if (storyResults) storyResults.value = typeof story.results === 'string' ? story.results : JSON.stringify(story.results || {}, null, 2);
+    if (storyDemoUrl) storyDemoUrl.value = story.demo_url || "";
+    if (storyOrder) storyOrder.value = story.order_index || 0;
+    if (storyActive) storyActive.checked = story.active !== false;
+    if (storyImageFile) storyImageFile.value = "";
+  }
+  
+  if (modal) modal.style.display = "flex";
+}
+
+async function saveSuccessStory() {
+  const id = document.getElementById("successStoryId")?.value;
+  const title = document.getElementById("successStoryTitle")?.value.trim();
+  const short_description = document.getElementById("successStoryDescription")?.value.trim();
+  const image_url = document.getElementById("successStoryImageUrl")?.value.trim();
+  let results = document.getElementById("successStoryResults")?.value.trim();
+  const demo_url = document.getElementById("successStoryDemoUrl")?.value.trim() || null;
+  const order_index = parseInt(document.getElementById("successStoryOrder")?.value) || 0;
+  const active = document.getElementById("successStoryActive")?.checked || false;
+  
+  if (!title) {
+    setSuccessStoriesMsg("❌ El título es obligatorio", true);
+    return;
+  }
+  
+  // Validar JSON de resultados
+  let parsedResults = {};
+  if (results) {
+    try {
+      parsedResults = typeof results === 'string' ? JSON.parse(results) : results;
+    } catch(e) {
+      setSuccessStoriesMsg("❌ El formato de resultados no es JSON válido", true);
+      return;
+    }
+  }
+  
+  const payload = { 
+    title, 
+    short_description, 
+    image_url, 
+    results: parsedResults, 
+    demo_url, 
+    order_index, 
+    active, 
+    updated_at: new Date().toISOString() 
+  };
+  
+  const ok = await confirmAction({
+    message: id ? `¿Guardar cambios en "${title}"?` : `¿Crear el caso de éxito "${title}"?`,
+    type: "generic",
+  });
+  if (!ok) return;
+  
+  setSuccessStoriesMsg("⏳ Guardando...");
+  
+  try {
+    if (id) {
+      const { error } = await sb.from("success_stories").update(payload).eq("id", id);
+      if (error) throw error;
+      setSuccessStoriesMsg("✅ Caso de éxito actualizado correctamente.");
+    } else {
+      const { error } = await sb.from("success_stories").insert([payload]);
+      if (error) throw error;
+      setSuccessStoriesMsg("✅ Caso de éxito creado correctamente.");
+    }
+    
+    const modal = document.getElementById("successStoryModal");
+    if (modal) modal.style.display = "none";
+    await loadSuccessStoriesAdmin();
+  } catch (err) {
+    setSuccessStoriesMsg(`❌ Error: ${err.message}`, true);
+  }
+}
+
+async function deleteSuccessStory(id) {
+  const story = successStoriesData.find(s => String(s.id) === String(id));
+  if (!story) return;
+  
+  const ok = await confirmAction({
+    message: `⚠️ ¿Eliminar el caso de éxito "${story.title}"? Esta acción no se puede deshacer.`,
+    type: "delete",
+    double: true,
+  });
+  if (!ok) return;
+  
+  setSuccessStoriesMsg("⏳ Eliminando...");
+  
+  try {
+    const { error } = await sb.from("success_stories").delete().eq("id", id);
+    if (error) throw error;
+    setSuccessStoriesMsg("✅ Caso de éxito eliminado correctamente.");
+    await loadSuccessStoriesAdmin();
+  } catch (err) {
+    setSuccessStoriesMsg(`❌ Error al eliminar: ${err.message}`, true);
+  }
+}
+
+/* =========================
+   PROYECTOS DESTACADOS
 ========================= */
 let featuredProjectsPaginator = null;
 let allFeaturedProjects = [];
@@ -3480,7 +3775,7 @@ function setHistoryMsg(msg, isError = false) {
 }
 
 /* =========================
-   MENÚ HAMBURGUESA PARA ADMIN (VERSIÓN CORREGIDA)
+   MENÚ HAMBURGUESA PARA ADMIN
 ========================= */
 function initSidebarToggle() {
   const toggleBtn = document.getElementById("sidebarToggleBtn");
@@ -3520,50 +3815,6 @@ function initSidebarToggle() {
   
   console.log("✅ Menú hamburguesa inicializado correctamente");
 }
-
-/* =========================
-   INTEGRACIÓN CON LOADALL Y SWITCHVIEW
-========================= */
-const originalLoadAll = window.loadAll;
-window.loadAll = async function() {
-  if (originalLoadAll) await originalLoadAll();
-  if (document.getElementById("plansList")) {
-    await loadPlansAdmin();
-  }
-  if (document.getElementById("brandsList")) {
-    await loadBrandsAdmin();
-  }
-  if (document.getElementById("assistantQuestionsList")) {
-    await loadAssistantQuestionsAdmin();
-  }
-  if (document.getElementById("reviewsApprovedList")) {
-    await loadApprovedReviews();
-  }
-  iniciarNotificaciones();
-};
-
-const originalSwitchView = window.switchView;
-window.switchView = function(view) {
-  if (originalSwitchView) originalSwitchView(view);
-  if (view === "reviews-pending" && document.getElementById("reviewsPendingList")) {
-    setTimeout(() => loadPendingReviews(), 100);
-  }
-  if (view === "reviews-approved" && document.getElementById("reviewsApprovedList")) {
-    setTimeout(() => loadApprovedReviews(), 100);
-  }
-  if (view === "plans" && document.getElementById("plansList")) {
-    setTimeout(() => loadPlansAdmin(), 100);
-  }
-  if (view === "brands" && document.getElementById("brandsList")) {
-    setTimeout(() => loadBrandsAdmin(), 100);
-  }
-  if (view === "assistant-questions" && document.getElementById("assistantQuestionsList")) {
-    setTimeout(() => loadAssistantQuestionsAdmin(), 100);
-  }
-  if (view === "assistant-responses" && document.getElementById("assistantResponsesList")) {
-    setTimeout(() => loadAssistantResponsesAdmin(), 100);
-  }
-};
 
 /* =========================
    EVENT LISTENERS EXTRA
@@ -3720,6 +3971,35 @@ if (exportResponsesBtn) {
   exportResponsesBtn.addEventListener("click", () => exportResponsesToCSV());
 }
 
+// Event listeners para casos de éxito
+const successStoriesRefreshBtn = document.getElementById("successStoriesRefreshBtn");
+if (successStoriesRefreshBtn) {
+  successStoriesRefreshBtn.addEventListener("click", () => loadSuccessStoriesAdmin());
+}
+
+const successStoriesNewBtn = document.getElementById("successStoriesNewBtn");
+if (successStoriesNewBtn) {
+  successStoriesNewBtn.addEventListener("click", () => openSuccessStoryModal());
+}
+
+const successStorySaveBtn = document.getElementById("successStorySaveBtn");
+if (successStorySaveBtn) {
+  successStorySaveBtn.addEventListener("click", () => saveSuccessStory());
+}
+
+const successStoryCancelBtn = document.getElementById("successStoryCancelBtn");
+if (successStoryCancelBtn) {
+  successStoryCancelBtn.addEventListener("click", () => {
+    const modal = document.getElementById("successStoryModal");
+    if (modal) modal.style.display = "none";
+  });
+}
+
+const successStoryImageFile = document.getElementById("successStoryImageFile");
+if (successStoryImageFile) {
+  successStoryImageFile.addEventListener("change", () => uploadSuccessStoryImage());
+}
+
 // Event listeners para historial
 document.getElementById("clearProjectHistoryBtn")?.addEventListener("click", clearProjectHistory);
 document.getElementById("clearSettingsHistoryBtn")?.addEventListener("click", clearSettingsHistory);
@@ -3732,4 +4012,4 @@ if (document.readyState === 'loading') {
   initSidebarToggle();
 }
 
-console.log("✅ Admin panel completamente cargado con Marcas y Asistente");
+console.log("✅ Admin panel completamente cargado con Marcas, Asistente y Casos de Éxito");
