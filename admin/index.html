@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover" />
   <title>Admin | CIBORG 347</title>
-  <meta name="description" content="Panel admin de CIBORG 347 para gestionar proyectos, categorias, contenido global, settings visuales, FAQs, planes, marcas y asistente." />
+  <meta name="description" content="Panel admin de CIBORG 347 para gestionar proyectos, categorias, contenido global, settings visuales, FAQs, planes, marcas, casos de éxito y asistente." />
   <link rel="stylesheet" href="./styles.css" />
   <link rel="icon" href="data:," />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -376,11 +376,15 @@
         <button class="navBtn" data-view="plans" type="button">💰 Planes</button>
         <button class="navBtn" data-view="faqs" type="button">❓ FAQs</button>
         
-        <!-- NUEVA SECCIÓN: MARCAS -->
+        <!-- SECCIÓN: CASOS DE ÉXITO (NUEVA) -->
+        <div class="sidebar__nav-section">📈 CASOS DE ÉXITO</div>
+        <button class="navBtn" data-view="success-stories" type="button">🏆 Casos de éxito</button>
+        
+        <!-- SECCIÓN: MARCAS -->
         <div class="sidebar__nav-section">🏢 MARCAS</div>
         <button class="navBtn" data-view="brands" type="button">🏷️ Marcas que confían</button>
         
-        <!-- NUEVA SECCIÓN: ASISTENTE -->
+        <!-- SECCIÓN: ASISTENTE -->
         <div class="sidebar__nav-section">🤖 ASISTENTE</div>
         <button class="navBtn" data-view="assistant-questions" type="button">❓ Preguntas del asistente</button>
         <button class="navBtn" data-view="assistant-responses" type="button">📊 Respuestas</button>
@@ -489,6 +493,20 @@
         <div id="plansPagination" class="pagination" style="display:none"></div>
       </section>
 
+      <!-- ========== SECCIÓN: CASOS DE ÉXITO (NUEVA) ========== -->
+      <section class="panel viewPanel" data-panel="success-stories" style="display:none">
+        <div class="row row--between row--wrap">
+          <div><h2>🏆 Casos de Éxito</h2><p class="muted">Gestioná los casos de éxito que se muestran en el frontend.</p></div>
+          <div class="row row--wrap">
+            <button id="successStoriesRefreshBtn" class="btn btn--ghost" type="button">Actualizar</button>
+            <button id="successStoriesNewBtn" class="btn btn--primary" type="button">➕ Nuevo caso</button>
+          </div>
+        </div>
+        <div id="successStoriesMsg" class="msg"></div>
+        <div id="successStoriesList" class="stackList"></div>
+        <div id="successStoriesPagination" class="pagination" style="display:none"></div>
+      </section>
+
       <!-- Contenido global -->
       <section class="panel viewPanel" data-panel="site-content" style="display:none">
         <div class="row row--between row--wrap"><div><h2>📄 Contenido global</h2><p class="muted">Editá los bloques fijos editoriales del frente A.</p></div><div class="row row--wrap"><button id="siteContentRefreshBtn" class="btn btn--ghost" type="button">Actualizar</button></div></div>
@@ -502,7 +520,7 @@
         <div class="subPanel"><h3>Assets y contacto</h3><div class="grid2"><div class="field"><label for="logoUrlInput">Logo</label><input id="logoUrlInput" type="url" /></div><div class="field"><label for="heroLogoUrlInput">Logo hero</label><input id="heroLogoUrlInput" type="url" /></div></div><div class="grid2"><div class="field"><label for="footerLogoUrlInput">Logo footer</label><input id="footerLogoUrlInput" type="url" /></div><div class="field"><label for="faviconUrlInput">Favicon</label><input id="faviconUrlInput" type="url" /></div></div><div class="grid2"><div class="field"><label for="whatsappNumberInput">WhatsApp</label><input id="whatsappNumberInput" type="text" placeholder="54911..." /></div><div class="field"><label for="emailContactInput">Email</label><input id="emailContactInput" type="email" /></div></div><div class="grid3"><div class="field"><label for="instagramUrlInput">Instagram</label><input id="instagramUrlInput" type="url" /></div><div class="field"><label for="facebookUrlInput">Facebook</label><input id="facebookUrlInput" type="url" /></div><div class="field"><label for="tiktokUrlInput">TikTok</label><input id="tiktokUrlInput" type="url" /></div></div><div class="togglesGrid togglesGrid--single"><label class="switchRow"><input id="useHeroVideoInput" type="checkbox" /><span>Usar video hero</span></label><label class="switchRow"><input id="useBackgroundImageInput" type="checkbox" /><span>Usar background global</span></label></div><div class="actions"><button id="siteSettingsSaveBtn" class="btn btn--primary" type="button">Guardar</button></div><div id="siteSettingsMsg" class="msg"></div></div>
       </section>
 
-      <!-- ========== NUEVA SECCIÓN: MARCAS ========== -->
+      <!-- SECCIÓN: MARCAS -->
       <section class="panel viewPanel" data-panel="brands" style="display:none">
         <div class="row row--between row--wrap">
           <div><h2>🏷️ Marcas que confían en nosotros</h2><p class="muted">Gestioná los logos de las marcas que aparecen en el frontend.</p></div>
@@ -516,7 +534,7 @@
         <div id="brandsPagination" class="pagination" style="display:none"></div>
       </section>
 
-      <!-- ========== NUEVA SECCIÓN: PREGUNTAS DEL ASISTENTE ========== -->
+      <!-- SECCIÓN: PREGUNTAS DEL ASISTENTE -->
       <section class="panel viewPanel" data-panel="assistant-questions" style="display:none">
         <div class="row row--between row--wrap">
           <div><h2>❓ Preguntas del Asistente Virtual</h2><p class="muted">Configurá las preguntas que hará el asistente a los usuarios.</p></div>
@@ -530,7 +548,7 @@
         <div id="assistantQuestionsPagination" class="pagination" style="display:none"></div>
       </section>
 
-      <!-- ========== NUEVA SECCIÓN: RESPUESTAS DEL ASISTENTE ========== -->
+      <!-- SECCIÓN: RESPUESTAS DEL ASISTENTE -->
       <section class="panel viewPanel" data-panel="assistant-responses" style="display:none">
         <div class="row row--between row--wrap">
           <div><h2>📊 Respuestas de usuarios</h2><p class="muted">Historial de respuestas recolectadas por el asistente.</p></div>
@@ -656,6 +674,61 @@
   </div>
 </div>
 
+<!-- Modal para editar/crear casos de éxito (NUEVO) -->
+<div id="successStoryModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:1000; justify-content:center; align-items:center;">
+  <div style="background:var(--bg-card); border-radius:24px; max-width:600px; width:90%; max-height:85vh; overflow:auto; padding:24px; border:1px solid var(--cyan);">
+    <h3 id="successStoryModalTitle" style="margin-bottom:1rem;">🏆 Nuevo Caso de Éxito</h3>
+    <input type="hidden" id="successStoryId">
+    
+    <div class="field">
+      <label>Título *</label>
+      <input type="text" id="successStoryTitle" placeholder="Ej: Pizzería El Italiano">
+    </div>
+    
+    <div class="field">
+      <label>Descripción corta</label>
+      <textarea id="successStoryDescription" rows="3" placeholder="Ej: Aumentamos sus pedidos online en un 300%..."></textarea>
+    </div>
+    
+    <div class="field">
+      <label>URL de la imagen</label>
+      <input type="url" id="successStoryImageUrl" placeholder="https://...">
+      <small>Podés subir una imagen</small>
+    </div>
+    
+    <div class="field">
+      <label>Subir imagen</label>
+      <input type="file" id="successStoryImageFile" accept="image/*">
+    </div>
+    
+    <div class="field">
+      <label>Resultados (JSON) - Ej: {"ventas": "+40%", "clientes": "+120"}</label>
+      <textarea id="successStoryResults" rows="4" placeholder='{"ventas": "+40%", "clientes": "+120"}'></textarea>
+      <small>Formato JSON válido. Los resultados se mostrarán como badges.</small>
+    </div>
+    
+    <div class="field">
+      <label>URL demo (opcional)</label>
+      <input type="url" id="successStoryDemoUrl" placeholder="https://...">
+    </div>
+    
+    <div class="field">
+      <label>Orden</label>
+      <input type="number" id="successStoryOrder" value="0">
+    </div>
+    
+    <label class="switchRow">
+      <input type="checkbox" id="successStoryActive" checked>
+      <span>Activo</span>
+    </label>
+    
+    <div style="display:flex; gap:12px; margin-top:1.5rem;">
+      <button id="successStorySaveBtn" class="btn btn--primary">💾 Guardar</button>
+      <button id="successStoryCancelBtn" class="btn btn--ghost">Cancelar</button>
+    </div>
+  </div>
+</div>
+
 <!-- Modal para editar reseña -->
 <div id="editReviewModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:1000; justify-content:center; align-items:center;">
   <div style="background:var(--bg-card); border-radius:24px; max-width:500px; width:90%; padding:24px; border:1px solid var(--cyan);">
@@ -738,6 +811,7 @@
           if (typeof loadFeaturedProjects === 'function') loadFeaturedProjects();
           if (typeof loadBrandsAdmin === 'function') loadBrandsAdmin();
           if (typeof loadAssistantQuestionsAdmin === 'function') loadAssistantQuestionsAdmin();
+          if (typeof loadSuccessStoriesAdmin === 'function') loadSuccessStoriesAdmin();
         }
       }).catch(err => console.error("Error de sesión:", err));
     } else {
