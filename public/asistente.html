@@ -3,477 +3,772 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>Asistente Ciborg 347</title>
+  <title>Ciborg 347 — Asistente Inteligente</title>
+  <meta name="description" content="Respondé algunas preguntas y te recomendamos la solución ideal para tu negocio." />
+  <meta property="og:title" content="Ciborg 347 — Asistente" />
+  <meta property="og:description" content="Encontrá la solución digital perfecta para tu negocio." />
+  <meta property="og:image" content="https://fhxcumwhgtfirznnznjx.supabase.co/storage/v1/object/public/Imagenes/fETkPEv.md.png" />
+  <meta property="og:type" content="website" />
+  <link rel="canonical" href="https://ciborg347.onrender.com/asistente" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🤖%3C/text%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
+    :root {
+      --bg: #0a0a0f;
+      --bg2: #0f0f1a;
+      --bg3: #1a1a2e;
+      --glass: rgba(26, 26, 46, 0.55);
+      --border: rgba(0, 212, 255, 0.13);
+      --border-h: rgba(0, 212, 255, 0.28);
+      --cyan: #00d4ff;
+      --violet: #8b5cf6;
+      --magenta: #ff47d1;
+      --grad: linear-gradient(135deg, var(--cyan), var(--violet));
+      --text: #e0e6ff;
+      --text2: #9ca3ff;
+      --white: #ffffff;
+      --card-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
     }
-    
+
+    [data-theme="light"] {
+      --bg: #f0f4f8;
+      --bg2: #ffffff;
+      --bg3: #e8edf5;
+      --border: rgba(0, 0, 0, 0.08);
+      --cyan: #0066cc;
+      --violet: #7c3aed;
+      --magenta: #db2777;
+      --grad: linear-gradient(135deg, #0066cc, #7c3aed);
+      --text: #1e293b;
+      --text2: #475569;
+      --white: #0f172a;
+      --card-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
     body {
-      font-family: 'Outfit', system-ui, -apple-system, sans-serif;
-      background: transparent;
-      color: #e0e6ff;
-      min-height: 100vh;
+      font-family: 'Outfit', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+      transition: background 0.3s, color 0.2s;
+    }
+
+    img { max-width: 100%; display: block; }
+    a { text-decoration: none; color: inherit; }
+    button { cursor: pointer; font-family: inherit; }
+
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--cyan); border-radius: 2px; }
+
+    .wrap { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+    /* Topbar */
+    .topbar {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(10,10,15,0.82);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+    }
+    [data-theme="light"] .topbar {
+      background: rgba(255,255,255,0.9);
+    }
+    .topbar__inner {
+      min-height: 68px;
+      display: flex; align-items: center; justify-content: space-between; gap: 20px;
+    }
+    .brand { display: flex; align-items: center; gap: 12px; transition: transform 0.2s; }
+    .brand:hover { transform: translateY(-1px); }
+    .brand__logo { width: 44px; height: 44px; object-fit: contain; border-radius: 10px; }
+    .brand__text strong { font-family: 'Syne', sans-serif; font-size: 17px; color: var(--white); }
+    .brand__text span { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text2); text-transform: uppercase; }
+
+    .theme-toggle {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: 40px;
+      width: 40px; height: 40px;
+      display: flex;
+      align-items: center; justify-content: center;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .theme-toggle:hover { border-color: var(--cyan); transform: scale(1.05); box-shadow: 0 0 10px var(--cyan); }
+
+    .nav { display: flex; align-items: center; gap: 4px; }
+    .nav a {
+      padding: 7px 14px; border-radius: 8px;
+      font-family: 'JetBrains Mono', monospace; font-size: 12px;
+      color: var(--text2); transition: all 0.15s;
+    }
+    .nav a:hover { color: var(--white); background: var(--glass); }
+
+    .topbar__cta { display: flex; align-items: center; gap: 10px; }
+
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 10px 20px; border: none; border-radius: 10px;
+      font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 600;
+      text-transform: uppercase; transition: all 0.25s;
+    }
+    .btn--primary { background: var(--grad); color: white; }
+    .btn--primary:hover { transform: translateY(-2px); box-shadow: 0 0 15px var(--cyan); }
+    .btn--ghost { background: transparent; color: var(--text); border: 1px solid var(--border); }
+    .btn--ghost:hover { background: var(--glass); transform: translateY(-1px); border-color: var(--cyan); }
+    .btn--wa { background: linear-gradient(135deg,#25d366,#128c7e); color: white; }
+    .btn--wa:hover { transform: translateY(-2px); box-shadow: 0 0 15px #25d366; }
+
+    .burger {
+      display: none; width: 40px; height: 40px;
+      border: 1px solid var(--border); border-radius: 10px;
+      background: var(--glass);
+      flex-direction: column; align-items: center; justify-content: center;
+      gap: 5px;
+    }
+    .burger span { width: 16px; height: 2px; background: var(--text); border-radius: 2px; }
+
+    .mobileMenu {
+      display: none; flex-direction: column;
+      position: fixed; top: 68px; left: 0; right: 0;
+      background: rgba(10,10,15,0.97); backdrop-filter: blur(16px);
+      padding: 1.5rem 24px; gap: 0.75rem; z-index: 99;
+    }
+    [data-theme="light"] .mobileMenu {
+      background: rgba(255,255,255,0.97);
+    }
+    .mobileMenu.isOpen { display: flex; }
+    .mobileMenu a {
+      font-family: 'JetBrains Mono', monospace; font-size: 13px;
+      color: var(--text2); padding: 0.6rem 0; border-bottom: 1px solid var(--border);
+    }
+
+    /* Tooltip / Glosario */
+    .tooltip {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      cursor: help;
+      margin-left: 8px;
+    }
+    .tooltip-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 18px;
+      height: 18px;
+      background: rgba(0, 212, 255, 0.15);
+      border: 1px solid var(--cyan);
+      border-radius: 50%;
+      font-size: 11px;
+      font-weight: bold;
+      color: var(--cyan);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .tooltip-icon:hover {
+      background: var(--cyan);
+      color: var(--white);
+      transform: scale(1.1);
+    }
+    .tooltip-text {
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--bg3);
+      border: 1px solid var(--cyan);
+      border-radius: 12px;
+      padding: 8px 12px;
+      font-size: 0.7rem;
+      color: var(--text);
+      white-space: nowrap;
+      z-index: 100;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.2s;
+      margin-bottom: 8px;
+      font-family: 'Outfit', sans-serif;
+      font-weight: normal;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      pointer-events: none;
+    }
+    .tooltip-text::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border-width: 5px;
+      border-style: solid;
+      border-color: var(--cyan) transparent transparent transparent;
+    }
+    .tooltip:hover .tooltip-text {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* Contenido principal del asistente */
+    .asistente-main {
+      min-height: calc(100vh - 140px);
+      padding: 60px 0;
+    }
+
+    .asistente-card {
+      max-width: 750px;
+      margin: 0 auto;
+      background: var(--bg2);
+      border-radius: 28px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+      box-shadow: var(--card-shadow);
+    }
+
+    .asistente-header-card {
+      background: linear-gradient(135deg, rgba(0, 212, 255, 0.08), rgba(139, 92, 246, 0.08));
+      padding: 24px;
+      text-align: center;
+      border-bottom: 1px solid var(--border);
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 0;
+      gap: 16px;
+      flex-wrap: wrap;
     }
-    
-    .asistente-container {
-      max-width: 100%;
-      width: 100%;
-      margin: 0 auto;
-      background: linear-gradient(135deg, rgba(12, 12, 20, 0.96), rgba(8, 8, 14, 0.98));
-      backdrop-filter: blur(20px);
-      border-radius: 0;
-      border: none;
-      overflow: hidden;
-      box-shadow: none;
-      height: 100%;
+
+    .robot-icon {
+      width: 50px;
+      height: 50px;
+      background: var(--grad);
+      border-radius: 50%;
       display: flex;
-      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+      animation: floatRobot 3s ease-in-out infinite;
     }
-    
-    .asistente-header {
-      background: linear-gradient(135deg, rgba(0, 212, 255, 0.12), rgba(139, 92, 246, 0.12));
-      padding: 20px 24px;
-      border-bottom: 1px solid rgba(0, 212, 255, 0.15);
-      text-align: center;
-      position: relative;
-      flex-shrink: 0;
+
+    @keyframes floatRobot {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-5px); }
     }
-    
-    .asistente-header h2 {
-      font-size: 1.4rem;
+
+    .asistente-header-card h2 {
+      font-size: 1.5rem;
       font-weight: 700;
-      background: linear-gradient(135deg, #00d4ff, #c084fc);
+      background: var(--grad);
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
       margin-bottom: 4px;
-      letter-spacing: -0.3px;
     }
-    
-    .asistente-header p {
-      font-size: 0.75rem;
-      color: #8b9dff;
-      opacity: 0.8;
+
+    .asistente-header-card p {
+      font-size: 0.8rem;
+      color: var(--text2);
     }
-    
-    .asistente-header::after {
-      content: '';
-      position: absolute;
-      bottom: -1px;
-      left: 20%;
-      width: 60%;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, #00d4ff, #c084fc, transparent);
-      border-radius: 2px;
-    }
-    
+
     .asistente-body {
-      padding: 24px;
-      flex: 1;
-      overflow-y: auto;
-      scroll-behavior: smooth;
+      padding: 32px;
+      min-height: 500px;
     }
-    
-    /* Scrollbar personalizada */
-    .asistente-body::-webkit-scrollbar {
-      width: 5px;
-    }
-    .asistente-body::-webkit-scrollbar-track {
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 10px;
-    }
-    .asistente-body::-webkit-scrollbar-thumb {
-      background: linear-gradient(135deg, #00d4ff, #c084fc);
-      border-radius: 10px;
-    }
-    
-    /* Barra de progreso */
+
+    /* Progress bar */
     .progress-bar {
       margin-bottom: 28px;
     }
-    
     .progress-track {
       background: rgba(255, 255, 255, 0.08);
       border-radius: 20px;
-      height: 6px;
+      height: 4px;
       overflow: hidden;
     }
-    
     .progress-fill {
-      background: linear-gradient(90deg, #00d4ff, #c084fc);
+      background: var(--grad);
       width: 0%;
       height: 100%;
       border-radius: 20px;
       transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-      position: relative;
     }
-    
-    .progress-fill::after {
-      content: '';
-      position: absolute;
-      right: 0;
-      top: -2px;
-      width: 8px;
-      height: 10px;
-      background: #00d4ff;
-      border-radius: 50%;
-      box-shadow: 0 0 8px #00d4ff;
-    }
-    
     .progress-text {
       font-size: 0.7rem;
-      color: #8b9dff;
-      margin-top: 10px;
+      color: var(--text2);
+      margin-top: 8px;
       text-align: right;
       font-weight: 500;
-      letter-spacing: 0.5px;
+      font-family: 'JetBrains Mono', monospace;
     }
-    
-    /* Preguntas */
+
+    /* Question */
     .question {
       font-size: 1.25rem;
       font-weight: 600;
-      margin-bottom: 24px;
-      color: #00d4ff;
-      animation: fadeInUp 0.4s ease;
-      letter-spacing: -0.2px;
+      margin-bottom: 20px;
+      color: var(--white);
+      animation: fadeInUp 0.3s ease;
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
     }
-    
+
     @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(15px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
-    
-    /* Opciones */
+
+    /* Options */
     .options {
       display: flex;
       flex-direction: column;
       gap: 12px;
-      margin-bottom: 24px;
+      margin-bottom: 20px;
     }
-    
+
     .option {
-      background: rgba(22, 22, 36, 0.8);
-      border: 1px solid rgba(0, 212, 255, 0.12);
-      border-radius: 20px;
+      background: rgba(26, 26, 46, 0.6);
+      border: 1px solid var(--border);
+      border-radius: 16px;
       padding: 14px 18px;
       cursor: pointer;
-      transition: all 0.25s ease;
-      backdrop-filter: blur(4px);
+      transition: all 0.2s ease;
     }
-    
+    [data-theme="light"] .option {
+      background: rgba(0, 0, 0, 0.03);
+    }
     .option:hover {
-      border-color: #00d4ff;
-      transform: translateX(6px);
+      border-color: var(--cyan);
       background: rgba(0, 212, 255, 0.08);
-      box-shadow: 0 4px 15px rgba(0, 212, 255, 0.1);
+      transform: translateX(4px);
     }
-    
     .option-label {
       font-weight: 600;
       font-size: 0.95rem;
       display: flex;
       align-items: center;
       gap: 10px;
+      color: var(--white);
     }
-    
     .option-desc {
-      font-size: 0.7rem;
-      color: #9ca3ff;
-      margin-top: 8px;
+      font-size: 0.75rem;
+      color: var(--text2);
+      margin-top: 6px;
       display: block;
       padding-left: 28px;
     }
-    
+
     /* Inputs */
     .text-input {
       width: 100%;
-      padding: 14px 18px;
-      background: rgba(22, 22, 36, 0.8);
-      border: 1px solid rgba(0, 212, 255, 0.15);
-      border-radius: 24px;
-      color: #e0e6ff;
+      padding: 14px 16px;
+      background: rgba(26, 26, 46, 0.6);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      color: var(--text);
       font-size: 0.9rem;
-      margin-bottom: 20px;
+      margin-bottom: 16px;
       transition: all 0.2s ease;
       resize: vertical;
       font-family: inherit;
     }
-    
     .text-input:focus {
       outline: none;
-      border-color: #00d4ff;
-      box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1);
+      border-color: var(--cyan);
+      box-shadow: 0 0 0 2px rgba(0, 212, 255, 0.1);
     }
-    
-    /* Botones */
-    .btn-next, .btn-back {
-      background: linear-gradient(135deg, #00d4ff, #8b5cf6);
+
+    /* Skip button */
+    .skip-btn {
+      background: transparent;
       border: none;
-      border-radius: 60px;
+      color: var(--text2);
+      font-size: 0.75rem;
+      cursor: pointer;
+      margin-top: 8px;
+      text-align: center;
+      width: 100%;
+      transition: color 0.2s;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .skip-btn:hover {
+      color: var(--cyan);
+    }
+
+    /* Buttons dentro del asistente */
+    .btn-next, .btn-back {
+      background: var(--grad);
+      border: none;
+      border-radius: 40px;
       padding: 12px 20px;
       color: white;
       font-weight: 600;
       font-size: 0.85rem;
       cursor: pointer;
-      transition: all 0.25s ease;
+      transition: all 0.2s ease;
       width: 100%;
       margin-bottom: 10px;
-      position: relative;
-      overflow: hidden;
+      font-family: 'JetBrains Mono', monospace;
     }
-    
-    .btn-next::before, .btn-back::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-      transition: left 0.5s ease;
-    }
-    
-    .btn-next:hover::before, .btn-back:hover::before {
-      left: 100%;
-    }
-    
     .btn-back {
       background: transparent;
-      border: 1px solid rgba(0, 212, 255, 0.4);
-      color: #00d4ff;
+      border: 1px solid var(--border);
+      color: var(--cyan);
     }
-    
     .btn-next:hover, .btn-back:hover {
       transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(0, 212, 255, 0.25);
+      filter: brightness(1.05);
     }
-    
-    .btn-next:active, .btn-back:active {
-      transform: translateY(0);
-    }
-    
-    /* Resultado */
+
+    /* Result card */
     .result-card {
-      background: linear-gradient(135deg, rgba(26, 26, 46, 0.9), rgba(20, 20, 35, 0.95));
-      border-radius: 24px;
-      padding: 20px;
+      background: var(--bg3);
+      border-radius: 20px;
+      padding: 24px;
       margin-bottom: 20px;
-      text-align: center;
-      border: 1px solid rgba(0, 212, 255, 0.2);
-      animation: fadeInUp 0.4s ease;
+      border: 1px solid var(--border);
+      animation: fadeInUp 0.3s ease;
     }
-    
-    .result-card img {
-      max-width: 100%;
-      border-radius: 16px;
-      margin-bottom: 16px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-    }
-    
     .result-title {
       font-size: 1.3rem;
       font-weight: 700;
-      margin-bottom: 10px;
-      background: linear-gradient(135deg, #00d4ff, #c084fc);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
+      margin-bottom: 12px;
+      color: var(--cyan);
     }
-    
     .result-description {
-      font-size: 0.85rem;
-      color: #a0aec0;
-      margin-bottom: 16px;
+      font-size: 0.9rem;
+      color: var(--text2);
+      margin-bottom: 20px;
       line-height: 1.5;
     }
-    
+    .price-tag {
+      background: rgba(0, 212, 255, 0.1);
+      border-radius: 16px;
+      padding: 16px;
+      text-align: center;
+      margin: 20px 0;
+      border: 1px solid rgba(0, 212, 255, 0.2);
+    }
+    .price-tag .price {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--cyan);
+    }
+    .price-tag .price-note {
+      font-size: 0.7rem;
+      color: var(--text2);
+      margin-top: 4px;
+    }
+    .disclaimer {
+      font-size: 0.7rem;
+      color: var(--text2);
+      text-align: center;
+      margin-top: 12px;
+      padding: 8px;
+      background: rgba(0, 212, 255, 0.05);
+      border-radius: 12px;
+    }
     .result-benefits {
       text-align: left;
-      margin: 16px 0;
-      padding-left: 20px;
+      margin: 20px 0;
+      padding-left: 0;
       list-style: none;
     }
-    
     .result-benefits li {
-      margin-bottom: 8px;
-      color: #e2e8f0;
-      font-size: 0.8rem;
+      margin-bottom: 10px;
+      color: var(--text);
+      font-size: 0.85rem;
       display: flex;
       align-items: center;
       gap: 8px;
     }
-    
     .result-benefits li::before {
-      content: "✨";
-      font-size: 0.8rem;
+      content: "✓";
+      color: var(--cyan);
+      font-weight: bold;
     }
-    
     .result-buttons {
       display: flex;
       flex-direction: column;
       gap: 10px;
-      margin-top: 10px;
+      margin-top: 20px;
     }
-    
-    .btn-wa, .btn-quote, .btn-demo {
-      display: block;
-      text-align: center;
-      text-decoration: none;
-      padding: 12px;
-      border-radius: 60px;
-      font-weight: 600;
-      font-size: 0.85rem;
-      transition: all 0.2s ease;
-    }
-    
-    .btn-wa {
-      background: linear-gradient(135deg, #25d366, #128c7e);
-      color: white;
-    }
-    
-    .btn-wa:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(37, 211, 102, 0.3);
-    }
-    
-    .btn-quote {
-      background: linear-gradient(135deg, #00d4ff, #8b5cf6);
-      color: white;
-    }
-    
-    .btn-quote:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(0, 212, 255, 0.3);
-    }
-    
-    .btn-demo {
-      background: transparent;
-      border: 1px solid #00d4ff;
-      color: #00d4ff;
-    }
-    
-    .btn-demo:hover {
-      background: rgba(0, 212, 255, 0.1);
-      transform: translateY(-2px);
-    }
-    
+
     /* Lead form */
     .lead-form {
       display: flex;
       flex-direction: column;
-      gap: 12px;
-      margin-bottom: 20px;
+      gap: 14px;
+      margin-bottom: 24px;
     }
-    
     .lead-form input {
-      background: rgba(22, 22, 36, 0.8);
-      border: 1px solid rgba(0, 212, 255, 0.15);
-      border-radius: 24px;
-      padding: 12px 16px;
-      color: #e0e6ff;
-      font-size: 0.85rem;
+      background: rgba(26, 26, 46, 0.6);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 14px 16px;
+      color: var(--text);
+      font-size: 0.9rem;
       transition: all 0.2s ease;
+      font-family: inherit;
     }
-    
     .lead-form input:focus {
       outline: none;
-      border-color: #00d4ff;
-      box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1);
+      border-color: var(--cyan);
+      box-shadow: 0 0 0 2px rgba(0, 212, 255, 0.1);
     }
-    
+
+    /* Custom textarea para necesidad específica */
+    .custom-need {
+      margin-top: 16px;
+    }
+
     /* Toast */
     .toast-message {
       position: fixed;
-      bottom: 20px;
+      bottom: 100px;
       left: 50%;
       transform: translateX(-50%);
-      background: #1a1a2e;
-      border: 1px solid #00d4ff;
-      border-radius: 60px;
-      padding: 8px 20px;
-      color: #00d4ff;
+      background: var(--bg3);
+      border: 1px solid var(--cyan);
+      border-radius: 40px;
+      padding: 10px 24px;
+      color: var(--cyan);
       font-size: 0.75rem;
       font-weight: 500;
-      z-index: 100;
-      animation: fadeInUp 0.3s ease;
+      z-index: 1000;
+      animation: fadeInUp 0.2s ease;
       backdrop-filter: blur(8px);
       white-space: nowrap;
+      font-family: 'JetBrains Mono', monospace;
     }
-    
+
     /* Skeleton */
     .skeleton {
-      background: linear-gradient(90deg, #1a1a2e 25%, #2a2a3e 50%, #1a1a2e 75%);
+      background: linear-gradient(90deg, var(--bg3) 25%, var(--bg2) 50%, var(--bg3) 75%);
       background-size: 200% 100%;
       animation: shimmer 1.5s infinite;
-      border-radius: 16px;
+      border-radius: 12px;
     }
-    
     @keyframes shimmer {
       0% { background-position: 200% 0; }
       100% { background-position: -200% 0; }
     }
-    
-    /* Responsive */
-    @media (max-width: 600px) {
-      .asistente-header { padding: 16px 20px; }
-      .asistente-header h2 { font-size: 1.2rem; }
-      .asistente-body { padding: 20px; }
+
+    /* Footer */
+    footer {
+      background: var(--bg2);
+      border-top: 1px solid var(--border);
+      padding: 2.5rem 0;
+      margin-top: 2rem;
+    }
+    .footer__inner {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      align-items: center;
+    }
+    .footer__brand { display: flex; align-items: center; gap: 12px; }
+    .footer__brand img { width: 38px; border-radius: 8px; }
+    .footer__links { display: flex; gap: 1.5rem; }
+    .footer__links a { font-size: 12px; color: var(--text2); transition: color 0.2s; }
+    .footer__links a:hover { color: var(--cyan); }
+    .footer__copy { font-size: 11px; color: var(--text2); }
+
+    /* WhatsApp flotante */
+    .waFloat {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #25d366, #128c7e);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 500;
+      transition: opacity 0.3s, transform 0.2s, visibility 0.3s;
+      opacity: 1;
+      visibility: visible;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+    .waFloat.hidden { opacity: 0; visibility: hidden; }
+    .waFloat:hover { transform: scale(1.08) rotate(5deg); box-shadow: 0 0 20px #25d366; }
+
+    @media (max-width: 900px) {
+      .nav { display: none; }
+      .burger { display: flex; }
+      .asistente-body { padding: 24px; }
       .question { font-size: 1.1rem; }
-      .option { padding: 10px 14px; }
+    }
+    @media (max-width: 600px) {
+      .asistente-main { padding: 40px 0; }
+      .asistente-body { padding: 20px; }
       .option-label { font-size: 0.85rem; }
-      .btn-next, .btn-back { padding: 10px 16px; font-size: 0.8rem; }
-      .toast-message { white-space: normal; text-align: center; max-width: 80%; font-size: 0.7rem; }
       .result-title { font-size: 1.1rem; }
-      .result-benefits li { font-size: 0.75rem; }
+      .price-tag .price { font-size: 1.4rem; }
+      .toast-message { white-space: normal; text-align: center; max-width: 80%; font-size: 0.65rem; }
+      .footer__inner { flex-direction: column; text-align: center; }
+      .footer__links { justify-content: center; flex-wrap: wrap; }
+      .robot-icon { width: 40px; height: 40px; font-size: 22px; }
+      .asistente-header-card h2 { font-size: 1.2rem; }
     }
   </style>
 </head>
 <body>
-<div class="asistente-container">
-  <div class="asistente-header">
-    <h2>🤖 Asesor Ciborg 347</h2>
-    <p>Te ayudo a encontrar la solución perfecta</p>
-  </div>
-  <div class="asistente-body" id="asistenteBody">
-    <div style="text-align: center; padding: 40px;">
-      <div class="skeleton" style="height: 50px; width: 80%; margin: 0 auto 20px;"></div>
-      <div class="skeleton" style="height: 45px; width: 90%; margin: 0 auto 10px;"></div>
-      <div class="skeleton" style="height: 45px; width: 85%; margin: 0 auto;"></div>
+
+<header class="topbar">
+  <div class="wrap topbar__inner">
+    <a href="index.html" class="brand">
+      <img class="brand__logo" src="https://fhxcumwhgtfirznnznjx.supabase.co/storage/v1/object/public/Imagenes/fETkPEv.md.png" alt="Logo" />
+      <div class="brand__text"><strong>CIBORG 347</strong><span>Desarrollo Web</span></div>
+    </a>
+    <nav class="nav">
+      <a href="index.html#portfolio">Portfolio</a>
+      <a href="index.html#servicios">Servicios</a>
+      <a href="index.html#faq">FAQ</a>
+      <a href="index.html#contacto">Contacto</a>
+    </nav>
+    <div class="topbar__cta">
+      <button class="theme-toggle" id="themeToggle">🌙</button>
+      <a href="index.html#contacto" class="btn btn--primary btn--sm">Contacto</a>
+      <button class="burger" id="burgerBtn"><span></span><span></span><span></span></button>
     </div>
   </div>
-</div>
+</header>
 
+<nav class="mobileMenu" id="mobileMenu">
+  <a href="index.html#portfolio">Portfolio</a>
+  <a href="index.html#servicios">Servicios</a>
+  <a href="index.html#faq">FAQ</a>
+  <a href="index.html#contacto">Contacto</a>
+  <a href="#" class="btn btn--wa" id="mobileWhatsAppBtn">WhatsApp</a>
+</nav>
+
+<main class="asistente-main">
+  <div class="wrap">
+    <div class="asistente-card">
+      <div class="asistente-header-card">
+        <div class="robot-icon">🤖</div>
+        <div>
+          <h2>Asistente Ciborg 347</h2>
+          <p>Respondé algunas preguntas y te recomendamos la solución ideal</p>
+        </div>
+      </div>
+      <div class="asistente-body" id="asistenteBody">
+        <div style="text-align: center; padding: 40px;">
+          <div class="skeleton" style="height: 50px; width: 80%; margin: 0 auto 20px;"></div>
+          <div class="skeleton" style="height: 45px; width: 90%; margin: 0 auto 10px;"></div>
+          <div class="skeleton" style="height: 45px; width: 85%; margin: 0 auto;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="footer__inner">
+      <div class="footer__brand">
+        <img src="https://fhxcumwhgtfirznnznjx.supabase.co/storage/v1/object/public/Imagenes/fETkPEv.md.png" alt="Logo" />
+        <div><strong>CIBORG 347</strong><span style="display: block; font-size: 10px;">Desarrollo Web</span></div>
+      </div>
+      <div class="footer__links">
+        <a href="index.html#portfolio">Proyectos</a>
+        <a href="index.html#servicios">Servicios</a>
+        <a href="index.html#faq">FAQ</a>
+        <a href="index.html#contacto">Contacto</a>
+      </div>
+      <div class="footer__copy">© 2025 Ciborg 347 — Diseñamos hoy, impulsamos tu futuro.</div>
+    </div>
+  </div>
+</footer>
+
+<a href="#" class="waFloat" id="waFloat" target="_blank">
+  <svg width="26" height="26" viewBox="0 0 24 24" fill="white">
+    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+  </svg>
+</a>
+
+<script src="config.js"></script>
 <script>
+  // ========== TEMA (DARK/LIGHT) ==========
+  const themeToggle = document.getElementById("themeToggle");
+  const savedTheme = localStorage.getItem("theme") || "dark";
+  document.documentElement.setAttribute("data-theme", savedTheme);
+  themeToggle.textContent = savedTheme === "dark" ? "☀️" : "🌙";
+  themeToggle.addEventListener("click", () => {
+    const current = document.documentElement.getAttribute("data-theme");
+    const newTheme = current === "dark" ? "light" : "dark";
+    document.documentElement.setAttribute("data-theme", newTheme);
+    localStorage.setItem("theme", newTheme);
+    themeToggle.textContent = newTheme === "dark" ? "☀️" : "🌙";
+  });
+
   // ========== CONFIGURACIÓN ==========
-  const DEFAULT_WA = "5491164499481";
+  const DEFAULT_WA = window.CIBORG_CONFIG?.WHATSAPP_NUMBER || "5491164499481";
+  
+  // Planes y precios - Estos valores se sincronizarán con los planes de la web
+  // TODO: Conectar con Supabase o API de planes
+  const PLANES = {
+    landing: { nombre: "Landing Page", precio: 250, precioARS: 350000, descripcion: "Ideal para captar clientes y mostrar servicios", tipo: "basico" },
+    web_profesional: { nombre: "Web Profesional", precio: 450, precioARS: 630000, descripcion: "Sitio completo con panel admin", tipo: "medio" },
+    tienda_online: { nombre: "Tienda Online", precio: 650, precioARS: 910000, descripcion: "Ecommerce completo con carrito", tipo: "avanzado" },
+    catalogo: { nombre: "Catálogo Digital", precio: 350, precioARS: 490000, descripcion: "Vitrina de productos con WhatsApp", tipo: "medio" },
+    sistema_pedidos: { nombre: "Sistema de Pedidos", precio: 550, precioARS: 770000, descripcion: "Sistema a medida para pedidos", tipo: "avanzado" },
+    panel_admin: { nombre: "Panel Administrativo", precio: 700, precioARS: 980000, descripcion: "Gestión completa de tu negocio", tipo: "premium" },
+    institucional: { nombre: "Web Institucional", precio: 500, precioARS: 700000, descripcion: "Presencia corporativa profesional", tipo: "avanzado" },
+    personalizado: { nombre: "Solución Personalizada", precio: "a consultar", descripcion: "Proyecto a medida", tipo: "premium" }
+  };
+  
   let currentStep = "welcome";
   let userAnswers = {};
   let historyStack = [];
   let leadData = {};
+  let precioEstimado = 0;
+  let planRecomendado = null;
+  let esModoPersonalizado = false;
+  
+  // Tooltips / Glosario de términos
+  const glosario = {
+    "Landing Page": "Página diseñada específicamente para convertir visitantes en clientes, con un objetivo claro y llamado a la acción.",
+    "Panel Admin": "Sistema interno para gestionar productos, usuarios, ventas y contenido sin necesidad de programación.",
+    "SEO": "Optimización para que tu web aparezca en los primeros resultados de Google.",
+    "Responsive": "Diseño que se adapta automáticamente a celulares, tablets y computadoras.",
+    "Ecommerce": "Tienda online que permite vender productos con carrito de compras y pasarela de pagos.",
+    "Catálogo Digital": "Vitrina online para mostrar productos sin necesidad de tener un carrito de compras."
+  };
+  
+  function showTooltip(texto) {
+    // Función para mostrar tooltip temporal (alternativa a CSS)
+    const tooltipDiv = document.createElement('div');
+    tooltipDiv.className = 'toast-message';
+    tooltipDiv.textContent = texto;
+    tooltipDiv.style.background = 'var(--bg3)';
+    tooltipDiv.style.border = '1px solid var(--cyan)';
+    tooltipDiv.style.maxWidth = '300px';
+    tooltipDiv.style.whiteSpace = 'normal';
+    tooltipDiv.style.textAlign = 'center';
+    document.body.appendChild(tooltipDiv);
+    setTimeout(() => tooltipDiv.remove(), 3000);
+  }
   
   function showToast(message, isError = false) {
-    const existingToast = document.querySelector('.toast-message');
+    const existingToast = document.querySelector('.toast-message:not(.tooltip-temp)');
     if (existingToast) existingToast.remove();
     
     const toast = document.createElement('div');
     toast.className = 'toast-message';
     toast.textContent = message;
-    toast.style.borderColor = isError ? '#ef4444' : '#00d4ff';
-    toast.style.color = isError ? '#ef4444' : '#00d4ff';
+    toast.style.borderColor = isError ? '#ff47d1' : '#00d4ff';
+    toast.style.color = isError ? '#ff47d1' : '#00d4ff';
     document.body.appendChild(toast);
     setTimeout(() => toast.remove(), 3000);
   }
@@ -487,26 +782,95 @@
   }
   
   function scrollToTop() {
-    document.querySelector('.asistente-body')?.scrollTo({ top: 0, behavior: 'smooth' });
+    const body = document.querySelector('.asistente-body');
+    if (body) body.scrollTo({ top: 0, behavior: 'smooth' });
   }
   
   function updateProgress(percent) {
     const fill = document.querySelector('.progress-fill');
     if (fill) fill.style.width = percent + '%';
+    const text = document.querySelector('.progress-text');
+    if (text) {
+      const steps = Math.floor(percent / 12.5);
+      text.textContent = `Paso ${steps + 1} de 8 · ${percent}% completado`;
+    }
+  }
+  
+  // Calcular precio estimado basado en respuestas
+  function calcularPrecioEstimado() {
+    let basePrice = 0;
+    let selectedPlan = null;
+    
+    if (esModoPersonalizado || userAnswers.q1 === 'personalizado') {
+      selectedPlan = PLANES.personalizado;
+      basePrice = "a consultar";
+    } else if (userAnswers.q1 === 'vender_productos') {
+      if (userAnswers.vender_vender === 'si') {
+        selectedPlan = PLANES.tienda_online;
+      } else {
+        selectedPlan = PLANES.catalogo;
+      }
+    } else if (userAnswers.q1 === 'conseguir_clientes') {
+      selectedPlan = PLANES.landing;
+    } else if (userAnswers.q1 === 'mostrar_servicios') {
+      if (userAnswers.mostrar_administrable === 'si') {
+        selectedPlan = PLANES.web_profesional;
+      } else {
+        selectedPlan = PLANES.landing;
+      }
+    } else if (userAnswers.q1 === 'automatizar') {
+      selectedPlan = PLANES.panel_admin;
+    } else if (userAnswers.q1 === 'presencia') {
+      selectedPlan = PLANES.institucional;
+    } else if (userAnswers.q1 === 'caso_propio' || userAnswers.texto_personalizado) {
+      selectedPlan = PLANES.personalizado;
+      basePrice = "a consultar";
+    } else {
+      selectedPlan = PLANES.personalizado;
+      basePrice = "a consultar";
+    }
+    
+    if (selectedPlan && selectedPlan.precio !== "a consultar") {
+      basePrice = selectedPlan.precio;
+      if (userAnswers.conseguir_whatsapp === 'si') basePrice += 50;
+      if (userAnswers.vender_administrar === 'si') basePrice += 100;
+      if (userAnswers.mostrar_administrable === 'si') basePrice += 80;
+    }
+    
+    planRecomendado = selectedPlan;
+    precioEstimado = basePrice;
+    return { precio: basePrice, plan: selectedPlan };
+  }
+  
+  function getWaLinks() {
+    return (msg) => `https://wa.me/${DEFAULT_WA}?text=${encodeURIComponent(msg)}`;
+  }
+  
+  // Función para crear texto con tooltips
+  function addTooltips(text) {
+    let result = text;
+    for (const [term, definition] of Object.entries(glosario)) {
+      const regex = new RegExp(`\\b${term}\\b`, 'g');
+      if (result.match(regex)) {
+        result = result.replace(regex, `<span class="tooltip">${term}<span class="tooltip-icon" onclick="event.stopPropagation(); showTooltip('${definition}')">?</span><span class="tooltip-text">${definition}</span></span>`);
+      }
+    }
+    return result;
   }
   
   // ========== BIENVENIDA ==========
   function showWelcome() {
     currentStep = "welcome";
     clearLocalStorage();
+    esModoPersonalizado = false;
     const body = document.getElementById('asistenteBody');
     body.innerHTML = `
-      <div style="text-align: center; animation: fadeInUp 0.4s ease;">
-        <div style="font-size: 3rem; margin-bottom: 12px;">👋</div>
-        <div class="question" style="margin-bottom: 10px;">¡Hola! Soy el asistente de Ciborg 347.</div>
-        <p style="color: #9ca3ff; margin-bottom: 16px; line-height: 1.5; font-size: 0.85rem;">Voy a ayudarte a encontrar la mejor solución para tu proyecto.</p>
-        <p style="font-size: 0.75rem; color: #6b7280; margin-bottom: 24px;">Si tu caso requiere algo especial, podrás hablar directamente con Martín.</p>
-        <button class="btn-next" id="startBtn">✨ Comenzar asesoría →</button>
+      <div style="text-align: center; animation: fadeInUp 0.3s ease;">
+        <div style="font-size: 2.5rem; margin-bottom: 12px;">✨</div>
+        <div class="question" style="margin-bottom: 16px; justify-content: center;">¡Hola! Te ayudo a encontrar la solución perfecta</div>
+        <p style="color: var(--text2); margin-bottom: 16px; line-height: 1.5; font-size: 0.9rem;">Respondé algunas preguntas y recibirás una recomendación personalizada con precio estimado.</p>
+        <button class="btn-next" id="startBtn">Comenzar →</button>
+        <button class="skip-btn" id="directBtn" style="margin-top: 12px;">✏️ Prefiero escribir directamente mi necesidad</button>
       </div>
     `;
     document.getElementById('startBtn')?.addEventListener('click', () => {
@@ -515,27 +879,61 @@
       currentStep = "q1";
       showQuestion1();
     });
+    document.getElementById('directBtn')?.addEventListener('click', () => {
+      esModoPersonalizado = true;
+      showTextoPersonalizado();
+    });
     updateProgress(0);
     scrollToTop();
   }
   
-  // ========== PREGUNTA 1 ==========
+  // Modo texto personalizado (omitir preguntas)
+  function showTextoPersonalizado() {
+    currentStep = "personalizado";
+    const body = document.getElementById('asistenteBody');
+    body.innerHTML = `
+      <div class="progress-bar"><div class="progress-track"><div class="progress-fill" style="width: 30%;"></div></div><div class="progress-text">Modo directo · Cuéntanos tu proyecto</div></div>
+      <div class="question">✏️ Contanos qué necesitas</div>
+      <p style="color: var(--text2); font-size: 0.8rem; margin-bottom: 16px;">Describí tu proyecto o necesidad. Cuanto más detalles, mejor podremos ayudarte.</p>
+      <textarea class="text-input" id="textoPersonalizado" rows="5" placeholder="Ej: Necesito un sistema de reservas para mi consultorio médico, con calendario y recordatorios automáticos..."></textarea>
+      <button class="btn-next" id="enviarTextoBtn">Enviar →</button>
+      <button class="btn-back" id="backBtn">← Volver al inicio</button>
+    `;
+    document.getElementById('enviarTextoBtn')?.addEventListener('click', () => {
+      const texto = document.getElementById('textoPersonalizado')?.value.trim();
+      if (!texto) { showToast('Por favor, describí tu proyecto', true); return; }
+      userAnswers.q1 = 'caso_propio';
+      userAnswers.texto_personalizado = texto;
+      saveToLocalStorage();
+      showLeadCapture();
+    });
+    document.getElementById('backBtn')?.addEventListener('click', () => showWelcome());
+    updateProgress(30);
+    scrollToTop();
+  }
+  
+  // ========== PREGUNTA 1 - Objetivo ==========
   function showQuestion1() {
     currentStep = "q1";
     const body = document.getElementById('asistenteBody');
     body.innerHTML = `
-      <div class="progress-bar"><div class="progress-track"><div class="progress-fill" style="width: 10%;"></div></div><div class="progress-text">Paso 1 · ¿Cuál es tu objetivo?</div></div>
-      <div class="question">🎯 ¿Cuál es tu principal objetivo?</div>
+      <div class="progress-bar"><div class="progress-track"><div class="progress-fill" style="width: 12%;"></div></div><div class="progress-text">Paso 1 de 8 · Tu objetivo</div></div>
+      <div class="question">
+        🎯 ¿Cuál es tu principal objetivo?
+        <span class="tooltip">
+          <span class="tooltip-icon" onclick="event.stopPropagation(); showTooltip('Elegí la opción que mejor describa lo que buscas lograr con tu sitio web.')">?</span>
+        </span>
+      </div>
       <div class="options">
         <div class="option" data-value="conseguir_clientes"><span class="option-label">🎯 Conseguir más clientes</span><span class="option-desc">Atraer y captar nuevos clientes para tu negocio</span></div>
-        <div class="option" data-value="mostrar_servicios"><span class="option-label">📋 Mostrar mis servicios</span><span class="option-desc">Exhibir lo que ofreces de forma profesional</span></div>
-        <div class="option" data-value="vender_productos"><span class="option-label">🛒 Vender productos</span><span class="option-desc">Comercializar productos físicos o digitales</span></div>
+        <div class="option" data-value="mostrar_servicios"><span class="option-label">📋 Mostrar mis servicios</span><span class="option-desc">Exhibir profesionalmente lo que ofrezco</span></div>
+        <div class="option" data-value="vender_productos"><span class="option-label">🛒 Vender productos</span><span class="option-desc">Comercializar productos online</span></div>
         <div class="option" data-value="automatizar"><span class="option-label">⚙️ Automatizar procesos</span><span class="option-desc">Optimizar tareas repetitivas</span></div>
         <div class="option" data-value="presencia"><span class="option-label">🏢 Presencia profesional</span><span class="option-desc">Tener presencia online confiable</span></div>
-        <div class="option" data-value="no_seguro"><span class="option-label">🤔 No estoy seguro</span><span class="option-desc">Necesito orientación para decidir</span></div>
-        <div class="option" data-value="diferente"><span class="option-label">✏️ Mi caso es diferente</span><span class="option-desc">Proyecto personalizado</span></div>
+        <div class="option" data-value="personalizado"><span class="option-label">✏️ Mi caso es diferente</span><span class="option-desc">Proyecto personalizado</span></div>
       </div>
-      <button class="btn-back" id="backBtn">← Volver al inicio</button>
+      <button class="skip-btn" id="skipBtn">✏️ Omitir y escribir mi necesidad</button>
+      <button class="btn-back" id="backBtn" style="margin-top: 8px;">← Reiniciar</button>
     `;
     
     document.querySelectorAll('.option').forEach(opt => {
@@ -545,37 +943,46 @@
         historyStack.push({ step: currentStep, answer: value });
         saveToLocalStorage();
         
-        if (value === 'conseguir_clientes') showConseguirClientes1();
-        else if (value === 'mostrar_servicios') showMostrarServicios1();
-        else if (value === 'vender_productos') showVenderProductos1();
-        else if (value === 'automatizar') showAutomatizar1();
-        else if (value === 'presencia') showPresencia1();
-        else if (value === 'no_seguro') showNoSeguro1();
-        else if (value === 'diferente') showCasoDiferente();
+        if (value === 'personalizado') {
+          showTextoPersonalizado();
+        } else {
+          const routingMap = {
+            'conseguir_clientes': showConseguirClientes1,
+            'mostrar_servicios': showMostrarServicios1,
+            'vender_productos': showVenderProductos1,
+            'automatizar': showAutomatizar1,
+            'presencia': showPresencia1
+          };
+          if (routingMap[value]) routingMap[value]();
+        }
       });
     });
     
+    document.getElementById('skipBtn')?.addEventListener('click', () => {
+      esModoPersonalizado = true;
+      showTextoPersonalizado();
+    });
     document.getElementById('backBtn')?.addEventListener('click', () => {
       historyStack = [];
       userAnswers = {};
       showWelcome();
     });
-    updateProgress(10);
+    updateProgress(12);
     scrollToTop();
   }
   
-  // ========== RAMA A ==========
+  // ========== RAMA: Conseguir clientes ==========
   function showConseguirClientes1() {
     currentStep = "conseguir1";
     const body = document.getElementById('asistenteBody');
     body.innerHTML = `
-      <div class="progress-bar"><div class="progress-track"><div class="progress-fill" style="width: 25%;"></div></div><div class="progress-text">Paso 2 · ¿Cómo conseguís clientes?</div></div>
+      <div class="progress-bar"><div class="progress-track"><div class="progress-fill" style="width: 25%;"></div></div><div class="progress-text">Paso 2 de 8 · Canales actuales</div></div>
       <div class="question">📢 ¿Cómo conseguís clientes actualmente?</div>
       <div class="options">
         <div class="option" data-value="redes"><span class="option-label">📱 Redes sociales</span><span class="option-desc">Instagram, Facebook, LinkedIn</span></div>
         <div class="option" data-value="recomendaciones"><span class="option-label">🗣️ Recomendaciones</span><span class="option-desc">Boca a boca</span></div>
-        <div class="option" data-value="publicidad"><span class="option-label">📢 Publicidad</span><span class="option-desc">Google Ads, Facebook Ads</span></div>
-        <div class="option" data-value="pocos"><span class="option-label">⚠️ No consigo muchos clientes</span><span class="option-desc">Me cuesta captar</span></div>
+        <div class="option" data-value="publicidad"><span class="option-label">📢 Publicidad paga</span><span class="option-desc">Google Ads, Facebook Ads</span></div>
+        <div class="option" data-value="pocos"><span class="option-label">⚠️ Me cuesta conseguir</span><span class="option-desc">Necesito más clientes</span></div>
       </div>
       <button class="btn-back" id="backBtn">← Volver</button>
     `;
@@ -595,12 +1002,12 @@
     currentStep = "conseguir2";
     const body = document.getElementById('asistenteBody');
     body.innerHTML = `
-      <div class="progress-bar"><div class="progress-track"><div class="progress-fill" style="width: 40%;"></div></div><div class="progress-text">Paso 3 · ¿Ya tenés sitio web?</div></div>
+      <div class="progress-bar"><div class="progress-track"><div class="progress-fill" style="width: 38%;"></div></div><div class="progress-text">Paso 3 de 8 · Sitio web actual</div></div>
       <div class="question">🌐 ¿Ya tenés sitio web?</div>
       <div class="options">
-        <div class="option" data-value="si"><span class="option-label">✅ Sí</span><span class="option-desc">Ya tengo web</span></div>
+        <div class="option" data-value="si"><span class="option-label">✅ Sí</span><span class="option-desc">Ya tengo una web</span></div>
         <div class="option" data-value="no"><span class="option-label">❌ No</span><span class="option-desc">Aún no tengo</span></div>
-        <div class="option" data-value="viejo"><span class="option-label">🕰️ Tengo uno muy viejo</span><span class="option-desc">Necesito actualizar</span></div>
+        <div class="option" data-value="viejo"><span class="option-label">🕰️ Tengo uno viejo</span><span class="option-desc">Necesito actualizar</span></div>
       </div>
       <button class="btn-back" id="backBtn">← Volver</button>
     `;
@@ -612,7 +1019,7 @@
       });
     });
     document.getElementById('backBtn')?.addEventListener('click', () => showConseguirClientes1());
-    updateProgress(40);
+    updateProgress(38);
     scrollToTop();
   }
   
@@ -620,11 +1027,11 @@
     currentStep = "conseguir3";
     const body = document.getElementById('asistenteBody');
     body.innerHTML = `
-      <div class="progress-bar"><div class="progress-track"><div class="progress-fill" style="width: 55%;"></div></div><div class="progress-text">Paso 4 · Preferencias de contacto</div></div>
+      <div class="progress-bar"><div class="progress-track"><div class="progress-fill" style="width: 50%;"></div></div><div class="progress-text">Paso 4 de 8 · Contacto por WhatsApp</div></div>
       <div class="question">💬 ¿Querés recibir consultas por WhatsApp?</div>
       <div class="options">
-        <div class="option" data-value="si"><span class="option-label">✅ Sí</span><span class="option-desc">Quiero que me contacten por WhatsApp</span></div>
-        <div class="option" data-value="no"><span class="option-label">❌ No</span><span class="option-desc">Solo por formulario</span></div>
+        <div class="option" data-value="si"><span class="option-label">✅ Sí, es muy importante</span><span class="option-desc">Quiero que me contacten por WhatsApp</span></div>
+        <div class="option" data-value="no"><span class="option-label">❌ No, solo formulario</span><span class="option-desc">Prefiero formulario de contacto</span></div>
         <div class="option" data-value="ambos"><span class="option-label">📱 Ambos</span><span class="option-desc">WhatsApp y formulario</span></div>
       </div>
       <button class="btn-back" id="backBtn">← Volver</button>
@@ -637,21 +1044,21 @@
       });
     });
     document.getElementById('backBtn')?.addEventListener('click', () => showConseguirClientes2());
-    updateProgress(55);
+    updateProgress(50);
     scrollToTop();
   }
   
-  // ========== RAMA B ==========
+  // ========== RAMA: Mostrar servicios (similar estructura) ==========
   function showMostrarServicios1() {
     currentStep = "mostrar1";
     const body = document.getElementById('asistenteBody');
     body.innerHTML = `
-      <div class="progress-bar"><div class="progress-track"><div class="progress-fill" style="width: 25%;"></div></div><div class="progress-text">Paso 2 · Tipo de actividad</div></div>
+      <div class="progress-bar"><div class="progress-track"><div class="progress-fill" style="width: 25%;"></div></div><div class="progress-text">Paso 2 de 8 · Tipo de actividad</div></div>
       <div class="question">👤 ¿Qué tipo de actividad tenés?</div>
       <div class="options">
         <div class="option" data-value="independiente"><span class="option-label">👤 Profesional independiente</span><span class="option-desc">Médico, abogado, contador, etc.</span></div>
-        <div class="option" data-value="consultorio"><span class="option-label">🏥 Consultorio</span><span class="option-desc">Consultorio médico, odontológico</span></div>
-        <div class="option" data-value="empresa"><span class="option-label">🏢 Empresa</span><span class="option-desc">PYME, corporación</span></div>
+        <div class="option" data-value="consultorio"><span class="option-label">🏥 Consultorio / Estudio</span><span class="option-desc">Consultorio médico, odontológico</span></div>
+        <div class="option" data-value="empresa"><span class="option-label">🏢 Empresa / PYME</span><span class="option-desc">Negocio consolidado</span></div>
         <div class="option" data-value="emprendimiento"><span class="option-label">🚀 Emprendimiento</span><span class="option-desc">Negocio en crecimiento</span></div>
       </div>
       <button class="btn-back" id="backBtn">← Volver</button>
@@ -672,11 +1079,11 @@
     currentStep = "mostrar2";
     const body = document.getElementById('asistenteBody');
     body.innerHTML = `
-      <div class="progress-bar"><div class="progress-track"><div class="progress-fill" style="width: 40%;"></div></div><div class="progress-text">Paso 3 · Cantidad de servicios</div></div>
-      <div class="question">📋 ¿Necesitás mostrar muchos servicios?</div>
+      <div class="progress-bar"><div class="progress-track"><div class="progress-fill" style="width: 38%;"></div></div><div class="progress-text">Paso 3 de 8 · Cantidad de servicios</div></div>
+      <div class="question">📋 ¿Cuántos servicios querés mostrar?</div>
       <div class="options">
-        <div class="option" data-value="si"><span class="option-label">✅ Sí</span><span class="option-desc">Múltiples servicios o productos</span></div>
-        <div class="option" data-value="no"><span class="option-label">❌ No</span><span class="option-desc">Unos pocos servicios</span></div>
+        <div class="option" data-value="si"><span class="option-label">📋 Más de 5 servicios</span><span class="option-desc">Catálogo extenso de servicios</span></div>
+        <div class="option" data-value="no"><span class="option-label">📄 Hasta 5 servicios</span><span class="option-desc">Pocos servicios específicos</span></div>
       </div>
       <button class="btn-back" id="backBtn">← Volver</button>
     `;
@@ -688,7 +1095,7 @@
       });
     });
     document.getElementById('backBtn')?.addEventListener('click', () => showMostrarServicios1());
-    updateProgress(40);
+    updateProgress(38);
     scrollToTop();
   }
   
@@ -696,11 +1103,16 @@
     currentStep = "mostrar3";
     const body = document.getElementById('asistenteBody');
     body.innerHTML = `
-      <div class="progress-bar"><div class="progress-track"><div class="progress-fill" style="width: 55%;"></div></div><div class="progress-text">Paso 4 · Autogestión de contenido</div></div>
-      <div class="question">✏️ ¿Necesitás actualizar contenido vos mismo?</div>
+      <div class="progress-bar"><div class="progress-track"><div class="progress-fill" style="width: 50%;"></div></div><div class="progress-text">Paso 4 de 8 · Autogestión</div></div>
+      <div class="question">
+        ✏️ ¿Necesitás actualizar el contenido vos mismo?
+        <span class="tooltip">
+          <span class="tooltip-icon" onclick="event.stopPropagation(); showTooltip('Con un panel administrativo podés editar textos, imágenes y servicios sin necesidad de programación.')">?</span>
+        </span>
+      </div>
       <div class="options">
-        <div class="option" data-value="si"><span class="option-label">✅ Sí</span><span class="option-desc">Quiero editar mi web sin depender de nadie</span></div>
-        <div class="option" data-value="no"><span class="option-label">❌ No</span><span class="option-desc">Prefiero que lo maneje el equipo</span></div>
+        <div class="option" data-value="si"><span class="option-label">✅ Sí, quiero administrarlo yo</span><span class="option-desc">Panel para editar contenido</span></div>
+        <div class="option" data-value="no"><span class="option-label">❌ No, que lo maneje el equipo</span><span class="option-desc">Prefiero que lo actualicen ellos</span></div>
       </div>
       <button class="btn-back" id="backBtn">← Volver</button>
     `;
@@ -712,21 +1124,21 @@
       });
     });
     document.getElementById('backBtn')?.addEventListener('click', () => showMostrarServicios2());
-    updateProgress(55);
+    updateProgress(50);
     scrollToTop();
   }
   
-  // ========== RAMA C ==========
+  // ========== RAMA: Vender productos ==========
   function showVenderProductos1() {
     currentStep = "vender1";
     const body = document.getElementById('asistenteBody');
     body.innerHTML = `
-      <div class="progress-bar"><div class="progress-track"><div class="progress-fill" style="width: 25%;"></div></div><div class="progress-text">Paso 2 · Cantidad de productos</div></div>
+      <div class="progress-bar"><div class="progress-track"><div class="progress-fill" style="width: 25%;"></div></div><div class="progress-text">Paso 2 de 8 · Cantidad de productos</div></div>
       <div class="question">📦 ¿Cuántos productos tenés?</div>
       <div class="options">
-        <div class="option" data-value="menos_20"><span class="option-label">📦 Menos de 20</span><span class="option-desc">Catálogo pequeño</span></div>
-        <div class="option" data-value="20_100"><span class="option-label">📦📦 20 a 100</span><span class="option-desc">Catálogo mediano</span></div>
-        <div class="option" data-value="mas_100"><span class="option-label">📦📦📦 Más de 100</span><span class="option-desc">Catálogo grande</span></div>
+        <div class="option" data-value="menos_20"><span class="option-label">📦 Menos de 20 productos</span><span class="option-desc">Catálogo pequeño</span></div>
+        <div class="option" data-value="20_100"><span class="option-label">📦📦 20 a 100 productos</span><span class="option-desc">Catálogo mediano</span></div>
+        <div class="option" data-value="mas_100"><span class="option-label">📦📦📦 Más de 100 productos</span><span class="option-desc">Catálogo grande</span></div>
       </div>
       <button class="btn-back" id="backBtn">← Volver</button>
     `;
@@ -746,12 +1158,11 @@
     currentStep = "vender2";
     const body = document.getElementById('asistenteBody');
     body.innerHTML = `
-      <div class="progress-bar"><div class="progress-track"><div class="progress-fill" style="width: 40%;"></div></div><div class="progress-text">Paso 3 · Venta online</div></div>
-      <div class="question">🛒 ¿Querés vender online?</div>
+      <div class="progress-bar"><div class="progress-track"><div class="progress-fill" style="width: 38%;"></div></div><div class="progress-text">Paso 3 de 8 · Venta online</div></div>
+      <div class="question">🛒 ¿Querés vender directamente desde la web?</div>
       <div class="options">
-        <div class="option" data-value="si"><span class="option-label">✅ Sí</span><span class="option-desc">Quiero vender desde la web</span></div>
-        <div class="option" data-value="no"><span class="option-label">❌ No</span><span class="option-desc">Solo mostrar productos</span></div>
-        <div class="option" data-value="despues"><span class="option-label">⏰ Más adelante</span><span class="option-desc">Por ahora solo mostrar</span></div>
+        <div class="option" data-value="si"><span class="option-label">✅ Sí, quiero vender online</span><span class="option-desc">Carrito de compras y pagos</span></div>
+        <div class="option" data-value="no"><span class="option-label">❌ No, solo mostrar productos</span><span class="option-desc">Catálogo con consultas</span></div>
       </div>
       <button class="btn-back" id="backBtn">← Volver</button>
     `;
@@ -763,7 +1174,7 @@
       });
     });
     document.getElementById('backBtn')?.addEventListener('click', () => showVenderProductos1());
-    updateProgress(40);
+    updateProgress(38);
     scrollToTop();
   }
   
@@ -771,11 +1182,11 @@
     currentStep = "vender3";
     const body = document.getElementById('asistenteBody');
     body.innerHTML = `
-      <div class="progress-bar"><div class="progress-track"><div class="progress-fill" style="width: 55%;"></div></div><div class="progress-text">Paso 4 · Administración</div></div>
-      <div class="question">⚙️ ¿Necesitás administrar productos?</div>
+      <div class="progress-bar"><div class="progress-track"><div class="progress-fill" style="width: 50%;"></div></div><div class="progress-text">Paso 4 de 8 · Administración</div></div>
+      <div class="question">⚙️ ¿Necesitás gestionar stock y precios vos mismo?</div>
       <div class="options">
-        <div class="option" data-value="si"><span class="option-label">✅ Sí</span><span class="option-desc">Gestionar stock y precios</span></div>
-        <div class="option" data-value="no"><span class="option-label">❌ No</span><span class="option-desc">No necesito administración</span></div>
+        <div class="option" data-value="si"><span class="option-label">✅ Sí, necesito panel admin</span><span class="option-desc">Control total de inventario</span></div>
+        <div class="option" data-value="no"><span class="option-label">❌ No, prefiero que lo maneje el equipo</span><span class="option-desc">Gestión externalizada</span></div>
       </div>
       <button class="btn-back" id="backBtn">← Volver</button>
     `;
@@ -787,22 +1198,22 @@
       });
     });
     document.getElementById('backBtn')?.addEventListener('click', () => showVenderProductos2());
-    updateProgress(55);
+    updateProgress(50);
     scrollToTop();
   }
   
-  // ========== RAMA D ==========
+  // ========== RAMAS SIMPLIFICADAS ==========
   function showAutomatizar1() {
     currentStep = "auto1";
     const body = document.getElementById('asistenteBody');
     body.innerHTML = `
-      <div class="progress-bar"><div class="progress-track"><div class="progress-fill" style="width: 30%;"></div></div><div class="progress-text">Paso 2 · ¿Qué automatizar?</div></div>
-      <div class="question">⚙️ ¿Qué querés automatizar?</div>
+      <div class="progress-bar"><div class="progress-track"><div class="progress-fill" style="width: 30%;"></div></div><div class="progress-text">Paso 2 de 7 · Qué automatizar</div></div>
+      <div class="question">⚙️ ¿Qué proceso querés automatizar?</div>
       <div class="options">
-        <div class="option" data-value="consultas"><span class="option-label">💬 Consultas</span><span class="option-desc">Respuestas automáticas</span></div>
-        <div class="option" data-value="reservas"><span class="option-label">📅 Reservas</span><span class="option-desc">Sistema de turnos</span></div>
-        <div class="option" data-value="pedidos"><span class="option-label">📦 Pedidos</span><span class="option-desc">Gestión automática</span></div>
-        <div class="option" data-value="todo"><span class="option-label">🎯 Todo</span><span class="option-desc">Solución completa</span></div>
+        <div class="option" data-value="consultas"><span class="option-label">💬 Atención de consultas</span><span class="option-desc">Respuestas automáticas</span></div>
+        <div class="option" data-value="reservas"><span class="option-label">📅 Reservas / Turnos</span><span class="option-desc">Sistema de agenda</span></div>
+        <div class="option" data-value="pedidos"><span class="option-label">📦 Gestión de pedidos</span><span class="option-desc">Seguimiento automático</span></div>
+        <div class="option" data-value="todo"><span class="option-label">🎯 Procesos completos</span><span class="option-desc">Solución integral</span></div>
       </div>
       <button class="btn-back" id="backBtn">← Volver</button>
     `;
@@ -810,7 +1221,7 @@
       opt.addEventListener('click', () => {
         userAnswers.auto_que = opt.dataset.value;
         saveToLocalStorage();
-        showAutomatizar2();
+        showLeadCapture();
       });
     });
     document.getElementById('backBtn')?.addEventListener('click', () => showQuestion1());
@@ -818,41 +1229,15 @@
     scrollToTop();
   }
   
-  function showAutomatizar2() {
-    currentStep = "auto2";
-    const body = document.getElementById('asistenteBody');
-    body.innerHTML = `
-      <div class="progress-bar"><div class="progress-track"><div class="progress-fill" style="width: 50%;"></div></div><div class="progress-text">Paso 3 · Situación actual</div></div>
-      <div class="question">🖐️ ¿Actualmente hacés esto manualmente?</div>
-      <div class="options">
-        <div class="option" data-value="si"><span class="option-label">✅ Sí</span><span class="option-desc">Lo hago manualmente</span></div>
-        <div class="option" data-value="no"><span class="option-label">❌ No</span><span class="option-desc">Ya tengo algún sistema</span></div>
-      </div>
-      <button class="btn-back" id="backBtn">← Volver</button>
-    `;
-    document.querySelectorAll('.option').forEach(opt => {
-      opt.addEventListener('click', () => {
-        userAnswers.auto_manual = opt.dataset.value;
-        saveToLocalStorage();
-        showLeadCapture();
-      });
-    });
-    document.getElementById('backBtn')?.addEventListener('click', () => showAutomatizar1());
-    updateProgress(50);
-    scrollToTop();
-  }
-  
-  // ========== RAMA E ==========
   function showPresencia1() {
     currentStep = "presencia1";
     const body = document.getElementById('asistenteBody');
     body.innerHTML = `
-      <div class="progress-bar"><div class="progress-track"><div class="progress-fill" style="width: 30%;"></div></div><div class="progress-text">Paso 2 · Presencia actual</div></div>
+      <div class="progress-bar"><div class="progress-track"><div class="progress-fill" style="width: 30%;"></div></div><div class="progress-text">Paso 2 de 7 · Presencia actual</div></div>
       <div class="question">🌐 ¿Actualmente tenés presencia online?</div>
       <div class="options">
-        <div class="option" data-value="si"><span class="option-label">✅ Sí</span><span class="option-desc">Ya tengo web o redes</span></div>
-        <div class="option" data-value="no"><span class="option-label">❌ No</span><span class="option-desc">No tengo presencia</span></div>
-        <div class="option" data-value="poca"><span class="option-label">⚠️ Muy poca</span><span class="option-desc">Básico</span></div>
+        <div class="option" data-value="si"><span class="option-label">✅ Sí, tengo web o redes</span><span class="option-desc">Presencia digital activa</span></div>
+        <div class="option" data-value="no"><span class="option-label">❌ No, no tengo</span><span class="option-desc">Aún sin presencia online</span></div>
       </div>
       <button class="btn-back" id="backBtn">← Volver</button>
     `;
@@ -860,131 +1245,11 @@
       opt.addEventListener('click', () => {
         userAnswers.presencia_tiene = opt.dataset.value;
         saveToLocalStorage();
-        showPresencia2();
+        showLeadCapture();
       });
     });
     document.getElementById('backBtn')?.addEventListener('click', () => showQuestion1());
     updateProgress(30);
-    scrollToTop();
-  }
-  
-  function showPresencia2() {
-    currentStep = "presencia2";
-    const body = document.getElementById('asistenteBody');
-    body.innerHTML = `
-      <div class="progress-bar"><div class="progress-track"><div class="progress-fill" style="width: 50%;"></div></div><div class="progress-text">Paso 3 · ¿Qué buscás transmitir?</div></div>
-      <div class="question">💭 ¿Qué buscás transmitir?</div>
-      <div class="options">
-        <div class="option" data-value="confianza"><span class="option-label">🤝 Confianza</span><span class="option-desc">Generar credibilidad</span></div>
-        <div class="option" data-value="profesionalismo"><span class="option-label">👔 Profesionalismo</span><span class="option-desc">Mostrar seriedad</span></div>
-        <div class="option" data-value="trabajos"><span class="option-label">🎨 Mostrar trabajos</span><span class="option-desc">Portfolio</span></div>
-        <div class="option" data-value="empresa"><span class="option-label">🏢 Mostrar empresa</span><span class="option-desc">Presentar organización</span></div>
-      </div>
-      <button class="btn-back" id="backBtn">← Volver</button>
-    `;
-    document.querySelectorAll('.option').forEach(opt => {
-      opt.addEventListener('click', () => {
-        userAnswers.presencia_transmitir = opt.dataset.value;
-        saveToLocalStorage();
-        showLeadCapture();
-      });
-    });
-    document.getElementById('backBtn')?.addEventListener('click', () => showPresencia1());
-    updateProgress(50);
-    scrollToTop();
-  }
-  
-  // ========== RAMA F ==========
-  function showNoSeguro1() {
-    currentStep = "noseguro1";
-    const body = document.getElementById('asistenteBody');
-    body.innerHTML = `
-      <div class="progress-bar"><div class="progress-track"><div class="progress-fill" style="width: 30%;"></div></div><div class="progress-text">Paso 2 · Situación actual</div></div>
-      <div class="question">📊 ¿Qué describe mejor tu situación?</div>
-      <div class="options">
-        <div class="option" data-value="empezando"><span class="option-label">🌱 Estoy empezando</span><span class="option-desc">Negocio nuevo</span></div>
-        <div class="option" data-value="funcionando"><span class="option-label">📈 Negocio funcionando</span><span class="option-desc">Ya tengo clientes</span></div>
-        <div class="option" data-value="empresa"><span class="option-label">🏢 Tengo una empresa</span><span class="option-desc">Equipo consolidado</span></div>
-      </div>
-      <button class="btn-back" id="backBtn">← Volver</button>
-    `;
-    document.querySelectorAll('.option').forEach(opt => {
-      opt.addEventListener('click', () => {
-        userAnswers.noseguro_situacion = opt.dataset.value;
-        saveToLocalStorage();
-        showNoSeguro2();
-      });
-    });
-    document.getElementById('backBtn')?.addEventListener('click', () => showQuestion1());
-    updateProgress(30);
-    scrollToTop();
-  }
-  
-  function showNoSeguro2() {
-    currentStep = "noseguro2";
-    const body = document.getElementById('asistenteBody');
-    body.innerHTML = `
-      <div class="progress-bar"><div class="progress-track"><div class="progress-fill" style="width: 50%;"></div></div><div class="progress-text">Paso 3 · ¿Qué mejorar?</div></div>
-      <div class="question">🎯 ¿Qué te gustaría mejorar?</div>
-      <div class="options">
-        <div class="option" data-value="consultas"><span class="option-label">💬 Más consultas</span><span class="option-desc">Recibir más contacto</span></div>
-        <div class="option" data-value="ventas"><span class="option-label">💰 Más ventas</span><span class="option-desc">Aumentar ingresos</span></div>
-        <div class="option" data-value="imagen"><span class="option-label">✨ Mejor imagen</span><span class="option-desc">Actualizar apariencia</span></div>
-        <div class="option" data-value="todo"><span class="option-label">🎯 Todo</span><span class="option-desc">Mejorar en general</span></div>
-      </div>
-      <button class="btn-back" id="backBtn">← Volver</button>
-    `;
-    document.querySelectorAll('.option').forEach(opt => {
-      opt.addEventListener('click', () => {
-        userAnswers.noseguro_mejorar = opt.dataset.value;
-        saveToLocalStorage();
-        showLeadCapture();
-      });
-    });
-    document.getElementById('backBtn')?.addEventListener('click', () => showNoSeguro1());
-    updateProgress(50);
-    scrollToTop();
-  }
-  
-  // ========== RAMA G ==========
-  function showCasoDiferente() {
-    currentStep = "diferente";
-    const body = document.getElementById('asistenteBody');
-    body.innerHTML = `
-      <div class="progress-bar"><div class="progress-track"><div class="progress-fill" style="width: 70%;"></div></div><div class="progress-text">Paso final · Cuéntanos</div></div>
-      <div class="question">✏️ Contanos qué necesitás</div>
-      <textarea class="text-input" id="casoTexto" rows="4" placeholder="Describí tu proyecto o necesidad específica..."></textarea>
-      <button class="btn-next" id="enviarBtn">📤 Enviar →</button>
-      <button class="btn-back" id="backBtn">← Volver</button>
-    `;
-    document.getElementById('enviarBtn')?.addEventListener('click', () => {
-      const texto = document.getElementById('casoTexto')?.value.trim();
-      if (!texto) { showToast('Por favor, contanos qué necesitás', true); return; }
-      userAnswers.caso_texto = texto;
-      saveToLocalStorage();
-      showCasoDiferenteResultado();
-    });
-    document.getElementById('backBtn')?.addEventListener('click', () => showQuestion1());
-    updateProgress(70);
-    scrollToTop();
-  }
-  
-  function showCasoDiferenteResultado() {
-    const body = document.getElementById('asistenteBody');
-    const waUrl = `https://wa.me/${DEFAULT_WA}?text=${encodeURIComponent(`Hola Martín! Necesito asesoría personalizada. ${userAnswers.caso_texto || ''}`)}`;
-    body.innerHTML = `
-      <div class="result-card" style="animation: fadeInUp 0.4s ease;">
-        <div style="font-size: 3rem; margin-bottom: 12px;">✨</div>
-        <div class="result-title">Proyecto Personalizado</div>
-        <div class="result-description">✨ Genial. Tu proyecto parece requerir una solución personalizada.<br><br>Te recomiendo hablar directamente con Martín para analizar tu caso y orientarte en la mejor alternativa.</div>
-        <div class="result-buttons">
-          <a href="${waUrl}" target="_blank" class="btn-wa">💬 Hablar con Martín →</a>
-          <button class="btn-back" id="reiniciarBtn">🔄 Comenzar de nuevo</button>
-        </div>
-      </div>
-    `;
-    document.getElementById('reiniciarBtn')?.addEventListener('click', () => showWelcome());
-    updateProgress(100);
     scrollToTop();
   }
   
@@ -993,21 +1258,21 @@
     currentStep = "lead";
     const body = document.getElementById('asistenteBody');
     body.innerHTML = `
-      <div class="progress-bar"><div class="progress-track"><div class="progress-fill" style="width: 85%;"></div></div><div class="progress-text">¡Último paso! Datos de contacto</div></div>
-      <div class="question">📝 ¡Casi terminamos! Dejanos tus datos</div>
+      <div class="progress-bar"><div class="progress-track"><div class="progress-fill" style="width: 75%;"></div></div><div class="progress-text">Paso final · Tus datos</div></div>
+      <div class="question">📝 ¡Último paso! Dejanos tus datos</div>
       <div class="lead-form">
         <input type="text" id="leadNombre" placeholder="Tu nombre *" autocomplete="name" />
         <input type="tel" id="leadWhatsapp" placeholder="WhatsApp *" autocomplete="tel" />
         <input type="email" id="leadEmail" placeholder="Email (opcional)" autocomplete="email" />
-        <input type="text" id="leadEmpresa" placeholder="Empresa (opcional)" />
+        <input type="text" id="leadEmpresa" placeholder="Empresa / Negocio (opcional)" />
       </div>
-      <button class="btn-next" id="enviarLeadBtn">🎯 Ver mi recomendación →</button>
+      <button class="btn-next" id="enviarLeadBtn">Ver mi recomendación →</button>
       <button class="btn-back" id="backBtn">← Volver</button>
     `;
     document.getElementById('enviarLeadBtn')?.addEventListener('click', () => {
       const nombre = document.getElementById('leadNombre')?.value.trim();
       const whatsapp = document.getElementById('leadWhatsapp')?.value.trim();
-      if (!nombre || !whatsapp) { showToast('Por favor, completá tu nombre y WhatsApp', true); return; }
+      if (!nombre || !whatsapp) { showToast('Completá tu nombre y WhatsApp', true); return; }
       leadData = { nombre, whatsapp, email: document.getElementById('leadEmail')?.value.trim() || '', empresa: document.getElementById('leadEmpresa')?.value.trim() || '' };
       userAnswers.lead = leadData;
       saveToLocalStorage();
@@ -1017,63 +1282,175 @@
       if (userAnswers.q1 === 'conseguir_clientes') showConseguirClientes3();
       else if (userAnswers.q1 === 'mostrar_servicios') showMostrarServicios3();
       else if (userAnswers.q1 === 'vender_productos') showVenderProductos3();
-      else if (userAnswers.q1 === 'automatizar') showAutomatizar2();
-      else if (userAnswers.q1 === 'presencia') showPresencia2();
-      else if (userAnswers.q1 === 'no_seguro') showNoSeguro2();
+      else if (userAnswers.q1 === 'automatizar') showAutomatizar1();
+      else if (userAnswers.q1 === 'presencia') showPresencia1();
+      else if (userAnswers.q1 === 'caso_propio' || esModoPersonalizado) showTextoPersonalizado();
       else showQuestion1();
     });
-    updateProgress(85);
+    updateProgress(75);
     scrollToTop();
   }
   
-  // ========== RESULTADO FINAL ==========
+  // ========== RESULTADO FINAL CON PRECIO ==========
   function showResultadoFinal() {
-    let resultado = {};
-    if (userAnswers.q1 === 'conseguir_clientes') {
-      resultado = { title: "🎯 LANDING PROFESIONAL", description: "Ideal para captar consultas y transformar visitas en potenciales clientes.", benefits: ["✅ Diseño orientado a conversión", "✅ Formulario de contacto integrado", "✅ Botón de WhatsApp flotante", "✅ Optimizada para móviles", "✅ SEO básico"], image: "https://placehold.co/400x250/1a1a2e/00d4ff?text=Landing" };
+    const { precio, plan } = calcularPrecioEstimado();
+    let titulo = "";
+    let descripcion = "";
+    let beneficios = [];
+    
+    if (esModoPersonalizado || userAnswers.q1 === 'caso_propio' || userAnswers.q1 === 'personalizado') {
+      titulo = "🎯 Solución Personalizada";
+      descripcion = userAnswers.texto_personalizado || "Proyecto a medida según tus necesidades específicas.";
+      beneficios = [
+        "Desarrollo 100% a medida",
+        "Consultoría gratuita para definir alcance",
+        "Propuesta detallada sin compromiso",
+        "Atención personalizada",
+        "Plazos adaptados a tu proyecto"
+      ];
+    } else if (userAnswers.q1 === 'conseguir_clientes') {
+      titulo = "🎯 Landing de Conversión";
+      descripcion = "Diseñada específicamente para captar clientes y convertir visitas en consultas.";
+      beneficios = [
+        "Formulario de contacto optimizado",
+        userAnswers.conseguir_whatsapp !== 'no' ? "Botón de WhatsApp flotante" : "Formulario de contacto",
+        "Diseño responsive (funciona en celulares y tablets)",
+        "SEO básico para aparecer en Google",
+        "Analítica integrada para medir resultados"
+      ];
     } else if (userAnswers.q1 === 'mostrar_servicios') {
-      resultado = { title: "📋 WEB PROFESIONAL ADMINISTRABLE", description: "Sitio para mostrar servicios, generar confianza y facilitar el contacto.", benefits: ["✅ Panel de administración", "✅ Actualizá contenido sin técnicos", "✅ Galería de trabajos", "✅ Formulario de contacto", "✅ Blog opcional"], image: "https://placehold.co/400x250/1a1a2e/00d4ff?text=Web+Profesional" };
+      titulo = userAnswers.mostrar_administrable === 'si' ? "📋 Web Profesional Administrable" : "📄 Landing de Servicios";
+      descripcion = plan.descripcion;
+      beneficios = [
+        "Diseño profesional a medida",
+        userAnswers.mostrar_administrable === 'si' ? "Panel de administración incluido" : "Diseño optimizado",
+        "Galería de servicios o portfolio",
+        "Formulario de contacto",
+        "Optimización para móviles"
+      ];
     } else if (userAnswers.q1 === 'vender_productos') {
-      const cantidad = userAnswers.vender_cantidad, vender = userAnswers.vender_vender;
-      if ((cantidad === 'menos_20' || cantidad === '20_100') && (vender === 'no' || vender === 'despues')) {
-        resultado = { title: "📋 CATÁLOGO DIGITAL", description: "Muestra productos sin tienda online.", benefits: ["✅ Vitrina profesional", "✅ Filtros de búsqueda", "✅ Botón WhatsApp", "✅ Panel para actualizar", "✅ Diseño responsive"], image: "https://placehold.co/400x250/1a1a2e/00d4ff?text=Catálogo" };
-      } else if (vender === 'si') {
-        resultado = { title: "🚀 ECOMMERCE ADMINISTRABLE", description: "Vende online con carrito y administración completa.", benefits: ["✅ Carrito de compras", "✅ Mercado Pago", "✅ Gestión de stock", "✅ Panel admin", "✅ Cupones de descuento"], image: "https://placehold.co/400x250/1a1a2e/00d4ff?text=Ecommerce" };
+      if (userAnswers.vender_vender === 'si') {
+        titulo = "🛒 Tienda Online Completa";
+        descripcion = "Ecommerce profesional con carrito de compras y pasarela de pagos integrada.";
+        beneficios = [
+          "Carrito de compras",
+          "Mercado Pago integrado",
+          userAnswers.vender_administrar === 'si' ? "Panel para gestionar stock y precios" : "Gestión incluida",
+          "Catálogo de productos",
+          "Notificaciones automáticas de pedidos"
+        ];
       } else {
-        resultado = { title: "🏆 TIENDA PREMIUM", description: "Tienda de alto rendimiento para grandes volúmenes.", benefits: ["✅ Todo del Ecommerce", "✅ Carga masiva", "✅ Variantes", "✅ Panel avanzado", "✅ Reportes"], image: "https://placehold.co/400x250/1a1a2e/00d4ff?text=Premium" };
+        titulo = "📋 Catálogo Digital";
+        descripcion = "Vitrina profesional para mostrar tus productos con botón de consulta directa.";
+        beneficios = [
+          "Vitrina de productos organizada",
+          "Botón de WhatsApp para consultas",
+          "Filtros de búsqueda",
+          "Diseño responsive",
+          "Panel para actualizar productos"
+        ];
       }
     } else if (userAnswers.q1 === 'automatizar') {
-      resultado = { title: "⚙️ SISTEMA ADMINISTRABLE", description: "Automatiza procesos y optimiza tu negocio.", benefits: ["✅ Panel a medida", "✅ Automatización", "✅ Reportes", "✅ Integración WhatsApp", "✅ Acceso remoto"], image: "https://placehold.co/400x250/1a1a2e/00d4ff?text=Sistema" };
+      titulo = "⚙️ Panel Administrativo";
+      descripcion = "Sistema a medida para automatizar procesos y gestionar tu negocio.";
+      beneficios = [
+        "Panel administrativo personalizado",
+        "Automatización de procesos clave",
+        "Reportes y estadísticas en tiempo real",
+        "Acceso remoto desde cualquier dispositivo",
+        "Integración con WhatsApp"
+      ];
     } else if (userAnswers.q1 === 'presencia') {
-      resultado = { title: "🏢 WEB INSTITUCIONAL", description: "Sitio para presentar tu empresa de forma profesional.", benefits: ["✅ Diseño corporativo", "✅ Páginas completas", "✅ Galería", "✅ Mapa", "✅ Formulario"], image: "https://placehold.co/400x250/1a1a2e/00d4ff?text=Institucional" };
+      titulo = "🏢 Web Institucional";
+      descripcion = "Sitio web corporativo para presentar tu empresa de manera profesional.";
+      beneficios = [
+        "Diseño corporativo moderno",
+        "Páginas: Inicio, Nosotros, Servicios, Contacto",
+        "Galería de imágenes o proyectos",
+        "Mapa de ubicación interactivo",
+        "Formulario de contacto"
+      ];
     } else {
-      resultado = { title: "🎯 RECOMENDACIÓN PERSONALIZADA", description: "Consultoría gratuita para definir la mejor estrategia.", benefits: ["✅ Asesoría sin costo", "✅ Análisis de necesidades", "✅ Propuesta a medida", "✅ Sin compromiso", "✅ Respuesta 24h"], image: "https://placehold.co/400x250/1a1a2e/00d4ff?text=Consultoría" };
+      titulo = "🎯 Solución Personalizada";
+      descripcion = "Proyecto a medida según tus necesidades específicas.";
+      beneficios = [
+        "Desarrollo a medida",
+        "Consultoría gratuita",
+        "Propuesta detallada sin compromiso",
+        "Atención personalizada",
+        "Plazos adaptados a tu proyecto"
+      ];
     }
     
-    const mensaje = `Hola CIBORG 347! 👋\n\n*Asesoría completada*\n\n*Objetivo:* ${userAnswers.q1}\n*Nombre:* ${leadData.nombre}\n*WhatsApp:* ${leadData.whatsapp}\n*Email:* ${leadData.email || 'No'}\n\n*Recomendación:* ${resultado.title}\n\nMe interesa más información. ¿Podemos coordinar?`;
-    const waUrl = `https://wa.me/${DEFAULT_WA}?text=${encodeURIComponent(mensaje)}`;
+    beneficios = beneficios.filter(b => b && b !== true);
+    
+    const waUrlFunc = getWaLinks();
+    const textoProyecto = userAnswers.texto_personalizado || titulo;
+    const mensaje = `Hola CIBORG 347! 👋\n\n✅ Completé el asistente de recomendación\n\n📊 *Proyecto:* ${titulo}\n💰 *Precio estimado:* ${typeof precio === 'number' ? `USD ${precio.toLocaleString()}` : precio}\n📝 *Detalle:* ${descripcion.substring(0, 100)}...\n👤 *Cliente:* ${leadData.nombre}\n📱 *WhatsApp:* ${leadData.whatsapp}\n📧 *Email:* ${leadData.email || 'No'}\n🏢 *Empresa:* ${leadData.empresa || 'No'}\n\n🔧 Me interesa avanzar con este proyecto. ¿Podemos coordinar una reunión para definir los detalles?`;
+    const waUrl = waUrlFunc(mensaje);
     
     const body = document.getElementById('asistenteBody');
     body.innerHTML = `
       <div class="result-card">
-        <img src="${resultado.image}" alt="${resultado.title}">
-        <div class="result-title">${resultado.title}</div>
-        <div class="result-description">${resultado.description}</div>
-        <ul class="result-benefits">${resultado.benefits.map(b => `<li>${b}</li>`).join('')}</ul>
+        <div class="result-title">${titulo}</div>
+        <div class="result-description">${descripcion}</div>
+        <div class="price-tag">
+          <div class="price">${typeof precio === 'number' ? `USD ${precio.toLocaleString()}` : precio}</div>
+          <div class="price-note">*Precio estimado · Pago único, sin mensualidades</div>
+        </div>
+        <ul class="result-benefits">
+          ${beneficios.map(b => `<li>${b}</li>`).join('')}
+        </ul>
+        <div class="disclaimer">
+          ⚡ Esta es una recomendación inicial. El precio final puede variar según los requerimientos específicos que definamos juntos.
+        </div>
         <div class="result-buttons">
           <a href="${waUrl}" target="_blank" class="btn-wa">💬 Consultar por WhatsApp →</a>
-          <a href="#contacto" class="btn-quote" id="presupuestoBtn">📋 Solicitar presupuesto</a>
-          <button class="btn-demo" id="reiniciarBtnFinal">🔄 Comenzar de nuevo</button>
+          <a href="index.html#contacto" class="btn-quote" id="presupuestoBtn" style="background: var(--grad); color: white; text-align: center; padding: 12px; border-radius: 40px; text-decoration: none; font-weight: 600;">📋 Solicitar presupuesto detallado</a>
         </div>
+        <button class="btn-back" id="reiniciarBtn" style="margin-top: 10px;">← Comenzar de nuevo</button>
       </div>
     `;
-    document.getElementById('presupuestoBtn')?.addEventListener('click', (e) => { e.preventDefault(); window.location.href = '/#contacto'; });
-    document.getElementById('reiniciarBtnFinal')?.addEventListener('click', () => showWelcome());
+    document.getElementById('presupuestoBtn')?.addEventListener('click', (e) => { e.preventDefault(); window.location.href = 'index.html#contacto'; });
+    document.getElementById('reiniciarBtn')?.addEventListener('click', () => showWelcome());
+    
+    const waFloat = document.getElementById("waFloat");
+    if (waFloat) waFloat.href = waUrl;
+    
     updateProgress(100);
     scrollToTop();
-    showToast('✅ Asesoría completada');
+    showToast('✅ Recomendación generada con éxito');
   }
   
+  // ========== INICIALIZACIÓN ==========
+  function setupWhatsAppVisibility() {
+    const whatsappButton = document.getElementById('waFloat');
+    const footer = document.querySelector('footer');
+    if (!whatsappButton || !footer) return;
+    const observerFooter = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) { whatsappButton.classList.add('hidden'); } 
+        else { whatsappButton.classList.remove('hidden'); }
+      });
+    }, { threshold: 0.1 });
+    observerFooter.observe(footer);
+  }
+  
+  // Exponer showTooltip globalmente
+  window.showTooltip = showTooltip;
+  
+  // Mobile menu
+  const burgerBtn = document.getElementById("burgerBtn");
+  const mobileMenu = document.getElementById("mobileMenu");
+  burgerBtn?.addEventListener("click", () => mobileMenu.classList.toggle("isOpen"));
+  document.querySelectorAll(".mobileMenu a").forEach(a => a.addEventListener("click", () => mobileMenu.classList.remove("isOpen")));
+  
+  // WhatsApp mobile
+  const mobileWa = document.getElementById("mobileWhatsAppBtn");
+  const waUrlFunc = getWaLinks();
+  if (mobileWa) mobileWa.href = waUrlFunc("Hola, vengo del asistente virtual y quiero consultar por un proyecto.");
+  
+  setupWhatsAppVisibility();
   showWelcome();
 </script>
 </body>
