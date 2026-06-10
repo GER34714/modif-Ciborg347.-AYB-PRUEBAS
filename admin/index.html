@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover" />
   <title>Admin | CIBORG 347</title>
-  <meta name="description" content="Panel admin de CIBORG 347 para gestionar proyectos, categorias, contenido global, settings visuales, FAQs, servicios, marcas, casos de éxito y asistente." />
+  <meta name="description" content="Panel admin de CIBORG 347 para gestionar proyectos, categorias, contenido global, settings visuales, FAQs, planes, marcas, casos de éxito y asistente." />
   <link rel="stylesheet" href="./styles.css" />
   <link rel="icon" href="data:," />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -219,6 +219,19 @@
     .star-btn.active { color: #f5b042; text-shadow: 0 0 5px #f5b042; }
     .star-btn:active { transform: scale(1.1); }
 
+    .plan-card {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 16px;
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+    .plan-card:hover { border-color: var(--cyan); transform: translateY(-2px); }
+
     .reviews-table { width: 100%; border-collapse: collapse; }
     .reviews-table th, .reviews-table td { padding: 12px; text-align: left; border-bottom: 1px solid var(--border); }
     .reviews-table th { color: var(--cyan); font-size: 0.75rem; }
@@ -249,6 +262,7 @@
       .listCard__actions { justify-content: center; margin-top: 8px; }
       .btn, .btn--small, .navBtn, .modeBtn, .themeBtn { min-height: 48px; padding: 12px 16px; font-size: 1rem; }
       .featured-projects-grid { grid-template-columns: 1fr; }
+      .plan-card { flex-direction: column; text-align: center; }
       .viewPanel { padding: 16px; }
       h2 { font-size: 1.4rem; }
       h3 { font-size: 1.2rem; }
@@ -359,8 +373,12 @@
         <button class="navBtn" data-view="projects" type="button">📁 Todos los Proyectos</button>
         <button class="navBtn" data-view="new-project" type="button">✨ Nueva web</button>
         <button class="navBtn" data-view="categories" type="button">📂 Categorías</button>
-        <button class="navBtn" data-view="services" type="button">🛠️ Servicios</button>
+        <button class="navBtn" data-view="plans" type="button">💰 Planes</button>
         <button class="navBtn" data-view="faqs" type="button">❓ FAQs</button>
+        
+        <!-- SECCIÓN: SERVICIOS (NUEVO) -->
+        <div class="sidebar__nav-section">💼 SERVICIOS</div>
+        <button class="navBtn" data-view="services" type="button">💼 Servicios</button>
         
         <!-- SECCIÓN: CASOS DE ÉXITO -->
         <div class="sidebar__nav-section">📈 CASOS DE ÉXITO</div>
@@ -374,6 +392,10 @@
         <div class="sidebar__nav-section">🤖 ASISTENTE</div>
         <button class="navBtn" data-view="assistant-questions" type="button">❓ Preguntas del asistente</button>
         <button class="navBtn" data-view="assistant-responses" type="button">📊 Respuestas</button>
+        
+        <!-- SECCIÓN: LEADS (NUEVO) -->
+        <div class="sidebar__nav-section">📊 LEADS</div>
+        <button class="navBtn" data-view="guide-leads" type="button">📋 Leads del asistente</button>
         
         <div class="sidebar__nav-section">🎨 APARIENCIA</div>
         <button class="navBtn" data-view="site-content" type="button">📄 Contenido global</button>
@@ -465,25 +487,32 @@
         <div class="subPanel"><h3>Listado</h3><div id="categoriesList" class="stackList"></div></div>
       </section>
 
-      <!-- SERVICIOS (NUEVO - Reemplaza a Planes) -->
+      <!-- Planes -->
+      <section class="panel viewPanel" data-panel="plans" style="display:none">
+        <div class="row row--between row--wrap">
+          <div><h2>💰 Planes y Precios</h2><p class="muted">Administrá los planes que se muestran en el frontend.</p></div>
+          <div class="row row--wrap">
+            <button id="plansRefreshBtn" class="btn btn--ghost" type="button">Actualizar</button>
+            <button id="plansNewBtn" class="btn btn--primary" type="button">➕ Nuevo Plan</button>
+          </div>
+        </div>
+        <div id="plansMsg" class="msg"></div>
+        <div id="plansList" class="stackList"></div>
+        <div id="plansPagination" class="pagination" style="display:none"></div>
+      </section>
+
+      <!-- SECCIÓN: SERVICIOS (NUEVO) -->
       <section class="panel viewPanel" data-panel="services" style="display:none">
         <div class="row row--between row--wrap">
-          <div><h2>🛠️ Servicios</h2><p class="muted">Administrá los servicios que se muestran en /servicio.html</p></div>
+          <div><h2>💼 Servicios</h2><p class="muted">Gestioná los servicios que se muestran en el frontend (landings, tiendas, paneles, etc.).</p></div>
           <div class="row row--wrap">
             <button id="servicesRefreshBtn" class="btn btn--ghost" type="button">Actualizar</button>
-            <button id="servicesNewBtn" class="btn btn--primary" type="button">➕ Nuevo Servicio</button>
+            <button id="servicesNewBtn" class="btn btn--primary" type="button">➕ Nuevo servicio</button>
           </div>
         </div>
         <div id="servicesMsg" class="msg"></div>
         <div id="servicesList" class="stackList"></div>
         <div id="servicesPagination" class="pagination" style="display:none"></div>
-      </section>
-
-      <!-- FAQs -->
-      <section class="panel viewPanel" data-panel="faqs" style="display:none">
-        <div class="row row--between row--wrap"><div><h2>❓ FAQs</h2><p class="muted">Preguntas frecuentes del sitio.</p></div><div class="row row--wrap"><button id="faqsRefreshBtn" class="btn btn--ghost" type="button">Actualizar</button></div></div>
-        <div class="subPanel"><h3>Nueva FAQ</h3><div class="field"><label for="faqQuestionInput">Pregunta</label><input id="faqQuestionInput" type="text" placeholder="¿Cómo trabajás?" /></div><div class="field"><label for="faqAnswerInput">Respuesta</label><textarea id="faqAnswerInput" rows="4" placeholder="Respuesta..."></textarea></div><div class="grid2"><div class="field"><label for="faqOrderInput">Orden</label><input id="faqOrderInput" type="number" step="1" value="0" /></div><label class="switchRow"><input id="faqActiveInput" type="checkbox" checked /><span>Activa</span></label></div><div class="actions"><button id="faqSaveBtn" class="btn btn--primary" type="button">Guardar</button><button id="faqResetBtn" class="btn btn--ghost" type="button">Limpiar</button></div><div id="faqsMsg" class="msg"></div></div>
-        <div class="subPanel"><h3>Listado</h3><div id="faqsList" class="stackList"></div></div>
       </section>
 
       <!-- SECCIÓN: CASOS DE ÉXITO -->
@@ -555,6 +584,20 @@
         <div id="assistantResponsesPagination" class="pagination" style="display:none"></div>
       </section>
 
+      <!-- SECCIÓN: LEADS DEL ASISTENTE (NUEVO) -->
+      <section class="panel viewPanel" data-panel="guide-leads" style="display:none">
+        <div class="row row--between row--wrap">
+          <div><h2>📋 Leads del Asistente</h2><p class="muted">Listado de usuarios que completaron el asistente y dejaron sus datos.</p></div>
+          <div class="row row--wrap">
+            <button id="guideLeadsRefreshBtn" class="btn btn--ghost" type="button">Actualizar</button>
+            <button id="exportGuideLeadsBtn" class="btn btn--primary" type="button">📥 Exportar CSV</button>
+          </div>
+        </div>
+        <div id="guideLeadsMsg" class="msg"></div>
+        <div id="guideLeadsList" class="stackList"></div>
+        <div id="guideLeadsPagination" class="pagination" style="display:none"></div>
+      </section>
+
       <!-- Reseñas pendientes -->
       <section class="panel viewPanel" data-panel="reviews-pending" style="display:none">
         <div class="row row--between row--wrap">
@@ -600,6 +643,13 @@
           <div id="settingsHistoryPagination" class="pagination" style="display:none"></div>
         </div>
       </section>
+
+      <!-- FAQs -->
+      <section class="panel viewPanel" data-panel="faqs" style="display:none">
+        <div class="row row--between row--wrap"><div><h2>❓ FAQs</h2><p class="muted">Preguntas frecuentes del sitio.</p></div><div class="row row--wrap"><button id="faqsRefreshBtn" class="btn btn--ghost" type="button">Actualizar</button></div></div>
+        <div class="subPanel"><h3>Nueva FAQ</h3><div class="field"><label for="faqQuestionInput">Pregunta</label><input id="faqQuestionInput" type="text" placeholder="¿Cómo trabajás?" /></div><div class="field"><label for="faqAnswerInput">Respuesta</label><textarea id="faqAnswerInput" rows="4" placeholder="Respuesta..."></textarea></div><div class="grid2"><div class="field"><label for="faqOrderInput">Orden</label><input id="faqOrderInput" type="number" step="1" value="0" /></div><label class="switchRow"><input id="faqActiveInput" type="checkbox" checked /><span>Activa</span></label></div><div class="actions"><button id="faqSaveBtn" class="btn btn--primary" type="button">Guardar</button><button id="faqResetBtn" class="btn btn--ghost" type="button">Limpiar</button></div><div id="faqsMsg" class="msg"></div></div>
+        <div class="subPanel"><h3>Listado</h3><div id="faqsList" class="stackList"></div></div>
+      </section>
     </section>
   </section>
 </main>
@@ -610,31 +660,9 @@
   </div>
 </footer>
 
-<!-- Modal para editar/crear servicios (NUEVO) -->
-<div id="serviceModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:1000; justify-content:center; align-items:center;">
-  <div style="background:var(--bg2); border-radius:24px; max-width:600px; width:90%; max-height:85vh; overflow:auto; padding:24px; border:1px solid var(--cyan);">
-    <h3 id="serviceModalTitle" style="margin-bottom:1rem;">🛠️ Nuevo Servicio</h3>
-    <input type="hidden" id="serviceId">
-    <div class="field"><label>Slug (identificador único) *</label><input type="text" id="serviceSlug" placeholder="ej: tienda-online"><small>Usado en la URL: /servicio.html?tipo=tienda-online</small></div>
-    <div class="field"><label>Título *</label><input type="text" id="serviceTitle" placeholder="Ej: Tiendas Online"></div>
-    <div class="field"><label>Ícono (emoji)</label><input type="text" id="serviceIcon" placeholder="🛒" maxlength="10"></div>
-    <div class="field"><label>Descripción completa *</label><textarea id="serviceDescription" rows="4" placeholder="Descripción detallada del servicio..."></textarea></div>
-    <div class="field"><label>¿Para quién es ideal? *</label><textarea id="serviceIdealFor" rows="3" placeholder="Descripción del público objetivo..."></textarea></div>
-    <div class="field"><label>Características (una por línea)</label><textarea id="serviceFeatures" rows="5" placeholder="Carrito de compras&#10;Pasarela de pago&#10;Panel de administración"></textarea><small>Cada línea será una característica destacada</small></div>
-    <div class="field"><label>Mensaje para WhatsApp</label><input type="text" id="serviceWhatsappMsg" placeholder="Hola, quiero consultar por..."></div>
-    <div class="field"><label>Orden</label><input type="number" id="serviceOrder" value="0"></div>
-    <label class="switchRow"><input type="checkbox" id="serviceActive" checked><span>Activo</span></label>
-    <div style="display:flex; gap:12px; margin-top:1.5rem;">
-      <button id="serviceSaveBtn" class="btn btn--primary">💾 Guardar</button>
-      <button id="serviceCancelBtn" class="btn btn--ghost">Cancelar</button>
-      <button id="serviceDeleteBtn" class="btn btn--danger" style="display:none;">🗑️ Eliminar</button>
-    </div>
-  </div>
-</div>
-
 <!-- Modal para editar/crear marcas -->
 <div id="brandModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:1000; justify-content:center; align-items:center;">
-  <div style="background:var(--bg2); border-radius:24px; max-width:500px; width:90%; max-height:85vh; overflow:auto; padding:24px; border:1px solid var(--cyan);">
+  <div style="background:var(--bg-card); border-radius:24px; max-width:500px; width:90%; max-height:85vh; overflow:auto; padding:24px; border:1px solid var(--cyan);">
     <h3 id="brandModalTitle" style="margin-bottom:1rem;">🏷️ Nueva Marca</h3>
     <input type="hidden" id="brandId">
     <div class="field"><label>Nombre de la marca *</label><input type="text" id="brandName" placeholder="Ej: Google"></div>
@@ -652,7 +680,7 @@
 
 <!-- Modal para editar/crear preguntas del asistente -->
 <div id="assistantQuestionModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:1000; justify-content:center; align-items:center;">
-  <div style="background:var(--bg2); border-radius:24px; max-width:550px; width:90%; max-height:85vh; overflow:auto; padding:24px; border:1px solid var(--cyan);">
+  <div style="background:var(--bg-card); border-radius:24px; max-width:550px; width:90%; max-height:85vh; overflow:auto; padding:24px; border:1px solid var(--cyan);">
     <h3 id="assistantQuestionModalTitle" style="margin-bottom:1rem;">❓ Nueva Pregunta</h3>
     <input type="hidden" id="assistantQuestionId">
     <div class="field"><label>Pregunta *</label><input type="text" id="assistantQuestionText" placeholder="Ej: ¿Qué tipo de proyecto necesitas?"></div>
@@ -684,17 +712,52 @@
 
 <!-- Modal para editar/crear casos de éxito -->
 <div id="successStoryModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:1000; justify-content:center; align-items:center;">
-  <div style="background:var(--bg2); border-radius:24px; max-width:600px; width:90%; max-height:85vh; overflow:auto; padding:24px; border:1px solid var(--cyan);">
+  <div style="background:var(--bg-card); border-radius:24px; max-width:600px; width:90%; max-height:85vh; overflow:auto; padding:24px; border:1px solid var(--cyan);">
     <h3 id="successStoryModalTitle" style="margin-bottom:1rem;">🏆 Nuevo Caso de Éxito</h3>
     <input type="hidden" id="successStoryId">
-    <div class="field"><label>Título *</label><input type="text" id="successStoryTitle" placeholder="Ej: Pizzería El Italiano"></div>
-    <div class="field"><label>Descripción corta</label><textarea id="successStoryDescription" rows="3" placeholder="Ej: Aumentamos sus pedidos online en un 300%..."></textarea></div>
-    <div class="field"><label>URL de la imagen</label><input type="url" id="successStoryImageUrl" placeholder="https://..."><small>Podés subir una imagen</small></div>
-    <div class="field"><label>Subir imagen</label><input type="file" id="successStoryImageFile" accept="image/*"></div>
-    <div class="field"><label>Resultados (JSON)</label><textarea id="successStoryResults" rows="4" placeholder='{"ventas": "+40%", "clientes": "+120"}'></textarea><small>Formato JSON válido. Los resultados se mostrarán como badges.</small></div>
-    <div class="field"><label>URL demo (opcional)</label><input type="url" id="successStoryDemoUrl" placeholder="https://..."></div>
-    <div class="field"><label>Orden</label><input type="number" id="successStoryOrder" value="0"></div>
-    <label class="switchRow"><input type="checkbox" id="successStoryActive" checked><span>Activo</span></label>
+    
+    <div class="field">
+      <label>Título *</label>
+      <input type="text" id="successStoryTitle" placeholder="Ej: Pizzería El Italiano">
+    </div>
+    
+    <div class="field">
+      <label>Descripción corta</label>
+      <textarea id="successStoryDescription" rows="3" placeholder="Ej: Aumentamos sus pedidos online en un 300%..."></textarea>
+    </div>
+    
+    <div class="field">
+      <label>URL de la imagen</label>
+      <input type="url" id="successStoryImageUrl" placeholder="https://...">
+      <small>Podés subir una imagen</small>
+    </div>
+    
+    <div class="field">
+      <label>Subir imagen</label>
+      <input type="file" id="successStoryImageFile" accept="image/*">
+    </div>
+    
+    <div class="field">
+      <label>Resultados (JSON) - Ej: {"ventas": "+40%", "clientes": "+120"}</label>
+      <textarea id="successStoryResults" rows="4" placeholder='{"ventas": "+40%", "clientes": "+120"}'></textarea>
+      <small>Formato JSON válido. Los resultados se mostrarán como badges.</small>
+    </div>
+    
+    <div class="field">
+      <label>URL demo (opcional)</label>
+      <input type="url" id="successStoryDemoUrl" placeholder="https://...">
+    </div>
+    
+    <div class="field">
+      <label>Orden</label>
+      <input type="number" id="successStoryOrder" value="0">
+    </div>
+    
+    <label class="switchRow">
+      <input type="checkbox" id="successStoryActive" checked>
+      <span>Activo</span>
+    </label>
+    
     <div style="display:flex; gap:12px; margin-top:1.5rem;">
       <button id="successStorySaveBtn" class="btn btn--primary">💾 Guardar</button>
       <button id="successStoryCancelBtn" class="btn btn--ghost">Cancelar</button>
@@ -702,9 +765,80 @@
   </div>
 </div>
 
+<!-- Modal para editar/crear servicios (NUEVO) -->
+<div id="serviceModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:1000; justify-content:center; align-items:center;">
+  <div style="background:var(--bg-card); border-radius:24px; max-width:600px; width:90%; max-height:85vh; overflow:auto; padding:24px; border:1px solid var(--cyan);">
+    <h3 id="serviceModalTitle" style="margin-bottom:1rem;">💼 Nuevo Servicio</h3>
+    <input type="hidden" id="serviceId">
+    
+    <div class="field">
+      <label>Título del servicio *</label>
+      <input type="text" id="serviceTitle" placeholder="Ej: Tienda Online">
+    </div>
+    
+    <div class="field">
+      <label>Slug *</label>
+      <input type="text" id="serviceSlug" placeholder="ej: tienda-online">
+      <small>Se genera automáticamente desde el título</small>
+    </div>
+    
+    <div class="field">
+      <label>Ícono (emoji)</label>
+      <input type="text" id="serviceIcon" placeholder="Ej: 🛒" maxlength="2" style="width:80px;">
+    </div>
+    
+    <div class="field">
+      <label>URL de la imagen (portada)</label>
+      <input type="url" id="serviceImageUrl" placeholder="https://...">
+      <small>Podés subir una imagen</small>
+    </div>
+    
+    <div class="field">
+      <label>Subir imagen</label>
+      <input type="file" id="serviceImageFile" accept="image/*">
+    </div>
+    
+    <div class="field">
+      <label>Descripción completa</label>
+      <textarea id="serviceDescription" rows="4" placeholder="Descripción detallada del servicio..."></textarea>
+    </div>
+    
+    <div class="field">
+      <label>¿Para quién es ideal?</label>
+      <textarea id="serviceIdealFor" rows="3" placeholder="Ej: Emprendedores, pymes y marcas que quieran vender online..."></textarea>
+    </div>
+    
+    <div class="field">
+      <label>Características (separadas por coma)</label>
+      <input type="text" id="serviceFeaturesInput" placeholder="Ej: Carrito de compras, Mercado Pago, Panel admin">
+      <small>Estas características se mostrarán como lista en el frontend</small>
+    </div>
+    
+    <div class="field">
+      <label>Mensaje por defecto para WhatsApp</label>
+      <input type="text" id="serviceWhatsappMessage" placeholder="Ej: Hola, quiero consultar por el servicio de Tienda Online">
+    </div>
+    
+    <div class="field">
+      <label>Orden</label>
+      <input type="number" id="serviceOrder" value="0">
+    </div>
+    
+    <label class="switchRow">
+      <input type="checkbox" id="serviceActive" checked>
+      <span>Activo</span>
+    </label>
+    
+    <div style="display:flex; gap:12px; margin-top:1.5rem;">
+      <button id="serviceSaveBtn" class="btn btn--primary">💾 Guardar</button>
+      <button id="serviceCancelBtn" class="btn btn--ghost">Cancelar</button>
+    </div>
+  </div>
+</div>
+
 <!-- Modal para editar reseña -->
 <div id="editReviewModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:1000; justify-content:center; align-items:center;">
-  <div style="background:var(--bg2); border-radius:24px; max-width:500px; width:90%; padding:24px; border:1px solid var(--cyan);">
+  <div style="background:var(--bg-card); border-radius:24px; max-width:500px; width:90%; padding:24px; border:1px solid var(--cyan);">
     <h3 style="margin-bottom:1rem;">✏️ Editar reseña</h3>
     <div class="field"><label>Usuario</label><input type="text" id="editReviewName" readonly style="background:var(--bg3);" /></div>
     <div class="field"><label>⭐ Calificación</label>
@@ -780,11 +914,13 @@
           document.getElementById('adminBox').style.display = 'grid';
           if (typeof loadAll === 'function') loadAll();
           if (typeof loadPendingReviews === 'function') loadPendingReviews();
-          if (typeof loadServicesAdmin === 'function') loadServicesAdmin();
+          if (typeof loadPlansAdmin === 'function') loadPlansAdmin();
           if (typeof loadFeaturedProjects === 'function') loadFeaturedProjects();
           if (typeof loadBrandsAdmin === 'function') loadBrandsAdmin();
           if (typeof loadAssistantQuestionsAdmin === 'function') loadAssistantQuestionsAdmin();
           if (typeof loadSuccessStoriesAdmin === 'function') loadSuccessStoriesAdmin();
+          if (typeof loadServicesAdmin === 'function') loadServicesAdmin();
+          if (typeof loadGuideLeadsAdmin === 'function') loadGuideLeadsAdmin();
         }
       }).catch(err => console.error("Error de sesión:", err));
     } else {
