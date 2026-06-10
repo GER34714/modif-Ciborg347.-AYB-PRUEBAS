@@ -27,7 +27,7 @@
   </script>
   
   <style>
-    /* ========== CSS ORIGINAL ========== */
+    /* ========== CSS ORIGINAL (se mantiene igual) ========== */
     :root {
       --bg: #0a0a0f;
       --bg2: #0f0f1a;
@@ -1267,7 +1267,7 @@
       display: grid !important;
     }
 
-    /* ===== ROBOT FLOTANTE (abre asistente.html en nueva pestaña) ===== */
+    /* ===== ROBOT FLOTANTE ===== */
     .robot-help {
       position: fixed;
       right: 20px;
@@ -1444,7 +1444,7 @@
   <div class="banner-controls" id="bannerControls"></div>
 </div>
 
-<!-- ========== 2. SERVICIOS (con precios dinámicos) ========== -->
+<!-- ========== 2. SERVICIOS ========== -->
 <section class="section" id="servicios">
   <div class="wrap">
     <div class="section__head fade-in-left">
@@ -1542,7 +1542,7 @@
   </div>
 </section>
 
-<!-- ========== 6. MARCAS QUE CONFÍAN (CARRUSEL) ========== -->
+<!-- ========== 6. MARCAS QUE CONFÍAN ========== -->
 <section class="section" id="marcas">
   <div class="wrap">
     <div class="section__head center fade-in-up">
@@ -1672,7 +1672,7 @@ const sb = window.supabase?.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 console.log("🔌 Conectando a Supabase...");
 
-// ========== CARGAR SERVICIOS CON PRECIOS ==========
+// ========== CARGAR SERVICIOS CON PRECIOS (VERSIÓN CORREGIDA) ==========
 async function loadServices() {
   const container = document.getElementById('servicesGrid');
   if (!container) return;
@@ -1712,13 +1712,30 @@ async function loadServices() {
       });
     }
     
-    // 4. Renderizar
+    // 4. Renderizar los servicios
     container.innerHTML = services.map(service => {
       const price = priceMap.get(service.id);
       const hasOffer = price?.offer_price && price?.offer_price !== '';
       const displayPrice = hasOffer ? price.offer_price : price?.price_from;
       const originalPrice = hasOffer ? price.price_from : null;
       const badge = price?.offer_badge || null;
+      
+      // ===== CORRECCIÓN: OBTENER EL SLUG CORRECTO =====
+      let serviceSlug = service.slug;
+      
+      // Mapeo de slugs incorrectos a correctos
+      const slugMap = {
+        'sistemas-pedidos': 'pedidos',
+        'tiendas-online': 'tienda',
+        'landings-conversion': 'landing',
+        'webs-institucionales': 'institucional',
+        'catalogos-digitales': 'catalogo',
+        'paneles-admin': 'admin'
+      };
+      
+      if (slugMap[serviceSlug]) {
+        serviceSlug = slugMap[serviceSlug];
+      }
       
       const priceHtml = price ? `
         <div class="serviceCard__price">
@@ -1728,13 +1745,14 @@ async function loadServices() {
         </div>
       ` : '';
       
+      // ===== EL ENLACE CORREGIDO (lo único que cambia en todo el archivo) =====
       return `
         <div class="serviceCard fade-in-up">
           <div class="serviceCard__icon">${service.icon || '📦'}</div>
           <div class="serviceCard__title">${escapeHtml(service.name)}</div>
           <div class="serviceCard__desc">${escapeHtml(service.description || '')}</div>
           ${priceHtml}
-          <a href="servicio.html?tipo=${service.slug}" class="serviceCard__btn">Ver más →</a>
+          <a href="servicio.html?tipo=${serviceSlug}" class="serviceCard__btn">Ver más →</a>
         </div>
       `;
     }).join('');
@@ -1745,7 +1763,7 @@ async function loadServices() {
   }
 }
 
-// ========== CARGAR MARCAS CON CARRUSEL ==========
+// ========== RESTO DEL CÓDIGO (TOTALMENTE ORIGINAL) ==========
 let brandsData = [];
 let currentBrandIndex = 0;
 let brandsPerPage = 4;
@@ -1852,7 +1870,6 @@ const brandsSection = document.getElementById('marcas');
 brandsSection?.addEventListener('mouseenter', stopBrandsCarousel);
 brandsSection?.addEventListener('mouseleave', startBrandsCarousel);
 
-// ========== CARGAR CASOS DE ÉXITO ==========
 async function loadSuccessStories() {
   const container = document.getElementById('storiesGrid');
   if (!container) return;
@@ -1910,7 +1927,7 @@ function escapeHtml(str) {
   });
 }
 
-// ===== ROBOT FLOTANTE (abre asistente.html en nueva pestaña) =====
+// ===== ROBOT FLOTANTE =====
 const robotBtn = document.getElementById('robotHelpBtn');
 const robotImg = document.getElementById('robotImg');
 const robotBubble = document.getElementById('robotBubble');
@@ -2061,7 +2078,6 @@ if (robotBtn) {
 
 setupRobotScroll();
 
-// ========== CARGAR RESEÑAS ==========
 let reviewsData = [];
 let currentReviewIndex = 0;
 let reviewsPerPage = 3;
@@ -2108,7 +2124,6 @@ document.getElementById("prevReviewBtn")?.addEventListener("click", () => { cons
 document.getElementById("nextReviewBtn")?.addEventListener("click", () => { const track = document.getElementById("reviewsTrack"); const total = track?.children.length || 0; const visible = Math.min(reviewsPerPage, total); const maxIdx = Math.max(0, total - visible); if (currentReviewIndex < maxIdx) { currentReviewIndex++; updateReviewCarousel(); } });
 window.addEventListener('resize', () => updateReviewCarousel());
 
-// ========== CARGAR FAQS ==========
 async function loadFaqs() {
   const grid = document.getElementById("faqGrid");
   if (!grid || !sb) return;
@@ -2134,7 +2149,6 @@ async function loadFaqs() {
   } catch(e) { console.error("Error loadFaqs:", e); }
 }
 
-// ========== CARGAR PROYECTOS ==========
 let projectsData = [];
 let allCategories = [];
 let activeFilter = "all";
@@ -2169,7 +2183,6 @@ function openLightbox(imageUrl) {
   lightbox.addEventListener('click', () => { document.body.style.overflow = ''; });
 }
 
-// Typewriter
 const phrases = ["Tu web.", "Tu negocio.", "Ciborg 347"];
 let phraseIndex = 0, charIndex = 0, isDeleting = false, isComplete = false;
 const typewriterEl = document.getElementById("typewriterTitle");
