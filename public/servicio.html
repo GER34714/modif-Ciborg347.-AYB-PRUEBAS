@@ -331,8 +331,17 @@
   </svg>
 </a>
 
-<script src="config.js"></script>
 <script>
+  // ============================================================
+  // NÚMERO DE WHATSAPP - CAMBIALO POR EL TUYO
+  // ============================================================
+  const WHATSAPP_NUMBER = "5491123456789";  // <--- PONÉ ACÁ TU NÚMERO
+
+  const waUrl = (msg) => `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
+
+  // ============================================================
+  // TEMAS (claro/oscuro)
+  // ============================================================
   const themeToggle = document.getElementById("themeToggle");
   const savedTheme = localStorage.getItem("theme") || "dark";
   document.documentElement.setAttribute("data-theme", savedTheme);
@@ -345,10 +354,9 @@
     themeToggle.textContent = newTheme === "dark" ? "☀️" : "🌙";
   });
 
-  const waNumber = window.CIBORG_CONFIG.WHATSAPP_NUMBER;
-  const waUrl = (msg) => `https://wa.me/${waNumber}?text=${encodeURIComponent(msg)}`;
-
-  // ========== SERVICIOS CON LOS PRECIOS QUE ME DISTE ==========
+  // ============================================================
+  // SERVICIOS CON PRECIOS
+  // ============================================================
   const serviciosData = {
     tienda: {
       titulo: "Tiendas Online",
@@ -443,15 +451,25 @@
     }
   };
 
+  // ============================================================
+  // LEER URL Y MOSTRAR SERVICIO
+  // ============================================================
   const urlParams = new URLSearchParams(window.location.search);
   let tipo = urlParams.get('tipo');
-  if (!tipo || !serviciosData[tipo]) tipo = 'tienda';
+  
+  // Si no hay tipo o el tipo no existe, mostrar tienda
+  if (!tipo || !serviciosData[tipo]) {
+    tipo = 'tienda';
+  }
+  
   const data = serviciosData[tipo];
 
+  // Actualizar título y meta
   document.title = `Ciborg 347 — ${data.titulo} | ${data.precio}`;
   const metaDesc = document.querySelector('meta[name="description"]');
   if (metaDesc) metaDesc.setAttribute('content', data.descripcionLarga.slice(0, 150));
 
+  // Renderizar contenido
   const container = document.getElementById('serviceContent');
   container.innerHTML = `
     <div class="breadcrumb">
@@ -472,9 +490,11 @@
     </div>
   `;
 
+  // Botón flotante WhatsApp
   const waFloat = document.getElementById("waFloat");
   if (waFloat) waFloat.href = waUrl(data.waMsg);
 
+  // Ocultar botón flotante cuando se acerca al footer
   const footer = document.querySelector("footer");
   function checkWaFloatVisibility() {
     if (!waFloat || !footer) return;
@@ -486,14 +506,17 @@
   window.addEventListener("resize", checkWaFloatVisibility);
   setTimeout(checkWaFloatVisibility, 100);
 
+  // Menú hamburguesa
   const burgerBtn = document.getElementById("burgerBtn");
   const mobileMenu = document.getElementById("mobileMenu");
   burgerBtn?.addEventListener("click", () => mobileMenu.classList.toggle("isOpen"));
   document.querySelectorAll(".mobileMenu a").forEach(a => a.addEventListener("click", () => mobileMenu.classList.remove("isOpen")));
 
+  // WhatsApp en menú mobile
   const mobileWa = document.getElementById("mobileWhatsAppBtn");
   if (mobileWa) mobileWa.href = waUrl(data.waMsg);
 
+  // Animación fade-in
   const observer = new IntersectionObserver(entries => {
     entries.forEach(e => { if(e.isIntersecting) { e.target.classList.add("visible"); observer.unobserve(e.target); } });
   }, { threshold: 0.1 });
