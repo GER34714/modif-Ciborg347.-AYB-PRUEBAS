@@ -335,7 +335,7 @@
   // ============================================================
   // NÚMERO DE WHATSAPP - CAMBIALO POR EL TUYO
   // ============================================================
-  const WHATSAPP_NUMBER = "5491123456789";  // <--- PONÉ ACÁ TU NÚMERO
+  const WHATSAPP_NUMBER = "5491123456789";
 
   const waUrl = (msg) => `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
 
@@ -452,10 +452,25 @@
   };
 
   // ============================================================
-  // LEER URL Y MOSTRAR SERVICIO
+  // LEER URL Y MOSTRAR SERVICIO (CON MAPEO DE SLUGS)
   // ============================================================
   const urlParams = new URLSearchParams(window.location.search);
   let tipo = urlParams.get('tipo');
+  
+  // ===== MAPEO DE SLUGS INCORRECTOS A CORRECTOS =====
+  const slugFix = {
+    'paneles-admin': 'admin',
+    'sistemas-pedidos': 'pedidos',
+    'tiendas-online': 'tienda',
+    'landings-conversion': 'landing',
+    'webs-institucionales': 'institucional',
+    'catalogos-digitales': 'catalogo',
+    'panel-admin': 'admin'
+  };
+  
+  if (slugFix[tipo]) {
+    tipo = slugFix[tipo];
+  }
   
   // Si no hay tipo o el tipo no existe, mostrar tienda
   if (!tipo || !serviciosData[tipo]) {
