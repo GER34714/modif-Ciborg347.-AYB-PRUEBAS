@@ -427,120 +427,89 @@
 
   const urlParams = new URLSearchParams(window.location.search);
   let tipo = urlParams.get('tipo');
-  let slug = urlParams.get('slug');
-  
-  // Mapeo de slug a tipo
-  const slugToTipo = {
-    'tiendas-online': 'tienda',
-    'sistemas-de-pedidos': 'pedidos',
-    'panel-admin': 'admin',
-    'landings-de-conversion': 'landing',
-    'webs-institucionales': 'institucional',
-    'catalogos-digitales': 'catalogo'
+  if (!tipo || !serviciosData[tipo]) tipo = 'tienda';
+  const data = serviciosData[tipo];
+
+  // Mapeo para buscar en Supabase
+  const tipoToSlug = {
+    tienda: 'tiendas-online',
+    pedidos: 'sistemas-de-pedidos',
+    admin: 'panel-admin',
+    landing: 'landings-de-conversion',
+    institucional: 'webs-institucionales',
+    catalogo: 'catalogos-digitales'
   };
-  
-  // Si viene por slug, convertir a tipo
-  if (slug && slugToTipo[slug]) {
-    tipo = slugToTipo[slug];
-  }
-  
-  // Si no hay tipo válido, mostrar error
-  if (!tipo || !serviciosData[tipo]) {
-    document.getElementById('serviceContent').innerHTML = `
-      <div class="error" style="text-align:center; padding:80px 20px">
-        ❌ Servicio no encontrado<br>
-        <a href="index.html#servicios" style="color:var(--cyan)">← Volver a servicios</a>
+
+  (async function() {
+    const supabase = window.supabase.createClient(
+      window.CIBORG_CONFIG.SUPABASE_URL,
+      window.CIBORG_CONFIG.SUPABASE_ANON_KEY
+    );
+    
+    const { data: precioData } = await supabase
+      .from('service_plans')
+      .select('price, offer_price, offer_badge')
+      .eq('slug', tipoToSlug[tipo])
+      .single();
+    
+    const precio = precioData?.price || 'Consultar precio';
+    const precioOferta = precioData?.offer_price;
+    const badgeOferta = precioData?.offer_badge;
+
+    document.title = `Ciborg 347 — ${data.titulo}`;
+    const metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc) metaDesc.setAttribute('content', data.descripcionLarga.slice(0, 150));
+
+    const container = document.getElementById('serviceContent');
+    container.innerHTML = `
+      <div class="breadcrumb">
+        <a href="index.html">Inicio</a> / <a href="index.html#servicios">Servicios</a> / <span style="color:var(--cyan)">${data.titulo}</span>
+      </div>
+      <h1>${data.titulo}</h1>
+      ${precioOferta ? 
+        `<div style="margin:1rem 0"><span style="font-size:2rem;color:var(--cyan);font-weight:700">${precioOferta}</span> <span style="text-decoration:line-through;margin-left:1rem;color:var(--text2)">${precio}</span> ${badgeOferta ? `<span style="background:linear-gradient(135deg,#ff47d1,#ff8c00);padding:4px 12px;border-radius:20px;margin-left:1rem">${badgeOferta}</span>` : ''}</div>` :
+        `<div style="font-size:2rem;color:var(--cyan);font-weight:700;margin:1rem 0">${precio}</div>`
+      }
+      <div class="intro">${data.descripcionLarga}</div>
+      <h2>🎯 ¿Para quién es ideal?</h2>
+      <p>${data.ideal}</p>
+      <h2>✨ ¿Qué incluye?</h2>
+      <ul>
+        ${data.incluye.map(item => `<li>${item}</li>`).join('')}
+      </ul>
+      <div class="action-buttons">
+        <a href="${waUrl(data.waMsg)}" target="_blank" class="btn btn--wa">Consultar por WhatsApp →</a>
+        <a href="index.html#servicios" class="btn btn-back">← Volver a servicios</a>
       </div>
     `;
-  } else {
-    const data = serviciosData[tipo];
 
-    const tipoToSlug = {
-      tienda: 'tiendas-online',
-      pedidos: 'sistemas-de-pedidos',
-      admin: 'panel-admin',
-      landing: 'landings-de-conversion',
-      institucional: 'webs-institucionales',
-      catalogo: 'catalogos-digitales'
-    };
+    const waFloat = document.getElementById("waFloat");
+    if (waFloat) waFloat.href = waUrl(data.waMsg);
 
-    (async function() {
-      const supabase = window.supabase.createClient(
-        window.CIBORG_CONFIG.SUPABASE_URL,
-        window.CIBORG_CONFIG.SUPABASE_ANON_KEY
-      );
-      
-      const { data: supabaseData } = await supabase
-        .from('service_plans')
-        .select('price, offer_price, offer_badge, image_url')
-        .eq('slug', tipoToSlug[tipo])
-        .single();
-      
-      const precio = supabaseData?.price || 'Consultar precio';
-      const precioOferta = supabaseData?.offer_price;
-      const badgeOferta = supabaseData?.offer_badge;
-      const imagenUrl = supabaseData?.image_url || '';
+    const footer = document.querySelector("footer");
+    function checkWaFloatVisibility() {
+      if (!waFloat || !footer) return;
+      const footerRect = footer.getBoundingClientRect();
+      if (footerRect.top < window.innerHeight - 50) waFloat.classList.add("hidden");
+      else waFloat.classList.remove("hidden");
+    }
+    window.addEventListener("scroll", checkWaFloatVisibility);
+    window.addEventListener("resize", checkWaFloatVisibility);
+    setTimeout(checkWaFloatVisibility, 100);
 
-      document.title = `Ciborg 347 — ${data.titulo}`;
-      const metaDesc = document.querySelector('meta[name="description"]');
-      if (metaDesc) metaDesc.setAttribute('content', data.descripcionLarga.slice(0, 150));
+    const burgerBtn = document.getElementById("burgerBtn");
+    const mobileMenu = document.getElementById("mobileMenu");
+    burgerBtn?.addEventListener("click", () => mobileMenu.classList.toggle("isOpen"));
+    document.querySelectorAll(".mobileMenu a").forEach(a => a.addEventListener("click", () => mobileMenu.classList.remove("isOpen")));
 
-      const container = document.getElementById('serviceContent');
-      container.innerHTML = `
-        <div class="breadcrumb">
-          <a href="index.html">Inicio</a> / <a href="index.html#servicios">Servicios</a> / <span style="color:var(--cyan)">${data.titulo}</span>
-        </div>
-        ${imagenUrl ? `<div style="margin-bottom:2rem; border-radius:24px; overflow:hidden;"><img src="${imagenUrl}" style="width:100%; max-height:400px; object-fit:cover;"></div>` : ''}
-        <h1>${data.titulo}</h1>
-        ${precioOferta ? 
-          `<div style="margin:1rem 0; display:flex; align-items:center; gap:1rem; flex-wrap:wrap;">
-             <span style="font-size:2rem; font-weight:700; color:var(--cyan)">${precioOferta}</span>
-             <span style="text-decoration:line-through; color:var(--text2)">${precio}</span>
-             ${badgeOferta ? `<span style="background:linear-gradient(135deg,#ff47d1,#ff8c00); padding:4px 12px; border-radius:20px; font-size:0.8rem;">${badgeOferta}</span>` : ''}
-           </div>` :
-          `<div style="font-size:2rem; font-weight:700; color:var(--cyan); margin:1rem 0">${precio}</div>`
-        }
-        <div class="intro">${data.descripcionLarga}</div>
-        <h2>🎯 ¿Para quién es ideal?</h2>
-        <p>${data.ideal}</p>
-        <h2>✨ ¿Qué incluye?</h2>
-        <ul>
-          ${data.incluye.map(item => `<li>${item}</li>`).join('')}
-        </ul>
-        <div class="action-buttons">
-          <a href="${waUrl(data.waMsg)}" target="_blank" class="btn btn--wa">Consultar por WhatsApp →</a>
-          <a href="index.html#servicios" class="btn btn-back">← Volver a servicios</a>
-        </div>
-      `;
+    const mobileWa = document.getElementById("mobileWhatsAppBtn");
+    if (mobileWa) mobileWa.href = waUrl(data.waMsg);
 
-      const waFloat = document.getElementById("waFloat");
-      if (waFloat) waFloat.href = waUrl(data.waMsg);
-
-      const footer = document.querySelector("footer");
-      function checkWaFloatVisibility() {
-        if (!waFloat || !footer) return;
-        const footerRect = footer.getBoundingClientRect();
-        if (footerRect.top < window.innerHeight - 50) waFloat.classList.add("hidden");
-        else waFloat.classList.remove("hidden");
-      }
-      window.addEventListener("scroll", checkWaFloatVisibility);
-      window.addEventListener("resize", checkWaFloatVisibility);
-      setTimeout(checkWaFloatVisibility, 100);
-
-      const burgerBtn = document.getElementById("burgerBtn");
-      const mobileMenu = document.getElementById("mobileMenu");
-      burgerBtn?.addEventListener("click", () => mobileMenu.classList.toggle("isOpen"));
-      document.querySelectorAll(".mobileMenu a").forEach(a => a.addEventListener("click", () => mobileMenu.classList.remove("isOpen")));
-
-      const mobileWa = document.getElementById("mobileWhatsAppBtn");
-      if (mobileWa) mobileWa.href = waUrl(data.waMsg);
-
-      const observer = new IntersectionObserver(entries => {
-        entries.forEach(e => { if(e.isIntersecting) { e.target.classList.add("visible"); observer.unobserve(e.target); } });
-      }, { threshold: 0.1 });
-      document.querySelectorAll(".fade-in").forEach(el => observer.observe(el));
-    })();
-  }
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => { if(e.isIntersecting) { e.target.classList.add("visible"); observer.unobserve(e.target); } });
+    }, { threshold: 0.1 });
+    document.querySelectorAll(".fade-in").forEach(el => observer.observe(el));
+  })();
 </script>
 </body>
 </html>
