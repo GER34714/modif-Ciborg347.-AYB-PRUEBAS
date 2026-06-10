@@ -14,7 +14,6 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
-
   <style>
     :root {
       --bg: #0a0a0f;
@@ -32,7 +31,6 @@
       --white: #ffffff;
       --card-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
     }
-
     [data-theme="light"] {
       --bg: #f0f4f8;
       --bg2: #ffffff;
@@ -47,7 +45,6 @@
       --white: #0f172a;
       --card-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
     }
-
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html { scroll-behavior: smooth; }
     body {
@@ -58,17 +55,13 @@
       overflow-x: hidden;
       transition: background 0.3s, color 0.2s;
     }
-
     img { max-width: 100%; display: block; }
     a { text-decoration: none; color: inherit; }
     button { cursor: pointer; font-family: inherit; }
-
     ::-webkit-scrollbar { width: 4px; }
     ::-webkit-scrollbar-track { background: var(--bg); }
     ::-webkit-scrollbar-thumb { background: var(--cyan); border-radius: 2px; }
-
     .wrap { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
-
     .topbar {
       position: sticky; top: 0; z-index: 100;
       background: rgba(10,10,15,0.82);
@@ -84,7 +77,6 @@
     .brand__logo { width: 44px; height: 44px; object-fit: contain; border-radius: 10px; }
     .brand__text strong { font-family: 'Syne', sans-serif; font-size: 17px; color: var(--white); }
     .brand__text span { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text2); text-transform: uppercase; }
-
     .theme-toggle {
       background: var(--glass);
       border: 1px solid var(--border);
@@ -97,7 +89,6 @@
       transition: all 0.2s;
     }
     .theme-toggle:hover { border-color: var(--cyan); transform: scale(1.05); box-shadow: 0 0 10px var(--cyan); }
-
     .nav { display: flex; align-items: center; gap: 4px; }
     .nav a {
       padding: 7px 14px; border-radius: 8px;
@@ -105,9 +96,7 @@
       color: var(--text2); transition: all 0.15s;
     }
     .nav a:hover { color: var(--white); background: var(--glass); }
-
     .topbar__cta { display: flex; align-items: center; gap: 10px; }
-
     .btn {
       display: inline-flex; align-items: center; gap: 8px;
       padding: 10px 20px; border: none; border-radius: 10px;
@@ -120,7 +109,6 @@
     .btn--ghost:hover { background: var(--glass); transform: translateY(-1px); border-color: var(--cyan); }
     .btn--wa { background: linear-gradient(135deg,#25d366,#128c7e); color: white; }
     .btn--wa:hover { transform: translateY(-2px); box-shadow: 0 0 15px #25d366; }
-
     .burger {
       display: none; width: 40px; height: 40px;
       border: 1px solid var(--border); border-radius: 10px;
@@ -129,7 +117,6 @@
       gap: 5px;
     }
     .burger span { width: 16px; height: 2px; background: var(--text); border-radius: 2px; }
-
     .mobileMenu {
       display: none; flex-direction: column;
       position: fixed; top: 68px; left: 0; right: 0;
@@ -141,20 +128,14 @@
       font-family: 'JetBrains Mono', monospace; font-size: 13px;
       color: var(--text2); padding: 0.6rem 0; border-bottom: 1px solid var(--border);
     }
-
-    .service-detail {
-      padding: 100px 0 80px;
-    }
+    .service-detail { padding: 100px 0 80px; }
     .breadcrumb {
       font-family: 'JetBrains Mono', monospace;
       font-size: 12px;
       color: var(--text2);
       margin-bottom: 2rem;
     }
-    .breadcrumb a {
-      color: var(--cyan);
-      transition: color 0.2s;
-    }
+    .breadcrumb a { color: var(--cyan); transition: color 0.2s; }
     .breadcrumb a:hover { opacity: 0.8; }
     .service-detail h1 {
       font-family: 'Syne', sans-serif;
@@ -209,7 +190,6 @@
       border-color: var(--cyan);
       color: var(--cyan);
     }
-
     .waFloat {
       position: fixed;
       bottom: 24px;
@@ -229,7 +209,6 @@
     }
     .waFloat.hidden { opacity: 0; visibility: hidden; }
     .waFloat:hover { transform: scale(1.08) rotate(5deg); box-shadow: 0 0 20px #25d366; }
-
     footer {
       background: var(--bg2);
       border-top: 1px solid var(--border);
@@ -248,7 +227,6 @@
     .footer__links { display: flex; gap: 1.5rem; }
     .footer__links a { font-size: 12px; color: var(--text2); transition: color 0.2s; }
     .footer__links a:hover { color: var(--cyan); }
-
     @media (max-width: 900px) {
       .nav { display: none; }
       .burger { display: flex; }
@@ -256,13 +234,11 @@
     @media (max-width: 600px) {
       .service-detail { padding: 60px 0; }
     }
-
     .fade-in { opacity: 0; transform: translateY(20px); transition: opacity 0.6s, transform 0.6s; }
     .fade-in.visible { opacity: 1; transform: translateY(0); }
   </style>
 </head>
 <body>
-
 <header class="topbar">
   <div class="wrap topbar__inner">
     <a href="index.html" class="brand">
@@ -282,7 +258,6 @@
     </div>
   </div>
 </header>
-
 <nav class="mobileMenu" id="mobileMenu">
   <a href="index.html#portfolio">Portfolio</a>
   <a href="index.html#servicios">Servicios</a>
@@ -290,11 +265,9 @@
   <a href="index.html#contacto">Contacto</a>
   <a href="#" class="btn btn--wa" id="mobileWhatsAppBtn">WhatsApp</a>
 </nav>
-
 <main>
   <div class="wrap service-detail fade-in" id="serviceContent"></div>
 </main>
-
 <footer>
   <div class="wrap">
     <div class="footer__inner">
@@ -312,203 +285,124 @@
     </div>
   </div>
 </footer>
-
 <a href="#" class="waFloat" id="waFloat" target="_blank">
   <svg width="26" height="26" viewBox="0 0 24 24" fill="white">
     <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
   </svg>
 </a>
-
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="config.js"></script>
 <script>
-  const themeToggle = document.getElementById("themeToggle");
-  const savedTheme = localStorage.getItem("theme") || "dark";
-  document.documentElement.setAttribute("data-theme", savedTheme);
-  themeToggle.textContent = savedTheme === "dark" ? "☀️" : "🌙";
-  themeToggle.addEventListener("click", () => {
-    const current = document.documentElement.getAttribute("data-theme");
-    const newTheme = current === "dark" ? "light" : "dark";
-    document.documentElement.setAttribute("data-theme", newTheme);
-    localStorage.setItem("theme", newTheme);
-    themeToggle.textContent = newTheme === "dark" ? "☀️" : "🌙";
-  });
-
-  const waNumber = window.CIBORG_CONFIG.WHATSAPP_NUMBER;
-  const waUrl = (msg) => `https://wa.me/${waNumber}?text=${encodeURIComponent(msg)}`;
-
-  const serviciosData = {
-    tienda: {
-      titulo: "Tiendas Online",
-      descripcionLarga: "Desarrollamos ecommerce completos, adaptados a tu negocio. Integramos carrito de compras, pasarelas de pago (Mercado Pago, Stripe), panel de administración de productos, gestión de stock, cupones de descuento y sistema de pedidos automático por WhatsApp.",
-      ideal: "Emprendedores, pymes y marcas que quieran vender sus productos por internet con una plataforma profesional, sin depender de soluciones genéricas.",
-      incluye: [
-        "Catálogo de productos con filtros y búsqueda",
-        "Carrito de compras y checkout optimizado",
-        "Integración con Mercado Pago / Stripe",
-        "Panel de administración desde cualquier dispositivo",
-        "Gestión de stock y cupones de descuento",
-        "Notificaciones de pedidos por WhatsApp y email",
-        "Diseño responsive y SEO básico"
-      ],
-      waMsg: "Hola, quiero consultar por el desarrollo de una Tienda Online profesional."
-    },
-    pedidos: {
-      titulo: "Sistemas de Pedidos",
-      descripcionLarga: "Creamos sistemas de pedidos a medida: configuradores de productos, cálculo automático de costos (envíos, opciones), generación de órdenes y envío directo a WhatsApp. Ideal para restaurantes, rotiserías, comercios con delivery o venta por catálogo.",
-      ideal: "Negocios que reciben pedidos por WhatsApp y desean automatizar el proceso, reduciendo errores y agilizando la atención.",
-      incluye: [
-        "Formulario inteligente de pedido",
-        "Cálculo de totales y costos de envío",
-        "Mensaje predefinido listo para enviar por WhatsApp",
-        "Panel de gestión de pedidos (opcional)",
-        "Historial de órdenes para el cliente",
-        "Diseño mobile first"
-      ],
-      waMsg: "Hola, necesito un Sistema de Pedidos a medida para mi negocio."
-    },
-    admin: {
-      titulo: "Panel Admin",
-      descripcionLarga: "Desarrollamos paneles administrativos completos para que puedas gestionar tu negocio desde cualquier lugar. Control de usuarios, productos, ventas, reportes, y más. Todo desde una interfaz clara, segura y adaptada a tus necesidades.",
-      ideal: "Empresas que requieren un sistema interno para administrar datos, inventario, empleados o clientes sin depender de software de terceros.",
-      incluye: [
-        "Autenticación de usuarios (roles: admin, editor, etc.)",
-        "CRUD completo de las entidades de tu negocio",
-        "Dashboard con métricas y gráficos",
-        "Exportación de datos a Excel/PDF",
-        "Diseño responsive (funciona en móvil)",
-        "Código fuente 100% tuyo"
-      ],
-      waMsg: "Hola, quiero un Panel Admin personalizado para gestionar mi negocio."
-    },
-    landing: {
-      titulo: "Landings de Conversión",
-      descripcionLarga: "Creamos landing pages de alto impacto visual y orientadas a la conversión. Diseñadas para captar leads, vender un producto o servicio específico, o promocionar un evento. Incluyen formularios, integración con WhatsApp, y seguimiento de métricas.",
-      ideal: "Empresas que lanzan campañas publicitarias (Google Ads, Facebook) y necesitan una página que convierta visitas en consultas o ventas.",
-      incluye: [
-        "Diseño persuasivo con jerarquía visual",
-        "Formulario de captación de leads",
-        "Botones de WhatsApp estratégicamente ubicados",
-        "Optimización de carga (Google PageSpeed)",
-        "SEO on-page para la campaña",
-        "Integración con Google Analytics y Facebook Pixel"
-      ],
-      waMsg: "Hola, necesito una Landing Page de alta conversión para mi campaña."
-    },
-    institucional: {
-      titulo: "Webs Institucionales",
-      descripcionLarga: "Desarrollamos sitios web corporativos que reflejan la identidad de tu marca. Con diseño moderno, galerías de trabajos, presentación de servicios, blog, mapa de ubicación y formulario de contacto. Totalmente adaptables a cualquier dispositivo.",
-      ideal: "Empresas, estudios profesionales, clínicas, ONGs que necesitan presencia online profesional y confiable.",
-      incluye: [
-        "Páginas: Inicio, Nosotros, Servicios, Contacto, Blog (opcional)",
-        "Galería de imágenes o proyectos",
-        "Formulario de contacto con validación",
-        "Integración con WhatsApp",
-        "Mapa de ubicación",
-        "SEO básico y estructura amigable"
-      ],
-      waMsg: "Hola, quiero una Web Institucional para mi empresa o emprendimiento."
-    },
-    catalogo: {
-      titulo: "Catálogos Digitales",
-      descripcionLarga: "Transformamos tus productos en un catálogo digital interactivo. Los clientes pueden navegar por categorías, ver detalles, precios y consultar directamente por WhatsApp. Ideal para negocios que no requieren carrito de compras pero sí una vitrina profesional.",
-      ideal: "Mayoristas, distribuidores, marcas que quieran mostrar sus productos sin vender online directamente.",
-      incluye: [
-        "Organización de productos por categorías",
-        "Filtros de búsqueda",
-        "Ficha de producto con descripción, precio e imágenes",
-        "Botón de consulta rápida por WhatsApp",
-        "Panel para actualizar catálogo fácilmente",
-        "Diseño responsive y rápido"
-      ],
-      waMsg: "Hola, necesito un Catálogo Digital para mostrar mis productos."
+  (function() {
+    const themeToggle = document.getElementById("themeToggle");
+    const savedTheme = localStorage.getItem("theme") || "dark";
+    document.documentElement.setAttribute("data-theme", savedTheme);
+    if (themeToggle) themeToggle.textContent = savedTheme === "dark" ? "☀️" : "🌙";
+    if (themeToggle) {
+      themeToggle.addEventListener("click", () => {
+        const current = document.documentElement.getAttribute("data-theme");
+        const newTheme = current === "dark" ? "light" : "dark";
+        document.documentElement.setAttribute("data-theme", newTheme);
+        localStorage.setItem("theme", newTheme);
+        themeToggle.textContent = newTheme === "dark" ? "☀️" : "🌙";
+      });
     }
-  };
-
-  const urlParams = new URLSearchParams(window.location.search);
-  let tipo = urlParams.get('tipo');
-  if (!tipo || !serviciosData[tipo]) tipo = 'tienda';
-  const data = serviciosData[tipo];
-
-  // Mapeo para buscar en Supabase
-  const tipoToSlug = {
-    tienda: 'tiendas-online',
-    pedidos: 'sistemas-de-pedidos',
-    admin: 'panel-admin',
-    landing: 'landings-de-conversion',
-    institucional: 'webs-institucionales',
-    catalogo: 'catalogos-digitales'
-  };
-
-  (async function() {
-    const supabase = window.supabase.createClient(
-      window.CIBORG_CONFIG.SUPABASE_URL,
-      window.CIBORG_CONFIG.SUPABASE_ANON_KEY
-    );
-    
-    const { data: precioData } = await supabase
-      .from('service_plans')
-      .select('price, offer_price, offer_badge')
-      .eq('slug', tipoToSlug[tipo])
-      .single();
-    
-    const precio = precioData?.price || 'Consultar precio';
-    const precioOferta = precioData?.offer_price;
-    const badgeOferta = precioData?.offer_badge;
-
-    document.title = `Ciborg 347 — ${data.titulo}`;
-    const metaDesc = document.querySelector('meta[name="description"]');
-    if (metaDesc) metaDesc.setAttribute('content', data.descripcionLarga.slice(0, 150));
-
-    const container = document.getElementById('serviceContent');
-    container.innerHTML = `
-      <div class="breadcrumb">
-        <a href="index.html">Inicio</a> / <a href="index.html#servicios">Servicios</a> / <span style="color:var(--cyan)">${data.titulo}</span>
-      </div>
-      <h1>${data.titulo}</h1>
-      ${precioOferta ? 
-        `<div style="margin:1rem 0"><span style="font-size:2rem;color:var(--cyan);font-weight:700">${precioOferta}</span> <span style="text-decoration:line-through;margin-left:1rem;color:var(--text2)">${precio}</span> ${badgeOferta ? `<span style="background:linear-gradient(135deg,#ff47d1,#ff8c00);padding:4px 12px;border-radius:20px;margin-left:1rem">${badgeOferta}</span>` : ''}</div>` :
-        `<div style="font-size:2rem;color:var(--cyan);font-weight:700;margin:1rem 0">${precio}</div>`
+    const waNumber = window.CIBORG_CONFIG?.WHATSAPP_NUMBER || "5491164499481";
+    const waUrl = (msg) => `https://wa.me/${waNumber}?text=${encodeURIComponent(msg)}`;
+    const serviciosData = {
+      tienda: {
+        titulo: "Tiendas Online",
+        descripcionLarga: "Desarrollamos ecommerce completos, adaptados a tu negocio. Integramos carrito de compras, pasarelas de pago (Mercado Pago, Stripe), panel de administración de productos, gestión de stock, cupones de descuento y sistema de pedidos automático por WhatsApp.",
+        ideal: "Emprendedores, pymes y marcas que quieran vender sus productos por internet con una plataforma profesional, sin depender de soluciones genéricas.",
+        incluye: ["Catálogo de productos con filtros y búsqueda", "Carrito de compras y checkout optimizado", "Integración con Mercado Pago / Stripe", "Panel de administración desde cualquier dispositivo", "Gestión de stock y cupones de descuento", "Notificaciones de pedidos por WhatsApp y email", "Diseño responsive y SEO básico"],
+        waMsg: "Hola, quiero consultar por el desarrollo de una Tienda Online profesional."
+      },
+      pedidos: {
+        titulo: "Sistemas de Pedidos",
+        descripcionLarga: "Creamos sistemas de pedidos a medida: configuradores de productos, cálculo automático de costos (envíos, opciones), generación de órdenes y envío directo a WhatsApp. Ideal para restaurantes, rotiserías, comercios con delivery o venta por catálogo.",
+        ideal: "Negocios que reciben pedidos por WhatsApp y desean automatizar el proceso, reduciendo errores y agilizando la atención.",
+        incluye: ["Formulario inteligente de pedido", "Cálculo de totales y costos de envío", "Mensaje predefinido listo para enviar por WhatsApp", "Panel de gestión de pedidos (opcional)", "Historial de órdenes para el cliente", "Diseño mobile first"],
+        waMsg: "Hola, necesito un Sistema de Pedidos a medida para mi negocio."
+      },
+      admin: {
+        titulo: "Panel Admin",
+        descripcionLarga: "Desarrollamos paneles administrativos completos para que puedas gestionar tu negocio desde cualquier lugar. Control de usuarios, productos, ventas, reportes, y más. Todo desde una interfaz clara, segura y adaptada a tus necesidades.",
+        ideal: "Empresas que requieren un sistema interno para administrar datos, inventario, empleados o clientes sin depender de software de terceros.",
+        incluye: ["Autenticación de usuarios (roles: admin, editor, etc.)", "CRUD completo de las entidades de tu negocio", "Dashboard con métricas y gráficos", "Exportación de datos a Excel/PDF", "Diseño responsive (funciona en móvil)", "Código fuente 100% tuyo"],
+        waMsg: "Hola, quiero un Panel Admin personalizado para gestionar mi negocio."
+      },
+      landing: {
+        titulo: "Landings de Conversión",
+        descripcionLarga: "Creamos landing pages de alto impacto visual y orientadas a la conversión. Diseñadas para captar leads, vender un producto o servicio específico, o promocionar un evento. Incluyen formularios, integración con WhatsApp, y seguimiento de métricas.",
+        ideal: "Empresas que lanzan campañas publicitarias (Google Ads, Facebook) y necesitan una página que convierta visitas en consultas o ventas.",
+        incluye: ["Diseño persuasivo con jerarquía visual", "Formulario de captación de leads", "Botones de WhatsApp estratégicamente ubicados", "Optimización de carga (Google PageSpeed)", "SEO on-page para la campaña", "Integración con Google Analytics y Facebook Pixel"],
+        waMsg: "Hola, necesito una Landing Page de alta conversión para mi campaña."
+      },
+      institucional: {
+        titulo: "Webs Institucionales",
+        descripcionLarga: "Desarrollamos sitios web corporativos que reflejan la identidad de tu marca. Con diseño moderno, galerías de trabajos, presentación de servicios, blog, mapa de ubicación y formulario de contacto. Totalmente adaptables a cualquier dispositivo.",
+        ideal: "Empresas, estudios profesionales, clínicas, ONGs que necesitan presencia online profesional y confiable.",
+        incluye: ["Páginas: Inicio, Nosotros, Servicios, Contacto, Blog (opcional)", "Galería de imágenes o proyectos", "Formulario de contacto con validación", "Integración con WhatsApp", "Mapa de ubicación", "SEO básico y estructura amigable"],
+        waMsg: "Hola, quiero una Web Institucional para mi empresa o emprendimiento."
+      },
+      catalogo: {
+        titulo: "Catálogos Digitales",
+        descripcionLarga: "Transformamos tus productos en un catálogo digital interactivo. Los clientes pueden navegar por categorías, ver detalles, precios y consultar directamente por WhatsApp. Ideal para negocios que no requieren carrito de compras pero sí una vitrina profesional.",
+        ideal: "Mayoristas, distribuidores, marcas que quieran mostrar sus productos sin vender online directamente.",
+        incluye: ["Organización de productos por categorías", "Filtros de búsqueda", "Ficha de producto con descripción, precio e imágenes", "Botón de consulta rápida por WhatsApp", "Panel para actualizar catálogo fácilmente", "Diseño responsive y rápido"],
+        waMsg: "Hola, necesito un Catálogo Digital para mostrar mis productos."
       }
-      <div class="intro">${data.descripcionLarga}</div>
-      <h2>🎯 ¿Para quién es ideal?</h2>
-      <p>${data.ideal}</p>
-      <h2>✨ ¿Qué incluye?</h2>
-      <ul>
-        ${data.incluye.map(item => `<li>${item}</li>`).join('')}
-      </ul>
-      <div class="action-buttons">
-        <a href="${waUrl(data.waMsg)}" target="_blank" class="btn btn--wa">Consultar por WhatsApp →</a>
-        <a href="index.html#servicios" class="btn btn-back">← Volver a servicios</a>
-      </div>
-    `;
-
-    const waFloat = document.getElementById("waFloat");
-    if (waFloat) waFloat.href = waUrl(data.waMsg);
-
-    const footer = document.querySelector("footer");
-    function checkWaFloatVisibility() {
-      if (!waFloat || !footer) return;
-      const footerRect = footer.getBoundingClientRect();
-      if (footerRect.top < window.innerHeight - 50) waFloat.classList.add("hidden");
-      else waFloat.classList.remove("hidden");
-    }
-    window.addEventListener("scroll", checkWaFloatVisibility);
-    window.addEventListener("resize", checkWaFloatVisibility);
-    setTimeout(checkWaFloatVisibility, 100);
-
-    const burgerBtn = document.getElementById("burgerBtn");
-    const mobileMenu = document.getElementById("mobileMenu");
-    burgerBtn?.addEventListener("click", () => mobileMenu.classList.toggle("isOpen"));
-    document.querySelectorAll(".mobileMenu a").forEach(a => a.addEventListener("click", () => mobileMenu.classList.remove("isOpen")));
-
-    const mobileWa = document.getElementById("mobileWhatsAppBtn");
-    if (mobileWa) mobileWa.href = waUrl(data.waMsg);
-
-    const observer = new IntersectionObserver(entries => {
-      entries.forEach(e => { if(e.isIntersecting) { e.target.classList.add("visible"); observer.unobserve(e.target); } });
-    }, { threshold: 0.1 });
-    document.querySelectorAll(".fade-in").forEach(el => observer.observe(el));
+    };
+    const urlParams = new URLSearchParams(window.location.search);
+    let tipo = urlParams.get('tipo');
+    if (!tipo || !serviciosData[tipo]) tipo = 'tienda';
+    const data = serviciosData[tipo];
+    const tipoToSlug = {
+      tienda: 'tiendas-online',
+      pedidos: 'sistemas-de-pedidos',
+      admin: 'panel-admin',
+      landing: 'landings-de-conversion',
+      institucional: 'webs-institucionales',
+      catalogo: 'catalogos-digitales'
+    };
+    (async function() {
+      const supabase = window.supabase.createClient(window.CIBORG_CONFIG.SUPABASE_URL, window.CIBORG_CONFIG.SUPABASE_ANON_KEY);
+      const { data: precioData } = await supabase.from('service_plans').select('price, offer_price, offer_badge').eq('slug', tipoToSlug[tipo]).single();
+      const precio = precioData?.price || 'Consultar precio';
+      const precioOferta = precioData?.offer_price;
+      const badgeOferta = precioData?.offer_badge;
+      document.title = `Ciborg 347 — ${data.titulo}`;
+      const container = document.getElementById('serviceContent');
+      container.innerHTML = `
+        <div class="breadcrumb"><a href="index.html">Inicio</a> / <a href="index.html#servicios">Servicios</a> / <span style="color:var(--cyan)">${data.titulo}</span></div>
+        <h1>${data.titulo}</h1>
+        ${precioOferta ? `<div style="margin:1rem 0"><span style="font-size:2rem;color:var(--cyan);font-weight:700">${precioOferta}</span> <span style="text-decoration:line-through;margin-left:1rem;color:var(--text2)">${precio}</span> ${badgeOferta ? `<span style="background:linear-gradient(135deg,#ff47d1,#ff8c00);padding:4px 12px;border-radius:20px;margin-left:1rem">${badgeOferta}</span>` : ''}</div>` : `<div style="font-size:2rem;color:var(--cyan);font-weight:700;margin:1rem 0">${precio}</div>`}
+        <div class="intro">${data.descripcionLarga}</div>
+        <h2>🎯 ¿Para quién es ideal?</h2><p>${data.ideal}</p>
+        <h2>✨ ¿Qué incluye?</h2><ul>${data.incluye.map(item => `<li>${item}</li>`).join('')}</ul>
+        <div class="action-buttons"><a href="${waUrl(data.waMsg)}" target="_blank" class="btn btn--wa">Consultar por WhatsApp →</a><a href="index.html#servicios" class="btn btn-back">← Volver a servicios</a></div>
+      `;
+      const waFloat = document.getElementById("waFloat");
+      if (waFloat) waFloat.href = waUrl(data.waMsg);
+      const mobileWa = document.getElementById("mobileWhatsAppBtn");
+      if (mobileWa) mobileWa.href = waUrl(data.waMsg);
+      const footer = document.querySelector("footer");
+      function checkWaFloatVisibility() {
+        if (!waFloat || !footer) return;
+        const footerRect = footer.getBoundingClientRect();
+        if (footerRect.top < window.innerHeight - 50) waFloat.classList.add("hidden");
+        else waFloat.classList.remove("hidden");
+      }
+      window.addEventListener("scroll", checkWaFloatVisibility);
+      window.addEventListener("resize", checkWaFloatVisibility);
+      setTimeout(checkWaFloatVisibility, 100);
+      const burgerBtn = document.getElementById("burgerBtn");
+      const mobileMenu = document.getElementById("mobileMenu");
+      if (burgerBtn) burgerBtn.addEventListener("click", () => mobileMenu?.classList.toggle("isOpen"));
+      document.querySelectorAll(".mobileMenu a").forEach(a => a.addEventListener("click", () => mobileMenu?.classList.remove("isOpen")));
+      const observer = new IntersectionObserver(entries => { entries.forEach(e => { if(e.isIntersecting) { e.target.classList.add("visible"); observer.unobserve(e.target); } }); }, { threshold: 0.1 });
+      document.querySelectorAll(".fade-in").forEach(el => observer.observe(el));
+    })();
   })();
 </script>
 </body>
