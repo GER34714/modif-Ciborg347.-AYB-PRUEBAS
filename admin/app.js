@@ -3,7 +3,6 @@ if (window.CIBORG_CONFIG && window.supabase) {
   const SUPABASE_URL = window.CIBORG_CONFIG.SUPABASE_URL;
   const SUPABASE_KEY = window.CIBORG_CONFIG.SUPABASE_KEY;
   
-  // Reemplazar el supabase existente por uno con auth
   window.supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
     auth: {
       persistSession: true,
@@ -14,6 +13,7 @@ if (window.CIBORG_CONFIG && window.supabase) {
   
   console.log("✅ Supabase reinicializado con autenticacion");
 }
+
 /* =========================
    STATE
 ========================= */
@@ -55,64 +55,35 @@ let lastPendingCount = 0;
 let plansData = [];
 let editingPlanId = null;
 
-// ========== NUEVAS VARIABLES PARA MARCAS ==========
+// Variables para marcas
 let brandsData = [];
 let editingBrandId = null;
 let brandsPaginator = null;
 
-// ========== NUEVAS VARIABLES PARA ASISTENTE ==========
+// Variables para asistente
 let assistantQuestionsData = [];
 let editingAssistantQuestionId = null;
 let assistantQuestionsPaginator = null;
 let assistantResponsesData = [];
 let assistantResponsesPaginator = null;
 
-// ========== NUEVAS VARIABLES PARA CASOS DE ÉXITO ==========
+// Variables para casos de éxito
 let successStoriesData = [];
 let editingSuccessStoryId = null;
 let successStoriesPaginator = null;
 
-// ========== NUEVAS VARIABLES PARA SERVICIOS ==========
+// ========== VARIABLES PARA SERVICIOS (CORREGIDAS) ==========
 let servicesData = [];
 let editingServiceId = null;
 let servicesPaginator = null;
 
-// ========== NUEVAS VARIABLES PARA LEADS DEL ASISTENTE ==========
+// Variables para leads del asistente
 let guideLeadsData = [];
 let guideLeadsPaginator = null;
 
-// Elementos DOM (declarados ANTES de usarlos)
+// Elementos DOM
 const navBtns = document.querySelectorAll(".navBtn");
 const viewPanels = document.querySelectorAll(".viewPanel");
-
-// ============================================
-// ELEMENTOS DOM QUE FALTABAN (PARA EVITAR ERRORES)
-// ============================================
-const backgroundImageUrlInput = document.getElementById("backgroundImageUrlInput") || { value: "", checked: false, style: {} };
-const userEmail = document.getElementById("userEmail") || { textContent: "" };
-
-// Elementos del formulario de settings
-const siteTitleInput = document.getElementById("siteTitleInput") || { value: "" };
-const siteTaglineInput = document.getElementById("siteTaglineInput") || { value: "" };
-const heroBadgeInput = document.getElementById("heroBadgeInput") || { value: "" };
-const heroTitleInput = document.getElementById("heroTitleInput") || { value: "" };
-const heroSubtitleInput = document.getElementById("heroSubtitleInput") || { value: "" };
-const heroCtaLabelInput = document.getElementById("heroCtaLabelInput") || { value: "" };
-const heroCtaUrlInput = document.getElementById("heroCtaUrlInput") || { value: "" };
-const logoUrlInput = document.getElementById("logoUrlInput") || { value: "" };
-const heroLogoUrlInput = document.getElementById("heroLogoUrlInput") || { value: "" };
-const footerLogoUrlInput = document.getElementById("footerLogoUrlInput") || { value: "" };
-const faviconUrlInput = document.getElementById("faviconUrlInput") || { value: "" };
-const heroImageUrlInput = document.getElementById("heroImageUrlInput") || { value: "" };
-const heroOverlayUrlInput = document.getElementById("heroOverlayUrlInput") || { value: "" };
-const heroVideoUrlInput = document.getElementById("heroVideoUrlInput") || { value: "" };
-const whatsappNumberInput = document.getElementById("whatsappNumberInput") || { value: "" };
-const emailContactInput = document.getElementById("emailContactInput") || { value: "" };
-const instagramUrlInput = document.getElementById("instagramUrlInput") || { value: "" };
-const facebookUrlInput = document.getElementById("facebookUrlInput") || { value: "" };
-const tiktokUrlInput = document.getElementById("tiktokUrlInput") || { value: "" };
-const useHeroVideoInput = document.getElementById("useHeroVideoInput") || { checked: false };
-const useBackgroundImageInput = document.getElementById("useBackgroundImageInput") || { checked: false };
 
 // Elementos de autenticación
 const authBox = document.getElementById("authBox");
@@ -123,6 +94,18 @@ const emailInput = document.getElementById("emailInput");
 const passInput = document.getElementById("passInput");
 const safeModeBtn = document.getElementById("safeModeBtn");
 const fastModeBtn = document.getElementById("fastModeBtn");
+const authMsg = document.getElementById("authMsg");
+
+// Elementos de estadísticas
+const statProjects = document.getElementById("statProjects");
+const statActive = document.getElementById("statActive");
+const statHighlight = document.getElementById("statHighlight");
+const statHome = document.getElementById("statHome");
+const statPortfolio = document.getElementById("statPortfolio");
+const statCategories = document.getElementById("statCategories");
+
+// Elementos de dashboard
+const dashboardRecentList = document.getElementById("dashboardRecentList");
 
 // Elementos de proyectos
 const projectsList = document.getElementById("projectsList");
@@ -209,17 +192,28 @@ const siteContentMsg = document.getElementById("siteContentMsg");
 const siteSettingsRefreshBtn = document.getElementById("siteSettingsRefreshBtn");
 const siteSettingsSaveBtn = document.getElementById("siteSettingsSaveBtn");
 const siteSettingsMsg = document.getElementById("siteSettingsMsg");
-
-// Elementos de estadísticas
-const statProjects = document.getElementById("statProjects");
-const statActive = document.getElementById("statActive");
-const statHighlight = document.getElementById("statHighlight");
-const statHome = document.getElementById("statHome");
-const statPortfolio = document.getElementById("statPortfolio");
-const statCategories = document.getElementById("statCategories");
-
-// Elementos de dashboard
-const dashboardRecentList = document.getElementById("dashboardRecentList");
+const siteTitleInput = document.getElementById("siteTitleInput") || { value: "" };
+const siteTaglineInput = document.getElementById("siteTaglineInput") || { value: "" };
+const heroBadgeInput = document.getElementById("heroBadgeInput") || { value: "" };
+const heroTitleInput = document.getElementById("heroTitleInput") || { value: "" };
+const heroSubtitleInput = document.getElementById("heroSubtitleInput") || { value: "" };
+const heroCtaLabelInput = document.getElementById("heroCtaLabelInput") || { value: "" };
+const heroCtaUrlInput = document.getElementById("heroCtaUrlInput") || { value: "" };
+const logoUrlInput = document.getElementById("logoUrlInput") || { value: "" };
+const heroLogoUrlInput = document.getElementById("heroLogoUrlInput") || { value: "" };
+const footerLogoUrlInput = document.getElementById("footerLogoUrlInput") || { value: "" };
+const faviconUrlInput = document.getElementById("faviconUrlInput") || { value: "" };
+const whatsappNumberInput = document.getElementById("whatsappNumberInput") || { value: "" };
+const emailContactInput = document.getElementById("emailContactInput") || { value: "" };
+const instagramUrlInput = document.getElementById("instagramUrlInput") || { value: "" };
+const facebookUrlInput = document.getElementById("facebookUrlInput") || { value: "" };
+const tiktokUrlInput = document.getElementById("tiktokUrlInput") || { value: "" };
+const useHeroVideoInput = document.getElementById("useHeroVideoInput") || { checked: false };
+const useBackgroundImageInput = document.getElementById("useBackgroundImageInput") || { checked: false };
+const backgroundImageUrlInput = document.getElementById("backgroundImageUrlInput") || { value: "" };
+const heroImageUrlInput = document.getElementById("heroImageUrlInput") || { value: "" };
+const heroOverlayUrlInput = document.getElementById("heroOverlayUrlInput") || { value: "" };
+const heroVideoUrlInput = document.getElementById("heroVideoUrlInput") || { value: "" };
 
 // Elementos de historial
 const projectHistoryList = document.getElementById("projectHistoryList");
@@ -228,6 +222,7 @@ const historyRefreshBtn = document.getElementById("historyRefreshBtn");
 
 // Elementos de reseñas
 const reviewsRefreshBtn = document.getElementById("reviewsRefreshBtn");
+const userEmail = document.getElementById("userEmail") || { textContent: "" };
 
 /* =========================
    HELPERS
@@ -294,6 +289,38 @@ function setGuideLeadsMsg(msg = "", isError = false) {
   msgEl.classList.add(isError ? "msg--error" : "msg--success");
   setTimeout(() => { if (msgEl.textContent === msg) { msgEl.textContent = ""; msgEl.classList.remove("msg--success", "msg--error"); } }, 4000);
 }
+function setPlansMsg(msg = "", isError = false) {
+  const msgEl = document.getElementById("plansMsg");
+  if (!msgEl) return;
+  msgEl.textContent = msg;
+  msgEl.classList.remove("msg--success", "msg--error");
+  msgEl.classList.add(isError ? "msg--error" : "msg--success");
+  setTimeout(() => { if (msgEl.textContent === msg) { msgEl.textContent = ""; msgEl.classList.remove("msg--success", "msg--error"); } }, 4000);
+}
+function setFeaturedProjectsMsg(msg = "", isError = false) {
+  const msgEl = document.getElementById("featuredProjectsMsg");
+  if (!msgEl) return;
+  msgEl.textContent = msg;
+  msgEl.classList.remove("msg--success", "msg--error");
+  msgEl.classList.add(isError ? "msg--error" : "msg--success");
+  setTimeout(() => { if (msgEl.textContent === msg) { msgEl.textContent = ""; msgEl.classList.remove("msg--success", "msg--error"); } }, 4000);
+}
+function setHistoryMsg(msg = "", isError = false) {
+  const msgEl = document.getElementById("historyMsg");
+  if (!msgEl) return;
+  msgEl.textContent = msg;
+  msgEl.classList.remove("msg--success", "msg--error");
+  msgEl.classList.add(isError ? "msg--error" : "msg--success");
+  setTimeout(() => { if (msgEl.textContent === msg) { msgEl.textContent = ""; msgEl.classList.remove("msg--success", "msg--error"); } }, 4000);
+}
+function setReviewsMsg(msg = "", isError = false) {
+  const msgEl = document.getElementById("reviewsPendingMsg");
+  if (!msgEl) return;
+  msgEl.textContent = msg;
+  msgEl.classList.remove("msg--success", "msg--error");
+  msgEl.classList.add(isError ? "msg--error" : "msg--success");
+  setTimeout(() => { if (msgEl.textContent === msg) { msgEl.textContent = ""; msgEl.classList.remove("msg--success", "msg--error"); } }, 4000);
+}
 
 function escapeHtml(s) {
   return String(s ?? "")
@@ -329,7 +356,6 @@ function switchView(view) {
   navBtns.forEach(btn => btn.classList.toggle("is-active", btn.dataset.view === view));
   viewPanels.forEach(panel => { panel.style.display = panel.dataset.panel === view ? "" : "none"; });
   
-  // Cargar datos específicos según la vista
   if (view === "brands" && typeof loadBrandsAdmin === "function") loadBrandsAdmin();
   if (view === "assistant-questions" && typeof loadAssistantQuestionsAdmin === "function") loadAssistantQuestionsAdmin();
   if (view === "assistant-responses" && typeof loadAssistantResponsesAdmin === "function") loadAssistantResponsesAdmin();
@@ -473,17 +499,6 @@ function buildStorageFilePath(file, folder = "brands") {
   return `${folder}/${stamp}-${random}.${ext || "jpg"}`;
 }
 
-function showLoading(elementId, show = true) {
-  const element = document.getElementById(elementId);
-  if (!element) return;
-  
-  if (show && element.children.length === 0) {
-    element.innerHTML = '<div class="loading-skeleton"><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div></div>';
-  } else if (!show && element.querySelector(".loading-skeleton")) {
-    element.innerHTML = "";
-  }
-}
-
 /* =========================
    PAGINATOR CLASS
 ========================= */
@@ -544,8 +559,8 @@ class Paginator {
     container.style.display = "flex";
     
     let html = `
-      <button class="pagination__first" ${this.currentPage === 1 ? "disabled" : ""} data-tooltip="Primera página">«</button>
-      <button class="pagination__prev" ${this.currentPage === 1 ? "disabled" : ""} data-tooltip="Página anterior">‹</button>
+      <button class="pagination__first" ${this.currentPage === 1 ? "disabled" : ""}>«</button>
+      <button class="pagination__prev" ${this.currentPage === 1 ? "disabled" : ""}>‹</button>
     `;
 
     let startPage = Math.max(1, this.currentPage - 2);
@@ -561,8 +576,8 @@ class Paginator {
     if (endPage < this.totalPages) html += `${endPage < this.totalPages - 1 ? '<span>...</span>' : ''}<button class="pagination__page" data-page="${this.totalPages}">${this.totalPages}</button>`;
     
     html += `
-      <button class="pagination__next" ${this.currentPage === this.totalPages ? "disabled" : ""} data-tooltip="Página siguiente">›</button>
-      <button class="pagination__last" ${this.currentPage === this.totalPages ? "disabled" : ""} data-tooltip="Última página">»</button>
+      <button class="pagination__next" ${this.currentPage === this.totalPages ? "disabled" : ""}>›</button>
+      <button class="pagination__last" ${this.currentPage === this.totalPages ? "disabled" : ""}>»</button>
       <span class="pagination__info">📊 ${this.items.length} items · Pág ${this.currentPage} de ${this.totalPages}</span>
       <select class="per-page-select">
         <option value="5" ${this.itemsPerPage === 5 ? "selected" : ""}>5 por página</option>
@@ -713,7 +728,7 @@ if (fastModeBtn) {
 }
 
 /* =========================
-   LOADERS
+   LOADERS PRINCIPALES
 ========================= */
 async function loadCategories() {
   const { data, error } = await sb.from("categories").select("*").order("order_index", { ascending: true });
@@ -734,8 +749,6 @@ async function loadTags() {
 }
 
 async function loadProjects() {
-  showLoading("projectsList", true);
-  
   const { data, error } = await sb
     .from("projects")
     .select("*")
@@ -745,7 +758,6 @@ async function loadProjects() {
 
   if (error) {
     setProjectsMsg(`No se pudieron cargar proyectos: ${error.message}`);
-    showLoading("projectsList", false);
     return;
   }
   
@@ -754,7 +766,6 @@ async function loadProjects() {
   updateDashboardStats();
   renderDashboardRecent();
   renderProjectsList();
-  showLoading("projectsList", false);
 }
 
 async function loadProjectTags() {
@@ -840,7 +851,7 @@ async function loadAll() {
 }
 
 /* =========================
-   RENDER (con paginación)
+   RENDER PRINCIPAL
 ========================= */
 function updateDashboardStats() {
   if (statProjects) statProjects.textContent = String(projectsData.length);
@@ -877,7 +888,7 @@ function renderDashboardRecent() {
           <div class="listCard__badges">${renderProjectBadges(project)}</div>
         </div>
         <div class="listCard__actions">
-          <button class="btn btn--ghost btn--small" type="button" data-edit-project="${project.id}" data-tooltip="Editar proyecto">✏️ Editar</button>
+          <button class="btn btn--ghost btn--small" type="button" data-edit-project="${project.id}">✏️ Editar</button>
         </div>
       </article>
     `).join("");
@@ -944,7 +955,7 @@ function renderProjectsListPage(projects) {
   }
 
   projectsList.innerHTML = projects.map(project => `
-    <article class="listCard" data-tooltip="📅 Última modificación: ${formatDate(project.updated_at)}">
+    <article class="listCard">
       <div class="listCard__thumb">
         <img src="${escapeHtml(project.image_url || "")}" alt="${escapeHtml(project.title)}" loading="lazy" />
       </div>
@@ -955,10 +966,10 @@ function renderProjectsListPage(projects) {
         <div class="listCard__badges">${renderProjectBadges(project)}</div>
       </div>
       <div class="listCard__actions">
-        <button class="btn btn--ghost btn--small" data-edit-project="${project.id}" data-tooltip="Editar proyecto">✏️</button>
-        <button class="btn btn--ghost btn--small" data-duplicate-project="${project.id}" data-tooltip="Duplicar proyecto">📋</button>
-        <button class="btn btn--ghost btn--small" data-toggle-project="${project.id}" data-tooltip="${project.active ? 'Desactivar' : 'Activar'}">${project.active ? "🔴" : "🟢"}</button>
-        <button class="btn btn--danger btn--small" data-delete-project="${project.id}" data-tooltip="Archivar proyecto">🗑️</button>
+        <button class="btn btn--ghost btn--small" data-edit-project="${project.id}">✏️</button>
+        <button class="btn btn--ghost btn--small" data-duplicate-project="${project.id}">📋</button>
+        <button class="btn btn--ghost btn--small" data-toggle-project="${project.id}">${project.active ? "🔴" : "🟢"}</button>
+        <button class="btn btn--danger btn--small" data-delete-project="${project.id}">🗑️</button>
       </div>
     </article>
   `).join("");
@@ -1068,8 +1079,8 @@ function renderCategoriesList() {
           <div class="listCard__meta">${cat.active ? "🟢 Activa" : "🔴 Inactiva"} · 🔢 Orden: ${cat.order_index ?? 0}</div>
         </div>
         <div class="listCard__actions">
-          <button class="btn btn--ghost btn--small" type="button" data-edit-category="${cat.id}" data-tooltip="Editar categoría">✏️</button>
-          <button class="btn btn--ghost btn--small" type="button" data-toggle-category="${cat.id}" data-tooltip="${cat.active ? 'Desactivar' : 'Activar'}">${cat.active ? "🔴" : "🟢"}</button>
+          <button class="btn btn--ghost btn--small" type="button" data-edit-category="${cat.id}">✏️</button>
+          <button class="btn btn--ghost btn--small" type="button" data-toggle-category="${cat.id}">${cat.active ? "🔴" : "🟢"}</button>
         </div>
       </article>
     `).join("");
@@ -1133,8 +1144,8 @@ function renderFaqsList() {
           <div class="listCard__meta">${faq.active ? "🟢 Activa" : "🔴 Inactiva"} · 🔢 Orden: ${faq.order_index ?? 0}</div>
         </div>
         <div class="listCard__actions">
-          <button class="btn btn--ghost btn--small" type="button" data-edit-faq="${faq.id}" data-tooltip="Editar FAQ">✏️</button>
-          <button class="btn btn--ghost btn--small" type="button" data-toggle-faq="${faq.id}" data-tooltip="${faq.active ? 'Desactivar' : 'Activar'}">${faq.active ? "🔴" : "🟢"}</button>
+          <button class="btn btn--ghost btn--small" type="button" data-edit-faq="${faq.id}">✏️</button>
+          <button class="btn btn--ghost btn--small" type="button" data-toggle-faq="${faq.id}">${faq.active ? "🔴" : "🟢"}</button>
         </div>
       </article>
     `).join("");
@@ -1209,10 +1220,6 @@ function fillSiteSettingsForm() {
   if (heroLogoUrlInput) heroLogoUrlInput.value = s.hero_logo_url || "";
   if (footerLogoUrlInput) footerLogoUrlInput.value = s.footer_logo_url || "";
   if (faviconUrlInput) faviconUrlInput.value = s.favicon_url || "";
-  if (backgroundImageUrlInput) backgroundImageUrlInput.value = s.background_image_url || "";
-  if (heroImageUrlInput) heroImageUrlInput.value = s.hero_image_url || "";
-  if (heroOverlayUrlInput) heroOverlayUrlInput.value = s.hero_overlay_url || "";
-  if (heroVideoUrlInput) heroVideoUrlInput.value = s.hero_video_url || "";
   if (whatsappNumberInput) whatsappNumberInput.value = s.whatsapp_number || "";
   if (emailContactInput) emailContactInput.value = s.email_contact || "";
   if (instagramUrlInput) instagramUrlInput.value = s.instagram_url || "";
@@ -1264,7 +1271,7 @@ function renderProjectHistoryPage(items) {
             <div class="listCard__meta">👤 Por: ${escapeHtml(item.changed_by || "admin")}</div>
           </div>
           <div class="listCard__actions">
-            <button class="btn btn--ghost btn--small" data-restore-project-history="${item.id}" data-tooltip="Restaurar esta versión">↩️ Restaurar</button>
+            <button class="btn btn--ghost btn--small" data-restore-project-history="${item.id}">↩️ Restaurar</button>
           </div>
         </article>
       `;
@@ -1318,7 +1325,7 @@ function renderSettingsHistoryPage(items) {
           <div class="listCard__meta">👤 Por: ${escapeHtml(item.changed_by || "admin")}</div>
         </div>
         <div class="listCard__actions">
-          <button class="btn btn--ghost btn--small" data-restore-settings-history="${item.id}" data-tooltip="Restaurar esta configuración">↩️ Restaurar</button>
+          <button class="btn btn--ghost btn--small" data-restore-settings-history="${item.id}">↩️ Restaurar</button>
         </div>
       </article>
     `).join("");
@@ -1333,8 +1340,49 @@ function renderSettingsHistoryPage(items) {
 }
 
 /* =========================
-   HISTORIAL
+   FUNCIONES DE PROYECTOS (CRUD)
 ========================= */
+async function uploadImageToStorage() {
+  if (!projectImageFileInput || !projectUploadBtn || !projectUploadMsg) return;
+  setProjectUploadMsg("");
+
+  const file = projectImageFileInput.files?.[0];
+  if (!file) return setProjectUploadMsg("Seleccioná una imagen primero.", "error");
+  if (!file.type.startsWith("image/")) return setProjectUploadMsg("El archivo debe ser una imagen.", "error");
+  if (file.size > 8 * 1024 * 1024) return setProjectUploadMsg("La imagen supera 8MB.", "error");
+
+  projectUploadBtn.disabled = true;
+  setProjectUploadMsg("📤 Subiendo imagen...", "success");
+
+  try {
+    const filePath = buildStorageFilePath(file, "projects");
+
+    const { error: uploadError } = await sb
+      .storage
+      .from("project-images")
+      .upload(filePath, file, {
+        cacheControl: "3600",
+        upsert: false,
+        contentType: file.type,
+      });
+
+    if (uploadError) throw new Error(uploadError.message || "No se pudo subir la imagen.");
+
+    const { data: publicData } = sb.storage.from("project-images").getPublicUrl(filePath);
+    const publicUrl = publicData?.publicUrl || "";
+
+    if (!publicUrl) throw new Error("No se pudo obtener la URL pública.");
+
+    if (projectImageUrlInput) projectImageUrlInput.value = publicUrl;
+    if (projectPreviewImg) projectPreviewImg.src = publicUrl;
+    setProjectUploadMsg("✅ Imagen subida y URL completada.", "success");
+  } catch (error) {
+    setProjectUploadMsg(error instanceof Error ? error.message : "No se pudo subir la imagen.", "error");
+  } finally {
+    projectUploadBtn.disabled = false;
+  }
+}
+
 async function snapshotProject(project, actionType) {
   if (!project?.id) return;
   await sb.from("project_history").insert([{
@@ -1402,9 +1450,6 @@ async function restoreSettingsFromHistory(item) {
   await loadHistory();
 }
 
-/* =========================
-   TAGS
-========================= */
 async function upsertTagsAndBindings(projectId, names) {
   const cleaned = parseTagInput(names.join(", "));
   if (!projectId) return;
@@ -1440,57 +1485,83 @@ async function upsertTagsAndBindings(projectId, names) {
   }
 }
 
-/* =========================
-   UPLOAD STORAGE
-========================= */
-async function uploadImageToStorage() {
-  if (!projectImageFileInput || !projectUploadBtn || !projectUploadMsg) return;
-  setProjectUploadMsg("");
+async function duplicateProject(project) {
+  const ok = await confirmAction({ message: `📋 ¿Duplicar "${project.title}"?`, type: "generic" });
+  if (!ok) return;
 
-  const file = projectImageFileInput.files?.[0];
-  if (!file) return setProjectUploadMsg("Seleccioná una imagen primero.", "error");
-  if (!file.type.startsWith("image/")) return setProjectUploadMsg("El archivo debe ser una imagen.", "error");
-  if (file.size > 8 * 1024 * 1024) return setProjectUploadMsg("La imagen supera 8MB.", "error");
+  const clonePayload = {
+    image_url: project.image_url,
+    title: `${project.title} (copia)`,
+    demo_url: project.demo_url,
+    category_id: project.category_id,
+    solution_type: project.solution_type,
+    short_description: project.short_description,
+    full_description: project.full_description,
+    preview_type: project.preview_type,
+    order_index: project.order_index,
+    active: false,
+    highlight: false,
+    featured_home: false,
+    featured_portfolio: false,
+    status: "draft",
+    duplicated_from: project.id,
+    updated_at: new Date().toISOString(),
+  };
 
-  projectUploadBtn.disabled = true;
-  setProjectUploadMsg("📤 Subiendo imagen...", "success");
+  const { data, error } = await sb.from("projects").insert([clonePayload]).select("*").single();
+  if (error) return setProjectsMsg(`No se pudo duplicar: ${error.message}`);
 
-  try {
-    const filePath = buildStorageFilePath(file, "projects");
+  const tags = getProjectTags(project.id);
+  await upsertTagsAndBindings(data.id, tags.map(t => t.name));
+  await snapshotProject(data, "duplicate");
 
-    const { error: uploadError } = await sb
-      .storage
-      .from("project-images")
-      .upload(filePath, file, {
-        cacheControl: "3600",
-        upsert: false,
-        contentType: file.type,
-      });
-
-    if (uploadError) {
-      throw new Error(uploadError.message || "No se pudo subir la imagen.");
-    }
-
-    const { data: publicData } = sb.storage.from("project-images").getPublicUrl(filePath);
-    const publicUrl = publicData?.publicUrl || "";
-
-    if (!publicUrl) {
-      throw new Error("No se pudo obtener la URL pública.");
-    }
-
-    if (projectImageUrlInput) projectImageUrlInput.value = publicUrl;
-    if (projectPreviewImg) projectPreviewImg.src = publicUrl;
-    setProjectUploadMsg("✅ Imagen subida y URL completada.", "success");
-  } catch (error) {
-    setProjectUploadMsg(error instanceof Error ? error.message : "No se pudo subir la imagen.", "error");
-  } finally {
-    projectUploadBtn.disabled = false;
-  }
+  setProjectsMsg("✅ Proyecto duplicado.");
+  await loadTags();
+  await loadProjects();
+  await loadHistory();
 }
 
-/* =========================
-   PROJECTS CRUD
-========================= */
+async function toggleProjectActive(project) {
+  const ok = await confirmAction({ message: `¿Actualizar estado activo de "${project.title}"?`, type: "generic" });
+  if (!ok) return;
+
+  await snapshotProject(project, "status_change");
+  const { error } = await sb.from("projects").update({
+    active: !project.active,
+    updated_at: new Date().toISOString(),
+  }).eq("id", project.id);
+
+  if (error) return setProjectsMsg(`No se pudo actualizar el proyecto: ${error.message}`);
+  setProjectsMsg("✅ Proyecto actualizado.");
+  await loadProjects();
+  await loadHistory();
+}
+
+async function deleteProject(project) {
+  const ok = await confirmAction({
+    message: `📦 ¿Archivar "${project.title}"? No se borra físico, se oculta y queda restaurable.`,
+    type: "delete",
+    double: true,
+  });
+  if (!ok) return;
+
+  await snapshotProject(project, "delete");
+
+  const { error } = await sb.from("projects").update({
+    status: "archived",
+    active: false,
+    deleted_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  }).eq("id", project.id);
+
+  if (error) return setProjectsMsg(`No se pudo archivar el proyecto: ${error.message}`);
+  setProjectsMsg("📦 Proyecto archivado.");
+  await loadProjects();
+  await loadHistory();
+  resetProjectForm();
+  switchView("projects");
+}
+
 if (projectImageUrlInput) {
   projectImageUrlInput.addEventListener("input", () => {
     const value = safeUrl(projectImageUrlInput.value);
@@ -1645,85 +1716,8 @@ if (projectDeleteBtn) {
   });
 }
 
-async function toggleProjectActive(project) {
-  const ok = await confirmAction({ message: `¿Actualizar estado activo de "${project.title}"?`, type: "generic" });
-  if (!ok) return;
-
-  await snapshotProject(project, "status_change");
-  const { error } = await sb.from("projects").update({
-    active: !project.active,
-    updated_at: new Date().toISOString(),
-  }).eq("id", project.id);
-
-  if (error) return setProjectsMsg(`No se pudo actualizar el proyecto: ${error.message}`);
-  setProjectsMsg("✅ Proyecto actualizado.");
-  await loadProjects();
-  await loadHistory();
-}
-
-async function deleteProject(project) {
-  const ok = await confirmAction({
-    message: `📦 ¿Archivar "${project.title}"? No se borra físico, se oculta y queda restaurable.`,
-    type: "delete",
-    double: true,
-  });
-  if (!ok) return;
-
-  await snapshotProject(project, "delete");
-
-  const { error } = await sb.from("projects").update({
-    status: "archived",
-    active: false,
-    deleted_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  }).eq("id", project.id);
-
-  if (error) return setProjectsMsg(`No se pudo archivar el proyecto: ${error.message}`);
-  setProjectsMsg("📦 Proyecto archivado.");
-  await loadProjects();
-  await loadHistory();
-  resetProjectForm();
-  switchView("projects");
-}
-
-async function duplicateProject(project) {
-  const ok = await confirmAction({ message: `📋 ¿Duplicar "${project.title}"?`, type: "generic" });
-  if (!ok) return;
-
-  const clonePayload = {
-    image_url: project.image_url,
-    title: `${project.title} (copia)`,
-    demo_url: project.demo_url,
-    category_id: project.category_id,
-    solution_type: project.solution_type,
-    short_description: project.short_description,
-    full_description: project.full_description,
-    preview_type: project.preview_type,
-    order_index: project.order_index,
-    active: false,
-    highlight: false,
-    featured_home: false,
-    featured_portfolio: false,
-    status: "draft",
-    duplicated_from: project.id,
-    updated_at: new Date().toISOString(),
-  };
-
-  const { data, error } = await sb.from("projects").insert([clonePayload]).select("*").single();
-  if (error) return setProjectsMsg(`No se pudo duplicar: ${error.message}`);
-
-  const tags = getProjectTags(project.id);
-  await upsertTagsAndBindings(data.id, tags.map(t => t.name));
-  await snapshotProject(data, "duplicate");
-
-  setProjectsMsg("✅ Proyecto duplicado.");
-  await loadTags();
-  await loadProjects();
-  await loadHistory();
-}
-
 /* =========================
-   FILTERS
+   EVENT LISTENERS PROYECTOS
 ========================= */
 if (projectsRefreshBtn) projectsRefreshBtn.addEventListener("click", loadProjects);
 if (dashboardRefreshBtn) dashboardRefreshBtn.addEventListener("click", loadAll);
@@ -1735,7 +1729,7 @@ if (projectStatusFilter) projectStatusFilter.addEventListener("change", renderPr
 if (projectTagFilter) projectTagFilter.addEventListener("change", renderProjectsList);
 
 /* =========================
-   CATEGORIES CRUD
+   CATEGORÍAS CRUD
 ========================= */
 if (categoryNameInput) {
   categoryNameInput.addEventListener("input", () => {
@@ -1978,7 +1972,7 @@ navBtns.forEach(btn => {
 });
 
 /* =========================
-   REVIEWS (RESEÑAS) - MEJORADO
+   REVIEWS (RESEÑAS) - FUNCIONES COMPLETAS
 ========================= */
 
 async function loadPendingReviews() {
@@ -1994,19 +1988,14 @@ async function loadPendingReviews() {
       .eq("status", "pending")
       .order("created_at", { ascending: false });
 
-    if (error) {
-      console.error("Error loading reviews:", error);
-      setReviewsMsg(`❌ Error: ${error.message}`, true);
-      container.innerHTML = `<div class="emptyState">⚠️ Error al cargar reseñas. ¿La tabla 'reviews' existe?</div>`;
-      return;
-    }
+    if (error) throw error;
     
     reviewsData = data || [];
     updatePendingStats();
     renderPendingReviews();
   } catch (err) {
-    console.error("Exception loading reviews:", err);
-    container.innerHTML = `<div class="emptyState">⚠️ Error: ${err.message}</div>`;
+    console.error("Error loading reviews:", err);
+    container.innerHTML = `<div class="emptyState">⚠️ Error al cargar reseñas. ¿La tabla 'reviews' existe?</div>`;
   }
 }
 
@@ -2027,22 +2016,6 @@ function updatePendingStats() {
   }
 }
 
-function setReviewsMsg(msg, isError = false) {
-  const msgEl = document.getElementById("reviewsPendingMsg");
-  if (!msgEl) return;
-  
-  msgEl.textContent = msg;
-  msgEl.classList.remove("msg--success", "msg--error");
-  msgEl.classList.add(isError ? "msg--error" : "msg--success");
-  
-  setTimeout(() => {
-    if (msgEl.textContent === msg) {
-      msgEl.textContent = "";
-      msgEl.classList.remove("msg--success", "msg--error");
-    }
-  }, 4000);
-}
-
 function renderPendingReviews() {
   const container = document.getElementById("reviewsPendingList");
   if (!container) return;
@@ -2055,40 +2028,21 @@ function renderPendingReviews() {
   container.innerHTML = `
     <table class="reviews-table">
       <thead>
-        <tr>
-          <th>Usuario</th>
-          <th>Calificación</th>
-          <th>Reseña</th>
-          <th>Proyecto</th>
-          <th>Fecha</th>
-          <th>Acciones</th>
-        </tr>
+        <tr><th>Usuario</th><th>Calificación</th><th>Reseña</th><th>Proyecto</th><th>Fecha</th><th>Acciones</th></tr>
       </thead>
       <tbody>
         ${reviewsData.map(review => `
           <tr>
-            <td data-label="Usuario">
-              <strong>${escapeHtml(review.user_name || "Anónimo")}</strong>
-              ${review.user_email ? `<br/><small>${escapeHtml(review.user_email)}</small>` : ""}
-              </td>
-            <td data-label="Calificación">
-              ${"⭐".repeat(review.rating)} (${review.rating}/5)
-              </td>
-            <td data-label="Reseña">
-              ${review.title ? `<strong>${escapeHtml(review.title)}</strong><br/>` : ""}
-              ${escapeHtml((review.comment || "").substring(0, 200))}${(review.comment || "").length > 200 ? "..." : ""}
-              </td>
-            <td data-label="Proyecto">
-              ${review.project_id ? escapeHtml(review.project_title || `Proyecto ${review.project_id}`) : "Opinión general"}
-              </td>
-            <td data-label="Fecha">
-              <small>${formatDate(review.created_at)}</small>
-              </td>
+            <td data-label="Usuario"><strong>${escapeHtml(review.user_name || "Anónimo")}</strong>${review.user_email ? `<br/><small>${escapeHtml(review.user_email)}</small>` : ""}</td>
+            <td data-label="Calificación">${"⭐".repeat(review.rating)} (${review.rating}/5)</td>
+            <td data-label="Reseña">${review.title ? `<strong>${escapeHtml(review.title)}</strong><br/>` : ""}${escapeHtml((review.comment || "").substring(0, 200))}${(review.comment || "").length > 200 ? "..." : ""}</td>
+            <td data-label="Proyecto">${review.project_id ? escapeHtml(review.project_title || `Proyecto ${review.project_id}`) : "Opinión general"}</td>
+            <td data-label="Fecha"><small>${formatDate(review.created_at)}</small></td>
             <td data-label="Acciones" class="action-btns">
               <button class="btn btn--small btn--ghost" data-edit-review="${review.id}" style="border-color:var(--cyan);">✏️ Editar</button>
               <button class="btn btn--success btn--small" data-approve-review="${review.id}">✅ Aprobar</button>
               <button class="btn btn--danger btn--small" data-reject-review="${review.id}">❌ Rechazar</button>
-             </td>
+            </td>
           </tr>
         `).join("")}
       </tbody>
@@ -2144,13 +2098,13 @@ async function approveReview(reviewId) {
   
   setReviewsMsg("✅ Reseña aprobada y publicada correctamente.");
   await loadPendingReviews();
-  if (typeof loadApprovedReviews === "function") await loadApprovedReviews();
+  await loadApprovedReviews();
   checkNewReviewsNotification();
 }
 
 async function rejectReview(reviewId) {
   const ok = await confirmAction({
-    message: "❌ ¿Rechazar esta reseña? Se eliminará permanentemente y no se podrá recuperar.",
+    message: "❌ ¿Rechazar esta reseña? Se eliminará permanentemente.",
     type: "delete",
     double: true,
   });
@@ -2170,105 +2124,87 @@ async function rejectReview(reviewId) {
   
   setReviewsMsg("❌ Reseña rechazada y eliminada.");
   await loadPendingReviews();
-  if (typeof loadApprovedReviews === "function") await loadApprovedReviews();
+  await loadApprovedReviews();
   checkNewReviewsNotification();
 }
 
-// NOTIFICACIONES VISUALES
-async function checkNewReviewsNotification() {
-  if (!sb || !currentUserEmail) return;
+function openEditModal(review) {
+  currentEditReviewId = review.id;
   
-  try {
-    const { data, error } = await sb
-      .from("reviews")
-      .select("id", { count: "exact", head: true })
-      .eq("status", "pending");
-    
-    if (error) throw error;
-    
-    const currentCount = data?.length || 0;
-    
-    const pendingBadge = document.getElementById("pendingBadge");
-    if (pendingBadge) {
-      if (currentCount > 0) {
-        pendingBadge.textContent = currentCount;
-        pendingBadge.style.display = "inline-block";
-      } else {
-        pendingBadge.style.display = "none";
-      }
-    }
-    
-    if (currentCount > lastPendingCount && lastPendingCount > 0) {
-      mostrarNotificacion(`✨ Tienes ${currentCount - lastPendingCount} reseña(s) nueva(s) para moderar`);
-    }
-    
-    lastPendingCount = currentCount;
-    
-  } catch (err) {
-    console.error("Error checking reviews:", err);
-  }
-}
-
-function mostrarNotificacion(mensaje) {
-  const toast = document.createElement("div");
-  toast.style.cssText = `
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background: linear-gradient(135deg, #00d4ff, #8b5cf6);
-    color: white;
-    padding: 12px 24px;
-    border-radius: 12px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 14px;
-    font-weight: bold;
-    z-index: 9999;
-    animation: slideIn 0.3s ease;
-    cursor: pointer;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-  `;
-  toast.textContent = `🔔 ${mensaje}`;
+  const editName = document.getElementById("editReviewName");
+  const editComment = document.getElementById("editReviewComment");
+  const editId = document.getElementById("editReviewId");
   
-  if (!document.querySelector("#notificationStyle")) {
-    const style = document.createElement("style");
-    style.id = "notificationStyle";
-    style.textContent = `
-      @keyframes slideIn {
-        from { transform: translateX(100%); opacity: 0; }
-        to { transform: translateX(0); opacity: 1; }
-      }
-      @keyframes slideOut {
-        from { transform: translateX(0); opacity: 1; }
-        to { transform: translateX(100%); opacity: 0; }
-      }
-    `;
-    document.head.appendChild(style);
-  }
+  if (editName) editName.value = review.user_name || "";
+  if (editComment) editComment.value = review.comment || "";
+  if (editId) editId.value = review.id;
   
-  document.body.appendChild(toast);
-  
-  toast.addEventListener("click", () => {
-    if (typeof switchView === "function") {
-      switchView("reviews-pending");
-    }
-    cerrarNotificacion(toast);
+  const stars = document.querySelectorAll("#editRatingStars span");
+  stars.forEach((star, idx) => {
+    star.style.color = idx < review.rating ? "#f5b042" : "#4a4a6a";
+    star.textContent = idx < review.rating ? "★" : "☆";
   });
   
-  setTimeout(() => cerrarNotificacion(toast), 8000);
+  window.currentEditRating = review.rating;
+  
+  stars.forEach(star => {
+    star.onclick = () => {
+      const rating = parseInt(star.dataset.rating);
+      window.currentEditRating = rating;
+      stars.forEach((s, i) => {
+        s.style.color = i < rating ? "#f5b042" : "#4a4a6a";
+        s.textContent = i < rating ? "★" : "☆";
+      });
+    };
+  });
+  
+  const modal = document.getElementById("editReviewModal");
+  if (modal) modal.style.display = "flex";
 }
 
-function cerrarNotificacion(toast) {
-  toast.style.animation = "slideOut 0.3s ease";
-  setTimeout(() => toast.remove(), 300);
+async function saveEditedReviewAndApprove() {
+  const reviewId = document.getElementById("editReviewId")?.value;
+  const newComment = document.getElementById("editReviewComment")?.value.trim();
+  const newRating = window.currentEditRating || 5;
+  
+  if (!newComment) {
+    setReviewsMsg("❌ El comentario no puede estar vacío", true);
+    return;
+  }
+  
+  const ok = await confirmAction({
+    message: "✅ ¿Aprobar esta reseña con los cambios realizados?",
+    type: "generic",
+  });
+  if (!ok) return;
+  
+  setReviewsMsg("⏳ Guardando cambios y aprobando...");
+  
+  const { error } = await sb
+    .from("reviews")
+    .update({
+      comment: newComment,
+      rating: newRating,
+      status: "approved",
+      approved_at: new Date().toISOString(),
+      approved_by: currentUserEmail,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", reviewId);
+  
+  if (error) {
+    setReviewsMsg(`❌ Error: ${error.message}`, true);
+    return;
+  }
+  
+  setReviewsMsg("✅ Reseña editada y aprobada correctamente.");
+  const modal = document.getElementById("editReviewModal");
+  if (modal) modal.style.display = "none";
+  
+  await loadPendingReviews();
+  await loadApprovedReviews();
 }
 
-function iniciarNotificaciones() {
-  if (notificationCheckInterval) clearInterval(notificationCheckInterval);
-  checkNewReviewsNotification();
-  notificationCheckInterval = setInterval(checkNewReviewsNotification, 15000);
-}
-
-// PANEL DE RESEÑAS APROBADAS
 async function loadApprovedReviews() {
   const container = document.getElementById("reviewsApprovedList");
   if (!container) return;
@@ -2351,14 +2287,7 @@ function renderApprovedReviewsPage(reviews) {
   
   container.innerHTML = `
     <table class="reviews-table">
-      <thead>
-        <tr>
-          <th>Usuario</th>
-          <th>Calificación</th>
-          <th>Reseña</th>
-          <th>Fecha</th>
-        </tr>
-      </thead>
+      <thead><tr><th>Usuario</th><th>Calificación</th><th>Reseña</th><th>Fecha</th></tr></thead>
       <tbody>
         ${reviews.map(review => `
           <tr>
@@ -2371,84 +2300,6 @@ function renderApprovedReviewsPage(reviews) {
       </tbody>
     </table>
   `;
-}
-
-// EDICIÓN DE RESEÑA
-function openEditModal(review) {
-  currentEditReviewId = review.id;
-  
-  const editName = document.getElementById("editReviewName");
-  const editComment = document.getElementById("editReviewComment");
-  const editId = document.getElementById("editReviewId");
-  
-  if (editName) editName.value = review.user_name || "";
-  if (editComment) editComment.value = review.comment || "";
-  if (editId) editId.value = review.id;
-  
-  const stars = document.querySelectorAll("#editRatingStars span");
-  stars.forEach((star, idx) => {
-    star.style.color = idx < review.rating ? "#f5b042" : "#4a4a6a";
-    star.textContent = idx < review.rating ? "★" : "☆";
-  });
-  
-  window.currentEditRating = review.rating;
-  
-  stars.forEach(star => {
-    star.onclick = () => {
-      const rating = parseInt(star.dataset.rating);
-      window.currentEditRating = rating;
-      stars.forEach((s, i) => {
-        s.style.color = i < rating ? "#f5b042" : "#4a4a6a";
-        s.textContent = i < rating ? "★" : "☆";
-      });
-    };
-  });
-  
-  const modal = document.getElementById("editReviewModal");
-  if (modal) modal.style.display = "flex";
-}
-
-async function saveEditedReviewAndApprove() {
-  const reviewId = document.getElementById("editReviewId")?.value;
-  const newComment = document.getElementById("editReviewComment")?.value.trim();
-  const newRating = window.currentEditRating || 5;
-  
-  if (!newComment) {
-    setReviewsMsg("❌ El comentario no puede estar vacío", true);
-    return;
-  }
-  
-  const ok = await confirmAction({
-    message: "✅ ¿Aprobar esta reseña con los cambios realizados?",
-    type: "generic",
-  });
-  if (!ok) return;
-  
-  setReviewsMsg("⏳ Guardando cambios y aprobando...");
-  
-  const { error } = await sb
-    .from("reviews")
-    .update({
-      comment: newComment,
-      rating: newRating,
-      status: "approved",
-      approved_at: new Date().toISOString(),
-      approved_by: currentUserEmail,
-      updated_at: new Date().toISOString(),
-    })
-    .eq("id", reviewId);
-  
-  if (error) {
-    setReviewsMsg(`❌ Error: ${error.message}`, true);
-    return;
-  }
-  
-  setReviewsMsg("✅ Reseña editada y aprobada correctamente.");
-  const modal = document.getElementById("editReviewModal");
-  if (modal) modal.style.display = "none";
-  
-  await loadPendingReviews();
-  await loadApprovedReviews();
 }
 
 function exportReviewsToCSV() {
@@ -2482,10 +2333,100 @@ function exportReviewsToCSV() {
   setReviewsMsg("✅ CSV exportado correctamente.");
 }
 
+async function checkNewReviewsNotification() {
+  if (!sb || !currentUserEmail) return;
+  
+  try {
+    const { count, error } = await sb
+      .from("reviews")
+      .select("*", { count: "exact", head: true })
+      .eq("status", "pending");
+    
+    if (error) throw error;
+    
+    const currentCount = count || 0;
+    
+    const pendingBadge = document.getElementById("pendingBadge");
+    if (pendingBadge) {
+      if (currentCount > 0) {
+        pendingBadge.textContent = currentCount;
+        pendingBadge.style.display = "inline-block";
+      } else {
+        pendingBadge.style.display = "none";
+      }
+    }
+    
+    if (currentCount > lastPendingCount && lastPendingCount > 0) {
+      mostrarNotificacion(`✨ Tienes ${currentCount - lastPendingCount} reseña(s) nueva(s) para moderar`);
+    }
+    
+    lastPendingCount = currentCount;
+    
+  } catch (err) {
+    console.error("Error checking reviews:", err);
+  }
+}
+
+function mostrarNotificacion(mensaje) {
+  const toast = document.createElement("div");
+  toast.style.cssText = `
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: linear-gradient(135deg, #00d4ff, #8b5cf6);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    font-weight: bold;
+    z-index: 9999;
+    animation: slideIn 0.3s ease;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  `;
+  toast.textContent = `🔔 ${mensaje}`;
+  
+  if (!document.querySelector("#notificationStyle")) {
+    const style = document.createElement("style");
+    style.id = "notificationStyle";
+    style.textContent = `
+      @keyframes slideIn {
+        from { transform: translateX(100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+      }
+      @keyframes slideOut {
+        from { transform: translateX(0); opacity: 1; }
+        to { transform: translateX(100%); opacity: 0; }
+      }
+    `;
+    document.head.appendChild(style);
+  }
+  
+  document.body.appendChild(toast);
+  
+  toast.addEventListener("click", () => {
+    switchView("reviews-pending");
+    cerrarNotificacion(toast);
+  });
+  
+  setTimeout(() => cerrarNotificacion(toast), 8000);
+}
+
+function cerrarNotificacion(toast) {
+  toast.style.animation = "slideOut 0.3s ease";
+  setTimeout(() => toast.remove(), 300);
+}
+
+function iniciarNotificaciones() {
+  if (notificationCheckInterval) clearInterval(notificationCheckInterval);
+  checkNewReviewsNotification();
+  notificationCheckInterval = setInterval(checkNewReviewsNotification, 15000);
+}
+
 /* =========================
    ADMINISTRACIÓN DE PLANES
 ========================= */
-
 async function loadPlansAdmin() {
   const container = document.getElementById("plansList");
   if (!container) return;
@@ -2556,9 +2497,9 @@ function renderPlansListPage(plans) {
         </div>
       </div>
       <div class="listCard__actions">
-        <button class="btn btn--ghost btn--small" data-edit-plan="${plan.id}" data-tooltip="Editar plan">✏️</button>
-        <button class="btn btn--ghost btn--small" data-duplicate-plan="${plan.id}" data-tooltip="Duplicar plan">📋</button>
-        <button class="btn btn--danger btn--small" data-delete-plan="${plan.id}" data-tooltip="Eliminar plan">🗑️</button>
+        <button class="btn btn--ghost btn--small" data-edit-plan="${plan.id}">✏️</button>
+        <button class="btn btn--ghost btn--small" data-duplicate-plan="${plan.id}">📋</button>
+        <button class="btn btn--danger btn--small" data-delete-plan="${plan.id}">🗑️</button>
       </div>
     </article>
   `).join("");
@@ -2579,19 +2520,19 @@ function openPlanModal(id = null) {
   const modal = document.getElementById("planModal");
   const title = document.getElementById("planModalTitle");
   
+  const planId = document.getElementById("planId");
+  const planName = document.getElementById("planName");
+  const planSlug = document.getElementById("planSlug");
+  const planDescription = document.getElementById("planDescription");
+  const planPrice = document.getElementById("planPrice");
+  const planIcon = document.getElementById("planIcon");
+  const planFeaturesInput = document.getElementById("planFeaturesInput");
+  const planCtaText = document.getElementById("planCtaText");
+  const planOrder = document.getElementById("planOrder");
+  const planActive = document.getElementById("planActive");
+  
   if (!id) {
     if (title) title.textContent = "📝 Nuevo Plan";
-    const planId = document.getElementById("planId");
-    const planName = document.getElementById("planName");
-    const planSlug = document.getElementById("planSlug");
-    const planDescription = document.getElementById("planDescription");
-    const planPrice = document.getElementById("planPrice");
-    const planIcon = document.getElementById("planIcon");
-    const planFeaturesInput = document.getElementById("planFeaturesInput");
-    const planCtaText = document.getElementById("planCtaText");
-    const planOrder = document.getElementById("planOrder");
-    const planActive = document.getElementById("planActive");
-    
     if (planId) planId.value = "";
     if (planName) planName.value = "";
     if (planSlug) planSlug.value = "";
@@ -2606,17 +2547,6 @@ function openPlanModal(id = null) {
     const plan = plansData.find(p => String(p.id) === String(id));
     if (!plan) return;
     if (title) title.textContent = `✏️ Editar: ${plan.name}`;
-    const planId = document.getElementById("planId");
-    const planName = document.getElementById("planName");
-    const planSlug = document.getElementById("planSlug");
-    const planDescription = document.getElementById("planDescription");
-    const planPrice = document.getElementById("planPrice");
-    const planIcon = document.getElementById("planIcon");
-    const planFeaturesInput = document.getElementById("planFeaturesInput");
-    const planCtaText = document.getElementById("planCtaText");
-    const planOrder = document.getElementById("planOrder");
-    const planActive = document.getElementById("planActive");
-    
     if (planId) planId.value = plan.id;
     if (planName) planName.value = plan.name || "";
     if (planSlug) planSlug.value = plan.slug || "";
@@ -2725,7 +2655,7 @@ async function deletePlan(id) {
   if (!plan) return;
   
   const ok = await confirmAction({
-    message: `⚠️ ¿Eliminar permanentemente el plan "${plan.name}"? Esta acción no se puede deshacer.`,
+    message: `⚠️ ¿Eliminar permanentemente el plan "${plan.name}"?`,
     type: "delete",
     double: true,
   });
@@ -2743,24 +2673,9 @@ async function deletePlan(id) {
   }
 }
 
-function setPlansMsg(msg, isError = false) {
-  const msgEl = document.getElementById("plansMsg");
-  if (!msgEl) return;
-  msgEl.textContent = msg;
-  msgEl.classList.remove("msg--success", "msg--error");
-  msgEl.classList.add(isError ? "msg--error" : "msg--success");
-  setTimeout(() => {
-    if (msgEl.textContent === msg) {
-      msgEl.textContent = "";
-      msgEl.classList.remove("msg--success", "msg--error");
-    }
-  }, 4000);
-}
-
 /* =========================
    ADMINISTRACIÓN DE MARCAS
 ========================= */
-
 async function loadBrandsAdmin() {
   const container = document.getElementById("brandsList");
   if (!container) return;
@@ -2830,8 +2745,8 @@ function renderBrandsListPage(brands) {
         <div class="listCard__meta">${brand.active ? '🟢 Activo' : '🔴 Inactivo'}</div>
       </div>
       <div class="listCard__actions">
-        <button class="btn btn--ghost btn--small" data-edit-brand="${brand.id}" data-tooltip="Editar marca">✏️</button>
-        <button class="btn btn--danger btn--small" data-delete-brand="${brand.id}" data-tooltip="Eliminar marca">🗑️</button>
+        <button class="btn btn--ghost btn--small" data-edit-brand="${brand.id}">✏️</button>
+        <button class="btn btn--danger btn--small" data-delete-brand="${brand.id}">🗑️</button>
       </div>
     </article>
   `).join("");
@@ -2977,7 +2892,7 @@ async function deleteBrand(id) {
   if (!brand) return;
   
   const ok = await confirmAction({
-    message: `⚠️ ¿Eliminar la marca "${brand.name}"? Esta acción no se puede deshacer.`,
+    message: `⚠️ ¿Eliminar la marca "${brand.name}"?`,
     type: "delete",
     double: true,
   });
@@ -2998,7 +2913,6 @@ async function deleteBrand(id) {
 /* =========================
    ADMINISTRACIÓN DE PREGUNTAS DEL ASISTENTE
 ========================= */
-
 async function loadAssistantQuestionsAdmin() {
   const container = document.getElementById("assistantQuestionsList");
   if (!container) return;
@@ -3074,8 +2988,8 @@ function renderAssistantQuestionsListPage(questions) {
           <div class="listCard__meta">🔢 Orden: ${q.order_index || 0} · ${q.active ? '🟢 Activa' : '🔴 Inactiva'} · ${q.required ? '⚠️ Requerida' : 'Opcional'}</div>
         </div>
         <div class="listCard__actions">
-          <button class="btn btn--ghost btn--small" data-edit-question="${q.id}" data-tooltip="Editar pregunta">✏️</button>
-          <button class="btn btn--danger btn--small" data-delete-question="${q.id}" data-tooltip="Eliminar pregunta">🗑️</button>
+          <button class="btn btn--ghost btn--small" data-edit-question="${q.id}">✏️</button>
+          <button class="btn btn--danger btn--small" data-delete-question="${q.id}">🗑️</button>
         </div>
       </article>
     `;
@@ -3212,7 +3126,7 @@ async function deleteAssistantQuestion(id) {
   if (!question) return;
   
   const ok = await confirmAction({
-    message: `⚠️ ¿Eliminar la pregunta "${question.question.substring(0, 50)}"? Esta acción no se puede deshacer.`,
+    message: `⚠️ ¿Eliminar la pregunta "${question.question.substring(0, 50)}"?`,
     type: "delete",
     double: true,
   });
@@ -3233,7 +3147,6 @@ async function deleteAssistantQuestion(id) {
 /* =========================
    RESPUESTAS DEL ASISTENTE
 ========================= */
-
 async function loadAssistantResponsesAdmin() {
   const container = document.getElementById("assistantResponsesList");
   if (!container) return;
@@ -3335,7 +3248,6 @@ function exportResponsesToCSV() {
 /* =========================
    ADMINISTRACIÓN DE CASOS DE ÉXITO
 ========================= */
-
 async function uploadSuccessStoryImage() {
   const fileInput = document.getElementById("successStoryImageFile");
   const imageUrlInput = document.getElementById("successStoryImageUrl");
@@ -3462,8 +3374,8 @@ function renderSuccessStoriesListPage(stories) {
           <div class="listCard__meta">🔢 Orden: ${story.order_index || 0} · ${story.active ? '🟢 Activo' : '🔴 Inactivo'}</div>
         </div>
         <div class="listCard__actions">
-          <button class="btn btn--ghost btn--small" data-edit-story="${story.id}" data-tooltip="Editar caso">✏️</button>
-          <button class="btn btn--danger btn--small" data-delete-story="${story.id}" data-tooltip="Eliminar caso">🗑️</button>
+          <button class="btn btn--ghost btn--small" data-edit-story="${story.id}">✏️</button>
+          <button class="btn btn--danger btn--small" data-delete-story="${story.id}">🗑️</button>
         </div>
       </article>
     `;
@@ -3536,7 +3448,6 @@ async function saveSuccessStory() {
     return;
   }
   
-  // Validar JSON de resultados
   let parsedResults = {};
   if (results) {
     try {
@@ -3590,7 +3501,7 @@ async function deleteSuccessStory(id) {
   if (!story) return;
   
   const ok = await confirmAction({
-    message: `⚠️ ¿Eliminar el caso de éxito "${story.title}"? Esta acción no se puede deshacer.`,
+    message: `⚠️ ¿Eliminar el caso de éxito "${story.title}"?`,
     type: "delete",
     double: true,
   });
@@ -3732,26 +3643,12 @@ async function toggleProjectFeatured(projectId, featured) {
   }
 }
 
-function setFeaturedProjectsMsg(msg, isError = false) {
-  const msgEl = document.getElementById("featuredProjectsMsg");
-  if (!msgEl) return;
-  msgEl.textContent = msg;
-  msgEl.classList.remove("msg--success", "msg--error");
-  msgEl.classList.add(isError ? "msg--error" : "msg--success");
-  setTimeout(() => {
-    if (msgEl.textContent === msg) {
-      msgEl.textContent = "";
-      msgEl.classList.remove("msg--success", "msg--error");
-    }
-  }, 4000);
-}
-
 /* =========================
    ELIMINAR HISTORIAL
 ========================= */
 async function clearProjectHistory() {
   const ok = await confirmAction({
-    message: "⚠️ ¿Eliminar TODO el historial de proyectos? Esta acción no se puede deshacer.",
+    message: "⚠️ ¿Eliminar TODO el historial de proyectos?",
     type: "delete",
     double: true,
   });
@@ -3772,7 +3669,7 @@ async function clearProjectHistory() {
 
 async function clearSettingsHistory() {
   const ok = await confirmAction({
-    message: "⚠️ ¿Eliminar TODO el historial de settings? Esta acción no se puede deshacer.",
+    message: "⚠️ ¿Eliminar TODO el historial de settings?",
     type: "delete",
     double: true,
   });
@@ -3791,22 +3688,8 @@ async function clearSettingsHistory() {
   }
 }
 
-function setHistoryMsg(msg, isError = false) {
-  const msgEl = document.getElementById("historyMsg");
-  if (!msgEl) return;
-  msgEl.textContent = msg;
-  msgEl.classList.remove("msg--success", "msg--error");
-  msgEl.classList.add(isError ? "msg--error" : "msg--success");
-  setTimeout(() => {
-    if (msgEl.textContent === msg) {
-      msgEl.textContent = "";
-      msgEl.classList.remove("msg--success", "msg--error");
-    }
-  }, 4000);
-}
-
 /* =========================
-   ADMINISTRACIÓN DE SERVICIOS (NUEVO)
+   ADMINISTRACIÓN DE SERVICIOS (CORREGIDO - TABLA "services")
 ========================= */
 
 async function loadServicesAdmin() {
@@ -3870,11 +3753,12 @@ function renderServicesListPage(services) {
   container.innerHTML = services.map(service => `
     <article class="listCard listCard--compact">
       <div class="listCard__thumb">
-        <img src="${escapeHtml(service.image_url || '')}" alt="${escapeHtml(service.title)}" style="width:80px; height:60px; object-fit:cover;" />
+        ${service.image_url ? `<img src="${escapeHtml(service.image_url)}" alt="${escapeHtml(service.title)}" style="width:80px; height:60px; object-fit:cover;" />` : '<div style="width:80px;height:60px;background:var(--bg);display:flex;align-items:center;justify-content:center;">📷</div>'}
       </div>
       <div class="listCard__body">
         <div class="listCard__title">💼 ${escapeHtml(service.title)}</div>
-        <div class="listCard__meta">🔗 Slug: ${escapeHtml(service.slug)} · 🏷️ Icono: ${escapeHtml(service.icon || '📦')}</div>
+        <div class="listCard__meta">🔗 Slug: ${escapeHtml(service.slug)} · 🏷️ Icono: ${escapeHtml(service.icon || '💼')}</div>
+        <div class="listCard__meta">💰 Precio: ${escapeHtml(service.price || 'Sin precio')}</div>
         <div class="listCard__meta">📝 ${escapeHtml(service.description?.substring(0, 80) || '')}${service.description?.length > 80 ? '...' : ''}</div>
         <div class="listCard__badges">
           ${service.features?.slice(0, 3).map(f => `<span class="miniTag">${escapeHtml(f)}</span>`).join('') || ''}
@@ -3883,8 +3767,8 @@ function renderServicesListPage(services) {
         <div class="listCard__meta">🔢 Orden: ${service.order_index || 0} · ${service.active ? '🟢 Activo' : '🔴 Inactivo'}</div>
       </div>
       <div class="listCard__actions">
-        <button class="btn btn--ghost btn--small" data-edit-service="${service.id}" data-tooltip="Editar servicio">✏️</button>
-        <button class="btn btn--danger btn--small" data-delete-service="${service.id}" data-tooltip="Eliminar servicio">🗑️</button>
+        <button class="btn btn--ghost btn--small" data-edit-service="${service.id}">✏️ Editar</button>
+        <button class="btn btn--danger btn--small" data-delete-service="${service.id}">🗑️ Eliminar</button>
       </div>
     </article>
   `).join("");
@@ -3911,6 +3795,7 @@ function openServiceModal(id = null) {
   const serviceWhatsappMessage = document.getElementById("serviceWhatsappMessage");
   const serviceIcon = document.getElementById("serviceIcon");
   const serviceImageUrl = document.getElementById("serviceImageUrl");
+  const servicePrice = document.getElementById("servicePrice");
   const serviceOrder = document.getElementById("serviceOrder");
   const serviceActive = document.getElementById("serviceActive");
   const serviceImageFile = document.getElementById("serviceImageFile");
@@ -3922,9 +3807,11 @@ function openServiceModal(id = null) {
   };
   
   if (serviceTitle) {
+    serviceTitle.removeEventListener("input", toggleSlugFromTitle);
     serviceTitle.addEventListener("input", toggleSlugFromTitle);
   }
   if (serviceSlug) {
+    serviceSlug.removeEventListener("input", () => {});
     serviceSlug.addEventListener("input", () => { serviceSlug.dataset.manuallyEdited = "true"; });
   }
   
@@ -3939,6 +3826,7 @@ function openServiceModal(id = null) {
     if (serviceWhatsappMessage) serviceWhatsappMessage.value = "";
     if (serviceIcon) serviceIcon.value = "💼";
     if (serviceImageUrl) serviceImageUrl.value = "";
+    if (servicePrice) servicePrice.value = "";
     if (serviceOrder) serviceOrder.value = "0";
     if (serviceActive) serviceActive.checked = true;
     if (serviceImageFile) serviceImageFile.value = "";
@@ -3955,6 +3843,7 @@ function openServiceModal(id = null) {
     if (serviceWhatsappMessage) serviceWhatsappMessage.value = service.whatsapp_message || "";
     if (serviceIcon) serviceIcon.value = service.icon || "💼";
     if (serviceImageUrl) serviceImageUrl.value = service.image_url || "";
+    if (servicePrice) servicePrice.value = service.price || "";
     if (serviceOrder) serviceOrder.value = service.order_index || 0;
     if (serviceActive) serviceActive.checked = service.active !== false;
     if (serviceImageFile) serviceImageFile.value = "";
@@ -4022,6 +3911,7 @@ async function saveService() {
   const whatsapp_message = document.getElementById("serviceWhatsappMessage")?.value.trim() || null;
   const icon = document.getElementById("serviceIcon")?.value.trim() || "💼";
   const image_url = document.getElementById("serviceImageUrl")?.value.trim() || null;
+  const price = document.getElementById("servicePrice")?.value.trim() || null;
   const order_index = parseInt(document.getElementById("serviceOrder")?.value) || 0;
   const active = document.getElementById("serviceActive")?.checked || false;
   
@@ -4034,7 +3924,20 @@ async function saveService() {
     slug = slugify(title);
   }
   
-  const payload = { title, slug, description, ideal_for, features, whatsapp_message, icon, image_url, order_index, active, updated_at: new Date().toISOString() };
+  const payload = { 
+    title, 
+    slug, 
+    description, 
+    ideal_for, 
+    features, 
+    whatsapp_message, 
+    icon, 
+    image_url, 
+    price, 
+    order_index, 
+    active, 
+    updated_at: new Date().toISOString() 
+  };
   
   const ok = await confirmAction({
     message: id ? `¿Guardar cambios en "${title}"?` : `¿Crear el servicio "${title}"?`,
@@ -4068,7 +3971,7 @@ async function deleteService(id) {
   if (!service) return;
   
   const ok = await confirmAction({
-    message: `⚠️ ¿Eliminar el servicio "${service.title}"? Esta acción no se puede deshacer.`,
+    message: `⚠️ ¿Eliminar el servicio "${service.title}"?`,
     type: "delete",
     double: true,
   });
@@ -4087,9 +3990,8 @@ async function deleteService(id) {
 }
 
 /* =========================
-   LEADS DEL ASISTENTE (NUEVO)
+   LEADS DEL ASISTENTE
 ========================= */
-
 async function loadGuideLeadsAdmin() {
   const container = document.getElementById("guideLeadsList");
   if (!container) return;
@@ -4159,7 +4061,7 @@ function renderGuideLeadsListPage(leads) {
         ${lead.flow_path ? `<details><summary>📋 Ver recorrido</summary><small>${escapeHtml(lead.flow_path)}</small></details>` : ''}
       </div>
       <div class="listCard__actions">
-        <button class="btn btn--ghost btn--small" data-wa-lead="${lead.id}" data-tooltip="WhatsApp">📱</button>
+        <button class="btn btn--ghost btn--small" data-wa-lead="${lead.id}">📱 WhatsApp</button>
       </div>
     </article>
   `).join("");
@@ -4212,14 +4114,189 @@ function exportGuideLeadsToCSV() {
 }
 
 /* =========================
-   MENÚ HAMBURGUESA PARA ADMIN
+   EVENT LISTENERS EXTRA
 ========================= */
+const reviewsApprovedRefreshBtn = document.getElementById("reviewsApprovedRefreshBtn");
+if (reviewsApprovedRefreshBtn) {
+  reviewsApprovedRefreshBtn.addEventListener("click", loadApprovedReviews);
+}
+
+const exportReviewsBtn = document.getElementById("exportReviewsBtn");
+if (exportReviewsBtn) {
+  exportReviewsBtn.addEventListener("click", exportReviewsToCSV);
+}
+
+const approvedSearchInput = document.getElementById("approvedSearchInput");
+if (approvedSearchInput) {
+  approvedSearchInput.addEventListener("input", () => renderApprovedReviews());
+}
+
+const approvedRatingFilter = document.getElementById("approvedRatingFilter");
+if (approvedRatingFilter) {
+  approvedRatingFilter.addEventListener("change", () => renderApprovedReviews());
+}
+
+const approvedSortFilter = document.getElementById("approvedSortFilter");
+if (approvedSortFilter) {
+  approvedSortFilter.addEventListener("change", () => renderApprovedReviews());
+}
+
+const saveEditReviewBtn = document.getElementById("saveEditReviewBtn");
+if (saveEditReviewBtn) {
+  saveEditReviewBtn.addEventListener("click", saveEditedReviewAndApprove);
+}
+
+const cancelEditReviewBtn = document.getElementById("cancelEditReviewBtn");
+if (cancelEditReviewBtn) {
+  cancelEditReviewBtn.addEventListener("click", () => {
+    const modal = document.getElementById("editReviewModal");
+    if (modal) modal.style.display = "none";
+  });
+}
+
+const plansRefreshBtn = document.getElementById("plansRefreshBtn");
+if (plansRefreshBtn) plansRefreshBtn.addEventListener("click", loadPlansAdmin);
+
+const plansNewBtn = document.getElementById("plansNewBtn");
+if (plansNewBtn) plansNewBtn.addEventListener("click", () => openPlanModal());
+
+const planSaveBtn = document.getElementById("planSaveBtn");
+if (planSaveBtn) planSaveBtn.addEventListener("click", savePlan);
+
+const planCancelBtn = document.getElementById("planCancelBtn");
+if (planCancelBtn) {
+  planCancelBtn.addEventListener("click", () => {
+    const modal = document.getElementById("planModal");
+    if (modal) modal.style.display = "none";
+  });
+}
+
+const planName = document.getElementById("planName");
+if (planName) {
+  planName.addEventListener("input", function() {
+    const slugInput = document.getElementById("planSlug");
+    if (slugInput && !slugInput.dataset.manuallyEdited) {
+      slugInput.value = this.value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+    }
+  });
+}
+
+const planSlug = document.getElementById("planSlug");
+if (planSlug) {
+  planSlug.addEventListener("input", function() {
+    this.dataset.manuallyEdited = "true";
+  });
+}
+
+// Event listeners para marcas
+const brandsRefreshBtn = document.getElementById("brandsRefreshBtn");
+if (brandsRefreshBtn) brandsRefreshBtn.addEventListener("click", loadBrandsAdmin);
+
+const brandsNewBtn = document.getElementById("brandsNewBtn");
+if (brandsNewBtn) brandsNewBtn.addEventListener("click", () => openBrandModal());
+
+const brandSaveBtn = document.getElementById("brandSaveBtn");
+if (brandSaveBtn) brandSaveBtn.addEventListener("click", saveBrand);
+
+const brandCancelBtn = document.getElementById("brandCancelBtn");
+if (brandCancelBtn) {
+  brandCancelBtn.addEventListener("click", () => {
+    const modal = document.getElementById("brandModal");
+    if (modal) modal.style.display = "none";
+  });
+}
+
+const brandLogoFile = document.getElementById("brandLogoFile");
+if (brandLogoFile) brandLogoFile.addEventListener("change", uploadBrandLogo);
+
+// Event listeners para preguntas del asistente
+const assistantRefreshBtn = document.getElementById("assistantRefreshBtn");
+if (assistantRefreshBtn) assistantRefreshBtn.addEventListener("click", loadAssistantQuestionsAdmin);
+
+const assistantNewBtn = document.getElementById("assistantNewBtn");
+if (assistantNewBtn) assistantNewBtn.addEventListener("click", () => openAssistantQuestionModal());
+
+const assistantQuestionSaveBtn = document.getElementById("assistantQuestionSaveBtn");
+if (assistantQuestionSaveBtn) assistantQuestionSaveBtn.addEventListener("click", saveAssistantQuestion);
+
+const assistantQuestionCancelBtn = document.getElementById("assistantQuestionCancelBtn");
+if (assistantQuestionCancelBtn) {
+  assistantQuestionCancelBtn.addEventListener("click", () => {
+    const modal = document.getElementById("assistantQuestionModal");
+    if (modal) modal.style.display = "none";
+  });
+}
+
+// Event listeners para respuestas del asistente
+const assistantResponsesRefreshBtn = document.getElementById("assistantResponsesRefreshBtn");
+if (assistantResponsesRefreshBtn) assistantResponsesRefreshBtn.addEventListener("click", loadAssistantResponsesAdmin);
+
+const exportResponsesBtn = document.getElementById("exportResponsesBtn");
+if (exportResponsesBtn) exportResponsesBtn.addEventListener("click", exportResponsesToCSV);
+
+// Event listeners para casos de éxito
+const successStoriesRefreshBtn = document.getElementById("successStoriesRefreshBtn");
+if (successStoriesRefreshBtn) successStoriesRefreshBtn.addEventListener("click", loadSuccessStoriesAdmin);
+
+const successStoriesNewBtn = document.getElementById("successStoriesNewBtn");
+if (successStoriesNewBtn) successStoriesNewBtn.addEventListener("click", () => openSuccessStoryModal());
+
+const successStorySaveBtn = document.getElementById("successStorySaveBtn");
+if (successStorySaveBtn) successStorySaveBtn.addEventListener("click", saveSuccessStory);
+
+const successStoryCancelBtn = document.getElementById("successStoryCancelBtn");
+if (successStoryCancelBtn) {
+  successStoryCancelBtn.addEventListener("click", () => {
+    const modal = document.getElementById("successStoryModal");
+    if (modal) modal.style.display = "none";
+  });
+}
+
+const successStoryImageFile = document.getElementById("successStoryImageFile");
+if (successStoryImageFile) successStoryImageFile.addEventListener("change", uploadSuccessStoryImage);
+
+// Event listeners para historial
+const clearProjectHistoryBtn = document.getElementById("clearProjectHistoryBtn");
+if (clearProjectHistoryBtn) clearProjectHistoryBtn.addEventListener("click", clearProjectHistory);
+const clearSettingsHistoryBtn = document.getElementById("clearSettingsHistoryBtn");
+if (clearSettingsHistoryBtn) clearSettingsHistoryBtn.addEventListener("click", clearSettingsHistory);
+const featuredRefreshBtn = document.getElementById("featuredRefreshBtn");
+if (featuredRefreshBtn) featuredRefreshBtn.addEventListener("click", loadFeaturedProjects);
+
+// Event listeners para servicios
+const servicesRefreshBtn = document.getElementById("servicesRefreshBtn");
+if (servicesRefreshBtn) servicesRefreshBtn.addEventListener("click", loadServicesAdmin);
+
+const servicesNewBtn = document.getElementById("servicesNewBtn");
+if (servicesNewBtn) servicesNewBtn.addEventListener("click", () => openServiceModal());
+
+const serviceSaveBtn = document.getElementById("serviceSaveBtn");
+if (serviceSaveBtn) serviceSaveBtn.addEventListener("click", saveService);
+
+const serviceCancelBtn = document.getElementById("serviceCancelBtn");
+if (serviceCancelBtn) {
+  serviceCancelBtn.addEventListener("click", () => {
+    const modal = document.getElementById("serviceModal");
+    if (modal) modal.style.display = "none";
+  });
+}
+
+const serviceImageFile = document.getElementById("serviceImageFile");
+if (serviceImageFile) serviceImageFile.addEventListener("change", uploadServiceImage);
+
+// Event listeners para leads
+const guideLeadsRefreshBtn = document.getElementById("guideLeadsRefreshBtn");
+if (guideLeadsRefreshBtn) guideLeadsRefreshBtn.addEventListener("click", loadGuideLeadsAdmin);
+
+const exportGuideLeadsBtn = document.getElementById("exportGuideLeadsBtn");
+if (exportGuideLeadsBtn) exportGuideLeadsBtn.addEventListener("click", exportGuideLeadsToCSV);
+
+// INICIALIZAR MENÚ HAMBURGUESA
 function initSidebarToggle() {
   const toggleBtn = document.getElementById("sidebarToggleBtn");
   const sidebar = document.querySelector(".sidebar");
   
   if (!toggleBtn || !sidebar) {
-    console.warn("Botón o sidebar no encontrados");
     return;
   }
   
@@ -4249,240 +4326,8 @@ function initSidebarToggle() {
       sidebar.classList.remove("open");
     }
   });
-  
-  console.log("✅ Menú hamburguesa inicializado correctamente");
 }
 
-/* =========================
-   EVENT LISTENERS EXTRA
-========================= */
-const reviewsApprovedRefreshBtn = document.getElementById("reviewsApprovedRefreshBtn");
-if (reviewsApprovedRefreshBtn) {
-  reviewsApprovedRefreshBtn.addEventListener("click", () => {
-    loadApprovedReviews();
-  });
-}
-
-const exportReviewsBtn = document.getElementById("exportReviewsBtn");
-if (exportReviewsBtn) {
-  exportReviewsBtn.addEventListener("click", () => {
-    exportReviewsToCSV();
-  });
-}
-
-const approvedSearchInput = document.getElementById("approvedSearchInput");
-if (approvedSearchInput) {
-  approvedSearchInput.addEventListener("input", () => {
-    renderApprovedReviews();
-  });
-}
-
-const approvedRatingFilter = document.getElementById("approvedRatingFilter");
-if (approvedRatingFilter) {
-  approvedRatingFilter.addEventListener("change", () => {
-    renderApprovedReviews();
-  });
-}
-
-const approvedSortFilter = document.getElementById("approvedSortFilter");
-if (approvedSortFilter) {
-  approvedSortFilter.addEventListener("change", () => {
-    renderApprovedReviews();
-  });
-}
-
-const saveEditReviewBtn = document.getElementById("saveEditReviewBtn");
-if (saveEditReviewBtn) {
-  saveEditReviewBtn.addEventListener("click", saveEditedReviewAndApprove);
-}
-
-const cancelEditReviewBtn = document.getElementById("cancelEditReviewBtn");
-if (cancelEditReviewBtn) {
-  cancelEditReviewBtn.addEventListener("click", () => {
-    const modal = document.getElementById("editReviewModal");
-    if (modal) modal.style.display = "none";
-  });
-}
-
-const plansRefreshBtn = document.getElementById("plansRefreshBtn");
-if (plansRefreshBtn) {
-  plansRefreshBtn.addEventListener("click", () => loadPlansAdmin());
-}
-
-const plansNewBtn = document.getElementById("plansNewBtn");
-if (plansNewBtn) {
-  plansNewBtn.addEventListener("click", () => openPlanModal());
-}
-
-const planSaveBtn = document.getElementById("planSaveBtn");
-if (planSaveBtn) {
-  planSaveBtn.addEventListener("click", () => savePlan());
-}
-
-const planCancelBtn = document.getElementById("planCancelBtn");
-if (planCancelBtn) {
-  planCancelBtn.addEventListener("click", () => {
-    const modal = document.getElementById("planModal");
-    if (modal) modal.style.display = "none";
-  });
-}
-
-const planName = document.getElementById("planName");
-if (planName) {
-  planName.addEventListener("input", function() {
-    const slugInput = document.getElementById("planSlug");
-    if (slugInput && !slugInput.dataset.manuallyEdited) {
-      slugInput.value = this.value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
-    }
-  });
-}
-
-const planSlug = document.getElementById("planSlug");
-if (planSlug) {
-  planSlug.addEventListener("input", function() {
-    this.dataset.manuallyEdited = "true";
-  });
-}
-
-// Event listeners para marcas
-const brandsRefreshBtn = document.getElementById("brandsRefreshBtn");
-if (brandsRefreshBtn) {
-  brandsRefreshBtn.addEventListener("click", () => loadBrandsAdmin());
-}
-
-const brandsNewBtn = document.getElementById("brandsNewBtn");
-if (brandsNewBtn) {
-  brandsNewBtn.addEventListener("click", () => openBrandModal());
-}
-
-const brandSaveBtn = document.getElementById("brandSaveBtn");
-if (brandSaveBtn) {
-  brandSaveBtn.addEventListener("click", () => saveBrand());
-}
-
-const brandCancelBtn = document.getElementById("brandCancelBtn");
-if (brandCancelBtn) {
-  brandCancelBtn.addEventListener("click", () => {
-    const modal = document.getElementById("brandModal");
-    if (modal) modal.style.display = "none";
-  });
-}
-
-const brandLogoFile = document.getElementById("brandLogoFile");
-if (brandLogoFile) {
-  brandLogoFile.addEventListener("change", () => uploadBrandLogo());
-}
-
-// Event listeners para preguntas del asistente
-const assistantRefreshBtn = document.getElementById("assistantRefreshBtn");
-if (assistantRefreshBtn) {
-  assistantRefreshBtn.addEventListener("click", () => loadAssistantQuestionsAdmin());
-}
-
-const assistantNewBtn = document.getElementById("assistantNewBtn");
-if (assistantNewBtn) {
-  assistantNewBtn.addEventListener("click", () => openAssistantQuestionModal());
-}
-
-const assistantQuestionSaveBtn = document.getElementById("assistantQuestionSaveBtn");
-if (assistantQuestionSaveBtn) {
-  assistantQuestionSaveBtn.addEventListener("click", () => saveAssistantQuestion());
-}
-
-const assistantQuestionCancelBtn = document.getElementById("assistantQuestionCancelBtn");
-if (assistantQuestionCancelBtn) {
-  assistantQuestionCancelBtn.addEventListener("click", () => {
-    const modal = document.getElementById("assistantQuestionModal");
-    if (modal) modal.style.display = "none";
-  });
-}
-
-// Event listeners para respuestas del asistente
-const assistantResponsesRefreshBtn = document.getElementById("assistantResponsesRefreshBtn");
-if (assistantResponsesRefreshBtn) {
-  assistantResponsesRefreshBtn.addEventListener("click", () => loadAssistantResponsesAdmin());
-}
-
-const exportResponsesBtn = document.getElementById("exportResponsesBtn");
-if (exportResponsesBtn) {
-  exportResponsesBtn.addEventListener("click", () => exportResponsesToCSV());
-}
-
-// Event listeners para casos de éxito
-const successStoriesRefreshBtn = document.getElementById("successStoriesRefreshBtn");
-if (successStoriesRefreshBtn) {
-  successStoriesRefreshBtn.addEventListener("click", () => loadSuccessStoriesAdmin());
-}
-
-const successStoriesNewBtn = document.getElementById("successStoriesNewBtn");
-if (successStoriesNewBtn) {
-  successStoriesNewBtn.addEventListener("click", () => openSuccessStoryModal());
-}
-
-const successStorySaveBtn = document.getElementById("successStorySaveBtn");
-if (successStorySaveBtn) {
-  successStorySaveBtn.addEventListener("click", () => saveSuccessStory());
-}
-
-const successStoryCancelBtn = document.getElementById("successStoryCancelBtn");
-if (successStoryCancelBtn) {
-  successStoryCancelBtn.addEventListener("click", () => {
-    const modal = document.getElementById("successStoryModal");
-    if (modal) modal.style.display = "none";
-  });
-}
-
-const successStoryImageFile = document.getElementById("successStoryImageFile");
-if (successStoryImageFile) {
-  successStoryImageFile.addEventListener("change", () => uploadSuccessStoryImage());
-}
-
-// Event listeners para historial
-document.getElementById("clearProjectHistoryBtn")?.addEventListener("click", clearProjectHistory);
-document.getElementById("clearSettingsHistoryBtn")?.addEventListener("click", clearSettingsHistory);
-document.getElementById("featuredRefreshBtn")?.addEventListener("click", loadFeaturedProjects);
-
-// ========== NUEVOS EVENT LISTENERS PARA SERVICIOS ==========
-const servicesRefreshBtn = document.getElementById("servicesRefreshBtn");
-if (servicesRefreshBtn) {
-  servicesRefreshBtn.addEventListener("click", () => loadServicesAdmin());
-}
-
-const servicesNewBtn = document.getElementById("servicesNewBtn");
-if (servicesNewBtn) {
-  servicesNewBtn.addEventListener("click", () => openServiceModal());
-}
-
-const serviceSaveBtn = document.getElementById("serviceSaveBtn");
-if (serviceSaveBtn) {
-  serviceSaveBtn.addEventListener("click", () => saveService());
-}
-
-const serviceCancelBtn = document.getElementById("serviceCancelBtn");
-if (serviceCancelBtn) {
-  serviceCancelBtn.addEventListener("click", () => {
-    const modal = document.getElementById("serviceModal");
-    if (modal) modal.style.display = "none";
-  });
-}
-
-const serviceImageFile = document.getElementById("serviceImageFile");
-if (serviceImageFile) {
-  serviceImageFile.addEventListener("change", () => uploadServiceImage());
-}
-
-// ========== NUEVOS EVENT LISTENERS PARA LEADS ==========
-const guideLeadsRefreshBtn = document.getElementById("guideLeadsRefreshBtn");
-if (guideLeadsRefreshBtn) {
-  guideLeadsRefreshBtn.addEventListener("click", () => loadGuideLeadsAdmin());
-}
-
-const exportGuideLeadsBtn = document.getElementById("exportGuideLeadsBtn");
-if (exportGuideLeadsBtn) {
-  exportGuideLeadsBtn.addEventListener("click", () => exportGuideLeadsToCSV());
-}
-
-// INICIALIZAR MENÚ HAMBURGUESA
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', initSidebarToggle);
 } else {
