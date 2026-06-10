@@ -157,7 +157,6 @@
     }
     .breadcrumb a:hover { opacity: 0.8; }
     
-    /* NUEVO: Estilos para imagen y precio */
     .service-header {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -398,194 +397,195 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="config.js"></script>
 <script>
-  // ========== TEMAS ==========
-  const themeToggle = document.getElementById("themeToggle");
-  const savedTheme = localStorage.getItem("theme") || "dark";
-  document.documentElement.setAttribute("data-theme", savedTheme);
-  themeToggle.textContent = savedTheme === "dark" ? "☀️" : "🌙";
-  themeToggle.addEventListener("click", () => {
-    const current = document.documentElement.getAttribute("data-theme");
-    const newTheme = current === "dark" ? "light" : "dark";
-    document.documentElement.setAttribute("data-theme", newTheme);
-    localStorage.setItem("theme", newTheme);
-    themeToggle.textContent = newTheme === "dark" ? "☀️" : "🌙";
-  });
-
-  const waNumber = window.CIBORG_CONFIG.WHATSAPP_NUMBER;
-  const waUrl = (msg) => `https://wa.me/${waNumber}?text=${encodeURIComponent(msg)}`;
-
-  // ========== SUPABASE ==========
-  const supabaseUrl = window.CIBORG_CONFIG.SUPABASE_URL;
-  const supabaseKey = window.CIBORG_CONFIG.SUPABASE_ANON_KEY;
-  const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
-
-  // ========== CARGAR SERVICIO DESDE SUPABASE ==========
-  async function cargarServicio() {
-    const urlParams = new URLSearchParams(window.location.search);
-    let slug = urlParams.get('slug');
-    
-    // Mapeo de slugs antiguos a nuevos (por compatibilidad)
-    const slugMap = {
-      'tienda': 'tiendas-online',
-      'pedidos': 'sistemas-de-pedidos',
-      'admin': 'panel-admin',
-      'landing': 'landings-de-conversion',
-      'institucional': 'webs-institucionales',
-      'catalogo': 'catalogos-digitales'
-    };
-    
-    if (slug && slugMap[slug]) {
-      slug = slugMap[slug];
+  (function() {
+    // ========== TEMAS ==========
+    const themeToggle = document.getElementById("themeToggle");
+    const savedTheme = localStorage.getItem("theme") || "dark";
+    document.documentElement.setAttribute("data-theme", savedTheme);
+    if (themeToggle) themeToggle.textContent = savedTheme === "dark" ? "☀️" : "🌙";
+    if (themeToggle) {
+      themeToggle.addEventListener("click", () => {
+        const current = document.documentElement.getAttribute("data-theme");
+        const newTheme = current === "dark" ? "light" : "dark";
+        document.documentElement.setAttribute("data-theme", newTheme);
+        localStorage.setItem("theme", newTheme);
+        themeToggle.textContent = newTheme === "dark" ? "☀️" : "🌙";
+      });
     }
+
+    const waNumber = window.CIBORG_CONFIG?.WHATSAPP_NUMBER || "5491164499481";
+    const waUrl = (msg) => `https://wa.me/${waNumber}?text=${encodeURIComponent(msg)}`;
+
+    // ========== SUPABASE ==========
+    const supabaseUrl = window.CIBORG_CONFIG?.SUPABASE_URL;
+    const supabaseKey = window.CIBORG_CONFIG?.SUPABASE_ANON_KEY;
     
-    if (!slug) {
-      document.getElementById('serviceContent').innerHTML = `
-        <div class="error">
-          ❌ No se especificó un servicio.<br>
-          <a href="index.html#servicios" style="color:var(--cyan)">← Volver a servicios</a>
-        </div>
-      `;
+    if (!supabaseUrl || !supabaseKey) {
+      document.getElementById('serviceContent').innerHTML = '<div class="error">❌ Error de configuración. Contacte al administrador.</div>';
       return;
     }
     
-    try {
-      const { data: servicio, error } = await supabase
-        .from('service_plans')
-        .select('*')
-        .eq('slug', slug)
-        .eq('active', true)
-        .single();
+    const _supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+    // ========== CARGAR SERVICIO ==========
+    async function cargarServicio() {
+      const urlParams = new URLSearchParams(window.location.search);
+      let slug = urlParams.get('slug');
+      let tipo = urlParams.get('tipo');
       
-      if (error || !servicio) {
-        throw new Error('Servicio no encontrado');
+      // Mapeo de slugs antiguos (tipo) a nuevos (slug)
+      const slugMap = {
+        'tienda': 'tiendas-online',
+        'pedidos': 'sistemas-de-pedidos',
+        'admin': 'panel-admin',
+        'landing': 'landings-de-conversion',
+        'institucional': 'webs-institucionales',
+        'catalogo': 'catalogos-digitales'
+      };
+      
+      // Si viene por tipo, convertir a slug
+      if (tipo && slugMap[tipo]) {
+        slug = slugMap[tipo];
       }
       
-      // Actualizar título
-      document.title = `Ciborg 347 — ${servicio.name}`;
-      
-      // Procesar features (puede ser array o string)
-      let featuresList = [];
-      if (servicio.features) {
-        if (Array.isArray(servicio.features)) {
-          featuresList = servicio.features;
-        } else if (typeof servicio.features === 'string') {
-          featuresList = servicio.features.split(',').map(f => f.trim());
-        }
-      }
-      
-      // Si no hay features, usar las que venían por defecto
-      if (featuresList.length === 0) {
-        featuresList = [
-          "Diseño responsive y moderno",
-          "Optimización SEO básica",
-          "Integración con WhatsApp",
-          "Formulario de contacto",
-          "Panel de administración sencillo",
-          "Soporte técnico incluido"
-        ];
-      }
-      
-      // Construir HTML del precio
-      let precioHTML = '';
-      if (servicio.offer_price) {
-        precioHTML = `
-          <div class="service-price">
-            <span class="precio-oferta">${servicio.offer_price}</span>
-            <span class="precio-original">${servicio.price || ''}</span>
-            ${servicio.offer_badge ? `<span class="badge-oferta">${servicio.offer_badge}</span>` : ''}
+      if (!slug) {
+        document.getElementById('serviceContent').innerHTML = `
+          <div class="error">
+            ❌ No se especificó un servicio.<br>
+            <a href="index.html#servicios" style="color:var(--cyan)">← Volver a servicios</a>
           </div>
         `;
-      } else if (servicio.price || servicio.price_numeric) {
-        const precioMostrar = servicio.price || `$${servicio.price_numeric.toLocaleString('es-AR')}`;
-        precioHTML = `<div class="service-price">${precioMostrar}</div>`;
+        return;
       }
       
-      // Imagen por defecto si no tiene
-      const imagenUrl = servicio.image_url || 'https://fhxcumwhgtfirznnznjx.supabase.co/storage/v1/object/public/Imagenes/fETkPEv.md.png';
-      
-      // Descripción larga (si no tiene, usar description)
-      const descripcionLarga = servicio.description || 'Desarrollo profesional de software a medida para tu negocio.';
-      
-      // Ideal para (si no tiene, usar texto genérico)
-      const idealPara = servicio.ideal_for || 'Empresas y emprendedores que buscan una solución digital profesional y escalable.';
-      
-      // Mensaje de WhatsApp
-      const waMsg = servicio.whatsapp_message || `Hola, quiero información sobre ${servicio.name}`;
-      
-      const container = document.getElementById('serviceContent');
-      container.innerHTML = `
-        <div class="breadcrumb">
-          <a href="index.html">Inicio</a> / <a href="index.html#servicios">Servicios</a> / <span style="color:var(--cyan)">${servicio.name}</span>
-        </div>
+      try {
+        const { data: servicio, error } = await _supabase
+          .from('service_plans')
+          .select('*')
+          .eq('slug', slug)
+          .eq('active', true)
+          .single();
         
-        <div class="service-header">
-          <div class="service-image">
-            <img src="${imagenUrl}" alt="${servicio.name}">
+        if (error || !servicio) {
+          throw new Error('Servicio no encontrado');
+        }
+        
+        document.title = `Ciborg 347 — ${servicio.name}`;
+        
+        let featuresList = [];
+        if (servicio.features) {
+          if (Array.isArray(servicio.features)) {
+            featuresList = servicio.features;
+          } else if (typeof servicio.features === 'string') {
+            featuresList = servicio.features.split(',').map(f => f.trim());
+          }
+        }
+        
+        if (featuresList.length === 0) {
+          featuresList = [
+            "Diseño responsive y moderno",
+            "Optimización SEO básica",
+            "Integración con WhatsApp",
+            "Formulario de contacto",
+            "Panel de administración sencillo",
+            "Soporte técnico incluido"
+          ];
+        }
+        
+        let precioHTML = '';
+        if (servicio.offer_price) {
+          precioHTML = `
+            <div class="service-price">
+              <span class="precio-oferta">${servicio.offer_price}</span>
+              <span class="precio-original">${servicio.price || ''}</span>
+              ${servicio.offer_badge ? `<span class="badge-oferta">${servicio.offer_badge}</span>` : ''}
+            </div>
+          `;
+        } else if (servicio.price || servicio.price_numeric) {
+          const precioMostrar = servicio.price || `$${servicio.price_numeric.toLocaleString('es-AR')}`;
+          precioHTML = `<div class="service-price">${precioMostrar}</div>`;
+        }
+        
+        const imagenUrl = servicio.image_url || 'https://fhxcumwhgtfirznnznjx.supabase.co/storage/v1/object/public/Imagenes/fETkPEv.md.png';
+        const descripcionLarga = servicio.description || 'Desarrollo profesional de software a medida para tu negocio.';
+        const idealPara = servicio.ideal_for || 'Empresas y emprendedores que buscan una solución digital profesional y escalable.';
+        const waMsg = servicio.whatsapp_message || `Hola, quiero información sobre ${servicio.name}`;
+        
+        const container = document.getElementById('serviceContent');
+        container.innerHTML = `
+          <div class="breadcrumb">
+            <a href="index.html">Inicio</a> / <a href="index.html#servicios">Servicios</a> / <span style="color:var(--cyan)">${servicio.name}</span>
           </div>
-          <div class="service-info">
-            <h1>${servicio.name}</h1>
-            ${precioHTML}
-            <div class="intro">${descripcionLarga}</div>
+          
+          <div class="service-header">
+            <div class="service-image">
+              <img src="${imagenUrl}" alt="${servicio.name}">
+            </div>
+            <div class="service-info">
+              <h1>${servicio.name}</h1>
+              ${precioHTML}
+              <div class="intro">${descripcionLarga}</div>
+            </div>
           </div>
-        </div>
+          
+          <h2>🎯 ¿Para quién es ideal?</h2>
+          <p>${idealPara}</p>
+          
+          <h2>✨ ¿Qué incluye?</h2>
+          <ul>
+            ${featuresList.map(item => `<li>${item}</li>`).join('')}
+          </ul>
+          
+          <div class="action-buttons">
+            <a href="${waUrl(waMsg)}" target="_blank" class="btn btn--wa">Consultar por WhatsApp →</a>
+            <a href="index.html#servicios" class="btn btn-back">← Volver a servicios</a>
+          </div>
+        `;
         
-        <h2>🎯 ¿Para quién es ideal?</h2>
-        <p>${idealPara}</p>
+        const waFloat = document.getElementById("waFloat");
+        if (waFloat) waFloat.href = waUrl(waMsg);
         
-        <h2>✨ ¿Qué incluye?</h2>
-        <ul>
-          ${featuresList.map(item => `<li>${item}</li>`).join('')}
-        </ul>
+        const mobileWa = document.getElementById("mobileWhatsAppBtn");
+        if (mobileWa) mobileWa.href = waUrl(waMsg);
         
-        <div class="action-buttons">
-          <a href="${waUrl(waMsg)}" target="_blank" class="btn btn--wa">Consultar por WhatsApp →</a>
-          <a href="index.html#servicios" class="btn btn-back">← Volver a servicios</a>
-        </div>
-      `;
-      
-      // Actualizar botón flotante
-      const waFloat = document.getElementById("waFloat");
-      if (waFloat) waFloat.href = waUrl(waMsg);
-      
-      const mobileWa = document.getElementById("mobileWhatsAppBtn");
-      if (mobileWa) mobileWa.href = waUrl(waMsg);
-      
-    } catch (error) {
-      console.error('Error:', error);
-      document.getElementById('serviceContent').innerHTML = `
-        <div class="error">
-          ❌ No se encontró el servicio solicitado.<br>
-          <a href="index.html#servicios" style="color:var(--cyan)">← Ver todos los servicios</a>
-        </div>
-      `;
+      } catch (error) {
+        console.error('Error:', error);
+        document.getElementById('serviceContent').innerHTML = `
+          <div class="error">
+            ❌ No se encontró el servicio solicitado.<br>
+            <a href="index.html#servicios" style="color:var(--cyan)">← Ver todos los servicios</a>
+          </div>
+        `;
+      }
     }
-  }
-  
-  // ========== INICIALIZAR ==========
-  cargarServicio();
-  
-  // ========== UI ELEMENTOS ==========
-  const waFloat = document.getElementById("waFloat");
-  const footer = document.querySelector("footer");
-  function checkWaFloatVisibility() {
-    if (!waFloat || !footer) return;
-    const footerRect = footer.getBoundingClientRect();
-    if (footerRect.top < window.innerHeight - 50) waFloat.classList.add("hidden");
-    else waFloat.classList.remove("hidden");
-  }
-  window.addEventListener("scroll", checkWaFloatVisibility);
-  window.addEventListener("resize", checkWaFloatVisibility);
-  setTimeout(checkWaFloatVisibility, 100);
-  
-  const burgerBtn = document.getElementById("burgerBtn");
-  const mobileMenu = document.getElementById("mobileMenu");
-  burgerBtn?.addEventListener("click", () => mobileMenu.classList.toggle("isOpen"));
-  document.querySelectorAll(".mobileMenu a").forEach(a => a.addEventListener("click", () => mobileMenu.classList.remove("isOpen")));
-  
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(e => { if(e.isIntersecting) { e.target.classList.add("visible"); observer.unobserve(e.target); } });
-  }, { threshold: 0.1 });
-  document.querySelectorAll(".fade-in").forEach(el => observer.observe(el));
+    
+    cargarServicio();
+    
+    // UI Elements
+    const waFloat = document.getElementById("waFloat");
+    const footer = document.querySelector("footer");
+    function checkWaFloatVisibility() {
+      if (!waFloat || !footer) return;
+      const footerRect = footer.getBoundingClientRect();
+      if (footerRect.top < window.innerHeight - 50) waFloat.classList.add("hidden");
+      else waFloat.classList.remove("hidden");
+    }
+    window.addEventListener("scroll", checkWaFloatVisibility);
+    window.addEventListener("resize", checkWaFloatVisibility);
+    setTimeout(checkWaFloatVisibility, 100);
+    
+    const burgerBtn = document.getElementById("burgerBtn");
+    const mobileMenu = document.getElementById("mobileMenu");
+    if (burgerBtn) {
+      burgerBtn.addEventListener("click", () => mobileMenu?.classList.toggle("isOpen"));
+    }
+    document.querySelectorAll(".mobileMenu a").forEach(a => a.addEventListener("click", () => mobileMenu?.classList.remove("isOpen")));
+    
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => { if(e.isIntersecting) { e.target.classList.add("visible"); observer.unobserve(e.target); } });
+    }, { threshold: 0.1 });
+    document.querySelectorAll(".fade-in").forEach(el => observer.observe(el));
+  })();
 </script>
 </body>
 </html>
