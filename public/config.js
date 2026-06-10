@@ -1,4 +1,3 @@
-// config.js - Configuración centralizada
 window.CIBORG_CONFIG = {
   WHATSAPP_NUMBER: "5491164499481",
   SUPABASE_URL: "https://fhxcumwhgtfirznnznjx.supabase.co",
