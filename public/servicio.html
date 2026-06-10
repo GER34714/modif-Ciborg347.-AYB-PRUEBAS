@@ -157,6 +157,7 @@
     }
     .breadcrumb a:hover { opacity: 0.8; }
     
+    /* NUEVO: Estilos para imagen y precio (manteniendo tu diseño) */
     .service-header {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -175,17 +176,6 @@
       width: 100%;
       height: auto;
       object-fit: cover;
-    }
-    
-    .service-info h1 {
-      font-family: 'Syne', sans-serif;
-      font-size: clamp(2.2rem, 5vw, 3.5rem);
-      font-weight: 800;
-      background: var(--grad);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      margin-bottom: 1rem;
     }
     
     .service-price {
@@ -258,13 +248,11 @@
       flex-wrap: wrap;
       margin-top: 2rem;
     }
-    
     .btn-back {
       background: transparent;
       border: 1px solid var(--border);
       color: var(--text2);
     }
-    
     .btn-back:hover {
       border-color: var(--cyan);
       color: var(--cyan);
@@ -398,7 +386,7 @@
 <script src="config.js"></script>
 <script>
   (function() {
-    // ========== TEMAS ==========
+    // ========== TEMAS (igual que antes) ==========
     const themeToggle = document.getElementById("themeToggle");
     const savedTheme = localStorage.getItem("theme") || "dark";
     document.documentElement.setAttribute("data-theme", savedTheme);
@@ -425,25 +413,24 @@
       return;
     }
     
-    const _supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+    const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-    // ========== CARGAR SERVICIO ==========
+    // Mapeo para compatibilidad con URLs viejas (tipo=tienda → slug=tiendas-online)
+    const slugMap = {
+      'tienda': 'tiendas-online',
+      'pedidos': 'sistemas-de-pedidos',
+      'admin': 'panel-admin',
+      'landing': 'landings-de-conversion',
+      'institucional': 'webs-institucionales',
+      'catalogo': 'catalogos-digitales'
+    };
+
     async function cargarServicio() {
       const urlParams = new URLSearchParams(window.location.search);
       let slug = urlParams.get('slug');
       let tipo = urlParams.get('tipo');
       
-      // Mapeo de slugs antiguos (tipo) a nuevos (slug)
-      const slugMap = {
-        'tienda': 'tiendas-online',
-        'pedidos': 'sistemas-de-pedidos',
-        'admin': 'panel-admin',
-        'landing': 'landings-de-conversion',
-        'institucional': 'webs-institucionales',
-        'catalogo': 'catalogos-digitales'
-      };
-      
-      // Si viene por tipo, convertir a slug
+      // Compatibilidad con URLs viejas
       if (tipo && slugMap[tipo]) {
         slug = slugMap[tipo];
       }
@@ -459,7 +446,7 @@
       }
       
       try {
-        const { data: servicio, error } = await _supabase
+        const { data: servicio, error } = await supabase
           .from('service_plans')
           .select('*')
           .eq('slug', slug)
@@ -472,6 +459,7 @@
         
         document.title = `Ciborg 347 — ${servicio.name}`;
         
+        // Procesar features (incluye de Supabase)
         let featuresList = [];
         if (servicio.features) {
           if (Array.isArray(servicio.features)) {
@@ -481,6 +469,7 @@
           }
         }
         
+        // Si no tiene features, usar las que tenía por defecto
         if (featuresList.length === 0) {
           featuresList = [
             "Diseño responsive y moderno",
@@ -492,6 +481,7 @@
           ];
         }
         
+        // ========== PRECIO (lo que pediste) ==========
         let precioHTML = '';
         if (servicio.offer_price) {
           precioHTML = `
@@ -506,7 +496,10 @@
           precioHTML = `<div class="service-price">${precioMostrar}</div>`;
         }
         
+        // ========== IMAGEN (lo que pediste) ==========
         const imagenUrl = servicio.image_url || 'https://fhxcumwhgtfirznnznjx.supabase.co/storage/v1/object/public/Imagenes/fETkPEv.md.png';
+        
+        // Descripción e ideal desde Supabase (con fallback)
         const descripcionLarga = servicio.description || 'Desarrollo profesional de software a medida para tu negocio.';
         const idealPara = servicio.ideal_for || 'Empresas y emprendedores que buscan una solución digital profesional y escalable.';
         const waMsg = servicio.whatsapp_message || `Hola, quiero información sobre ${servicio.name}`;
@@ -542,6 +535,7 @@
           </div>
         `;
         
+        // Actualizar botón flotante
         const waFloat = document.getElementById("waFloat");
         if (waFloat) waFloat.href = waUrl(waMsg);
         
@@ -553,7 +547,7 @@
         document.getElementById('serviceContent').innerHTML = `
           <div class="error">
             ❌ No se encontró el servicio solicitado.<br>
-            <a href="index.html#servicios" style="color:var(--cyan)">← Ver todos los servicios</a>
+            <a href="index.html#servicios" style="color:var(--cyan)">← Volver a servicios</a>
           </div>
         `;
       }
@@ -561,7 +555,7 @@
     
     cargarServicio();
     
-    // UI Elements
+    // UI Elements (igual que antes)
     const waFloat = document.getElementById("waFloat");
     const footer = document.querySelector("footer");
     function checkWaFloatVisibility() {
