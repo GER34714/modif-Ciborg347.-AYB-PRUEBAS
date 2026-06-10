@@ -14,6 +14,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 
   <style>
     :root {
@@ -166,6 +167,13 @@
       color: transparent;
       margin-bottom: 1.5rem;
     }
+    .service-image {
+      width: 100%;
+      max-height: 400px;
+      object-fit: cover;
+      border-radius: 24px;
+      margin-bottom: 2rem;
+    }
     .service-detail .intro {
       font-size: 1.1rem;
       color: var(--text);
@@ -208,6 +216,21 @@
     .btn-back:hover {
       border-color: var(--cyan);
       color: var(--cyan);
+    }
+
+    .skeleton-service {
+      text-align: center;
+      padding: 40px;
+    }
+    .skeleton-service .skeleton {
+      background: linear-gradient(90deg, var(--bg3) 25%, var(--bg2) 50%, var(--bg3) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      border-radius: 12px;
+    }
+    @keyframes shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
     }
 
     .waFloat {
@@ -292,7 +315,15 @@
 </nav>
 
 <main>
-  <div class="wrap service-detail fade-in" id="serviceContent"></div>
+  <div class="wrap service-detail fade-in" id="serviceContent">
+    <div class="skeleton-service">
+      <div class="skeleton" style="height: 30px; width: 60%; margin: 0 auto 20px;"></div>
+      <div class="skeleton" style="height: 200px; width: 100%; margin: 0 auto 20px; border-radius: 24px;"></div>
+      <div class="skeleton" style="height: 20px; width: 90%; margin: 0 auto 10px;"></div>
+      <div class="skeleton" style="height: 20px; width: 85%; margin: 0 auto 10px;"></div>
+      <div class="skeleton" style="height: 20px; width: 80%; margin: 0 auto;"></div>
+    </div>
+  </div>
 </main>
 
 <footer>
@@ -321,6 +352,7 @@
 
 <script src="config.js"></script>
 <script>
+  // ========== TEMA (DARK/LIGHT) ==========
   const themeToggle = document.getElementById("themeToggle");
   const savedTheme = localStorage.getItem("theme") || "dark";
   document.documentElement.setAttribute("data-theme", savedTheme);
@@ -333,108 +365,152 @@
     themeToggle.textContent = newTheme === "dark" ? "☀️" : "🌙";
   });
 
-  const waNumber = window.CIBORG_CONFIG.WHATSAPP_NUMBER;
-  const waUrl = (msg) => `https://wa.me/${waNumber}?text=${encodeURIComponent(msg)}`;
+  // ========== CONFIGURACIÓN SUPABASE ==========
+  const SUPABASE_URL = window.CIBORG_CONFIG?.SUPABASE_URL || "https://fhxcumwhgtfirznnznjx.supabase.co";
+  const SUPABASE_KEY = window.CIBORG_CONFIG?.SUPABASE_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZoeGN1bXdoZ3RmaXJ6bm56bmp4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc5OTYyNzEsImV4cCI6MjA4MzU3MjI3MX0.7z1B099L4yrA9k1JxwvYGCABzqiqYtkUClI3E8wQ2zA";
+  const sb = window.supabase?.createClient(SUPABASE_URL, SUPABASE_KEY);
+  const DEFAULT_WA = window.CIBORG_CONFIG?.WHATSAPP_NUMBER || "5491164499481";
 
-  const urlParams = new URLSearchParams(window.location.search);
-  let tipo = urlParams.get('tipo');
-  if (!tipo) tipo = 'tienda';
-
-  document.title = `Ciborg 347 — Cargando...`;
-  const container = document.getElementById('serviceContent');
-  container.innerHTML = '<div style="text-align:center; padding:60px 0;">🤖 Cargando información del servicio...</div>';
-
-  function escapeHtml(s) {
-    if (!s) return '';
-    return String(s)
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#39;');
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str).replace(/[&<>]/g, function(m) {
+      if (m === '&') return '&amp;';
+      if (m === '<') return '&lt;';
+      if (m === '>') return '&gt;';
+      return m;
+    });
   }
 
+  function waUrl(msg) {
+    return `https://wa.me/${DEFAULT_WA}?text=${encodeURIComponent(msg)}`;
+  }
+
+  // ========== CARGAR SERVICIO DESDE SUPABASE ==========
   async function loadService() {
+    const urlParams = new URLSearchParams(window.location.search);
+    let slug = urlParams.get('slug');
+    
+    if (!slug) {
+      slug = urlParams.get('tipo');
+    }
+    
+    if (!slug) {
+      showError('No se especificó qué servicio consultar');
+      return;
+    }
+    
     try {
-      const { data: service, error } = await window.supabase
+      const { data: service, error } = await sb
         .from('services')
         .select('*')
-        .eq('slug', tipo)
+        .eq('slug', slug)
         .eq('active', true)
-        .single();
-
-      if (error || !service) {
-        container.innerHTML = `
-          <div class="breadcrumb"><a href="index.html">Inicio</a> / <a href="index.html#servicios">Servicios</a> / <span style="color:var(--cyan)">Servicio no encontrado</span></div>
-          <h1>⚠️ Servicio no disponible</h1>
-          <p>El servicio que buscas no está disponible en este momento.</p>
-          <div class="action-buttons"><a href="index.html#servicios" class="btn btn-back">← Volver a servicios</a></div>
-        `;
+        .maybeSingle();
+      
+      if (error) throw error;
+      
+      if (!service) {
+        showError('Servicio no encontrado');
         return;
       }
-
-      document.title = `Ciborg 347 — ${service.title}`;
-      const metaDesc = document.querySelector('meta[name="description"]');
-      if (metaDesc) metaDesc.setAttribute('content', service.description.slice(0, 150));
-
-      container.innerHTML = `
-        <div class="breadcrumb">
-          <a href="index.html">Inicio</a> / <a href="index.html#servicios">Servicios</a> / <span style="color:var(--cyan)">${escapeHtml(service.title)}</span>
-        </div>
-        <h1>${escapeHtml(service.icon || '🛠️')} ${escapeHtml(service.title)}</h1>
-        <div class="intro">${escapeHtml(service.description)}</div>
-        <h2>🎯 ¿Para quién es ideal?</h2>
-        <p>${escapeHtml(service.ideal_for)}</p>
-        <h2>✨ ¿Qué incluye?</h2>
-        <ul>
-          ${service.features.map(item => `<li>${escapeHtml(item)}</li>`).join('')}
-        </ul>
-        <div class="action-buttons">
-          <a href="${waUrl(service.whatsapp_message || `Hola, quiero consultar por el servicio de ${service.title}.`)}" target="_blank" class="btn btn--wa">Consultar por WhatsApp →</a>
-          <a href="index.html#servicios" class="btn btn-back">← Volver a servicios</a>
-        </div>
-      `;
-
-      const waFloat = document.getElementById("waFloat");
-      if (waFloat) waFloat.href = waUrl(service.whatsapp_message || `Hola, quiero consultar por el servicio de ${service.title}.`);
-
-      const mobileWa = document.getElementById("mobileWhatsAppBtn");
-      if (mobileWa) mobileWa.href = waUrl(service.whatsapp_message || `Hola, quiero consultar por el servicio de ${service.title}.`);
-
+      
+      renderService(service);
+      
     } catch (err) {
-      console.error("Error loading service:", err);
-      container.innerHTML = `
-        <div class="breadcrumb"><a href="index.html">Inicio</a> / <a href="index.html#servicios">Servicios</a></div>
-        <h1>⚠️ Error</h1>
-        <p>No se pudo cargar el servicio. Por favor, intentá nuevamente.</p>
-        <div class="action-buttons"><a href="index.html#servicios" class="btn btn-back">← Volver a servicios</a></div>
-      `;
+      console.error('Error loading service:', err);
+      showError('Error al cargar el servicio');
     }
   }
 
-  loadService();
-
-  const footer = document.querySelector("footer");
-  function checkWaFloatVisibility() {
+  function renderService(service) {
+    document.title = `Ciborg 347 — ${service.title}`;
+    
+    const metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc) {
+      metaDesc.setAttribute('content', service.description?.substring(0, 150) || '');
+    }
+    
+    const container = document.getElementById('serviceContent');
+    if (!container) return;
+    
+    const featuresArray = Array.isArray(service.features) ? service.features : [];
+    
+    container.innerHTML = `
+      <div class="breadcrumb">
+        <a href="index.html">Inicio</a> / <a href="index.html#servicios">Servicios</a> / <span style="color:var(--cyan)">${escapeHtml(service.title)}</span>
+      </div>
+      ${service.image_url ? `<img class="service-image" src="${escapeHtml(service.image_url)}" alt="${escapeHtml(service.title)}" />` : ''}
+      <h1>${escapeHtml(service.title)}</h1>
+      <div class="intro">${escapeHtml(service.description || '')}</div>
+      <h2>🎯 ¿Para quién es ideal?</h2>
+      <p>${escapeHtml(service.ideal_for || 'Emprendedores, pymes y marcas que buscan una solución profesional.')}</p>
+      <h2>✨ ¿Qué incluye?</h2>
+      <ul>
+        ${featuresArray.map(feature => `<li>${escapeHtml(feature)}</li>`).join('')}
+      </ul>
+      <div class="action-buttons">
+        <a href="${waUrl(service.whatsapp_message || `Hola, quiero consultar por el servicio de ${service.title}`)}" target="_blank" class="btn btn--wa">Consultar por WhatsApp →</a>
+        <a href="index.html#servicios" class="btn btn-back">← Volver a servicios</a>
+      </div>
+    `;
+    
     const waFloat = document.getElementById("waFloat");
-    if (!waFloat || !footer) return;
-    const footerRect = footer.getBoundingClientRect();
-    if (footerRect.top < window.innerHeight - 50) waFloat.classList.add("hidden");
-    else waFloat.classList.remove("hidden");
+    if (waFloat) {
+      waFloat.href = waUrl(service.whatsapp_message || `Hola, quiero consultar por el servicio de ${service.title}`);
+    }
+    
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => { if(e.isIntersecting) { e.target.classList.add("visible"); observer.unobserve(e.target); } });
+    }, { threshold: 0.1 });
+    document.querySelectorAll(".fade-in").forEach(el => observer.observe(el));
   }
-  window.addEventListener("scroll", checkWaFloatVisibility);
-  window.addEventListener("resize", checkWaFloatVisibility);
-  setTimeout(checkWaFloatVisibility, 100);
 
+  function showError(message) {
+    const container = document.getElementById('serviceContent');
+    if (!container) return;
+    
+    container.innerHTML = `
+      <div class="breadcrumb">
+        <a href="index.html">Inicio</a> / <a href="index.html#servicios">Servicios</a>
+      </div>
+      <div style="text-align: center; padding: 60px 20px;">
+        <div style="font-size: 48px; margin-bottom: 20px;">⚠️</div>
+        <h2>${escapeHtml(message)}</h2>
+        <p style="margin-top: 20px;">Volvé al <a href="index.html#servicios" style="color: var(--cyan);">listado de servicios</a> para ver todas las opciones disponibles.</p>
+      </div>
+    `;
+  }
+
+  // ========== WHATSAPP VISIBILITY ==========
+  function setupWhatsAppVisibility() {
+    const whatsappButton = document.getElementById('waFloat');
+    const footer = document.querySelector('footer');
+    if (!whatsappButton || !footer) return;
+    
+    const observerFooter = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          whatsappButton.classList.add('hidden');
+        } else {
+          whatsappButton.classList.remove('hidden');
+        }
+      });
+    }, { threshold: 0.1 });
+    observerFooter.observe(footer);
+  }
+
+  // ========== MOBILE MENU ==========
   const burgerBtn = document.getElementById("burgerBtn");
   const mobileMenu = document.getElementById("mobileMenu");
   burgerBtn?.addEventListener("click", () => mobileMenu.classList.toggle("isOpen"));
   document.querySelectorAll(".mobileMenu a").forEach(a => a.addEventListener("click", () => mobileMenu.classList.remove("isOpen")));
+  
+  const mobileWa = document.getElementById("mobileWhatsAppBtn");
+  if (mobileWa) mobileWa.href = waUrl("Hola, vengo del asistente virtual y quiero consultar por un proyecto.");
 
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(e => { if(e.isIntersecting) { e.target.classList.add("visible"); observer.unobserve(e.target); } });
-  }, { threshold: 0.1 });
-  document.querySelectorAll(".fade-in").forEach(el => observer.observe(el));
+  // ========== INICIALIZACIÓN ==========
+  setupWhatsAppVisibility();
+  loadService();
 </script>
 </body>
 </html>
