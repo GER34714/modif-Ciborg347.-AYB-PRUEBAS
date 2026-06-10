@@ -164,7 +164,19 @@
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
-      margin-bottom: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+    .precio {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--cyan);
+      background: var(--bg2);
+      display: inline-block;
+      padding: 0.5rem 1.2rem;
+      border-radius: 40px;
+      margin: 1rem 0 1.5rem 0;
+      border: 1px solid var(--border);
+      font-family: 'JetBrains Mono', monospace;
     }
     .service-detail .intro {
       font-size: 1.1rem;
@@ -319,7 +331,6 @@
   </svg>
 </a>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="config.js"></script>
 <script>
   const themeToggle = document.getElementById("themeToggle");
@@ -337,10 +348,12 @@
   const waNumber = window.CIBORG_CONFIG.WHATSAPP_NUMBER;
   const waUrl = (msg) => `https://wa.me/${waNumber}?text=${encodeURIComponent(msg)}`;
 
+  // ========== SERVICIOS CON LOS PRECIOS QUE ME DISTE ==========
   const serviciosData = {
     tienda: {
       titulo: "Tiendas Online",
-      descripcionLarga: "Desarrollamos ecommerce completos, adaptados a tu negocio. Integramos carrito de compras, pasarelas de pago (Mercado Pago, Stripe), panel de administración de productos, gestión de stock, cupones de descuento y sistema de pedidos automático por WhatsApp.",
+      precio: "$700.000",
+      descripcionLarga: "Desarrollamos ecommerce completos, adaptados a tu negocio. Integramos carrito de compras, pasarelas de pago (Mercado Pago, Stripe), panel de administración de productos, gestión de stock, cupones de descuento y sistema de pedidos automático por WhatsApp. Carrito, stock, ofertas y pedidos por WhatsApp. Experiencia de compra fluida.",
       ideal: "Emprendedores, pymes y marcas que quieran vender sus productos por internet con una plataforma profesional, sin depender de soluciones genéricas.",
       incluye: [
         "Catálogo de productos con filtros y búsqueda",
@@ -351,11 +364,12 @@
         "Notificaciones de pedidos por WhatsApp y email",
         "Diseño responsive y SEO básico"
       ],
-      waMsg: "Hola, quiero consultar por el desarrollo de una Tienda Online profesional."
+      waMsg: "Hola, quiero consultar por el desarrollo de una Tienda Online profesional. Presupuesto desde $700.000"
     },
     pedidos: {
       titulo: "Sistemas de Pedidos",
-      descripcionLarga: "Creamos sistemas de pedidos a medida: configuradores de productos, cálculo automático de costos (envíos, opciones), generación de órdenes y envío directo a WhatsApp. Ideal para restaurantes, rotiserías, comercios con delivery o venta por catálogo.",
+      precio: "$550.000",
+      descripcionLarga: "Creamos sistemas de pedidos a medida: configuradores de productos, cálculo automático de costos (envíos, opciones), generación de órdenes y envío directo a WhatsApp. Ideal para restaurantes, rotiserías, comercios con delivery o venta por catálogo. Flujo guiado con cálculo de costos. Ideal para delivery y comidas.",
       ideal: "Negocios que reciben pedidos por WhatsApp y desean automatizar el proceso, reduciendo errores y agilizando la atención.",
       incluye: [
         "Formulario inteligente de pedido",
@@ -365,11 +379,12 @@
         "Historial de órdenes para el cliente",
         "Diseño mobile first"
       ],
-      waMsg: "Hola, necesito un Sistema de Pedidos a medida para mi negocio."
+      waMsg: "Hola, necesito un Sistema de Pedidos a medida para mi negocio. Presupuesto desde $550.000"
     },
     admin: {
       titulo: "Panel Admin",
-      descripcionLarga: "Desarrollamos paneles administrativos completos para que puedas gestionar tu negocio desde cualquier lugar. Control de usuarios, productos, ventas, reportes, y más. Todo desde una interfaz clara, segura y adaptada a tus necesidades.",
+      precio: "$500.000",
+      descripcionLarga: "Desarrollamos paneles administrativos completos para que puedas gestionar tu negocio desde cualquier lugar. Control de usuarios, productos, ventas, reportes, y más. Todo desde una interfaz clara, segura y adaptada a tus necesidades. Gestioná productos, ventas y usuarios desde cualquier dispositivo.",
       ideal: "Empresas que requieren un sistema interno para administrar datos, inventario, empleados o clientes sin depender de software de terceros.",
       incluye: [
         "Autenticación de usuarios (roles: admin, editor, etc.)",
@@ -379,11 +394,12 @@
         "Diseño responsive (funciona en móvil)",
         "Código fuente 100% tuyo"
       ],
-      waMsg: "Hola, quiero un Panel Admin personalizado para gestionar mi negocio."
+      waMsg: "Hola, quiero un Panel Admin personalizado para gestionar mi negocio. Presupuesto desde $500.000"
     },
     landing: {
       titulo: "Landings de Conversión",
-      descripcionLarga: "Creamos landing pages de alto impacto visual y orientadas a la conversión. Diseñadas para captar leads, vender un producto o servicio específico, o promocionar un evento. Incluyen formularios, integración con WhatsApp, y seguimiento de métricas.",
+      precio: "$250.000",
+      descripcionLarga: "Creamos landing pages de alto impacto visual y orientadas a la conversión. Diseñadas para captar leads, vender un producto o servicio específico, o promocionar un evento. Incluyen formularios, integración con WhatsApp, y seguimiento de métricas. Diseñadas para convertir visitas en clientes. Alto impacto visual.",
       ideal: "Empresas que lanzan campañas publicitarias (Google Ads, Facebook) y necesitan una página que convierta visitas en consultas o ventas.",
       incluye: [
         "Diseño persuasivo con jerarquía visual",
@@ -393,11 +409,12 @@
         "SEO on-page para la campaña",
         "Integración con Google Analytics y Facebook Pixel"
       ],
-      waMsg: "Hola, necesito una Landing Page de alta conversión para mi campaña."
+      waMsg: "Hola, necesito una Landing Page de alta conversión para mi campaña. Presupuesto desde $250.000"
     },
     institucional: {
       titulo: "Webs Institucionales",
-      descripcionLarga: "Desarrollamos sitios web corporativos que reflejan la identidad de tu marca. Con diseño moderno, galerías de trabajos, presentación de servicios, blog, mapa de ubicación y formulario de contacto. Totalmente adaptables a cualquier dispositivo.",
+      precio: "$450.000",
+      descripcionLarga: "Desarrollamos sitios web corporativos que reflejan la identidad de tu marca. Con diseño moderno, galerías de trabajos, presentación de servicios, blog, mapa de ubicación y formulario de contacto. Totalmente adaptables a cualquier dispositivo. Galería, servicios, SEO y presencia profesional para tu empresa.",
       ideal: "Empresas, estudios profesionales, clínicas, ONGs que necesitan presencia online profesional y confiable.",
       incluye: [
         "Páginas: Inicio, Nosotros, Servicios, Contacto, Blog (opcional)",
@@ -407,11 +424,12 @@
         "Mapa de ubicación",
         "SEO básico y estructura amigable"
       ],
-      waMsg: "Hola, quiero una Web Institucional para mi empresa o emprendimiento."
+      waMsg: "Hola, quiero una Web Institucional para mi empresa o emprendimiento. Presupuesto desde $450.000"
     },
     catalogo: {
       titulo: "Catálogos Digitales",
-      descripcionLarga: "Transformamos tus productos en un catálogo digital interactivo. Los clientes pueden navegar por categorías, ver detalles, precios y consultar directamente por WhatsApp. Ideal para negocios que no requieren carrito de compras pero sí una vitrina profesional.",
+      precio: "$350.000",
+      descripcionLarga: "Transformamos tus productos en un catálogo digital interactivo. Los clientes pueden navegar por categorías, ver detalles, precios y consultar directamente por WhatsApp. Ideal para negocios que no requieren carrito de compras pero sí una vitrina profesional. Vitrina profesional con botón de consulta. Ideal para mayoristas.",
       ideal: "Mayoristas, distribuidores, marcas que quieran mostrar sus productos sin vender online directamente.",
       incluye: [
         "Organización de productos por categorías",
@@ -421,104 +439,65 @@
         "Panel para actualizar catálogo fácilmente",
         "Diseño responsive y rápido"
       ],
-      waMsg: "Hola, necesito un Catálogo Digital para mostrar mis productos."
+      waMsg: "Hola, necesito un Catálogo Digital para mostrar mis productos. Presupuesto desde $350.000"
     }
   };
 
   const urlParams = new URLSearchParams(window.location.search);
   let tipo = urlParams.get('tipo');
-  
-  // Si no hay tipo o no existe en serviciosData, mostrar error
-  if (!tipo || !serviciosData[tipo]) {
-    document.getElementById('serviceContent').innerHTML = `
-      <div class="error" style="text-align:center; padding:80px 20px">
-        ❌ Servicio no encontrado<br>
-        <a href="index.html#servicios" style="color:var(--cyan)">← Volver a servicios</a>
-      </div>
-    `;
-  } else {
-    const data = serviciosData[tipo];
-    
-    const tipoToSlug = {
-      tienda: 'tiendas-online',
-      pedidos: 'sistemas-de-pedidos',
-      admin: 'panel-admin',
-      landing: 'landings-de-conversion',
-      institucional: 'webs-institucionales',
-      catalogo: 'catalogos-digitales'
-    };
+  if (!tipo || !serviciosData[tipo]) tipo = 'tienda';
+  const data = serviciosData[tipo];
 
-    (async function() {
-      const supabase = window.supabase.createClient(
-        window.CIBORG_CONFIG.SUPABASE_URL,
-        window.CIBORG_CONFIG.SUPABASE_ANON_KEY
-      );
-      
-      const { data: precioData } = await supabase
-        .from('service_plans')
-        .select('price, offer_price, offer_badge')
-        .eq('slug', tipoToSlug[tipo])
-        .single();
-      
-      const precio = precioData?.price || 'Consultar precio';
-      const precioOferta = precioData?.offer_price;
-      const badgeOferta = precioData?.offer_badge;
+  document.title = `Ciborg 347 — ${data.titulo} | ${data.precio}`;
+  const metaDesc = document.querySelector('meta[name="description"]');
+  if (metaDesc) metaDesc.setAttribute('content', data.descripcionLarga.slice(0, 150));
 
-      document.title = `Ciborg 347 — ${data.titulo}`;
-      const metaDesc = document.querySelector('meta[name="description"]');
-      if (metaDesc) metaDesc.setAttribute('content', data.descripcionLarga.slice(0, 150));
+  const container = document.getElementById('serviceContent');
+  container.innerHTML = `
+    <div class="breadcrumb">
+      <a href="index.html">Inicio</a> / <a href="index.html#servicios">Servicios</a> / <span style="color:var(--cyan)">${data.titulo}</span>
+    </div>
+    <h1>${data.titulo}</h1>
+    <div class="precio">💰 ${data.precio} ARS</div>
+    <div class="intro">${data.descripcionLarga}</div>
+    <h2>🎯 ¿Para quién es ideal?</h2>
+    <p>${data.ideal}</p>
+    <h2>✨ ¿Qué incluye?</h2>
+    <ul>
+      ${data.incluye.map(item => `<li>${item}</li>`).join('')}
+    </ul>
+    <div class="action-buttons">
+      <a href="${waUrl(data.waMsg)}" target="_blank" class="btn btn--wa">Consultar por WhatsApp → ${data.precio}</a>
+      <a href="index.html#servicios" class="btn btn-back">← Volver a servicios</a>
+    </div>
+  `;
 
-      const container = document.getElementById('serviceContent');
-      container.innerHTML = `
-        <div class="breadcrumb">
-          <a href="index.html">Inicio</a> / <a href="index.html#servicios">Servicios</a> / <span style="color:var(--cyan)">${data.titulo}</span>
-        </div>
-        <h1>${data.titulo}</h1>
-        ${precioOferta ? 
-          `<div style="margin:1rem 0"><span style="font-size:2rem;color:var(--cyan);font-weight:700">${precioOferta}</span> <span style="text-decoration:line-through;margin-left:1rem;color:var(--text2)">${precio}</span> ${badgeOferta ? `<span style="background:linear-gradient(135deg,#ff47d1,#ff8c00);padding:4px 12px;border-radius:20px;margin-left:1rem">${badgeOferta}</span>` : ''}</div>` :
-          `<div style="font-size:2rem;color:var(--cyan);font-weight:700;margin:1rem 0">${precio}</div>`
-        }
-        <div class="intro">${data.descripcionLarga}</div>
-        <h2>🎯 ¿Para quién es ideal?</h2>
-        <p>${data.ideal}</p>
-        <h2>✨ ¿Qué incluye?</h2>
-        <ul>
-          ${data.incluye.map(item => `<li>${item}</li>`).join('')}
-        </ul>
-        <div class="action-buttons">
-          <a href="${waUrl(data.waMsg)}" target="_blank" class="btn btn--wa">Consultar por WhatsApp →</a>
-          <a href="index.html#servicios" class="btn btn-back">← Volver a servicios</a>
-        </div>
-      `;
+  const waFloat = document.getElementById("waFloat");
+  if (waFloat) waFloat.href = waUrl(data.waMsg);
 
-      const waFloat = document.getElementById("waFloat");
-      if (waFloat) waFloat.href = waUrl(data.waMsg);
-
-      const mobileWa = document.getElementById("mobileWhatsAppBtn");
-      if (mobileWa) mobileWa.href = waUrl(data.waMsg);
-
-      const footer = document.querySelector("footer");
-      function checkWaFloatVisibility() {
-        if (!waFloat || !footer) return;
-        const footerRect = footer.getBoundingClientRect();
-        if (footerRect.top < window.innerHeight - 50) waFloat.classList.add("hidden");
-        else waFloat.classList.remove("hidden");
-      }
-      window.addEventListener("scroll", checkWaFloatVisibility);
-      window.addEventListener("resize", checkWaFloatVisibility);
-      setTimeout(checkWaFloatVisibility, 100);
-
-      const burgerBtn = document.getElementById("burgerBtn");
-      const mobileMenu = document.getElementById("mobileMenu");
-      burgerBtn?.addEventListener("click", () => mobileMenu.classList.toggle("isOpen"));
-      document.querySelectorAll(".mobileMenu a").forEach(a => a.addEventListener("click", () => mobileMenu.classList.remove("isOpen")));
-
-      const observer = new IntersectionObserver(entries => {
-        entries.forEach(e => { if(e.isIntersecting) { e.target.classList.add("visible"); observer.unobserve(e.target); } });
-      }, { threshold: 0.1 });
-      document.querySelectorAll(".fade-in").forEach(el => observer.observe(el));
-    })();
+  const footer = document.querySelector("footer");
+  function checkWaFloatVisibility() {
+    if (!waFloat || !footer) return;
+    const footerRect = footer.getBoundingClientRect();
+    if (footerRect.top < window.innerHeight - 50) waFloat.classList.add("hidden");
+    else waFloat.classList.remove("hidden");
   }
+  window.addEventListener("scroll", checkWaFloatVisibility);
+  window.addEventListener("resize", checkWaFloatVisibility);
+  setTimeout(checkWaFloatVisibility, 100);
+
+  const burgerBtn = document.getElementById("burgerBtn");
+  const mobileMenu = document.getElementById("mobileMenu");
+  burgerBtn?.addEventListener("click", () => mobileMenu.classList.toggle("isOpen"));
+  document.querySelectorAll(".mobileMenu a").forEach(a => a.addEventListener("click", () => mobileMenu.classList.remove("isOpen")));
+
+  const mobileWa = document.getElementById("mobileWhatsAppBtn");
+  if (mobileWa) mobileWa.href = waUrl(data.waMsg);
+
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => { if(e.isIntersecting) { e.target.classList.add("visible"); observer.unobserve(e.target); } });
+  }, { threshold: 0.1 });
+  document.querySelectorAll(".fade-in").forEach(el => observer.observe(el));
 </script>
 </body>
 </html>
