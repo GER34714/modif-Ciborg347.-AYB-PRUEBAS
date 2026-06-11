@@ -1672,7 +1672,7 @@ const sb = window.supabase?.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 console.log("🔌 Conectando a Supabase...");
 
-// ========== CARGAR SERVICIOS DESDE SUPABASE (TABLA "services") ==========
+// ========== CARGAR SERVICIOS CON PRECIOS (VERSIÓN CORREGIDA) ==========
 async function loadServices() {
   const container = document.getElementById('servicesGrid');
   if (!container) return;
@@ -1680,9 +1680,9 @@ async function loadServices() {
   container.innerHTML = '<div class="skeleton-card"></div><div class="skeleton-card"></div><div class="skeleton-card"></div>';
   
   try {
-    // Traer servicios directamente de la tabla "services"
+    // 1. Traer todos los tipos de servicio activos
     const { data: services, error: servicesError } = await sb
-      .from('services')
+      .from('service_types')
       .select('*')
       .eq('active', true)
       .order('order_index', { ascending: true });
@@ -1694,47 +1694,31 @@ async function loadServices() {
       return;
     }
     
-    // Mapeo de slugs por si vienen con guiones
-    const slugMap = {
-      'tiendas-online': 'tienda',
-      'sistemas-pedidos': 'pedidos',
-      'paneles-admin': 'admin',
-      'landings-conversion': 'landing',
-      'webs-institucionales': 'institucional',
-      'catalogos-digitales': 'catalogo'
-    };
+    // 2. Traer los precios activos para estos servicios
+    const serviceIds = services.map(s => s.id);
+    const { data: prices, error: pricesError } = await sb
+      .from('service_prices')
+      .select('*')
+      .in('service_type_id', serviceIds)
+      .eq('active', true);
     
-    // Renderizar los servicios
+    if (pricesError) throw pricesError;
+    
+    // 3. Armar un mapa de precios por service_type_id
+    const priceMap = new Map();
+    if (prices) {
+      prices.forEach(price => {
+        priceMap.set(price.service_type_id, price);
+      });
+    }
+    
+    // 4. Renderizar los servicios
     container.innerHTML = services.map(service => {
-      let serviceSlug = service.slug;
-      if (slugMap[serviceSlug]) serviceSlug = slugMap[serviceSlug];
-      
-      // Obtener precio directamente de la columna price
-      const price = service.price || 'Consultar';
-      
-      // Descripción corta
-      const shortDesc = service.description ? 
-        service.description.substring(0, 100) + (service.description.length > 100 ? '...' : '') : 
-        'Solución digital profesional';
-      
-      return `
-        <div class="serviceCard fade-in-up">
-          <div class="serviceCard__icon">${service.icon || '📦'}</div>
-          <div class="serviceCard__title">${escapeHtml(service.title)}</div>
-          <div class="serviceCard__desc">${escapeHtml(shortDesc)}</div>
-          <div class="serviceCard__price">${escapeHtml(price)}</div>
-          <a href="servicio.html?tipo=${serviceSlug}" class="serviceCard__btn">Ver más →</a>
-        </div>
-      `;
-    }).join('');
-    
-    console.log("✅ Servicios cargados desde tabla 'services'");
-    
-  } catch(e) { 
-    console.error("Error loading services:", e);
-    container.innerHTML = '<div style="grid-column:1/-1; text-align:center; color:var(--text2);">Error al cargar servicios</div>';
-  }
-}
+      const price = priceMap.get(service.id);
+      const hasOffer = price?.offer_price && price?.offer_price !== '';
+      const displayPrice = hasOffer ? price.offer_price : price?.price_from;
+      const originalPrice = hasOffer ? price.price_from : null;
+      const badge = price?.offer_badge || null;
       // ===== CORRECCIÓN: OBTENER EL SLUG CORRECTO =====
       let serviceSlug = service.slug;
       
