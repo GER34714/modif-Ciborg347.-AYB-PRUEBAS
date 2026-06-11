@@ -184,8 +184,7 @@
       max-height: 400px;
       object-fit: cover;
       border-radius: 24px;
-      margin: 1rem 0 1.5rem 0;
-      background: var(--bg3);
+      margin: 1rem 0;
     }
     .service-detail .intro {
       font-size: 1.1rem;
@@ -365,7 +364,7 @@
   function waUrl(msg) { return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`; }
 
   // ============================================================
-  // TEMAS (claro/oscuro)
+  // TEMAS
   // ============================================================
   const themeToggle = document.getElementById("themeToggle");
   const savedTheme = localStorage.getItem("theme") || "dark";
@@ -380,7 +379,7 @@
   });
 
   // ============================================================
-  // MAPEO DE SLUGS (por si vienen con guiones)
+  // MAPEO DE SLUGS
   // ============================================================
   const slugFix = {
     'paneles-admin': 'admin',
@@ -393,11 +392,10 @@
   };
 
   // ============================================================
-  // OBTENER SERVICIO DESDE SUPABASE
+  // CARGAR SERVICIO DESDE SUPABASE
   // ============================================================
   async function loadServiceFromSupabase(slug) {
     try {
-      // Primero intentamos buscar por slug exacto
       let { data, error } = await sb
         .from('services')
         .select('*')
@@ -406,7 +404,6 @@
         .single();
 
       if (error && error.code === 'PGRST116') {
-        // Si no encuentra, intentamos con el slug corregido
         const fixedSlug = slugFix[slug];
         if (fixedSlug && fixedSlug !== slug) {
           const { data: fixedData, error: fixedError } = await sb
@@ -415,12 +412,10 @@
             .eq('slug', fixedSlug)
             .eq('active', true)
             .single();
-          
           if (!fixedError && fixedData) return fixedData;
         }
         return null;
       }
-      
       if (error) throw error;
       return data;
     } catch (err) {
@@ -435,31 +430,18 @@
   function renderService(service) {
     const container = document.getElementById('serviceContent');
     if (!service) {
-      container.innerHTML = `
-        <div class="error">
-          ❌ Servicio no encontrado.<br>
-          <a href="index.html#servicios" style="color: var(--cyan);">← Volver a servicios</a>
-        </div>
-      `;
+      container.innerHTML = `<div class="error">❌ Servicio no encontrado.<br><a href="index.html#servicios" style="color: var(--cyan);">← Volver a servicios</a></div>`;
       return;
     }
 
-    // Procesar características (pueden ser array o string)
     let features = [];
     if (service.features) {
-      if (Array.isArray(service.features)) {
-        features = service.features;
-      } else if (typeof service.features === 'string') {
-        try {
-          const parsed = JSON.parse(service.features);
-          features = Array.isArray(parsed) ? parsed : [service.features];
-        } catch(e) {
-          features = service.features.split(',').map(f => f.trim()).filter(f => f);
-        }
+      if (Array.isArray(service.features)) features = service.features;
+      else if (typeof service.features === 'string') {
+        try { features = JSON.parse(service.features); } catch(e) { features = [service.features]; }
       }
     }
 
-    // Mensaje de WhatsApp personalizado o default
     const whatsappMsg = service.whatsapp_message || `Hola, quiero consultar por el servicio de ${service.title}. Presupuesto desde ${service.price || 'consultar'}`;
     
     container.innerHTML = `
@@ -473,10 +455,7 @@
       <h2>🎯 ¿Para quién es ideal?</h2>
       <p>${escapeHtml(service.ideal_for || 'Emprendedores, pymes y empresas que buscan una solución digital profesional.')}</p>
       <h2>✨ ¿Qué incluye?</h2>
-      <ul>
-        ${features.map(item => `<li>${escapeHtml(item)}</li>`).join('')}
-        ${features.length === 0 ? '<li>Consultar por más detalles</li>' : ''}
-      </ul>
+      <ul>${features.map(item => `<li>${escapeHtml(item)}</li>`).join('')}${features.length === 0 ? '<li>Consultar por más detalles</li>' : ''}</ul>
       <div class="action-buttons">
         <a href="${waUrl(whatsappMsg)}" target="_blank" class="btn btn--wa">Consultar por WhatsApp → ${escapeHtml(service.price || '')}</a>
         <a href="index.html#servicios" class="btn btn-back">← Volver a servicios</a>
@@ -488,12 +467,7 @@
 
   function escapeHtml(str) {
     if (!str) return '';
-    return String(str).replace(/[&<>]/g, function(m) {
-      if (m === '&') return '&amp;';
-      if (m === '<') return '&lt;';
-      if (m === '>') return '&gt;';
-      return m;
-    });
+    return String(str).replace(/[&<>]/g, m => m === '&' ? '&amp;' : m === '<' ? '&lt;' : '&gt;');
   }
 
   // ============================================================
@@ -502,11 +476,7 @@
   async function init() {
     const urlParams = new URLSearchParams(window.location.search);
     let slug = urlParams.get('tipo') || 'tienda';
-    
-    // Aplicar mapeo de slugs
-    if (slugFix[slug]) {
-      slug = slugFix[slug];
-    }
+    if (slugFix[slug]) slug = slugFix[slug];
     
     const container = document.getElementById('serviceContent');
     container.innerHTML = '<div class="loading">🤖 Cargando información del servicio...</div>';
@@ -514,14 +484,12 @@
     const service = await loadServiceFromSupabase(slug);
     renderService(service);
     
-    // Actualizar botón flotante
     const waFloat = document.getElementById('waFloat');
     if (waFloat && service) {
       const whatsappMsg = service.whatsapp_message || `Hola, quiero consultar por el servicio de ${service.title}. Presupuesto desde ${service.price || 'consultar'}`;
       waFloat.href = waUrl(whatsappMsg);
     }
     
-    // WhatsApp en menú mobile
     const mobileWa = document.getElementById('mobileWhatsAppBtn');
     if (mobileWa && service) {
       const whatsappMsg = service.whatsapp_message || `Hola, quiero consultar por el servicio de ${service.title}. Presupuesto desde ${service.price || 'consultar'}`;
@@ -529,9 +497,13 @@
     }
   }
 
-  // ============================================================
-  // OCULTAR BOTÓN FLOTANTE AL LLEGAR AL FOOTER
-  // ============================================================
+  // Menú hamburguesa
+  const burgerBtn = document.getElementById("burgerBtn");
+  const mobileMenu = document.getElementById("mobileMenu");
+  burgerBtn?.addEventListener("click", () => mobileMenu.classList.toggle("isOpen"));
+  document.querySelectorAll(".mobileMenu a").forEach(a => a.addEventListener("click", () => mobileMenu.classList.remove("isOpen")));
+
+  // Ocultar botón flotante al llegar al footer
   const footer = document.querySelector("footer");
   const waFloat = document.getElementById("waFloat");
   function checkWaFloatVisibility() {
@@ -544,19 +516,12 @@
   window.addEventListener("resize", checkWaFloatVisibility);
   setTimeout(checkWaFloatVisibility, 100);
 
-  // Menú hamburguesa
-  const burgerBtn = document.getElementById("burgerBtn");
-  const mobileMenu = document.getElementById("mobileMenu");
-  burgerBtn?.addEventListener("click", () => mobileMenu.classList.toggle("isOpen"));
-  document.querySelectorAll(".mobileMenu a").forEach(a => a.addEventListener("click", () => mobileMenu.classList.remove("isOpen")));
-
   // Animación fade-in
   const observer = new IntersectionObserver(entries => {
     entries.forEach(e => { if(e.isIntersecting) { e.target.classList.add("visible"); observer.unobserve(e.target); } });
   }, { threshold: 0.1 });
   document.querySelectorAll(".fade-in").forEach(el => observer.observe(el));
 
-  // Iniciar
   init();
 </script>
 </body>
