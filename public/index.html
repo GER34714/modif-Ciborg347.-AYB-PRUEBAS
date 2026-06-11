@@ -1672,17 +1672,17 @@ const sb = window.supabase?.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 console.log("🔌 Conectando a Supabase...");
 
-// ========== CARGAR SERVICIOS CON PRECIOS (VERSIÓN CORREGIDA) ==========
-async function loadServices() {
+// ========== NUEVA FUNCIÓN PARA CARGAR SERVICIOS CON PRECIOS REALES ==========
+async function loadServicesReal() {
   const container = document.getElementById('servicesGrid');
   if (!container) return;
   
   container.innerHTML = '<div class="skeleton-card"></div><div class="skeleton-card"></div><div class="skeleton-card"></div>';
   
   try {
-    // 1. Traer todos los tipos de servicio activos
+    // Traer servicios desde la tabla "services" (precios reales editables desde admin)
     const { data: services, error: servicesError } = await sb
-      .from('service_types')
+      .from('services')
       .select('*')
       .eq('active', true)
       .order('order_index', { ascending: true });
@@ -1694,72 +1694,52 @@ async function loadServices() {
       return;
     }
     
-    // 2. Traer los precios activos para estos servicios
-    const serviceIds = services.map(s => s.id);
-    const { data: prices, error: pricesError } = await sb
-      .from('service_prices')
-      .select('*')
-      .in('service_type_id', serviceIds)
-      .eq('active', true);
+    // Mapeo de slugs por si vienen con guiones
+    const slugMap = {
+      'tiendas-online': 'tienda',
+      'sistemas-pedidos': 'pedidos',
+      'paneles-admin': 'admin',
+      'landings-conversion': 'landing',
+      'webs-institucionales': 'institucional',
+      'catalogos-digitales': 'catalogo'
+    };
     
-    if (pricesError) throw pricesError;
-    
-    // 3. Armar un mapa de precios por service_type_id
-    const priceMap = new Map();
-    if (prices) {
-      prices.forEach(price => {
-        priceMap.set(price.service_type_id, price);
-      });
-    }
-    
-    // 4. Renderizar los servicios
+    // Renderizar los servicios (usando el precio REAL de la tabla "services")
     container.innerHTML = services.map(service => {
-      const price = priceMap.get(service.id);
-      const hasOffer = price?.offer_price && price?.offer_price !== '';
-      const displayPrice = hasOffer ? price.offer_price : price?.price_from;
-      const originalPrice = hasOffer ? price.price_from : null;
-      const badge = price?.offer_badge || null;
-      // ===== CORRECCIÓN: OBTENER EL SLUG CORRECTO =====
       let serviceSlug = service.slug;
+      if (slugMap[serviceSlug]) serviceSlug = slugMap[serviceSlug];
       
-      // Mapeo de slugs incorrectos a correctos
-      const slugMap = {
-        'sistemas-pedidos': 'pedidos',
-        'tiendas-online': 'tienda',
-        'landings-conversion': 'landing',
-        'webs-institucionales': 'institucional',
-        'catalogos-digitales': 'catalogo',
-        'paneles-admin': 'admin'
-      };
+      // ===== PRECIO REAL desde la tabla services =====
+      const price = service.price || 'Consultar';
       
-      if (slugMap[serviceSlug]) {
-        serviceSlug = slugMap[serviceSlug];
-      }
+      // Descripción corta
+      const shortDesc = service.description ? 
+        service.description.substring(0, 100) + (service.description.length > 100 ? '...' : '') : 
+        'Solución digital profesional';
       
-      const priceHtml = price ? `
-        <div class="serviceCard__price">
-          ${hasOffer ? `<strike>${escapeHtml(originalPrice)}</strike>` : ''}
-          ${escapeHtml(displayPrice)}
-          ${badge ? `<span class="serviceCard__offer-badge">${escapeHtml(badge)}</span>` : ''}
-        </div>
-      ` : '';
-      
-      // ===== EL ENLACE CORREGIDO (lo único que cambia en todo el archivo) =====
       return `
         <div class="serviceCard fade-in-up">
           <div class="serviceCard__icon">${service.icon || '📦'}</div>
-          <div class="serviceCard__title">${escapeHtml(service.name)}</div>
-          <div class="serviceCard__desc">${escapeHtml(service.description || '')}</div>
-          ${priceHtml}
+          <div class="serviceCard__title">${escapeHtml(service.title)}</div>
+          <div class="serviceCard__desc">${escapeHtml(shortDesc)}</div>
+          <div class="serviceCard__price">${escapeHtml(price)}</div>
           <a href="servicio.html?tipo=${serviceSlug}" class="serviceCard__btn">Ver más →</a>
         </div>
       `;
     }).join('');
     
+    console.log("✅ Servicios cargados desde tabla 'services' con precios reales");
+    
   } catch(e) { 
     console.error("Error loading services:", e);
     container.innerHTML = '<div style="grid-column:1/-1; text-align:center; color:var(--text2);">Error al cargar servicios</div>';
   }
+}
+
+// ========== FUNCIÓN ORIGINAL (se mantiene por si acaso) ==========
+async function loadServices() {
+  // Esta función se mantiene original por si algo más la necesita
+  console.log("Función loadServices original (no utilizada actualmente)");
 }
 
 // ========== RESTO DEL CÓDIGO (TOTALMENTE ORIGINAL) ==========
@@ -2385,8 +2365,8 @@ function setupWhatsAppVisibility() {
   observerFooter.observe(footer);
 }
 
-// Inicializar todo
-loadServices();
+// Inicializar todo - USANDO LA NUEVA FUNCIÓN loadServicesReal()
+loadServicesReal();
 loadProjects();
 loadFaqs();
 loadReviews();
