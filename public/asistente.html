@@ -14,7 +14,6 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 
   <style>
     :root {
@@ -70,6 +69,7 @@
 
     .wrap { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
 
+    /* Topbar */
     .topbar {
       position: sticky; top: 0; z-index: 100;
       background: rgba(10,10,15,0.82);
@@ -147,6 +147,71 @@
     .mobileMenu a {
       font-family: 'JetBrains Mono', monospace; font-size: 13px;
       color: var(--text2); padding: 0.6rem 0; border-bottom: 1px solid var(--border);
+    }
+
+    /* Tooltip / Glosario */
+    .tooltip {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      cursor: help;
+      margin-left: 8px;
+    }
+    .tooltip-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 18px;
+      height: 18px;
+      background: rgba(0, 212, 255, 0.15);
+      border: 1px solid var(--cyan);
+      border-radius: 50%;
+      font-size: 11px;
+      font-weight: bold;
+      color: var(--cyan);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .tooltip-icon:hover {
+      background: var(--cyan);
+      color: var(--white);
+      transform: scale(1.1);
+    }
+    .tooltip-text {
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--bg3);
+      border: 1px solid var(--cyan);
+      border-radius: 12px;
+      padding: 8px 12px;
+      font-size: 0.7rem;
+      color: var(--text);
+      white-space: nowrap;
+      z-index: 100;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.2s;
+      margin-bottom: 8px;
+      font-family: 'Outfit', sans-serif;
+      font-weight: normal;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      pointer-events: none;
+    }
+    .tooltip-text::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border-width: 5px;
+      border-style: solid;
+      border-color: var(--cyan) transparent transparent transparent;
+    }
+    .tooltip:hover .tooltip-text {
+      opacity: 1;
+      visibility: visible;
     }
 
     /* Contenido principal del asistente */
@@ -241,12 +306,17 @@
       font-family: 'JetBrains Mono', monospace;
     }
 
+    /* Question */
     .question {
       font-size: 1.25rem;
       font-weight: 600;
       margin-bottom: 20px;
       color: var(--white);
       animation: fadeInUp 0.3s ease;
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
     }
 
     @keyframes fadeInUp {
@@ -254,6 +324,7 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
+    /* Options */
     .options {
       display: flex;
       flex-direction: column;
@@ -293,6 +364,7 @@
       padding-left: 28px;
     }
 
+    /* Inputs */
     .text-input {
       width: 100%;
       padding: 14px 16px;
@@ -312,6 +384,7 @@
       box-shadow: 0 0 0 2px rgba(0, 212, 255, 0.1);
     }
 
+    /* Skip button */
     .skip-btn {
       background: transparent;
       border: none;
@@ -328,6 +401,7 @@
       color: var(--cyan);
     }
 
+    /* Buttons dentro del asistente */
     .btn-next, .btn-back {
       background: var(--grad);
       border: none;
@@ -352,6 +426,7 @@
       filter: brightness(1.05);
     }
 
+    /* Result card */
     .result-card {
       background: var(--bg3);
       border-radius: 20px;
@@ -424,22 +499,8 @@
       gap: 10px;
       margin-top: 20px;
     }
-    .result-buttons a {
-      text-align: center;
-      padding: 12px;
-      border-radius: 40px;
-      text-decoration: none;
-      font-weight: 600;
-    }
-    .result-buttons .btn-wa {
-      background: linear-gradient(135deg, #25d366, #128c7e);
-      color: white;
-    }
-    .result-buttons .btn-quote {
-      background: var(--grad);
-      color: white;
-    }
 
+    /* Lead form */
     .lead-form {
       display: flex;
       flex-direction: column;
@@ -462,6 +523,12 @@
       box-shadow: 0 0 0 2px rgba(0, 212, 255, 0.1);
     }
 
+    /* Custom textarea para necesidad específica */
+    .custom-need {
+      margin-top: 16px;
+    }
+
+    /* Toast */
     .toast-message {
       position: fixed;
       bottom: 100px;
@@ -481,6 +548,7 @@
       font-family: 'JetBrains Mono', monospace;
     }
 
+    /* Skeleton */
     .skeleton {
       background: linear-gradient(90deg, var(--bg3) 25%, var(--bg2) 50%, var(--bg3) 75%);
       background-size: 200% 100%;
@@ -492,6 +560,7 @@
       100% { background-position: -200% 0; }
     }
 
+    /* Footer */
     footer {
       background: var(--bg2);
       border-top: 1px solid var(--border);
@@ -512,6 +581,7 @@
     .footer__links a:hover { color: var(--cyan); }
     .footer__copy { font-size: 11px; color: var(--text2); }
 
+    /* WhatsApp flotante */
     .waFloat {
       position: fixed;
       bottom: 24px;
@@ -588,8 +658,8 @@
       <div class="asistente-header-card">
         <div class="robot-icon">🤖</div>
         <div>
-          <h2 id="asistenteTitle">Asistente Ciborg 347</h2>
-          <p id="asistenteSubtitle">Respondé algunas preguntas y te recomendamos la solución ideal</p>
+          <h2>Asistente Ciborg 347</h2>
+          <p>Respondé algunas preguntas y te recomendamos la solución ideal</p>
         </div>
       </div>
       <div class="asistente-body" id="asistenteBody">
@@ -642,24 +712,56 @@
     themeToggle.textContent = newTheme === "dark" ? "☀️" : "🌙";
   });
 
-  // ========== CONFIGURACIÓN SUPABASE ==========
-  const SUPABASE_URL = window.CIBORG_CONFIG?.SUPABASE_URL || "https://fhxcumwhgtfirznnznjx.supabase.co";
-  const SUPABASE_KEY = window.CIBORG_CONFIG?.SUPABASE_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZoeGN1bXdoZ3RmaXJ6bm56bmp4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc5OTYyNzEsImV4cCI6MjA4MzU3MjI3MX0.7z1B099L4yrA9k1JxwvYGCABzqiqYtkUClI3E8wQ2zA";
-  const sb = window.supabase?.createClient(SUPABASE_URL, SUPABASE_KEY);
+  // ========== CONFIGURACIÓN ==========
   const DEFAULT_WA = window.CIBORG_CONFIG?.WHATSAPP_NUMBER || "5491164499481";
-
-  // ========== ESTADO GLOBAL ==========
-  let guideConfig = null;
-  let firstNode = null;
-  let currentNode = null;
-  let sessionId = null;
-  let userAnswers = [];
-  let currentScore = 0;
-  let currentLeadData = {};
-
-  // ========== FUNCIONES AUXILIARES ==========
+  
+  // Planes y precios - Estos valores se sincronizarán con los planes de la web
+  // TODO: Conectar con Supabase o API de planes
+  const PLANES = {
+    landing: { nombre: "Landing Page", precio: 250, precioARS: 350000, descripcion: "Ideal para captar clientes y mostrar servicios", tipo: "basico" },
+    web_profesional: { nombre: "Web Profesional", precio: 450, precioARS: 630000, descripcion: "Sitio completo con panel admin", tipo: "medio" },
+    tienda_online: { nombre: "Tienda Online", precio: 650, precioARS: 910000, descripcion: "Ecommerce completo con carrito", tipo: "avanzado" },
+    catalogo: { nombre: "Catálogo Digital", precio: 350, precioARS: 490000, descripcion: "Vitrina de productos con WhatsApp", tipo: "medio" },
+    sistema_pedidos: { nombre: "Sistema de Pedidos", precio: 550, precioARS: 770000, descripcion: "Sistema a medida para pedidos", tipo: "avanzado" },
+    panel_admin: { nombre: "Panel Administrativo", precio: 700, precioARS: 980000, descripcion: "Gestión completa de tu negocio", tipo: "premium" },
+    institucional: { nombre: "Web Institucional", precio: 500, precioARS: 700000, descripcion: "Presencia corporativa profesional", tipo: "avanzado" },
+    personalizado: { nombre: "Solución Personalizada", precio: "a consultar", descripcion: "Proyecto a medida", tipo: "premium" }
+  };
+  
+  let currentStep = "welcome";
+  let userAnswers = {};
+  let historyStack = [];
+  let leadData = {};
+  let precioEstimado = 0;
+  let planRecomendado = null;
+  let esModoPersonalizado = false;
+  
+  // Tooltips / Glosario de términos
+  const glosario = {
+    "Landing Page": "Página diseñada específicamente para convertir visitantes en clientes, con un objetivo claro y llamado a la acción.",
+    "Panel Admin": "Sistema interno para gestionar productos, usuarios, ventas y contenido sin necesidad de programación.",
+    "SEO": "Optimización para que tu web aparezca en los primeros resultados de Google.",
+    "Responsive": "Diseño que se adapta automáticamente a celulares, tablets y computadoras.",
+    "Ecommerce": "Tienda online que permite vender productos con carrito de compras y pasarela de pagos.",
+    "Catálogo Digital": "Vitrina online para mostrar productos sin necesidad de tener un carrito de compras."
+  };
+  
+  function showTooltip(texto) {
+    // Función para mostrar tooltip temporal (alternativa a CSS)
+    const tooltipDiv = document.createElement('div');
+    tooltipDiv.className = 'toast-message';
+    tooltipDiv.textContent = texto;
+    tooltipDiv.style.background = 'var(--bg3)';
+    tooltipDiv.style.border = '1px solid var(--cyan)';
+    tooltipDiv.style.maxWidth = '300px';
+    tooltipDiv.style.whiteSpace = 'normal';
+    tooltipDiv.style.textAlign = 'center';
+    document.body.appendChild(tooltipDiv);
+    setTimeout(() => tooltipDiv.remove(), 3000);
+  }
+  
   function showToast(message, isError = false) {
-    const existingToast = document.querySelector('.toast-message');
+    const existingToast = document.querySelector('.toast-message:not(.tooltip-temp)');
     if (existingToast) existingToast.remove();
     
     const toast = document.createElement('div');
@@ -670,476 +772,686 @@
     document.body.appendChild(toast);
     setTimeout(() => toast.remove(), 3000);
   }
-
-  function generateSessionId() {
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-      const r = Math.random() * 16 | 0;
-      const v = c === 'x' ? r : (r & 0x3 | 0x8);
-      return v.toString(16);
-    });
+  
+  function saveToLocalStorage() {
+    localStorage.setItem('ciborg_asistente', JSON.stringify({ userAnswers, currentStep, historyStack, timestamp: Date.now() }));
   }
-
-  function updateProgress(percent) {
-    const fill = document.querySelector('.progress-fill');
-    if (fill) fill.style.width = percent + '%';
+  
+  function clearLocalStorage() {
+    localStorage.removeItem('ciborg_asistente');
   }
-
+  
   function scrollToTop() {
     const body = document.querySelector('.asistente-body');
     if (body) body.scrollTo({ top: 0, behavior: 'smooth' });
   }
-
-  // ========== CARGAR CONFIGURACIÓN ==========
-  async function loadGuideConfig() {
-    try {
-      const { data, error } = await sb
-        .from('guide_config')
-        .select('*')
-        .eq('active', true)
-        .limit(1)
-        .single();
-      
-      if (error && error.code !== 'PGRST116') throw error;
-      
-      if (data) {
-        guideConfig = data;
-        const titleEl = document.getElementById('asistenteTitle');
-        const subtitleEl = document.getElementById('asistenteSubtitle');
-        if (titleEl && guideConfig.assistant_name) titleEl.textContent = guideConfig.assistant_name;
-        if (subtitleEl && guideConfig.welcome_message) subtitleEl.textContent = guideConfig.welcome_message;
-      }
-    } catch (err) {
-      console.error('Error loading guide config:', err);
+  
+  function updateProgress(percent) {
+    const fill = document.querySelector('.progress-fill');
+    if (fill) fill.style.width = percent + '%';
+    const text = document.querySelector('.progress-text');
+    if (text) {
+      const steps = Math.floor(percent / 12.5);
+      text.textContent = `Paso ${steps + 1} de 8 · ${percent}% completado`;
     }
   }
-
-  // ========== CARGAR PRIMER NODO ==========
-  async function loadFirstNode() {
-    try {
-      const { data, error } = await sb
-        .from('guide_nodes')
-        .select('*')
-        .is('parent_id', null)
-        .eq('active', true)
-        .order('order_index', { ascending: true })
-        .limit(1)
-        .single();
-      
-      if (error && error.code !== 'PGRST116') throw error;
-      
-      if (data) {
-        firstNode = data;
-        currentNode = data;
-        return true;
+  
+  // Calcular precio estimado basado en respuestas
+  function calcularPrecioEstimado() {
+    let basePrice = 0;
+    let selectedPlan = null;
+    
+    if (esModoPersonalizado || userAnswers.q1 === 'personalizado') {
+      selectedPlan = PLANES.personalizado;
+      basePrice = "a consultar";
+    } else if (userAnswers.q1 === 'vender_productos') {
+      if (userAnswers.vender_vender === 'si') {
+        selectedPlan = PLANES.tienda_online;
       } else {
-        showToast('No hay preguntas configuradas en el asistente', true);
-        return false;
+        selectedPlan = PLANES.catalogo;
       }
-    } catch (err) {
-      console.error('Error loading first node:', err);
-      showToast('Error al cargar el asistente', true);
-      return false;
-    }
-  }
-
-  // ========== CARGAR NODO POR ID ==========
-  async function loadNodeById(nodeId) {
-    try {
-      const { data, error } = await sb
-        .from('guide_nodes')
-        .select('*')
-        .eq('id', nodeId)
-        .eq('active', true)
-        .single();
-      
-      if (error) throw error;
-      return data;
-    } catch (err) {
-      console.error('Error loading node:', err);
-      return null;
-    }
-  }
-
-  // ========== CARGAR RESULTADO POR ID ==========
-  async function loadResultById(resultId) {
-    try {
-      const { data, error } = await sb
-        .from('guide_results')
-        .select('*')
-        .eq('id', resultId)
-        .eq('active', true)
-        .single();
-      
-      if (error) throw error;
-      return data;
-    } catch (err) {
-      console.error('Error loading result:', err);
-      return null;
-    }
-  }
-
-  // ========== GUARDAR RESPUESTA EN LA SESIÓN ==========
-  async function saveResponseToSession(nodeId, answer, scoreIncrement = 0) {
-    if (!sessionId) {
-      sessionId = generateSessionId();
-    }
-    
-    try {
-      await sb.from('guide_sessions').insert({
-        session_id: sessionId,
-        node_id: nodeId,
-        answer: answer,
-        score: currentScore
-      });
-    } catch (err) {
-      console.error('Error saving session:', err);
-    }
-  }
-
-  // ========== GUARDAR LEAD ==========
-  async function saveLead(resultId, resultTitle, freeText = null) {
-    if (!sessionId) return;
-    
-    try {
-      const flowPath = userAnswers.map(a => `${a.question}:${a.answer}`).join(' → ');
-      
-      await sb.from('guide_leads').insert({
-        session_id: sessionId,
-        name: currentLeadData.name || null,
-        whatsapp: currentLeadData.whatsapp || null,
-        email: currentLeadData.email || null,
-        company: currentLeadData.company || null,
-        query: currentLeadData.query || null,
-        free_text: freeText,
-        result_id: resultId,
-        result_title: resultTitle,
-        flow_path: flowPath
-      });
-    } catch (err) {
-      console.error('Error saving lead:', err);
-    }
-  }
-
-  // ========== MOSTRAR PREGUNTA ==========
-  function showQuestion(node) {
-    const body = document.getElementById('asistenteBody');
-    if (!body || !node) return;
-    
-    let optionsHtml = '';
-    let hasFreeText = false;
-    let freeTextLabel = '';
-    let freeTextPlaceholder = '';
-    
-    if (node.options && typeof node.options === 'object') {
-      const opts = Array.isArray(node.options) ? node.options : Object.values(node.options);
-      optionsHtml = `<div class="options">`;
-      opts.forEach(opt => {
-        let optLabel = typeof opt === 'string' ? opt : (opt.label || opt);
-        let optDesc = typeof opt === 'object' ? opt.description : '';
-        let optValue = typeof opt === 'object' ? (opt.value || opt.label) : opt;
-        optionsHtml += `
-          <div class="option" data-value="${escapeHtml(optValue)}" data-score="${opt.score || 0}">
-            <div class="option-label">${escapeHtml(optLabel)}</div>
-            ${optDesc ? `<div class="option-desc">${escapeHtml(optDesc)}</div>` : ''}
-          </div>
-        `;
-      });
-      optionsHtml += `</div>`;
-    }
-    
-    if (node.allow_free_text) {
-      hasFreeText = true;
-      freeTextLabel = node.free_text_label || '📝 Otro:';
-      freeTextPlaceholder = node.free_text_placeholder || 'Contanos qué necesitas específicamente...';
-      optionsHtml += `
-        <div class="field" style="margin-top: 16px;">
-          <label>${escapeHtml(freeTextLabel)}</label>
-          <textarea class="text-input" id="freeTextInput" rows="3" placeholder="${escapeHtml(freeTextPlaceholder)}"></textarea>
-        </div>
-      `;
-    }
-    
-    body.innerHTML = `
-      <div class="progress-bar">
-        <div class="progress-track"><div class="progress-fill" style="width: ${Math.min((userAnswers.length / 10) * 100, 90)}%;"></div></div>
-        <div class="progress-text">Pregunta ${userAnswers.length + 1}</div>
-      </div>
-      <div class="question">${escapeHtml(node.title)}</div>
-      ${optionsHtml}
-      ${hasFreeText ? `<button class="btn-next" id="freeTextSubmitBtn">Enviar respuesta →</button>` : ''}
-      ${userAnswers.length > 0 ? `<button class="btn-back" id="backBtn">← Volver</button>` : ''}
-    `;
-    
-    if (!hasFreeText) {
-      document.querySelectorAll('.option').forEach(opt => {
-        opt.addEventListener('click', async () => {
-          const value = opt.dataset.value;
-          const scoreInc = parseInt(opt.dataset.score) || 0;
-          currentScore += scoreInc;
-          userAnswers.push({ question: node.title, answer: value, node_id: node.id });
-          await saveResponseToSession(node.id, value, scoreInc);
-          await processAnswer(node, value, null);
-        });
-      });
+    } else if (userAnswers.q1 === 'conseguir_clientes') {
+      selectedPlan = PLANES.landing;
+    } else if (userAnswers.q1 === 'mostrar_servicios') {
+      if (userAnswers.mostrar_administrable === 'si') {
+        selectedPlan = PLANES.web_profesional;
+      } else {
+        selectedPlan = PLANES.landing;
+      }
+    } else if (userAnswers.q1 === 'automatizar') {
+      selectedPlan = PLANES.panel_admin;
+    } else if (userAnswers.q1 === 'presencia') {
+      selectedPlan = PLANES.institucional;
+    } else if (userAnswers.q1 === 'caso_propio' || userAnswers.texto_personalizado) {
+      selectedPlan = PLANES.personalizado;
+      basePrice = "a consultar";
     } else {
-      const submitBtn = document.getElementById('freeTextSubmitBtn');
-      if (submitBtn) {
-        submitBtn.addEventListener('click', async () => {
-          const freeText = document.getElementById('freeTextInput')?.value.trim();
-          if (!freeText) {
-            showToast('Por favor, escribí tu respuesta', true);
-            return;
-          }
-          userAnswers.push({ question: node.title, answer: freeText, node_id: node.id });
-          await saveResponseToSession(node.id, freeText, 0);
-          await processAnswer(node, freeText, freeText);
-        });
+      selectedPlan = PLANES.personalizado;
+      basePrice = "a consultar";
+    }
+    
+    if (selectedPlan && selectedPlan.precio !== "a consultar") {
+      basePrice = selectedPlan.precio;
+      if (userAnswers.conseguir_whatsapp === 'si') basePrice += 50;
+      if (userAnswers.vender_administrar === 'si') basePrice += 100;
+      if (userAnswers.mostrar_administrable === 'si') basePrice += 80;
+    }
+    
+    planRecomendado = selectedPlan;
+    precioEstimado = basePrice;
+    return { precio: basePrice, plan: selectedPlan };
+  }
+  
+  function getWaLinks() {
+    return (msg) => `https://wa.me/${DEFAULT_WA}?text=${encodeURIComponent(msg)}`;
+  }
+  
+  // Función para crear texto con tooltips
+  function addTooltips(text) {
+    let result = text;
+    for (const [term, definition] of Object.entries(glosario)) {
+      const regex = new RegExp(`\\b${term}\\b`, 'g');
+      if (result.match(regex)) {
+        result = result.replace(regex, `<span class="tooltip">${term}<span class="tooltip-icon" onclick="event.stopPropagation(); showTooltip('${definition}')">?</span><span class="tooltip-text">${definition}</span></span>`);
       }
     }
-    
-    const backBtn = document.getElementById('backBtn');
-    if (backBtn) {
-      backBtn.addEventListener('click', () => {
-        showToast('Volviendo atrás...');
-        window.location.reload();
-      });
-    }
-    
+    return result;
+  }
+  
+  // ========== BIENVENIDA ==========
+  function showWelcome() {
+    currentStep = "welcome";
+    clearLocalStorage();
+    esModoPersonalizado = false;
+    const body = document.getElementById('asistenteBody');
+    body.innerHTML = `
+      <div style="text-align: center; animation: fadeInUp 0.3s ease;">
+        <div style="font-size: 2.5rem; margin-bottom: 12px;">✨</div>
+        <div class="question" style="margin-bottom: 16px; justify-content: center;">¡Hola! Te ayudo a encontrar la solución perfecta</div>
+        <p style="color: var(--text2); margin-bottom: 16px; line-height: 1.5; font-size: 0.9rem;">Respondé algunas preguntas y recibirás una recomendación personalizada con precio estimado.</p>
+        <button class="btn-next" id="startBtn">Comenzar →</button>
+        <button class="skip-btn" id="directBtn" style="margin-top: 12px;">✏️ Prefiero escribir directamente mi necesidad</button>
+      </div>
+    `;
+    document.getElementById('startBtn')?.addEventListener('click', () => {
+      historyStack = [];
+      userAnswers = {};
+      currentStep = "q1";
+      showQuestion1();
+    });
+    document.getElementById('directBtn')?.addEventListener('click', () => {
+      esModoPersonalizado = true;
+      showTextoPersonalizado();
+    });
+    updateProgress(0);
     scrollToTop();
   }
-
-  // ========== PROCESAR RESPUESTA Y OBTENER SIGUIENTE NODO ==========
-  async function processAnswer(currentNode, answer, freeText = null) {
-    let nextNodeId = null;
-    
-    if (currentNode.options && typeof currentNode.options === 'object') {
-      const opts = Array.isArray(currentNode.options) ? currentNode.options : Object.values(currentNode.options);
-      const selectedOpt = opts.find(opt => {
-        const optValue = typeof opt === 'string' ? opt : (opt.value || opt.label);
-        return optValue === answer;
-      });
-      
-      if (selectedOpt && selectedOpt.next_node_id) {
-        nextNodeId = selectedOpt.next_node_id;
-      }
-    }
-    
-    if (!nextNodeId && currentNode.fallback_node_id) {
-      nextNodeId = currentNode.fallback_node_id;
-    }
-    
-    if (nextNodeId) {
-      const nextNode = await loadNodeById(nextNodeId);
-      if (nextNode && nextNode.active) {
-        if (nextNode.node_type === 'question') {
-          currentNode = nextNode;
-          showQuestion(currentNode);
-        } else if (nextNode.node_type === 'result' && nextNode.result_id) {
-          const result = await loadResultById(nextNode.result_id);
-          if (result) {
-            showLeadCapture(result, freeText);
-          } else {
-            showFallback();
-          }
-        } else {
-          showFallback();
-        }
-      } else {
-        showFallback();
-      }
-    } else if (currentNode.is_final && currentNode.result_id) {
-      const result = await loadResultById(currentNode.result_id);
-      if (result) {
-        showLeadCapture(result, freeText);
-      } else {
-        showFallback();
-      }
-    } else {
-      showFallback();
-    }
-  }
-
-  // ========== MOSTRAR CAPTURA DE LEAD ==========
-  function showLeadCapture(result, freeText = null) {
+  
+  // Modo texto personalizado (omitir preguntas)
+  function showTextoPersonalizado() {
+    currentStep = "personalizado";
     const body = document.getElementById('asistenteBody');
-    if (!body) return;
-    
     body.innerHTML = `
-      <div class="progress-bar">
-        <div class="progress-track"><div class="progress-fill" style="width: 100%;"></div></div>
-        <div class="progress-text">¡Último paso!</div>
+      <div class="progress-bar"><div class="progress-track"><div class="progress-fill" style="width: 30%;"></div></div><div class="progress-text">Modo directo · Cuéntanos tu proyecto</div></div>
+      <div class="question">✏️ Contanos qué necesitas</div>
+      <p style="color: var(--text2); font-size: 0.8rem; margin-bottom: 16px;">Describí tu proyecto o necesidad. Cuanto más detalles, mejor podremos ayudarte.</p>
+      <textarea class="text-input" id="textoPersonalizado" rows="5" placeholder="Ej: Necesito un sistema de reservas para mi consultorio médico, con calendario y recordatorios automáticos..."></textarea>
+      <button class="btn-next" id="enviarTextoBtn">Enviar →</button>
+      <button class="btn-back" id="backBtn">← Volver al inicio</button>
+    `;
+    document.getElementById('enviarTextoBtn')?.addEventListener('click', () => {
+      const texto = document.getElementById('textoPersonalizado')?.value.trim();
+      if (!texto) { showToast('Por favor, describí tu proyecto', true); return; }
+      userAnswers.q1 = 'caso_propio';
+      userAnswers.texto_personalizado = texto;
+      saveToLocalStorage();
+      showLeadCapture();
+    });
+    document.getElementById('backBtn')?.addEventListener('click', () => showWelcome());
+    updateProgress(30);
+    scrollToTop();
+  }
+  
+  // ========== PREGUNTA 1 - Objetivo ==========
+  function showQuestion1() {
+    currentStep = "q1";
+    const body = document.getElementById('asistenteBody');
+    body.innerHTML = `
+      <div class="progress-bar"><div class="progress-track"><div class="progress-fill" style="width: 12%;"></div></div><div class="progress-text">Paso 1 de 8 · Tu objetivo</div></div>
+      <div class="question">
+        🎯 ¿Cuál es tu principal objetivo?
+        <span class="tooltip">
+          <span class="tooltip-icon" onclick="event.stopPropagation(); showTooltip('Elegí la opción que mejor describa lo que buscas lograr con tu sitio web.')">?</span>
+        </span>
       </div>
-      <div class="question">📝 ¡Genial! Dejanos tus datos para enviarte la propuesta</div>
+      <div class="options">
+        <div class="option" data-value="conseguir_clientes"><span class="option-label">🎯 Conseguir más clientes</span><span class="option-desc">Atraer y captar nuevos clientes para tu negocio</span></div>
+        <div class="option" data-value="mostrar_servicios"><span class="option-label">📋 Mostrar mis servicios</span><span class="option-desc">Exhibir profesionalmente lo que ofrezco</span></div>
+        <div class="option" data-value="vender_productos"><span class="option-label">🛒 Vender productos</span><span class="option-desc">Comercializar productos online</span></div>
+        <div class="option" data-value="automatizar"><span class="option-label">⚙️ Automatizar procesos</span><span class="option-desc">Optimizar tareas repetitivas</span></div>
+        <div class="option" data-value="presencia"><span class="option-label">🏢 Presencia profesional</span><span class="option-desc">Tener presencia online confiable</span></div>
+        <div class="option" data-value="personalizado"><span class="option-label">✏️ Mi caso es diferente</span><span class="option-desc">Proyecto personalizado</span></div>
+      </div>
+      <button class="skip-btn" id="skipBtn">✏️ Omitir y escribir mi necesidad</button>
+      <button class="btn-back" id="backBtn" style="margin-top: 8px;">← Reiniciar</button>
+    `;
+    
+    document.querySelectorAll('.option').forEach(opt => {
+      opt.addEventListener('click', () => {
+        const value = opt.dataset.value;
+        userAnswers.q1 = value;
+        historyStack.push({ step: currentStep, answer: value });
+        saveToLocalStorage();
+        
+        if (value === 'personalizado') {
+          showTextoPersonalizado();
+        } else {
+          const routingMap = {
+            'conseguir_clientes': showConseguirClientes1,
+            'mostrar_servicios': showMostrarServicios1,
+            'vender_productos': showVenderProductos1,
+            'automatizar': showAutomatizar1,
+            'presencia': showPresencia1
+          };
+          if (routingMap[value]) routingMap[value]();
+        }
+      });
+    });
+    
+    document.getElementById('skipBtn')?.addEventListener('click', () => {
+      esModoPersonalizado = true;
+      showTextoPersonalizado();
+    });
+    document.getElementById('backBtn')?.addEventListener('click', () => {
+      historyStack = [];
+      userAnswers = {};
+      showWelcome();
+    });
+    updateProgress(12);
+    scrollToTop();
+  }
+  
+  // ========== RAMA: Conseguir clientes ==========
+  function showConseguirClientes1() {
+    currentStep = "conseguir1";
+    const body = document.getElementById('asistenteBody');
+    body.innerHTML = `
+      <div class="progress-bar"><div class="progress-track"><div class="progress-fill" style="width: 25%;"></div></div><div class="progress-text">Paso 2 de 8 · Canales actuales</div></div>
+      <div class="question">📢 ¿Cómo conseguís clientes actualmente?</div>
+      <div class="options">
+        <div class="option" data-value="redes"><span class="option-label">📱 Redes sociales</span><span class="option-desc">Instagram, Facebook, LinkedIn</span></div>
+        <div class="option" data-value="recomendaciones"><span class="option-label">🗣️ Recomendaciones</span><span class="option-desc">Boca a boca</span></div>
+        <div class="option" data-value="publicidad"><span class="option-label">📢 Publicidad paga</span><span class="option-desc">Google Ads, Facebook Ads</span></div>
+        <div class="option" data-value="pocos"><span class="option-label">⚠️ Me cuesta conseguir</span><span class="option-desc">Necesito más clientes</span></div>
+      </div>
+      <button class="btn-back" id="backBtn">← Volver</button>
+    `;
+    document.querySelectorAll('.option').forEach(opt => {
+      opt.addEventListener('click', () => {
+        userAnswers.conseguir_como = opt.dataset.value;
+        saveToLocalStorage();
+        showConseguirClientes2();
+      });
+    });
+    document.getElementById('backBtn')?.addEventListener('click', () => showQuestion1());
+    updateProgress(25);
+    scrollToTop();
+  }
+  
+  function showConseguirClientes2() {
+    currentStep = "conseguir2";
+    const body = document.getElementById('asistenteBody');
+    body.innerHTML = `
+      <div class="progress-bar"><div class="progress-track"><div class="progress-fill" style="width: 38%;"></div></div><div class="progress-text">Paso 3 de 8 · Sitio web actual</div></div>
+      <div class="question">🌐 ¿Ya tenés sitio web?</div>
+      <div class="options">
+        <div class="option" data-value="si"><span class="option-label">✅ Sí</span><span class="option-desc">Ya tengo una web</span></div>
+        <div class="option" data-value="no"><span class="option-label">❌ No</span><span class="option-desc">Aún no tengo</span></div>
+        <div class="option" data-value="viejo"><span class="option-label">🕰️ Tengo uno viejo</span><span class="option-desc">Necesito actualizar</span></div>
+      </div>
+      <button class="btn-back" id="backBtn">← Volver</button>
+    `;
+    document.querySelectorAll('.option').forEach(opt => {
+      opt.addEventListener('click', () => {
+        userAnswers.conseguir_tiene_web = opt.dataset.value;
+        saveToLocalStorage();
+        showConseguirClientes3();
+      });
+    });
+    document.getElementById('backBtn')?.addEventListener('click', () => showConseguirClientes1());
+    updateProgress(38);
+    scrollToTop();
+  }
+  
+  function showConseguirClientes3() {
+    currentStep = "conseguir3";
+    const body = document.getElementById('asistenteBody');
+    body.innerHTML = `
+      <div class="progress-bar"><div class="progress-track"><div class="progress-fill" style="width: 50%;"></div></div><div class="progress-text">Paso 4 de 8 · Contacto por WhatsApp</div></div>
+      <div class="question">💬 ¿Querés recibir consultas por WhatsApp?</div>
+      <div class="options">
+        <div class="option" data-value="si"><span class="option-label">✅ Sí, es muy importante</span><span class="option-desc">Quiero que me contacten por WhatsApp</span></div>
+        <div class="option" data-value="no"><span class="option-label">❌ No, solo formulario</span><span class="option-desc">Prefiero formulario de contacto</span></div>
+        <div class="option" data-value="ambos"><span class="option-label">📱 Ambos</span><span class="option-desc">WhatsApp y formulario</span></div>
+      </div>
+      <button class="btn-back" id="backBtn">← Volver</button>
+    `;
+    document.querySelectorAll('.option').forEach(opt => {
+      opt.addEventListener('click', () => {
+        userAnswers.conseguir_whatsapp = opt.dataset.value;
+        saveToLocalStorage();
+        showLeadCapture();
+      });
+    });
+    document.getElementById('backBtn')?.addEventListener('click', () => showConseguirClientes2());
+    updateProgress(50);
+    scrollToTop();
+  }
+  
+  // ========== RAMA: Mostrar servicios (similar estructura) ==========
+  function showMostrarServicios1() {
+    currentStep = "mostrar1";
+    const body = document.getElementById('asistenteBody');
+    body.innerHTML = `
+      <div class="progress-bar"><div class="progress-track"><div class="progress-fill" style="width: 25%;"></div></div><div class="progress-text">Paso 2 de 8 · Tipo de actividad</div></div>
+      <div class="question">👤 ¿Qué tipo de actividad tenés?</div>
+      <div class="options">
+        <div class="option" data-value="independiente"><span class="option-label">👤 Profesional independiente</span><span class="option-desc">Médico, abogado, contador, etc.</span></div>
+        <div class="option" data-value="consultorio"><span class="option-label">🏥 Consultorio / Estudio</span><span class="option-desc">Consultorio médico, odontológico</span></div>
+        <div class="option" data-value="empresa"><span class="option-label">🏢 Empresa / PYME</span><span class="option-desc">Negocio consolidado</span></div>
+        <div class="option" data-value="emprendimiento"><span class="option-label">🚀 Emprendimiento</span><span class="option-desc">Negocio en crecimiento</span></div>
+      </div>
+      <button class="btn-back" id="backBtn">← Volver</button>
+    `;
+    document.querySelectorAll('.option').forEach(opt => {
+      opt.addEventListener('click', () => {
+        userAnswers.mostrar_tipo = opt.dataset.value;
+        saveToLocalStorage();
+        showMostrarServicios2();
+      });
+    });
+    document.getElementById('backBtn')?.addEventListener('click', () => showQuestion1());
+    updateProgress(25);
+    scrollToTop();
+  }
+  
+  function showMostrarServicios2() {
+    currentStep = "mostrar2";
+    const body = document.getElementById('asistenteBody');
+    body.innerHTML = `
+      <div class="progress-bar"><div class="progress-track"><div class="progress-fill" style="width: 38%;"></div></div><div class="progress-text">Paso 3 de 8 · Cantidad de servicios</div></div>
+      <div class="question">📋 ¿Cuántos servicios querés mostrar?</div>
+      <div class="options">
+        <div class="option" data-value="si"><span class="option-label">📋 Más de 5 servicios</span><span class="option-desc">Catálogo extenso de servicios</span></div>
+        <div class="option" data-value="no"><span class="option-label">📄 Hasta 5 servicios</span><span class="option-desc">Pocos servicios específicos</span></div>
+      </div>
+      <button class="btn-back" id="backBtn">← Volver</button>
+    `;
+    document.querySelectorAll('.option').forEach(opt => {
+      opt.addEventListener('click', () => {
+        userAnswers.mostrar_muchos = opt.dataset.value;
+        saveToLocalStorage();
+        showMostrarServicios3();
+      });
+    });
+    document.getElementById('backBtn')?.addEventListener('click', () => showMostrarServicios1());
+    updateProgress(38);
+    scrollToTop();
+  }
+  
+  function showMostrarServicios3() {
+    currentStep = "mostrar3";
+    const body = document.getElementById('asistenteBody');
+    body.innerHTML = `
+      <div class="progress-bar"><div class="progress-track"><div class="progress-fill" style="width: 50%;"></div></div><div class="progress-text">Paso 4 de 8 · Autogestión</div></div>
+      <div class="question">
+        ✏️ ¿Necesitás actualizar el contenido vos mismo?
+        <span class="tooltip">
+          <span class="tooltip-icon" onclick="event.stopPropagation(); showTooltip('Con un panel administrativo podés editar textos, imágenes y servicios sin necesidad de programación.')">?</span>
+        </span>
+      </div>
+      <div class="options">
+        <div class="option" data-value="si"><span class="option-label">✅ Sí, quiero administrarlo yo</span><span class="option-desc">Panel para editar contenido</span></div>
+        <div class="option" data-value="no"><span class="option-label">❌ No, que lo maneje el equipo</span><span class="option-desc">Prefiero que lo actualicen ellos</span></div>
+      </div>
+      <button class="btn-back" id="backBtn">← Volver</button>
+    `;
+    document.querySelectorAll('.option').forEach(opt => {
+      opt.addEventListener('click', () => {
+        userAnswers.mostrar_administrable = opt.dataset.value;
+        saveToLocalStorage();
+        showLeadCapture();
+      });
+    });
+    document.getElementById('backBtn')?.addEventListener('click', () => showMostrarServicios2());
+    updateProgress(50);
+    scrollToTop();
+  }
+  
+  // ========== RAMA: Vender productos ==========
+  function showVenderProductos1() {
+    currentStep = "vender1";
+    const body = document.getElementById('asistenteBody');
+    body.innerHTML = `
+      <div class="progress-bar"><div class="progress-track"><div class="progress-fill" style="width: 25%;"></div></div><div class="progress-text">Paso 2 de 8 · Cantidad de productos</div></div>
+      <div class="question">📦 ¿Cuántos productos tenés?</div>
+      <div class="options">
+        <div class="option" data-value="menos_20"><span class="option-label">📦 Menos de 20 productos</span><span class="option-desc">Catálogo pequeño</span></div>
+        <div class="option" data-value="20_100"><span class="option-label">📦📦 20 a 100 productos</span><span class="option-desc">Catálogo mediano</span></div>
+        <div class="option" data-value="mas_100"><span class="option-label">📦📦📦 Más de 100 productos</span><span class="option-desc">Catálogo grande</span></div>
+      </div>
+      <button class="btn-back" id="backBtn">← Volver</button>
+    `;
+    document.querySelectorAll('.option').forEach(opt => {
+      opt.addEventListener('click', () => {
+        userAnswers.vender_cantidad = opt.dataset.value;
+        saveToLocalStorage();
+        showVenderProductos2();
+      });
+    });
+    document.getElementById('backBtn')?.addEventListener('click', () => showQuestion1());
+    updateProgress(25);
+    scrollToTop();
+  }
+  
+  function showVenderProductos2() {
+    currentStep = "vender2";
+    const body = document.getElementById('asistenteBody');
+    body.innerHTML = `
+      <div class="progress-bar"><div class="progress-track"><div class="progress-fill" style="width: 38%;"></div></div><div class="progress-text">Paso 3 de 8 · Venta online</div></div>
+      <div class="question">🛒 ¿Querés vender directamente desde la web?</div>
+      <div class="options">
+        <div class="option" data-value="si"><span class="option-label">✅ Sí, quiero vender online</span><span class="option-desc">Carrito de compras y pagos</span></div>
+        <div class="option" data-value="no"><span class="option-label">❌ No, solo mostrar productos</span><span class="option-desc">Catálogo con consultas</span></div>
+      </div>
+      <button class="btn-back" id="backBtn">← Volver</button>
+    `;
+    document.querySelectorAll('.option').forEach(opt => {
+      opt.addEventListener('click', () => {
+        userAnswers.vender_vender = opt.dataset.value;
+        saveToLocalStorage();
+        showVenderProductos3();
+      });
+    });
+    document.getElementById('backBtn')?.addEventListener('click', () => showVenderProductos1());
+    updateProgress(38);
+    scrollToTop();
+  }
+  
+  function showVenderProductos3() {
+    currentStep = "vender3";
+    const body = document.getElementById('asistenteBody');
+    body.innerHTML = `
+      <div class="progress-bar"><div class="progress-track"><div class="progress-fill" style="width: 50%;"></div></div><div class="progress-text">Paso 4 de 8 · Administración</div></div>
+      <div class="question">⚙️ ¿Necesitás gestionar stock y precios vos mismo?</div>
+      <div class="options">
+        <div class="option" data-value="si"><span class="option-label">✅ Sí, necesito panel admin</span><span class="option-desc">Control total de inventario</span></div>
+        <div class="option" data-value="no"><span class="option-label">❌ No, prefiero que lo maneje el equipo</span><span class="option-desc">Gestión externalizada</span></div>
+      </div>
+      <button class="btn-back" id="backBtn">← Volver</button>
+    `;
+    document.querySelectorAll('.option').forEach(opt => {
+      opt.addEventListener('click', () => {
+        userAnswers.vender_administrar = opt.dataset.value;
+        saveToLocalStorage();
+        showLeadCapture();
+      });
+    });
+    document.getElementById('backBtn')?.addEventListener('click', () => showVenderProductos2());
+    updateProgress(50);
+    scrollToTop();
+  }
+  
+  // ========== RAMAS SIMPLIFICADAS ==========
+  function showAutomatizar1() {
+    currentStep = "auto1";
+    const body = document.getElementById('asistenteBody');
+    body.innerHTML = `
+      <div class="progress-bar"><div class="progress-track"><div class="progress-fill" style="width: 30%;"></div></div><div class="progress-text">Paso 2 de 7 · Qué automatizar</div></div>
+      <div class="question">⚙️ ¿Qué proceso querés automatizar?</div>
+      <div class="options">
+        <div class="option" data-value="consultas"><span class="option-label">💬 Atención de consultas</span><span class="option-desc">Respuestas automáticas</span></div>
+        <div class="option" data-value="reservas"><span class="option-label">📅 Reservas / Turnos</span><span class="option-desc">Sistema de agenda</span></div>
+        <div class="option" data-value="pedidos"><span class="option-label">📦 Gestión de pedidos</span><span class="option-desc">Seguimiento automático</span></div>
+        <div class="option" data-value="todo"><span class="option-label">🎯 Procesos completos</span><span class="option-desc">Solución integral</span></div>
+      </div>
+      <button class="btn-back" id="backBtn">← Volver</button>
+    `;
+    document.querySelectorAll('.option').forEach(opt => {
+      opt.addEventListener('click', () => {
+        userAnswers.auto_que = opt.dataset.value;
+        saveToLocalStorage();
+        showLeadCapture();
+      });
+    });
+    document.getElementById('backBtn')?.addEventListener('click', () => showQuestion1());
+    updateProgress(30);
+    scrollToTop();
+  }
+  
+  function showPresencia1() {
+    currentStep = "presencia1";
+    const body = document.getElementById('asistenteBody');
+    body.innerHTML = `
+      <div class="progress-bar"><div class="progress-track"><div class="progress-fill" style="width: 30%;"></div></div><div class="progress-text">Paso 2 de 7 · Presencia actual</div></div>
+      <div class="question">🌐 ¿Actualmente tenés presencia online?</div>
+      <div class="options">
+        <div class="option" data-value="si"><span class="option-label">✅ Sí, tengo web o redes</span><span class="option-desc">Presencia digital activa</span></div>
+        <div class="option" data-value="no"><span class="option-label">❌ No, no tengo</span><span class="option-desc">Aún sin presencia online</span></div>
+      </div>
+      <button class="btn-back" id="backBtn">← Volver</button>
+    `;
+    document.querySelectorAll('.option').forEach(opt => {
+      opt.addEventListener('click', () => {
+        userAnswers.presencia_tiene = opt.dataset.value;
+        saveToLocalStorage();
+        showLeadCapture();
+      });
+    });
+    document.getElementById('backBtn')?.addEventListener('click', () => showQuestion1());
+    updateProgress(30);
+    scrollToTop();
+  }
+  
+  // ========== CAPTURA LEAD ==========
+  function showLeadCapture() {
+    currentStep = "lead";
+    const body = document.getElementById('asistenteBody');
+    body.innerHTML = `
+      <div class="progress-bar"><div class="progress-track"><div class="progress-fill" style="width: 75%;"></div></div><div class="progress-text">Paso final · Tus datos</div></div>
+      <div class="question">📝 ¡Último paso! Dejanos tus datos</div>
       <div class="lead-form">
-        <input type="text" id="leadName" placeholder="Tu nombre *" autocomplete="name" />
+        <input type="text" id="leadNombre" placeholder="Tu nombre *" autocomplete="name" />
         <input type="tel" id="leadWhatsapp" placeholder="WhatsApp *" autocomplete="tel" />
         <input type="email" id="leadEmail" placeholder="Email (opcional)" autocomplete="email" />
-        <input type="text" id="leadCompany" placeholder="Empresa / Negocio (opcional)" />
+        <input type="text" id="leadEmpresa" placeholder="Empresa / Negocio (opcional)" />
       </div>
-      <button class="btn-next" id="submitLeadBtn">Ver mi recomendación →</button>
+      <button class="btn-next" id="enviarLeadBtn">Ver mi recomendación →</button>
+      <button class="btn-back" id="backBtn">← Volver</button>
     `;
-    
-    const submitBtn = document.getElementById('submitLeadBtn');
-    if (submitBtn) {
-      submitBtn.addEventListener('click', async () => {
-        const name = document.getElementById('leadName')?.value.trim();
-        const whatsapp = document.getElementById('leadWhatsapp')?.value.trim();
-        
-        if (!name || !whatsapp) {
-          showToast('Completá tu nombre y WhatsApp', true);
-          return;
-        }
-        
-        currentLeadData = {
-          name: name,
-          whatsapp: whatsapp,
-          email: document.getElementById('leadEmail')?.value.trim() || null,
-          company: document.getElementById('leadCompany')?.value.trim() || null,
-          query: userAnswers.map(a => `${a.question}: ${a.answer}`).join('\n')
-        };
-        
-        await saveLead(result.id, result.title, freeText);
-        showResult(result);
-      });
-    }
-    
+    document.getElementById('enviarLeadBtn')?.addEventListener('click', () => {
+      const nombre = document.getElementById('leadNombre')?.value.trim();
+      const whatsapp = document.getElementById('leadWhatsapp')?.value.trim();
+      if (!nombre || !whatsapp) { showToast('Completá tu nombre y WhatsApp', true); return; }
+      leadData = { nombre, whatsapp, email: document.getElementById('leadEmail')?.value.trim() || '', empresa: document.getElementById('leadEmpresa')?.value.trim() || '' };
+      userAnswers.lead = leadData;
+      saveToLocalStorage();
+      showResultadoFinal();
+    });
+    document.getElementById('backBtn')?.addEventListener('click', () => {
+      if (userAnswers.q1 === 'conseguir_clientes') showConseguirClientes3();
+      else if (userAnswers.q1 === 'mostrar_servicios') showMostrarServicios3();
+      else if (userAnswers.q1 === 'vender_productos') showVenderProductos3();
+      else if (userAnswers.q1 === 'automatizar') showAutomatizar1();
+      else if (userAnswers.q1 === 'presencia') showPresencia1();
+      else if (userAnswers.q1 === 'caso_propio' || esModoPersonalizado) showTextoPersonalizado();
+      else showQuestion1();
+    });
+    updateProgress(75);
     scrollToTop();
   }
-
-  // ========== MOSTRAR RESULTADO FINAL ==========
-  function showResult(result) {
+  
+  // ========== RESULTADO FINAL CON PRECIO ==========
+  function showResultadoFinal() {
+    const { precio, plan } = calcularPrecioEstimado();
+    let titulo = "";
+    let descripcion = "";
+    let beneficios = [];
+    
+    if (esModoPersonalizado || userAnswers.q1 === 'caso_propio' || userAnswers.q1 === 'personalizado') {
+      titulo = "🎯 Solución Personalizada";
+      descripcion = userAnswers.texto_personalizado || "Proyecto a medida según tus necesidades específicas.";
+      beneficios = [
+        "Desarrollo 100% a medida",
+        "Consultoría gratuita para definir alcance",
+        "Propuesta detallada sin compromiso",
+        "Atención personalizada",
+        "Plazos adaptados a tu proyecto"
+      ];
+    } else if (userAnswers.q1 === 'conseguir_clientes') {
+      titulo = "🎯 Landing de Conversión";
+      descripcion = "Diseñada específicamente para captar clientes y convertir visitas en consultas.";
+      beneficios = [
+        "Formulario de contacto optimizado",
+        userAnswers.conseguir_whatsapp !== 'no' ? "Botón de WhatsApp flotante" : "Formulario de contacto",
+        "Diseño responsive (funciona en celulares y tablets)",
+        "SEO básico para aparecer en Google",
+        "Analítica integrada para medir resultados"
+      ];
+    } else if (userAnswers.q1 === 'mostrar_servicios') {
+      titulo = userAnswers.mostrar_administrable === 'si' ? "📋 Web Profesional Administrable" : "📄 Landing de Servicios";
+      descripcion = plan.descripcion;
+      beneficios = [
+        "Diseño profesional a medida",
+        userAnswers.mostrar_administrable === 'si' ? "Panel de administración incluido" : "Diseño optimizado",
+        "Galería de servicios o portfolio",
+        "Formulario de contacto",
+        "Optimización para móviles"
+      ];
+    } else if (userAnswers.q1 === 'vender_productos') {
+      if (userAnswers.vender_vender === 'si') {
+        titulo = "🛒 Tienda Online Completa";
+        descripcion = "Ecommerce profesional con carrito de compras y pasarela de pagos integrada.";
+        beneficios = [
+          "Carrito de compras",
+          "Mercado Pago integrado",
+          userAnswers.vender_administrar === 'si' ? "Panel para gestionar stock y precios" : "Gestión incluida",
+          "Catálogo de productos",
+          "Notificaciones automáticas de pedidos"
+        ];
+      } else {
+        titulo = "📋 Catálogo Digital";
+        descripcion = "Vitrina profesional para mostrar tus productos con botón de consulta directa.";
+        beneficios = [
+          "Vitrina de productos organizada",
+          "Botón de WhatsApp para consultas",
+          "Filtros de búsqueda",
+          "Diseño responsive",
+          "Panel para actualizar productos"
+        ];
+      }
+    } else if (userAnswers.q1 === 'automatizar') {
+      titulo = "⚙️ Panel Administrativo";
+      descripcion = "Sistema a medida para automatizar procesos y gestionar tu negocio.";
+      beneficios = [
+        "Panel administrativo personalizado",
+        "Automatización de procesos clave",
+        "Reportes y estadísticas en tiempo real",
+        "Acceso remoto desde cualquier dispositivo",
+        "Integración con WhatsApp"
+      ];
+    } else if (userAnswers.q1 === 'presencia') {
+      titulo = "🏢 Web Institucional";
+      descripcion = "Sitio web corporativo para presentar tu empresa de manera profesional.";
+      beneficios = [
+        "Diseño corporativo moderno",
+        "Páginas: Inicio, Nosotros, Servicios, Contacto",
+        "Galería de imágenes o proyectos",
+        "Mapa de ubicación interactivo",
+        "Formulario de contacto"
+      ];
+    } else {
+      titulo = "🎯 Solución Personalizada";
+      descripcion = "Proyecto a medida según tus necesidades específicas.";
+      beneficios = [
+        "Desarrollo a medida",
+        "Consultoría gratuita",
+        "Propuesta detallada sin compromiso",
+        "Atención personalizada",
+        "Plazos adaptados a tu proyecto"
+      ];
+    }
+    
+    beneficios = beneficios.filter(b => b && b !== true);
+    
+    const waUrlFunc = getWaLinks();
+    const textoProyecto = userAnswers.texto_personalizado || titulo;
+    const mensaje = `Hola CIBORG 347! 👋\n\n✅ Completé el asistente de recomendación\n\n📊 *Proyecto:* ${titulo}\n💰 *Precio estimado:* ${typeof precio === 'number' ? `USD ${precio.toLocaleString()}` : precio}\n📝 *Detalle:* ${descripcion.substring(0, 100)}...\n👤 *Cliente:* ${leadData.nombre}\n📱 *WhatsApp:* ${leadData.whatsapp}\n📧 *Email:* ${leadData.email || 'No'}\n🏢 *Empresa:* ${leadData.empresa || 'No'}\n\n🔧 Me interesa avanzar con este proyecto. ¿Podemos coordinar una reunión para definir los detalles?`;
+    const waUrl = waUrlFunc(mensaje);
+    
     const body = document.getElementById('asistenteBody');
-    if (!body) return;
-    
-    const whatsappNumber = result.cta_whatsapp || guideConfig?.special_case_whatsapp || DEFAULT_WA;
-    const message = `Hola CIBORG 347! 👋\n\n✅ Completé el asistente de recomendación\n\n📊 *Proyecto:* ${result.title}\n📝 *Detalle:* ${result.description?.substring(0, 100) || ''}\n👤 *Cliente:* ${currentLeadData.name}\n📱 *WhatsApp:* ${currentLeadData.whatsapp}\n📧 *Email:* ${currentLeadData.email || 'No'}\n🏢 *Empresa:* ${currentLeadData.company || 'No'}\n\n🔧 Me interesa avanzar con este proyecto. ¿Podemos coordinar?`;
-    const waUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
-    
     body.innerHTML = `
       <div class="result-card">
-        ${result.image_url ? `<img src="${escapeHtml(result.image_url)}" alt="${escapeHtml(result.title)}" style="width:100%; border-radius:16px; margin-bottom:16px;" />` : ''}
-        <div class="result-title">${escapeHtml(result.title)}</div>
-        <div class="result-description">${escapeHtml(result.description || '')}</div>
+        <div class="result-title">${titulo}</div>
+        <div class="result-description">${descripcion}</div>
+        <div class="price-tag">
+          <div class="price">${typeof precio === 'number' ? `USD ${precio.toLocaleString()}` : precio}</div>
+          <div class="price-note">*Precio estimado · Pago único, sin mensualidades</div>
+        </div>
+        <ul class="result-benefits">
+          ${beneficios.map(b => `<li>${b}</li>`).join('')}
+        </ul>
+        <div class="disclaimer">
+          ⚡ Esta es una recomendación inicial. El precio final puede variar según los requerimientos específicos que definamos juntos.
+        </div>
         <div class="result-buttons">
           <a href="${waUrl}" target="_blank" class="btn-wa">💬 Consultar por WhatsApp →</a>
-          ${result.cta_lead ? `<a href="index.html#contacto" class="btn-quote" id="presupuestoBtn">📋 Solicitar presupuesto detallado</a>` : ''}
+          <a href="index.html#contacto" class="btn-quote" id="presupuestoBtn" style="background: var(--grad); color: white; text-align: center; padding: 12px; border-radius: 40px; text-decoration: none; font-weight: 600;">📋 Solicitar presupuesto detallado</a>
         </div>
         <button class="btn-back" id="reiniciarBtn" style="margin-top: 10px;">← Comenzar de nuevo</button>
       </div>
     `;
+    document.getElementById('presupuestoBtn')?.addEventListener('click', (e) => { e.preventDefault(); window.location.href = 'index.html#contacto'; });
+    document.getElementById('reiniciarBtn')?.addEventListener('click', () => showWelcome());
     
-    const reiniciarBtn = document.getElementById('reiniciarBtn');
-    if (reiniciarBtn) {
-      reiniciarBtn.addEventListener('click', () => {
-        sessionId = null;
-        userAnswers = [];
-        currentScore = 0;
-        currentLeadData = {};
-        startAssistant();
-      });
-    }
-    
-    const waFloat = document.getElementById('waFloat');
+    const waFloat = document.getElementById("waFloat");
     if (waFloat) waFloat.href = waUrl;
     
     updateProgress(100);
     scrollToTop();
+    showToast('✅ Recomendación generada con éxito');
   }
-
-  // ========== FALLBACK ==========
-  function showFallback() {
-    const whatsappNumber = guideConfig?.special_case_whatsapp || DEFAULT_WA;
-    const message = `Hola CIBORG 347! 👋\n\n✅ Completé el asistente\n\n📝 Necesito asesoramiento personalizado para mi proyecto.`;
-    const waUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
-    
-    const body = document.getElementById('asistenteBody');
-    if (!body) return;
-    
-    body.innerHTML = `
-      <div class="result-card">
-        <div class="result-title">🎯 Solución Personalizada</div>
-        <div class="result-description">${escapeHtml(guideConfig?.special_case_message || 'Tu proyecto parece requerir una solución personalizada. Te recomiendo hablar directamente con el equipo de Ciborg 347.')}</div>
-        <div class="result-buttons">
-          <a href="${waUrl}" target="_blank" class="btn-wa">💬 Consultar por WhatsApp →</a>
-        </div>
-        <button class="btn-back" id="reiniciarBtn" style="margin-top: 10px;">← Comenzar de nuevo</button>
-      </div>
-    `;
-    
-    const reiniciarBtn = document.getElementById('reiniciarBtn');
-    if (reiniciarBtn) {
-      reiniciarBtn.addEventListener('click', () => {
-        sessionId = null;
-        userAnswers = [];
-        currentScore = 0;
-        currentLeadData = {};
-        startAssistant();
-      });
-    }
-    
-    scrollToTop();
-  }
-
-  // ========== INICIAR ASISTENTE ==========
-  async function startAssistant() {
-    const body = document.getElementById('asistenteBody');
-    if (body) {
-      body.innerHTML = `
-        <div style="text-align: center; padding: 40px;">
-          <div class="skeleton" style="height: 50px; width: 80%; margin: 0 auto 20px;"></div>
-          <div class="skeleton" style="height: 45px; width: 90%; margin: 0 auto 10px;"></div>
-          <div class="skeleton" style="height: 45px; width: 85%; margin: 0 auto;"></div>
-        </div>
-      `;
-    }
-    
-    await loadGuideConfig();
-    const hasNodes = await loadFirstNode();
-    
-    if (hasNodes && firstNode) {
-      showQuestion(firstNode);
-    } else {
-      showFallback();
-    }
-  }
-
-  // ========== WHATSAPP VISIBILITY ==========
+  
+  // ========== INICIALIZACIÓN ==========
   function setupWhatsAppVisibility() {
     const whatsappButton = document.getElementById('waFloat');
     const footer = document.querySelector('footer');
     if (!whatsappButton || !footer) return;
-    
     const observerFooter = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          whatsappButton.classList.add('hidden');
-        } else {
-          whatsappButton.classList.remove('hidden');
-        }
+        if (entry.isIntersecting) { whatsappButton.classList.add('hidden'); } 
+        else { whatsappButton.classList.remove('hidden'); }
       });
     }, { threshold: 0.1 });
     observerFooter.observe(footer);
   }
-
-  function escapeHtml(str) {
-    if (!str) return '';
-    return String(str).replace(/[&<>]/g, function(m) {
-      if (m === '&') return '&amp;';
-      if (m === '<') return '&lt;';
-      if (m === '>') return '&gt;';
-      return m;
-    });
-  }
-
-  // ========== MOBILE MENU ==========
-  const burgerBtn = document.getElementById('burgerBtn');
-  const mobileMenu = document.getElementById('mobileMenu');
-  burgerBtn?.addEventListener('click', () => mobileMenu.classList.toggle('isOpen'));
-  document.querySelectorAll('.mobileMenu a').forEach(a => a.addEventListener('click', () => mobileMenu.classList.remove('isOpen')));
-
-  // ========== INICIALIZACIÓN ==========
+  
+  // Exponer showTooltip globalmente
+  window.showTooltip = showTooltip;
+  
+  // Mobile menu
+  const burgerBtn = document.getElementById("burgerBtn");
+  const mobileMenu = document.getElementById("mobileMenu");
+  burgerBtn?.addEventListener("click", () => mobileMenu.classList.toggle("isOpen"));
+  document.querySelectorAll(".mobileMenu a").forEach(a => a.addEventListener("click", () => mobileMenu.classList.remove("isOpen")));
+  
+  // WhatsApp mobile
+  const mobileWa = document.getElementById("mobileWhatsAppBtn");
+  const waUrlFunc = getWaLinks();
+  if (mobileWa) mobileWa.href = waUrlFunc("Hola, vengo del asistente virtual y quiero consultar por un proyecto.");
+  
   setupWhatsAppVisibility();
-  startAssistant();
+  showWelcome();
 </script>
 </body>
 </html>
