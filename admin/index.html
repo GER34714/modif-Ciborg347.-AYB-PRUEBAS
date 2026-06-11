@@ -1,1108 +1,1436 @@
 <!DOCTYPE html>
 <html lang="es-AR">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin | CIBORG 347</title>
-  <meta name="description" content="Panel admin de CIBORG 347 para gestionar proyectos, categorias, contenido global, settings visuales, FAQs, planes, marcas, casos de éxito y asistente." />
-  <link rel="stylesheet" href="./styles.css" />
-  <link rel="icon" href="data:," />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    /* ========== ESTILOS COMPLETOS (igual que tu original) ========== */
-    :root {
-      --bg: #0a0a0f;
-      --bg2: #0f0f1a;
-      --bg3: #1a1a2e;
-      --glass: rgba(26, 26, 46, 0.55);
-      --border: rgba(0, 212, 255, 0.13);
-      --border-h: rgba(0, 212, 255, 0.28);
-      --cyan: #00d4ff;
-      --violet: #8b5cf6;
-      --magenta: #ff47d1;
-      --grad: linear-gradient(135deg, var(--cyan), var(--violet));
-      --text: #e0e6ff;
-      --text2: #9ca3ff;
-      --white: #ffffff;
-      --card-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
 
-    [data-theme="light"] {
-      --bg: #f0f4f8;
-      --bg2: #ffffff;
-      --bg3: #e8edf5;
-      --border: rgba(0, 0, 0, 0.08);
-      --cyan: #0066cc;
-      --violet: #7c3aed;
-      --magenta: #db2777;
-      --grad: linear-gradient(135deg, #0066cc, #7c3aed);
-      --text: #1e293b;
-      --text2: #475569;
-      --white: #0f172a;
-      --card-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-    }
-
-    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      font-family: 'Outfit', system-ui, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-    }
-    .wrap { max-width: 1400px; margin: 0 auto; padding: 0 20px; }
-    
-    .topbar {
-      position: sticky; top: 0; z-index: 100;
-      background: rgba(10,10,15,0.92);
-      backdrop-filter: blur(14px);
-      border-bottom: 1px solid var(--border);
-    }
-    .topbar__inner {
-      min-height: 64px;
-      display: flex; align-items: center; justify-content: space-between; gap: 16px;
-      flex-wrap: wrap;
-    }
-    .brand__title { font-weight: 900; font-size: 1.3rem; }
-    .brand__subtitle { font-size: 0.7rem; color: var(--cyan); }
-    .topbar__right { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-
-    .btn {
-      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-      padding: 10px 18px; border: none; border-radius: 12px;
-      font-weight: 600; transition: all 0.2s; cursor: pointer;
-      min-height: 44px;
-    }
-    .btn--primary { background: var(--grad); color: white; }
-    .btn--ghost { background: transparent; border: 1px solid var(--border); color: var(--text); }
-    .btn--danger { background: #ef4444; color: white; }
-    .btn--success { background: #22c55e; color: white; }
-    .btn--small { padding: 6px 12px; font-size: 0.75rem; min-height: 36px; }
-    .btn--block { width: 100%; }
-    .btn--frontend { background: var(--grad); color: white; margin-bottom: 1rem; }
-    .btn:active { transform: scale(0.98); }
-
-    .adminLayout { display: grid; grid-template-columns: 280px 1fr; gap: 20px; margin: 20px 0; }
-    .sidebar {
-      background: var(--bg2);
-      border: 1px solid var(--border);
-      border-radius: 20px;
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      background: #0a0a0f;
+      color: #e0e6ff;
       padding: 20px;
-      position: sticky;
-      top: 80px;
-      height: fit-content;
     }
-    .sidebar__nav { display: flex; flex-direction: column; gap: 8px; margin: 16px 0; }
-    .sidebar__nav-section {
-      font-size: 0.65rem;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      color: var(--cyan);
-      margin-top: 16px;
-      margin-bottom: 8px;
-      padding-left: 8px;
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
     }
-    .sidebar__nav-section:first-of-type { margin-top: 0; }
-    .navBtn {
-      text-align: left;
-      padding: 12px 16px;
-      border-radius: 14px;
-      background: transparent;
+
+    /* Login */
+    .login-box {
+      max-width: 400px;
+      margin: 100px auto;
+      background: #0f0f1a;
+      padding: 30px;
+      border-radius: 20px;
+      border: 1px solid #00d4ff33;
+    }
+
+    .login-box input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      background: #1a1a2e;
+      border: 1px solid #00d4ff33;
+      border-radius: 10px;
+      color: white;
+    }
+
+    .login-box button {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, #00d4ff, #8b5cf6);
       border: none;
-      color: var(--text2);
-      font-weight: 600;
+      border-radius: 10px;
+      color: white;
+      font-weight: bold;
       cursor: pointer;
-      transition: all 0.2s;
     }
-    .navBtn:hover { background: var(--bg3); color: var(--white); }
-    .navBtn.is-active { background: var(--grad); color: white; }
 
-    .viewPanel {
-      background: var(--bg2);
-      border: 1px solid var(--border);
-      border-radius: 24px;
-      padding: 24px;
-      margin-bottom: 20px;
+    /* Panel principal */
+    .admin-panel {
+      display: none;
     }
-    .statsGrid {
-      display: grid;
-      grid-template-columns: repeat(6, 1fr);
-      gap: 16px;
-      margin: 20px 0;
-    }
-    .statCard {
-      background: var(--bg3);
-      border-radius: 16px;
-      padding: 16px;
-      text-align: center;
-    }
-    .statCard span { font-size: 0.7rem; color: var(--text2); display: block; }
-    .statCard strong { font-size: 1.8rem; display: block; background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
 
-    .stackList { display: flex; flex-direction: column; gap: 12px; }
-    .listCard {
-      background: var(--bg3);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 16px;
-      display: flex;
-      gap: 16px;
-      align-items: center;
-      transition: all 0.2s;
-    }
-    .listCard:hover { transform: translateY(-2px); border-color: var(--cyan); }
-    .listCard__thumb { width: 80px; height: 60px; border-radius: 12px; overflow: hidden; flex-shrink: 0; }
-    .listCard__thumb img { width: 100%; height: 100%; object-fit: cover; }
-    .listCard__body { flex: 1; }
-    .listCard__title { font-weight: bold; margin-bottom: 4px; }
-    .listCard__meta { font-size: 0.75rem; color: var(--text2); }
-    .listCard__badges { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
-    .listCard__actions { display: flex; gap: 8px; flex-wrap: wrap; }
-    .miniTag { background: var(--bg); padding: 4px 8px; border-radius: 20px; font-size: 0.7rem; }
-
-    .grid2, .grid3 { display: grid; gap: 16px; }
-    .grid2 { grid-template-columns: repeat(2, 1fr); }
-    .grid3 { grid-template-columns: repeat(3, 1fr); }
-    .filtersGrid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap: 12px; margin: 16px 0; }
-    .field { display: flex; flex-direction: column; gap: 6px; }
-    .field input, .field select, .field textarea {
-      background: var(--bg3);
-      border: 1px solid var(--border);
+    .topbar {
+      background: #0f0f1a;
+      padding: 15px 20px;
       border-radius: 12px;
-      padding: 10px 14px;
-      color: var(--text);
-    }
-    .msg { margin-top: 12px; padding: 8px; border-radius: 10px; }
-    .msg--success { background: rgba(34,197,94,0.2); color: #22c55e; }
-    .msg--error { background: rgba(239,68,68,0.2); color: #ef4444; }
-
-    .modal-overlay {
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0,0,0,0.85);
-      backdrop-filter: blur(8px);
-      display: flex; align-items: center; justify-content: center;
-      z-index: 1000;
-    }
-    .modal-container {
-      background: var(--bg2);
-      border-radius: 24px;
-      max-width: 550px;
-      width: 90%;
-      max-height: 85vh;
-      overflow: auto;
-      padding: 24px;
-      border: 1px solid var(--cyan);
-    }
-
-    .featured-projects-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 16px;
-      margin-top: 16px;
-    }
-    .featured-project-card {
-      background: var(--bg3);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 16px;
+      margin-bottom: 20px;
       display: flex;
-      gap: 16px;
+      justify-content: space-between;
       align-items: center;
-      transition: all 0.2s;
-      cursor: pointer;
+      border: 1px solid #00d4ff33;
     }
-    .featured-project-card:hover { border-color: var(--cyan); transform: translateY(-2px); }
-    .featured-project-card img { width: 60px; height: 60px; border-radius: 12px; object-fit: cover; }
-    .featured-project-info { flex: 1; }
-    .featured-project-title { font-weight: bold; }
-    .featured-project-cat { font-size: 0.7rem; color: var(--text2); }
-    .star-btn { background: transparent; border: none; font-size: 1.8rem; cursor: pointer; transition: transform 0.2s; }
-    .star-btn.active { color: #f5b042; text-shadow: 0 0 5px #f5b042; }
-    .star-btn:active { transform: scale(1.1); }
 
-    .plan-card {
-      background: var(--bg3);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 16px;
-      display: flex;
-      gap: 16px;
-      align-items: center;
-      transition: all 0.2s;
-      cursor: pointer;
-    }
-    .plan-card:hover { border-color: var(--cyan); transform: translateY(-2px); }
-
-    .reviews-table { width: 100%; border-collapse: collapse; }
-    .reviews-table th, .reviews-table td { padding: 12px; text-align: left; border-bottom: 1px solid var(--border); }
-    .reviews-table th { color: var(--cyan); font-size: 0.75rem; }
-    .action-btns { display: flex; gap: 8px; flex-wrap: wrap; }
-    .pending-reviews-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
-    .stat-card-pending { background: var(--bg2); border-radius: 16px; padding: 1rem; text-align: center; border: 1px solid var(--border); }
-    .stat-card-pending strong { font-size: 2rem; display: block; background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
-
-    .pagination { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 8px; margin-top: 24px; }
-    .pagination button {
-      min-width: 40px; min-height: 40px;
-      padding: 8px 12px;
-      border: 1px solid var(--border);
-      background: var(--bg3);
+    .logout-btn {
+      background: transparent;
+      border: 1px solid #ef4444;
+      color: #ef4444;
+      padding: 8px 16px;
       border-radius: 8px;
       cursor: pointer;
     }
-    .pagination button.active { background: var(--grad); color: white; border-color: transparent; }
-    .pagination button:disabled { opacity: 0.4; cursor: not-allowed; }
 
-    @media (max-width: 980px) {
-      .adminLayout { grid-template-columns: 1fr; }
-      .statsGrid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
-      .filtersGrid, .filtersGrid--5 { grid-template-columns: 1fr; gap: 12px; }
-      .grid2, .grid3 { grid-template-columns: 1fr; gap: 12px; }
-      .listCard { flex-direction: column; text-align: center; }
-      .listCard__thumb { width: 100%; height: 140px; }
-      .listCard__actions { justify-content: center; margin-top: 8px; }
-      .btn, .btn--small, .navBtn, .modeBtn, .themeBtn { min-height: 48px; padding: 12px 16px; font-size: 1rem; }
-      .featured-projects-grid { grid-template-columns: 1fr; }
-      .plan-card { flex-direction: column; text-align: center; }
-      .viewPanel { padding: 16px; }
-      h2 { font-size: 1.4rem; }
-      h3 { font-size: 1.2rem; }
-      .modal-container { width: 95%; padding: 20px; }
-      .reviews-table, .reviews-table tbody, .reviews-table tr, .reviews-table td { display: block; width: 100%; }
-      .reviews-table thead { display: none; }
-      .reviews-table tr {
-        margin-bottom: 1rem;
-        border: 1px solid var(--border);
-        border-radius: 16px;
-        padding: 0.5rem;
-      }
-      .reviews-table td {
-        padding: 0.5rem;
-        border: none;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 8px;
-      }
-      .reviews-table td:before {
-        content: attr(data-label);
-        font-weight: 800;
-        font-size: 0.7rem;
-        text-transform: uppercase;
-        color: var(--cyan);
-        min-width: 100px;
-      }
-      .action-btns { justify-content: flex-end; width: 100%; }
+    /* Layout */
+    .layout {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 20px;
     }
 
-    @media (max-width: 600px) {
-      .statsGrid { grid-template-columns: 1fr; }
-      .row { flex-direction: column; align-items: stretch; }
-      .row .btn { width: 100%; margin-bottom: 8px; }
-      .action-btns { justify-content: center; }
-      .action-btns .btn { flex: 1; text-align: center; }
-      .topbar__inner { flex-direction: column; align-items: flex-start; }
-      .topbar__right { width: 100%; justify-content: space-between; }
+    /* Sidebar */
+    .sidebar {
+      background: #0f0f1a;
+      border-radius: 16px;
+      padding: 20px;
+      border: 1px solid #00d4ff33;
+      position: sticky;
+      top: 20px;
+      height: fit-content;
+    }
+
+    .sidebar h3 {
+      margin-bottom: 20px;
+      color: #00d4ff;
+      font-size: 18px;
+    }
+
+    .nav-btn {
+      display: block;
+      width: 100%;
+      text-align: left;
+      padding: 10px 15px;
+      margin: 5px 0;
+      background: transparent;
+      border: none;
+      border-radius: 10px;
+      color: #9ca3ff;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+
+    .nav-btn:hover {
+      background: #1a1a2e;
+      color: white;
+    }
+
+    .nav-btn.active {
+      background: linear-gradient(135deg, #00d4ff, #8b5cf6);
+      color: white;
+    }
+
+    /* Content */
+    .content {
+      background: #0f0f1a;
+      border-radius: 16px;
+      padding: 24px;
+      border: 1px solid #00d4ff33;
+    }
+
+    .panel {
+      display: none;
+    }
+
+    .panel.active {
+      display: block;
+    }
+
+    /* Stats grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 16px;
+      margin-bottom: 30px;
+    }
+
+    .stat-card {
+      background: #1a1a2e;
+      padding: 20px;
+      border-radius: 12px;
+      text-align: center;
+    }
+
+    .stat-card h3 {
+      font-size: 28px;
+      background: linear-gradient(135deg, #00d4ff, #8b5cf6);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    /* Lista de servicios/proyectos */
+    .items-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .item-card {
+      background: #1a1a2e;
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      border: 1px solid #00d4ff33;
+    }
+
+    .item-card:hover {
+      border-color: #00d4ff;
+    }
+
+    .item-info {
+      flex: 1;
+    }
+
+    .item-title {
+      font-weight: bold;
+      font-size: 16px;
+      margin-bottom: 4px;
+    }
+
+    .item-meta {
+      font-size: 12px;
+      color: #9ca3ff;
+    }
+
+    .item-preview {
+      width: 60px;
+      height: 60px;
+      border-radius: 8px;
+      object-fit: cover;
+      background: #2a2a4e;
+    }
+
+    .item-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    button {
+      padding: 8px 16px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .btn-edit {
+      background: #00d4ff20;
+      color: #00d4ff;
+      border: 1px solid #00d4ff;
+    }
+
+    .btn-delete {
+      background: #ef444420;
+      color: #ef4444;
+      border: 1px solid #ef4444;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #00d4ff, #8b5cf6);
+      color: white;
+    }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.9);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .modal-content {
+      background: #0f0f1a;
+      border-radius: 20px;
+      padding: 24px;
+      max-width: 600px;
+      width: 90%;
+      max-height: 85vh;
+      overflow-y: auto;
+      border: 1px solid #00d4ff;
+    }
+
+    .modal-content h3 {
+      margin-bottom: 20px;
+      color: #00d4ff;
+    }
+
+    .modal-content input,
+    .modal-content textarea,
+    .modal-content select {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      background: #1a1a2e;
+      border: 1px solid #00d4ff33;
+      border-radius: 8px;
+      color: white;
+    }
+
+    .modal-content label {
+      display: block;
+      margin-top: 10px;
+      font-size: 12px;
+      color: #9ca3ff;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 20px;
+      justify-content: flex-end;
+    }
+
+    .msg {
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 13px;
+    }
+
+    .msg-success {
+      background: #22c55e20;
+      color: #22c55e;
+    }
+
+    .msg-error {
+      background: #ef444420;
+      color: #ef4444;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: #9ca3ff;
+    }
+
+    @media (max-width: 768px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+      .sidebar {
+        position: static;
+      }
     }
   </style>
 </head>
 <body>
-<button id="sidebarToggleBtn" class="sidebar-toggle">☰</button>
-
-<header class="topbar">
-  <div class="wrap topbar__inner">
-    <div class="brand">
-      <div class="brand__title">Admin</div>
-      <div class="brand__subtitle">CIBORG 347 | Sistema A/B</div>
-    </div>
-    <div class="topbar__right topbar__right--extended">
-      <div class="modeSwitchCard">
-        <span class="modeSwitchCard__label">Modo</span>
-        <div class="modeSwitch">
-          <button id="safeModeBtn" class="modeBtn is-active" type="button">Seguro</button>
-          <button id="fastModeBtn" class="modeBtn" type="button">Rápido</button>
-        </div>
-      </div>
-      <span id="userEmail" class="muted"></span>
-      <button id="logoutBtn" class="btn btn--ghost" type="button">Salir</button>
-    </div>
+<div class="container">
+  <!-- Login -->
+  <div id="loginBox" class="login-box">
+    <h2 style="margin-bottom: 20px; text-align: center;">🔐 Panel Admin</h2>
+    <input type="email" id="loginEmail" placeholder="Email" autocomplete="email">
+    <input type="password" id="loginPassword" placeholder="Contraseña" autocomplete="current-password">
+    <button id="loginBtn">Ingresar</button>
+    <div id="loginMsg" class="msg" style="margin-top: 15px;"></div>
   </div>
-</header>
 
-<main class="wrap">
-  <section id="authBox" class="panel authBox">
-    <h1>Ingresar al panel</h1>
-    <p class="muted">Solo usuarios autorizados en la tabla admin_users.</p>
-    <div class="grid2">
-      <div class="field">
-        <label for="emailInput">Email</label>
-        <input id="emailInput" type="email" autocomplete="email" placeholder="ciborg347@gmail.com" />
-      </div>
-      <div class="field">
-        <label for="passInput">Password</label>
-        <input id="passInput" type="password" autocomplete="current-password" placeholder="********" />
+  <!-- Panel Admin -->
+  <div id="adminPanel" class="admin-panel">
+    <div class="topbar">
+      <h2>🤖 CIBORG 347 | Admin</h2>
+      <div>
+        <span id="userEmailDisplay" style="margin-right: 15px;"></span>
+        <button class="logout-btn" id="logoutBtn">Salir</button>
       </div>
     </div>
-    <div class="actions">
-      <button id="loginBtn" class="btn btn--primary" type="button">Ingresar</button>
-    </div>
-    <div id="authMsg" class="msg"></div>
-  </section>
 
-  <section id="adminBox" class="adminLayout" style="display:none">
-    <aside class="sidebar panel">
-      <div class="sidebar__head">
-        <div class="sidebar__title">Panel B</div>
-        <div class="sidebar__subtitle">Gestión de CIBORG 347</div>
-      </div>
-      
-      <button id="goToFrontendBtn" class="btn btn--frontend btn--block" style="margin-top: 1rem;">🌐 Ver sitio web →</button>
-      
-      <div class="themeSelector">
-        <span class="themeSelector__label">🎨 Tema</span>
-        <div class="themeSelector__buttons">
-          <button id="lightThemeBtn" class="themeBtn is-active" data-theme="light">☀️ Claro</button>
-          <button id="darkThemeBtn" class="themeBtn" data-theme="dark">🌙 Oscuro</button>
+    <div class="layout">
+      <aside class="sidebar">
+        <h3>📋 Menú</h3>
+        <button class="nav-btn active" data-view="dashboard">📊 Dashboard</button>
+        <button class="nav-btn" data-view="projects">📁 Proyectos</button>
+        <button class="nav-btn" data-view="services">💰 Servicios</button>
+        <button class="nav-btn" data-view="categories">📂 Categorías</button>
+        <button class="nav-btn" data-view="brands">🏷️ Marcas</button>
+        <button class="nav-btn" data-view="reviews">⭐ Reseñas</button>
+        <button class="nav-btn" data-view="faqs">❓ FAQs</button>
+        <button class="nav-btn" data-view="settings">⚙️ Settings</button>
+      </aside>
+
+      <main class="content">
+        <!-- Dashboard -->
+        <div id="dashboardPanel" class="panel active">
+          <h2>📊 Dashboard</h2>
+          <div class="stats-grid" id="statsGrid"></div>
+          <h3>📌 Últimos proyectos</h3>
+          <div id="recentProjects" class="items-list"></div>
         </div>
-      </div>
-      
-      <nav class="sidebar__nav">
-        <div class="sidebar__nav-section">📦 CONTENIDO</div>
-        <button class="navBtn is-active" data-view="dashboard" type="button">Dashboard</button>
-        <button class="navBtn" data-view="featured-projects" type="button">⭐ Proyectos Destacados</button>
-        <button class="navBtn" data-view="projects" type="button">📁 Todos los Proyectos</button>
-        <button class="navBtn" data-view="new-project" type="button">✨ Nueva web</button>
-        <button class="navBtn" data-view="categories" type="button">📂 Categorías</button>
-        
-        <!-- SECCIÓN: SERVICIOS (con precios) -->
-        <div class="sidebar__nav-section">💼 SERVICIOS</div>
-        <button class="navBtn" data-view="services" type="button">💰 Servicios y Precios</button>
-        
-        <!-- SECCIÓN: CASOS DE ÉXITO -->
-        <div class="sidebar__nav-section">📈 CASOS DE ÉXITO</div>
-        <button class="navBtn" data-view="success-stories" type="button">🏆 Casos de éxito</button>
-        
-        <!-- SECCIÓN: MARCAS -->
-        <div class="sidebar__nav-section">🏢 MARCAS</div>
-        <button class="navBtn" data-view="brands" type="button">🏷️ Marcas que confían</button>
-        
-        <!-- SECCIÓN: ASISTENTE -->
-        <div class="sidebar__nav-section">🤖 ASISTENTE</div>
-        <button class="navBtn" data-view="assistant-questions" type="button">❓ Preguntas del asistente</button>
-        <button class="navBtn" data-view="assistant-responses" type="button">📊 Respuestas</button>
-        
-        <!-- SECCIÓN: LEADS -->
-        <div class="sidebar__nav-section">📊 LEADS</div>
-        <button class="navBtn" data-view="guide-leads" type="button">📋 Leads del asistente</button>
-        
-        <div class="sidebar__nav-section">🎨 APARIENCIA</div>
-        <button class="navBtn" data-view="site-content" type="button">📄 Contenido global</button>
-        <button class="navBtn" data-view="site-settings" type="button">⚙️ Settings visuales</button>
-        
-        <div class="sidebar__nav-section">⭐ RESEÑAS</div>
-        <button class="navBtn" data-view="reviews-pending" type="button">⏳ Pendientes <span id="pendingBadge" style="background:#ef4444; color:white; border-radius:20px; padding:2px 8px; font-size:10px; margin-left:8px; display:none;">0</span></button>
-        <button class="navBtn" data-view="reviews-approved" type="button">✅ Aprobadas</button>
-        
-        <div class="sidebar__nav-section">❓ FAQ</div>
-        <button class="navBtn" data-view="faqs" type="button">📋 Preguntas Frecuentes</button>
-        
-        <div class="sidebar__nav-section">🔧 SISTEMA</div>
-        <button class="navBtn" data-view="history" type="button">📜 Historial</button>
-      </nav>
-      <div class="sidebar__foot">
-        <button id="quickNewProjectBtn" class="btn btn--primary btn--block" type="button">➕ Cargar nueva web</button>
-      </div>
-    </aside>
 
-    <section class="contentArea">
-      <!-- Dashboard -->
-      <section class="panel viewPanel" data-panel="dashboard">
-        <div class="row row--between row--wrap">
-          <div><h2>Dashboard</h2><p class="muted">Resumen general del sistema</p></div>
-          <div class="row row--wrap">
-            <button id="dashboardRefreshBtn" class="btn btn--ghost" type="button">Actualizar</button>
-            <button id="dashboardNewBtn" class="btn btn--primary" type="button">Cargar nueva web</button>
+        <!-- Proyectos -->
+        <div id="projectsPanel" class="panel">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h2>📁 Proyectos</h2>
+            <button class="btn-primary" id="newProjectBtn">➕ Nuevo proyecto</button>
           </div>
+          <div id="projectsList" class="items-list"></div>
         </div>
-        <div class="statsGrid">
-          <article class="statCard"><span class="statCard__label">Total proyectos</span><strong id="statProjects">0</strong></article>
-          <article class="statCard"><span class="statCard__label">Publicados</span><strong id="statActive">0</strong></article>
-          <article class="statCard"><span class="statCard__label">Destacados</span><strong id="statHighlight">0</strong></article>
-          <article class="statCard"><span class="statCard__label">Home</span><strong id="statHome">0</strong></article>
-          <article class="statCard"><span class="statCard__label">Portfolio</span><strong id="statPortfolio">0</strong></article>
-          <article class="statCard"><span class="statCard__label">Categorías activas</span><strong id="statCategories">0</strong></article>
-        </div>
-        <div class="subPanel">
-          <h3>Últimas webs cargadas</h3>
-          <button id="dashboardSeeProjectsBtn" class="btn btn--ghost" type="button">Ver proyectos</button>
-          <div id="dashboardRecentList" class="stackList"></div>
-        </div>
-      </section>
 
-      <!-- Destacados -->
-      <section class="panel viewPanel" data-panel="featured-projects" style="display:none">
-        <div class="row row--between row--wrap">
-          <div><h2>⭐ Proyectos Destacados</h2><p class="muted">Gestioná qué proyectos aparecen como destacados en el frontend.</p></div>
-          <div class="row row--wrap"><button id="featuredRefreshBtn" class="btn btn--ghost" type="button">Actualizar</button></div>
-        </div>
-        <div id="featuredProjectsMsg" class="msg"></div>
-        <div id="featuredProjectsList" class="featured-projects-grid"></div>
-        <div id="featuredProjectsPagination" class="pagination" style="display:none; margin-top: 1rem;"></div>
-      </section>
-
-      <!-- Proyectos -->
-      <section class="panel viewPanel" data-panel="projects" style="display:none">
-        <div class="row row--between row--wrap"><div><h2>📁 Todos los Proyectos</h2><p class="muted">Listado completo</p></div><div class="row row--wrap"><button id="projectsRefreshBtn" class="btn btn--ghost" type="button">Actualizar</button><button id="projectsNewBtn" class="btn btn--primary" type="button">Nueva web</button></div></div>
-        <div class="filtersGrid filtersGrid--5">
-          <div class="field"><label for="projectSearchInput">Buscar</label><input id="projectSearchInput" type="search" placeholder="Título..." /></div>
-          <div class="field"><label for="projectCategoryFilter">Categoría</label><select id="projectCategoryFilter"><option value="__all__">Todas</option></select></div>
-          <div class="field"><label for="projectTypeFilter">Tipo</label><select id="projectTypeFilter"><option value="__all__">Todos</option><option value="Landing Pages">Landing Pages</option><option value="Webs Profesionales">Webs Profesionales</option><option value="Webs Autoadministrables">Webs Autoadministrables</option><option value="Sistemas / Soluciones Especiales">Sistemas</option></select></div>
-          <div class="field"><label for="projectStatusFilter">Estado</label><select id="projectStatusFilter"><option value="__all__">Todos</option><option value="published">Publicados</option><option value="draft">Borradores</option><option value="featured">Destacados</option><option value="archived">Archivados</option><option value="new">Nuevos</option></select></div>
-          <div class="field"><label for="projectTagFilter">Tag</label><select id="projectTagFilter"><option value="__all__">Todos</option></select></div>
-        </div>
-        <div id="projectsMsg" class="msg"></div>
-        <div id="projectsList" class="stackList"></div>
-        <div id="projectsPagination" class="pagination" style="display:none"></div>
-      </section>
-
-      <!-- Nueva web -->
-      <section class="panel viewPanel" data-panel="new-project" style="display:none">
-        <div class="row row--between row--wrap"><div><h2 id="projectFormTitle">✨ Nueva web</h2><p class="muted">Cargá una demo nueva o editá una existente.</p></div><div class="row row--wrap"><button id="projectFormResetBtn" class="btn btn--ghost" type="button">Limpiar</button><button id="projectDuplicateBtn" class="btn btn--ghost" type="button" style="display:none">Duplicar</button></div></div>
-        <div class="grid2"><div class="field"><label for="projectImageUrlInput">URL de imagen</label><input id="projectImageUrlInput" type="url" placeholder="https://..." /><small class="muted">Podés pegar URL manual o subir imagen.</small></div><div class="field"><label>Preview</label><div class="preview preview--large"><img id="projectPreviewImg" alt="Preview" /></div></div></div>
-        <div class="subPanel"><h3>Subida de imagen</h3><div class="grid2"><div class="field"><label for="projectImageFileInput">Elegir imagen</label><input id="projectImageFileInput" type="file" accept="image/*" /><small class="muted">Seleccioná una imagen y tocá subir.</small></div><div class="field"><label>&nbsp;</label><button id="projectUploadBtn" class="btn btn--ghost" type="button">Subir imagen</button></div></div><div id="projectUploadMsg" class="msg"></div></div>
-        <div class="grid2"><div class="field"><label for="projectTitleInput">Título</label><input id="projectTitleInput" type="text" placeholder="Nombre de la web/demo" /></div><div class="field"><label for="projectDemoUrlInput">Link demo</label><input id="projectDemoUrlInput" type="url" placeholder="https://..." /></div></div>
-        <div class="grid3"><div class="field"><label for="projectCategorySelect">Categoría</label><select id="projectCategorySelect"><option value="">Elegir...</option></select></div><div class="field"><label for="projectTypeSelect">Tipo</label><select id="projectTypeSelect"><option value="">Elegir...</option><option value="Landing Pages">Landing Pages</option><option value="Webs Profesionales">Webs Profesionales</option><option value="Webs Autoadministrables">Webs Autoadministrables</option><option value="Sistemas / Soluciones Especiales">Sistemas</option></select></div><div class="field"><label for="projectStatusSelect">Status</label><select id="projectStatusSelect"><option value="published">Publicado</option><option value="draft">Borrador</option><option value="featured">Destacado</option><option value="archived">Archivado</option><option value="new">Nuevo</option></select></div></div>
-        <div class="field"><label for="projectShortDescInput">Descripción corta</label><textarea id="projectShortDescInput" rows="3" placeholder="Texto corto para cards..."></textarea></div>
-        <div class="field"><label for="projectTagsInput">Tags</label><input id="projectTagsInput" type="text" placeholder="Ej: Web nueva, Destacada" /><small class="muted">Separalos por coma.</small><div id="projectTagsPreview" class="tagEditorPreview"></div></div>
-        <div class="togglesGrid"><label class="switchRow"><input id="projectActiveInput" type="checkbox" checked /><span>Activo</span></label><label class="switchRow"><input id="projectHighlightInput" type="checkbox" /><span>Destacado</span></label><label class="switchRow"><input id="projectFeaturedHomeInput" type="checkbox" /><span>Mostrar en home</span></label><label class="switchRow"><input id="projectFeaturedPortfolioInput" type="checkbox" /><span>Mostrar en portfolio destacado</span></label></div>
-        <div class="actions"><button id="projectAdvancedToggleBtn" class="btn btn--ghost" type="button">Abrir ajustes avanzados</button></div>
-        <div id="projectAdvancedBox" class="advancedBox" style="display:none"><div class="field"><label for="projectFullDescInput">Descripción larga</label><textarea id="projectFullDescInput" rows="5" placeholder="Texto ampliado para modal..."></textarea></div><div class="grid2"><div class="field"><label for="projectPreviewTypeSelect">Tipo preview</label><select id="projectPreviewTypeSelect"><option value="image">image</option><option value="embed">embed</option><option value="video">video</option></select></div><div class="field"><label for="projectOrderInput">Orden</label><input id="projectOrderInput" type="number" step="1" value="0" /></div></div></div>
-        <div class="actions"><button id="projectSaveBtn" class="btn btn--primary" type="button">Publicar</button><button id="projectDeleteBtn" class="btn btn--danger" type="button" style="display:none">Archivar</button></div>
-        <div id="projectFormMsg" class="msg"></div>
-      </section>
-
-      <!-- Categorías -->
-      <section class="panel viewPanel" data-panel="categories" style="display:none">
-        <div class="row row--between row--wrap"><div><h2>📂 Categorías</h2><p class="muted">Administrá las categorías del portfolio.</p></div><div class="row row--wrap"><button id="categoriesRefreshBtn" class="btn btn--ghost" type="button">Actualizar</button></div></div>
-        <div class="subPanel"><h3>Nueva categoría</h3><div class="grid3"><div class="field"><label for="categoryNameInput">Nombre</label><input id="categoryNameInput" type="text" placeholder="Ej: Estética" /></div><div class="field"><label for="categorySlugInput">Slug</label><input id="categorySlugInput" type="text" placeholder="ej-estetica" /></div><div class="field"><label for="categoryOrderInput">Orden</label><input id="categoryOrderInput" type="number" step="1" value="0" /></div></div><div class="togglesGrid togglesGrid--single"><label class="switchRow"><input id="categoryActiveInput" type="checkbox" checked /><span>Activa</span></label></div><div class="actions"><button id="categorySaveBtn" class="btn btn--primary" type="button">Guardar</button><button id="categoryResetBtn" class="btn btn--ghost" type="button">Limpiar</button></div><div id="categoriesMsg" class="msg"></div></div>
-        <div class="subPanel"><h3>Listado</h3><div id="categoriesList" class="stackList"></div></div>
-      </section>
-
-      <!-- SERVICIOS (con precios) -->
-      <section class="panel viewPanel" data-panel="services" style="display:none">
-        <div class="row row--between row--wrap">
-          <div><h2>💰 Servicios y Precios</h2><p class="muted">Gestioná los servicios y sus precios (se muestran en el frontend).</p></div>
-          <div class="row row--wrap">
-            <button id="servicesRefreshBtn" class="btn btn--ghost" type="button">Actualizar</button>
-            <button id="servicesNewBtn" class="btn btn--primary" type="button">➕ Nuevo servicio</button>
+        <!-- Servicios -->
+        <div id="servicesPanel" class="panel">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h2>💰 Servicios</h2>
+            <button class="btn-primary" id="newServiceBtn">➕ Nuevo servicio</button>
           </div>
+          <div id="servicesList" class="items-list"></div>
         </div>
-        <div id="servicesMsg" class="msg"></div>
-        <div id="servicesList" class="stackList"></div>
-        <div id="servicesPagination" class="pagination" style="display:none"></div>
-      </section>
 
-      <!-- Casos de éxito -->
-      <section class="panel viewPanel" data-panel="success-stories" style="display:none">
-        <div class="row row--between row--wrap">
-          <div><h2>🏆 Casos de Éxito</h2><p class="muted">Gestioná los casos de éxito que se muestran en el frontend.</p></div>
-          <div class="row row--wrap">
-            <button id="successStoriesRefreshBtn" class="btn btn--ghost" type="button">Actualizar</button>
-            <button id="successStoriesNewBtn" class="btn btn--primary" type="button">➕ Nuevo caso</button>
+        <!-- Categorías -->
+        <div id="categoriesPanel" class="panel">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h2>📂 Categorías</h2>
+            <button class="btn-primary" id="newCategoryBtn">➕ Nueva categoría</button>
           </div>
+          <div id="categoriesList" class="items-list"></div>
         </div>
-        <div id="successStoriesMsg" class="msg"></div>
-        <div id="successStoriesList" class="stackList"></div>
-        <div id="successStoriesPagination" class="pagination" style="display:none"></div>
-      </section>
 
-      <!-- Marcas -->
-      <section class="panel viewPanel" data-panel="brands" style="display:none">
-        <div class="row row--between row--wrap">
-          <div><h2>🏷️ Marcas que confían en nosotros</h2><p class="muted">Gestioná los logos de las marcas que aparecen en el frontend.</p></div>
-          <div class="row row--wrap">
-            <button id="brandsRefreshBtn" class="btn btn--ghost" type="button">Actualizar</button>
-            <button id="brandsNewBtn" class="btn btn--primary" type="button">➕ Nueva marca</button>
+        <!-- Marcas -->
+        <div id="brandsPanel" class="panel">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h2>🏷️ Marcas que confían</h2>
+            <button class="btn-primary" id="newBrandBtn">➕ Nueva marca</button>
           </div>
+          <div id="brandsList" class="items-list"></div>
         </div>
-        <div id="brandsMsg" class="msg"></div>
-        <div id="brandsList" class="stackList"></div>
-        <div id="brandsPagination" class="pagination" style="display:none"></div>
-      </section>
 
-      <!-- Preguntas del asistente -->
-      <section class="panel viewPanel" data-panel="assistant-questions" style="display:none">
-        <div class="row row--between row--wrap">
-          <div><h2>❓ Preguntas del Asistente Virtual</h2><p class="muted">Configurá las preguntas que hará el asistente a los usuarios.</p></div>
-          <div class="row row--wrap">
-            <button id="assistantRefreshBtn" class="btn btn--ghost" type="button">Actualizar</button>
-            <button id="assistantNewBtn" class="btn btn--primary" type="button">➕ Nueva pregunta</button>
+        <!-- Reseñas -->
+        <div id="reviewsPanel" class="panel">
+          <h2>⭐ Reseñas pendientes</h2>
+          <div id="pendingReviewsList" class="items-list"></div>
+          <h2 style="margin-top: 30px;">✅ Reseñas aprobadas</h2>
+          <div id="approvedReviewsList" class="items-list"></div>
+        </div>
+
+        <!-- FAQs -->
+        <div id="faqsPanel" class="panel">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h2>❓ FAQs</h2>
+            <button class="btn-primary" id="newFaqBtn">➕ Nueva FAQ</button>
           </div>
+          <div id="faqsList" class="items-list"></div>
         </div>
-        <div id="assistantQuestionsMsg" class="msg"></div>
-        <div id="assistantQuestionsList" class="stackList"></div>
-        <div id="assistantQuestionsPagination" class="pagination" style="display:none"></div>
-      </section>
 
-      <!-- Respuestas del asistente -->
-      <section class="panel viewPanel" data-panel="assistant-responses" style="display:none">
-        <div class="row row--between row--wrap">
-          <div><h2>📊 Respuestas de usuarios</h2><p class="muted">Historial de respuestas recolectadas por el asistente.</p></div>
-          <div class="row row--wrap">
-            <button id="assistantResponsesRefreshBtn" class="btn btn--ghost" type="button">Actualizar</button>
-            <button id="exportResponsesBtn" class="btn btn--primary" type="button">📥 Exportar CSV</button>
+        <!-- Settings -->
+        <div id="settingsPanel" class="panel">
+          <h2>⚙️ Configuración general</h2>
+          <div class="form-row">
+            <div>
+              <label>📧 Email de contacto</label>
+              <input type="email" id="settingsEmail" placeholder="admin@ciborg.com">
+            </div>
+            <div>
+              <label>📱 WhatsApp (sin +, sin espacios)</label>
+              <input type="text" id="settingsWhatsapp" placeholder="5491112345678">
+            </div>
           </div>
-        </div>
-        <div id="assistantResponsesMsg" class="msg"></div>
-        <div id="assistantResponsesList" class="stackList"></div>
-        <div id="assistantResponsesPagination" class="pagination" style="display:none"></div>
-      </section>
-
-      <!-- Leads del asistente -->
-      <section class="panel viewPanel" data-panel="guide-leads" style="display:none">
-        <div class="row row--between row--wrap">
-          <div><h2>📋 Leads del Asistente</h2><p class="muted">Listado de usuarios que completaron el asistente y dejaron sus datos.</p></div>
-          <div class="row row--wrap">
-            <button id="guideLeadsRefreshBtn" class="btn btn--ghost" type="button">Actualizar</button>
-            <button id="exportGuideLeadsBtn" class="btn btn--primary" type="button">📥 Exportar CSV</button>
+          <div class="form-row">
+            <div>
+              <label>📷 Logo URL</label>
+              <input type="url" id="settingsLogo" placeholder="https://...">
+            </div>
+            <div>
+              <label>🔗 Instagram</label>
+              <input type="url" id="settingsInstagram" placeholder="https://instagram.com/...">
+            </div>
           </div>
+          <button id="saveSettingsBtn" class="btn-primary" style="margin-top: 20px;">💾 Guardar cambios</button>
+          <div id="settingsMsg" class="msg" style="margin-top: 15px;"></div>
         </div>
-        <div id="guideLeadsMsg" class="msg"></div>
-        <div id="guideLeadsList" class="stackList"></div>
-        <div id="guideLeadsPagination" class="pagination" style="display:none"></div>
-      </section>
-
-      <!-- Contenido global -->
-      <section class="panel viewPanel" data-panel="site-content" style="display:none">
-        <div class="row row--between row--wrap"><div><h2>📄 Contenido global</h2><p class="muted">Editá los bloques fijos editoriales del frente A.</p></div><div class="row row--wrap"><button id="siteContentRefreshBtn" class="btn btn--ghost" type="button">Actualizar</button></div></div>
-        <div class="subPanel"><div class="field"><label for="siteContentSelect">Bloque</label><select id="siteContentSelect"><option value="">Elegir bloque...</option></select></div><div class="grid2"><div class="field"><label for="siteContentTitleInput">Título</label><input id="siteContentTitleInput" type="text" /></div><div class="field"><label for="siteContentSubtitleInput">Subtítulo</label><input id="siteContentSubtitleInput" type="text" /></div></div><div class="field"><label for="siteContentBodyInput">Contenido</label><textarea id="siteContentBodyInput" rows="5"></textarea></div><div class="grid3"><div class="field"><label for="siteContentImageUrlInput">URL imagen</label><input id="siteContentImageUrlInput" type="url" placeholder="https://..." /></div><div class="field"><label for="siteContentCtaLabelInput">Texto CTA</label><input id="siteContentCtaLabelInput" type="text" /></div><div class="field"><label for="siteContentCtaUrlInput">URL CTA</label><input id="siteContentCtaUrlInput" type="text" /></div></div><div class="grid2"><div class="field"><label for="siteContentOrderInput">Orden</label><input id="siteContentOrderInput" type="number" step="1" value="0" /></div><div class="togglesGrid togglesGrid--single"><label class="switchRow"><input id="siteContentActiveInput" type="checkbox" checked /><span>Activo</span></label></div></div><div class="actions"><button id="siteContentSaveBtn" class="btn btn--primary" type="button">Guardar</button></div><div id="siteContentMsg" class="msg"></div></div>
-      </section>
-
-      <!-- Settings visuales -->
-      <section class="panel viewPanel" data-panel="site-settings" style="display:none">
-        <div class="row row--between row--wrap"><div><h2>⚙️ Settings visuales</h2><p class="muted">Configuración global visual y de contacto.</p></div><div class="row row--wrap"><button id="siteSettingsRefreshBtn" class="btn btn--ghost" type="button">Actualizar</button></div></div>
-        <div class="subPanel"><h3>Marca y hero</h3><div class="grid2"><div class="field"><label for="siteTitleInput">Título sitio</label><input id="siteTitleInput" type="text" /></div><div class="field"><label for="siteTaglineInput">Tagline</label><input id="siteTaglineInput" type="text" /></div></div><div class="grid2"><div class="field"><label for="heroBadgeInput">Badge hero</label><input id="heroBadgeInput" type="text" /></div><div class="field"><label for="heroTitleInput">Título hero</label><input id="heroTitleInput" type="text" /></div></div><div class="field"><label for="heroSubtitleInput">Subtítulo hero</label><textarea id="heroSubtitleInput" rows="3"></textarea></div><div class="grid2"><div class="field"><label for="heroCtaLabelInput">Texto CTA</label><input id="heroCtaLabelInput" type="text" /></div><div class="field"><label for="heroCtaUrlInput">URL CTA</label><input id="heroCtaUrlInput" type="text" /></div></div></div>
-        <div class="subPanel"><h3>Assets y contacto</h3><div class="grid2"><div class="field"><label for="logoUrlInput">Logo</label><input id="logoUrlInput" type="url" /></div><div class="field"><label for="heroLogoUrlInput">Logo hero</label><input id="heroLogoUrlInput" type="url" /></div></div><div class="grid2"><div class="field"><label for="footerLogoUrlInput">Logo footer</label><input id="footerLogoUrlInput" type="url" /></div><div class="field"><label for="faviconUrlInput">Favicon</label><input id="faviconUrlInput" type="url" /></div></div><div class="grid2"><div class="field"><label for="whatsappNumberInput">WhatsApp</label><input id="whatsappNumberInput" type="text" placeholder="54911..." /></div><div class="field"><label for="emailContactInput">Email</label><input id="emailContactInput" type="email" /></div></div><div class="grid3"><div class="field"><label for="instagramUrlInput">Instagram</label><input id="instagramUrlInput" type="url" /></div><div class="field"><label for="facebookUrlInput">Facebook</label><input id="facebookUrlInput" type="url" /></div><div class="field"><label for="tiktokUrlInput">TikTok</label><input id="tiktokUrlInput" type="url" /></div></div><div class="togglesGrid togglesGrid--single"><label class="switchRow"><input id="useHeroVideoInput" type="checkbox" /><span>Usar video hero</span></label><label class="switchRow"><input id="useBackgroundImageInput" type="checkbox" /><span>Usar background global</span></label></div><div class="actions"><button id="siteSettingsSaveBtn" class="btn btn--primary" type="button">Guardar</button></div><div id="siteSettingsMsg" class="msg"></div></div>
-      </section>
-
-      <!-- Reseñas pendientes -->
-      <section class="panel viewPanel" data-panel="reviews-pending" style="display:none">
-        <div class="row row--between row--wrap">
-          <div><h2>⏳ Reseñas Pendientes</h2><p class="muted">Moderá las reseñas que los usuarios envían desde el frontend.</p></div>
-          <div class="row row--wrap"><button id="reviewsRefreshBtn" class="btn btn--ghost" type="button">Actualizar</button></div>
-        </div>
-        <div class="pending-reviews-stats"><div class="stat-card-pending"><span>📝 Pendientes</span><strong id="pendingCount">0</strong></div></div>
-        <div id="reviewsPendingMsg" class="msg"></div>
-        <div id="reviewsPendingList" class="stackList"></div>
-      </section>
-
-      <!-- Reseñas aprobadas -->
-      <section class="panel viewPanel" data-panel="reviews-approved" style="display:none">
-        <div class="row row--between row--wrap">
-          <div><h2>✅ Reseñas Aprobadas</h2><p class="muted">Historial completo de reseñas publicadas.</p></div>
-          <div class="row row--wrap"><button id="reviewsApprovedRefreshBtn" class="btn btn--ghost" type="button">Actualizar</button><button id="exportReviewsBtn" class="btn btn--primary" type="button">📥 Exportar CSV</button></div>
-        </div>
-        <div class="filtersGrid filtersGrid--3" style="margin-top:1rem;">
-          <div class="field"><label>🔍 Buscar</label><input type="text" id="approvedSearchInput" placeholder="Usuario o comentario..." /></div>
-          <div class="field"><label>⭐ Calificación</label><select id="approvedRatingFilter"><option value="all">Todas</option><option value="5">5⭐</option><option value="4">4⭐</option><option value="3">3⭐</option><option value="2">2⭐</option><option value="1">1⭐</option></select></div>
-          <div class="field"><label>📅 Ordenar</label><select id="approvedSortFilter"><option value="recent">Más recientes</option><option value="oldest">Más antiguas</option><option value="rating_high">Mayor rating</option><option value="rating_low">Menor rating</option></select></div>
-        </div>
-        <div id="reviewsApprovedMsg" class="msg"></div>
-        <div id="reviewsApprovedList" class="stackList"></div>
-        <div id="reviewsApprovedPagination" class="pagination" style="display:none"></div>
-      </section>
-
-      <!-- FAQs -->
-      <section class="panel viewPanel" data-panel="faqs" style="display:none">
-        <div class="row row--between row--wrap"><div><h2>❓ FAQs</h2><p class="muted">Preguntas frecuentes del sitio.</p></div><div class="row row--wrap"><button id="faqsRefreshBtn" class="btn btn--ghost" type="button">Actualizar</button></div></div>
-        <div class="subPanel"><h3>Nueva FAQ</h3><div class="field"><label for="faqQuestionInput">Pregunta</label><input id="faqQuestionInput" type="text" placeholder="¿Cómo trabajás?" /></div><div class="field"><label for="faqAnswerInput">Respuesta</label><textarea id="faqAnswerInput" rows="4" placeholder="Respuesta..."></textarea></div><div class="grid2"><div class="field"><label for="faqOrderInput">Orden</label><input id="faqOrderInput" type="number" step="1" value="0" /></div><label class="switchRow"><input id="faqActiveInput" type="checkbox" checked /><span>Activa</span></label></div><div class="actions"><button id="faqSaveBtn" class="btn btn--primary" type="button">Guardar</button><button id="faqResetBtn" class="btn btn--ghost" type="button">Limpiar</button></div><div id="faqsMsg" class="msg"></div></div>
-        <div class="subPanel"><h3>Listado</h3><div id="faqsList" class="stackList"></div></div>
-      </section>
-
-      <!-- Historial -->
-      <section class="panel viewPanel" data-panel="history" style="display:none">
-        <div class="row row--between row--wrap">
-          <div><h2>📜 Historial</h2><p class="muted">Versiones previas y restauración segura.</p></div>
-          <div class="row row--wrap"><button id="historyRefreshBtn" class="btn btn--ghost" type="button">Actualizar</button></div>
-        </div>
-        <div id="historyMsg" class="msg"></div>
-        <div class="subPanel">
-          <div class="row row--between row--wrap"><h3>Historial de proyectos</h3><button id="clearProjectHistoryBtn" class="btn btn--danger btn--small" type="button">🗑️ Limpiar</button></div>
-          <div id="projectHistoryList" class="stackList"></div>
-          <div id="projectHistoryPagination" class="pagination" style="display:none"></div>
-        </div>
-        <div class="subPanel">
-          <div class="row row--between row--wrap"><h3>Historial de settings</h3><button id="clearSettingsHistoryBtn" class="btn btn--danger btn--small" type="button">🗑️ Limpiar</button></div>
-          <div id="settingsHistoryList" class="stackList"></div>
-          <div id="settingsHistoryPagination" class="pagination" style="display:none"></div>
-        </div>
-      </section>
-    </section>
-  </section>
-</main>
-
-<footer class="footer">
-  <div class="wrap footer__inner">
-    <small>Panel autoadministrable | CIBORG 347 | Supabase Auth + DB</small>
-  </div>
-</footer>
-
-<!-- Modal para editar/crear servicios (CON PRECIOS) -->
-<div id="serviceModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:1000; justify-content:center; align-items:center;">
-  <div style="background:var(--bg2); border-radius:24px; max-width:700px; width:90%; max-height:85vh; overflow:auto; padding:24px; border:1px solid var(--cyan);">
-    <h3 id="serviceModalTitle" style="margin-bottom:1rem;">💼 Nuevo Servicio</h3>
-    <input type="hidden" id="serviceId">
-    <input type="hidden" id="servicePriceId">
-    
-    <div class="grid2">
-      <div class="field"><label>Título del servicio *</label><input type="text" id="serviceTitle" placeholder="Ej: Tienda Online"></div>
-      <div class="field"><label>Slug *</label><input type="text" id="serviceSlug" placeholder="ej: tienda"><small>Sin espacios, usar guiones</small></div>
-    </div>
-    
-    <div class="grid2">
-      <div class="field"><label>Ícono (emoji)</label><input type="text" id="serviceIcon" placeholder="Ej: 🛒" maxlength="2" style="width:80px;"></div>
-      <div class="field"><label>Orden</label><input type="number" id="serviceOrder" value="0"></div>
-    </div>
-    
-    <div class="field"><label>URL de la imagen (portada)</label><input type="url" id="serviceImageUrl" placeholder="https://..."></div>
-    <div class="field"><label>Subir imagen</label><input type="file" id="serviceImageFile" accept="image/*"></div>
-    
-    <div class="grid2">
-      <div class="field"><label>💰 Precio desde</label><input type="text" id="servicePriceFrom" placeholder="Ej: $700.000" value="$700.000"></div>
-      <div class="field"><label>💰 Precio oferta (opcional)</label><input type="text" id="serviceOfferPrice" placeholder="Ej: $600.000"></div>
-    </div>
-    
-    <div class="field"><label>🏷️ Badge de oferta (opcional)</label><input type="text" id="serviceOfferBadge" placeholder="Ej: -15%"></div>
-    
-    <div class="field"><label>📝 Descripción completa</label><textarea id="serviceDescription" rows="4" placeholder="Descripción detallada del servicio..."></textarea></div>
-    
-    <div class="field"><label>🎯 ¿Para quién es ideal?</label><textarea id="serviceIdealFor" rows="3" placeholder="Ej: Emprendedores, pymes y marcas..."></textarea></div>
-    
-    <div class="field"><label>✅ Características (separadas por coma)</label><input type="text" id="serviceFeaturesInput" placeholder="Ej: Carrito de compras, Mercado Pago, Panel admin"></div>
-    
-    <div class="field"><label>💬 Mensaje por defecto para WhatsApp</label><input type="text" id="serviceWhatsappMessage" placeholder="Ej: Hola, quiero consultar por el servicio de Tienda Online"></div>
-    
-    <label class="switchRow"><input type="checkbox" id="serviceActive" checked><span>Activo</span></label>
-    
-    <div style="display:flex; gap:12px; margin-top:1.5rem;">
-      <button id="serviceSaveBtn" class="btn btn--primary">💾 Guardar</button>
-      <button id="serviceCancelBtn" class="btn btn--ghost">Cancelar</button>
+      </main>
     </div>
   </div>
 </div>
 
-<!-- Modal para marcas -->
-<div id="brandModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:1000; justify-content:center; align-items:center;">
-  <div style="background:var(--bg2); border-radius:24px; max-width:500px; width:90%; max-height:85vh; overflow:auto; padding:24px; border:1px solid var(--cyan);">
-    <h3 id="brandModalTitle" style="margin-bottom:1rem;">🏷️ Nueva Marca</h3>
+<!-- Modal para editar/crear servicios -->
+<div id="serviceModal" class="modal">
+  <div class="modal-content">
+    <h3 id="serviceModalTitle">💼 Nuevo Servicio</h3>
+    <input type="hidden" id="serviceId">
+    <label>Título del servicio *</label>
+    <input type="text" id="serviceTitle" placeholder="Ej: Tienda Online">
+    <label>Slug (URL amigable)</label>
+    <input type="text" id="serviceSlug" placeholder="ej: tienda-online">
+    <label>💰 Precio</label>
+    <input type="text" id="servicePrice" placeholder="Ej: $700.000">
+    <label>🖼️ URL de imagen (portada)</label>
+    <input type="url" id="serviceImageUrl" placeholder="https://...">
+    <label>📝 Descripción</label>
+    <textarea id="serviceDescription" rows="3" placeholder="Descripción del servicio..."></textarea>
+    <label>✅ Características (separadas por coma)</label>
+    <input type="text" id="serviceFeatures" placeholder="Ej: Carrito, Mercado Pago, Stock">
+    <label>🔢 Orden</label>
+    <input type="number" id="serviceOrder" value="0">
+    <label style="display: flex; align-items: center; gap: 10px; margin-top: 10px;">
+      <input type="checkbox" id="serviceActive" checked> Activo
+    </label>
+    <div class="modal-actions">
+      <button id="serviceSaveBtn" class="btn-primary">💾 Guardar</button>
+      <button id="serviceCancelBtn">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal para editar/crear proyectos -->
+<div id="projectModal" class="modal">
+  <div class="modal-content">
+    <h3 id="projectModalTitle">📁 Nuevo Proyecto</h3>
+    <input type="hidden" id="projectId">
+    <label>Título del proyecto *</label>
+    <input type="text" id="projectTitle" placeholder="Ej: Web para Pizzería">
+    <label>URL demo</label>
+    <input type="url" id="projectDemoUrl" placeholder="https://...">
+    <label>🖼️ URL de imagen</label>
+    <input type="url" id="projectImageUrl" placeholder="https://...">
+    <label>Categoría</label>
+    <select id="projectCategoryId"></select>
+    <label>Descripción corta</label>
+    <textarea id="projectShortDesc" rows="2" placeholder="Descripción breve..."></textarea>
+    <label>Estado</label>
+    <select id="projectStatus">
+      <option value="published">Publicado</option>
+      <option value="draft">Borrador</option>
+      <option value="featured">Destacado</option>
+    </select>
+    <label>🔢 Orden</label>
+    <input type="number" id="projectOrder" value="0">
+    <label style="display: flex; align-items: center; gap: 10px; margin-top: 10px;">
+      <input type="checkbox" id="projectActive" checked> Activo
+    </label>
+    <div class="modal-actions">
+      <button id="projectSaveBtn" class="btn-primary">💾 Guardar</button>
+      <button id="projectCancelBtn">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal para editar/crear categorías -->
+<div id="categoryModal" class="modal">
+  <div class="modal-content">
+    <h3 id="categoryModalTitle">📂 Nueva Categoría</h3>
+    <input type="hidden" id="categoryId">
+    <label>Nombre *</label>
+    <input type="text" id="categoryName" placeholder="Ej: E-commerce">
+    <label>Slug</label>
+    <input type="text" id="categorySlug" placeholder="ej: e-commerce">
+    <label>🔢 Orden</label>
+    <input type="number" id="categoryOrder" value="0">
+    <label style="display: flex; align-items: center; gap: 10px; margin-top: 10px;">
+      <input type="checkbox" id="categoryActive" checked> Activa
+    </label>
+    <div class="modal-actions">
+      <button id="categorySaveBtn" class="btn-primary">💾 Guardar</button>
+      <button id="categoryCancelBtn">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal para editar/crear marcas -->
+<div id="brandModal" class="modal">
+  <div class="modal-content">
+    <h3 id="brandModalTitle">🏷️ Nueva Marca</h3>
     <input type="hidden" id="brandId">
-    <div class="field"><label>Nombre de la marca *</label><input type="text" id="brandName" placeholder="Ej: Google"></div>
-    <div class="field"><label>URL del logo *</label><input type="url" id="brandLogoUrl" placeholder="https://..."></div>
-    <div class="field"><label>Subir logo</label><input type="file" id="brandLogoFile" accept="image/*"></div>
-    <div class="field"><label>Sitio web (opcional)</label><input type="url" id="brandWebsite" placeholder="https://..."></div>
-    <div class="field"><label>Orden</label><input type="number" id="brandOrder" value="0"></div>
-    <label class="switchRow"><input type="checkbox" id="brandActive" checked><span>Activo</span></label>
-    <div style="display:flex; gap:12px; margin-top:1.5rem;">
-      <button id="brandSaveBtn" class="btn btn--primary">💾 Guardar</button>
-      <button id="brandCancelBtn" class="btn btn--ghost">Cancelar</button>
+    <label>Nombre *</label>
+    <input type="text" id="brandName" placeholder="Ej: Google">
+    <label>Logo URL *</label>
+    <input type="url" id="brandLogo" placeholder="https://...">
+    <label>Sitio web (opcional)</label>
+    <input type="url" id="brandWebsite" placeholder="https://...">
+    <label>🔢 Orden</label>
+    <input type="number" id="brandOrder" value="0">
+    <label style="display: flex; align-items: center; gap: 10px; margin-top: 10px;">
+      <input type="checkbox" id="brandActive" checked> Activo
+    </label>
+    <div class="modal-actions">
+      <button id="brandSaveBtn" class="btn-primary">💾 Guardar</button>
+      <button id="brandCancelBtn">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal para editar/crear FAQs -->
+<div id="faqModal" class="modal">
+  <div class="modal-content">
+    <h3 id="faqModalTitle">❓ Nueva FAQ</h3>
+    <input type="hidden" id="faqId">
+    <label>Pregunta *</label>
+    <input type="text" id="faqQuestion" placeholder="¿Cómo trabajan?">
+    <label>Respuesta *</label>
+    <textarea id="faqAnswer" rows="4" placeholder="Respuesta..."></textarea>
+    <label>🔢 Orden</label>
+    <input type="number" id="faqOrder" value="0">
+    <label style="display: flex; align-items: center; gap: 10px; margin-top: 10px;">
+      <input type="checkbox" id="faqActive" checked> Activa
+    </label>
+    <div class="modal-actions">
+      <button id="faqSaveBtn" class="btn-primary">💾 Guardar</button>
+      <button id="faqCancelBtn">Cancelar</button>
     </div>
   </div>
 </div>
 
 <script>
-  // ========== CONFIGURACIÓN ==========
-  window.CIBORG_CONFIG = {
-    WHATSAPP_NUMBER: "5491164499481",
-    SUPABASE_URL: "https://fhxcumwhgtfirznnznjx.supabase.co",
-    SUPABASE_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZoeGN1bXdoZ3RmaXJ6bm56bmp4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc5OTYyNzEsImV4cCI6MjA4MzU3MjI3MX0.7z1B099L4yrA9k1JxwvYGCABzqiqYtkUClI3E8wQ2zA"
-  };
+// ============================================================
+// CONFIGURACIÓN SUPABASE
+// ============================================================
+const SUPABASE_URL = "https://fhxcumwhgtfirznnznjx.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZoeGN1bXdoZ3RmaXJ6bm56bmp4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc5OTYyNzEsImV4cCI6MjA4MzU3MjI3MX0.7z1B099L4yrA9k1JxwvYGCABzqiqYtkUClI3E8wQ2zA";
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-  const SUPABASE_URL = window.CIBORG_CONFIG.SUPABASE_URL;
-  const SUPABASE_KEY = window.CIBORG_CONFIG.SUPABASE_KEY;
-  const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-  let currentUser = null;
+// Estado
+let currentUser = null;
+let services = [];
+let projects = [];
+let categories = [];
+let brands = [];
+let faqs = [];
+let settings = {};
 
-  // Elementos del DOM
-  const goToFrontendBtn = document.getElementById("goToFrontendBtn");
-  if (goToFrontendBtn) {
-    goToFrontendBtn.addEventListener("click", () => {
-      window.open("https://ciborg347.onrender.com/", "_blank");
-    });
-  }
+// ============================================================
+// AUTENTICACIÓN
+// ============================================================
+const loginBox = document.getElementById('loginBox');
+const adminPanel = document.getElementById('adminPanel');
+const loginBtn = document.getElementById('loginBtn');
+const logoutBtn = document.getElementById('logoutBtn');
+const userEmailDisplay = document.getElementById('userEmailDisplay');
 
-  // Tema
-  function initTheme() {
-    const saved = localStorage.getItem('admin-theme');
-    const prefers = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const theme = saved || (prefers ? 'dark' : 'light');
-    document.documentElement.setAttribute('data-theme', theme);
-    const light = document.getElementById('lightThemeBtn');
-    const dark = document.getElementById('darkThemeBtn');
-    if (light && dark) {
-      light.classList.toggle('is-active', theme === 'light');
-      dark.classList.toggle('is-active', theme === 'dark');
-    }
+async function checkSession() {
+  const { data: { session } } = await sb.auth.getSession();
+  if (session) {
+    currentUser = session.user;
+    loginBox.style.display = 'none';
+    adminPanel.style.display = 'block';
+    userEmailDisplay.textContent = currentUser.email;
+    loadAllData();
+  } else {
+    loginBox.style.display = 'block';
+    adminPanel.style.display = 'none';
   }
-  initTheme();
-  
-  document.getElementById('lightThemeBtn')?.addEventListener('click', () => {
-    document.documentElement.setAttribute('data-theme', 'light');
-    localStorage.setItem('admin-theme', 'light');
-    document.getElementById('lightThemeBtn')?.classList.add('is-active');
-    document.getElementById('darkThemeBtn')?.classList.remove('is-active');
-  });
-  
-  document.getElementById('darkThemeBtn')?.addEventListener('click', () => {
-    document.documentElement.setAttribute('data-theme', 'dark');
-    localStorage.setItem('admin-theme', 'dark');
-    document.getElementById('darkThemeBtn')?.classList.add('is-active');
-    document.getElementById('lightThemeBtn')?.classList.remove('is-active');
-  });
+}
 
-  // ========== NAVEGACIÓN ENTRE PESTAÑAS ==========
-  let currentView = 'dashboard';
-  const navBtns = document.querySelectorAll('.navBtn');
-  const panels = document.querySelectorAll('.viewPanel');
+loginBtn.addEventListener('click', async () => {
+  const email = document.getElementById('loginEmail').value;
+  const password = document.getElementById('loginPassword').value;
+  const msgDiv = document.getElementById('loginMsg');
   
-  function showPanel(panelId) {
-    panels.forEach(panel => {
-      panel.style.display = panel.getAttribute('data-panel') === panelId ? 'block' : 'none';
-    });
-    navBtns.forEach(btn => {
-      btn.classList.toggle('is-active', btn.getAttribute('data-view') === panelId);
-    });
-    currentView = panelId;
+  const { data, error } = await sb.auth.signInWithPassword({ email, password });
+  if (error) {
+    msgDiv.innerHTML = `<div class="msg msg-error">❌ ${error.message}</div>`;
+  } else {
+    msgDiv.innerHTML = `<div class="msg msg-success">✅ Ingresando...</div>`;
+    checkSession();
   }
-  
-  navBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      const view = btn.getAttribute('data-view');
-      if (view) showPanel(view);
+});
+
+logoutBtn.addEventListener('click', async () => {
+  await sb.auth.signOut();
+  checkSession();
+});
+
+// ============================================================
+// NAVEGACIÓN
+// ============================================================
+const navBtns = document.querySelectorAll('.nav-btn');
+const panels = ['dashboardPanel', 'projectsPanel', 'servicesPanel', 'categoriesPanel', 'brandsPanel', 'reviewsPanel', 'faqsPanel', 'settingsPanel'];
+
+navBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    navBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    panels.forEach(panelId => {
+      document.getElementById(panelId).classList.remove('active');
     });
+    const view = btn.getAttribute('data-view');
+    document.getElementById(`${view}Panel`).classList.add('active');
+    
+    if (view === 'services') loadServices();
+    if (view === 'projects') loadProjects();
+    if (view === 'categories') loadCategories();
+    if (view === 'brands') loadBrands();
+    if (view === 'faqs') loadFaqs();
+    if (view === 'reviews') loadReviews();
+    if (view === 'dashboard') loadDashboard();
   });
-  
-  // ========== LOGIN ==========
-  const loginBtn = document.getElementById('loginBtn');
-  const emailInput = document.getElementById('emailInput');
-  const passInput = document.getElementById('passInput');
-  const authMsg = document.getElementById('authMsg');
-  
-  loginBtn?.addEventListener('click', async () => {
-    const email = emailInput.value.trim();
-    const password = passInput.value.trim();
-    if (!email || !password) {
-      authMsg.innerHTML = '<div class="msg msg--error">Completá email y contraseña</div>';
-      return;
-    }
-    try {
-      const { data, error } = await sb.auth.signInWithPassword({ email, password });
-      if (error) throw error;
-      if (data.user) {
-        currentUser = data.user;
-        document.getElementById('userEmail').textContent = currentUser.email;
-        document.getElementById('authBox').style.display = 'none';
-        document.getElementById('adminBox').style.display = 'grid';
-        loadServicesAdmin();
-        loadPlansAdmin();
-        loadBrandsAdmin();
-        loadSuccessStoriesAdmin();
-        loadAssistantQuestionsAdmin();
-        loadGuideLeadsAdmin();
-        loadFaqsAdmin();
-        loadCategoriesAdmin();
-        loadProjectsAdmin();
-        loadFeaturedProjects();
-        loadPendingReviews();
-      }
-    } catch (err) {
-      authMsg.innerHTML = `<div class="msg msg--error">Error: ${err.message}</div>`;
-    }
+});
+
+// ============================================================
+// FUNCIONES AUXILIARES
+// ============================================================
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str).replace(/[&<>]/g, function(m) {
+    if (m === '&') return '&amp;';
+    if (m === '<') return '&lt;';
+    if (m === '>') return '&gt;';
+    return m;
   });
+}
+
+// ============================================================
+// DASHBOARD
+// ============================================================
+async function loadDashboard() {
+  await loadProjects();
+  await loadServices();
   
-  // Logout
-  document.getElementById('logoutBtn')?.addEventListener('click', async () => {
-    await sb.auth.signOut();
-    location.reload();
-  });
+  const statsGrid = document.getElementById('statsGrid');
+  statsGrid.innerHTML = `
+    <div class="stat-card"><h3 id="statProjects">${projects.length}</h3><p>Proyectos</p></div>
+    <div class="stat-card"><h3 id="statServices">${services.length}</h3><p>Servicios</p></div>
+    <div class="stat-card"><h3 id="statCategories">${categories.length}</h3><p>Categorías</p></div>
+    <div class="stat-card"><h3 id="statBrands">${brands.length}</h3><p>Marcas</p></div>
+  `;
   
-  // ========== FUNCIONES DE ESCAPE HTML ==========
-  function escapeHtml(str) {
-    if (!str) return '';
-    return String(str).replace(/[&<>]/g, function(m) {
-      if (m === '&') return '&amp;';
-      if (m === '<') return '&lt;';
-      if (m === '>') return '&gt;';
-      return m;
-    });
+  const recent = [...projects].sort((a,b) => new Date(b.created_at) - new Date(a.created_at)).slice(0,5);
+  const recentDiv = document.getElementById('recentProjects');
+  if (recent.length === 0) {
+    recentDiv.innerHTML = '<div class="loading">No hay proyectos aún</div>';
+  } else {
+    recentDiv.innerHTML = recent.map(p => `
+      <div class="item-card">
+        <div class="item-info">
+          <div class="item-title">${escapeHtml(p.title)}</div>
+          <div class="item-meta">${p.status || 'published'} · ${p.created_at ? new Date(p.created_at).toLocaleDateString() : ''}</div>
+        </div>
+        <button class="btn-edit" onclick="editProject('${p.id}')">Editar</button>
+      </div>
+    `).join('');
+  }
+}
+
+// ============================================================
+// SERVICIOS (CRUD COMPLETO)
+// ============================================================
+async function loadServices() {
+  const container = document.getElementById('servicesList');
+  container.innerHTML = '<div class="loading">Cargando servicios...</div>';
+  
+  const { data, error } = await sb.from('services').select('*').order('order_index', { ascending: true });
+  if (error) {
+    container.innerHTML = `<div class="msg msg-error">Error: ${error.message}</div>`;
+    return;
   }
   
-  // ========== SERVICIOS ADMIN (con precios) ==========
-  async function loadServicesAdmin() {
-    const container = document.getElementById('servicesList');
-    if (!container) return;
-    
-    container.innerHTML = '<div class="msg">Cargando servicios...</div>';
-    
-    try {
-      // Traer servicios
-      const { data: services, error: servicesError } = await sb
-        .from('service_types')
-        .select('*')
-        .order('order_index', { ascending: true });
-      
-      if (servicesError) throw servicesError;
-      
-      if (!services || services.length === 0) {
-        container.innerHTML = '<div class="msg">No hay servicios cargados. Creá uno nuevo.</div>';
-        return;
-      }
-      
-      // Traer precios asociados
-      const serviceIds = services.map(s => s.id);
-      const { data: prices, error: pricesError } = await sb
-        .from('service_prices')
-        .select('*')
-        .in('service_type_id', serviceIds)
-        .eq('active', true);
-      
-      if (pricesError) throw pricesError;
-      
-      const priceMap = new Map();
-      if (prices) {
-        prices.forEach(price => {
-          priceMap.set(price.service_type_id, price);
-        });
-      }
-      
-      container.innerHTML = services.map(service => {
-        const price = priceMap.get(service.id);
-        const displayPrice = price?.price_from || 'Sin precio';
-        const offerPrice = price?.offer_price || '';
-        const offerBadge = price?.offer_badge || '';
-        
-        return `
-          <div class="listCard" data-service-id="${service.id}" data-price-id="${price?.id || ''}">
-            <div class="listCard__thumb">
-              ${service.imagen_portada ? `<img src="${escapeHtml(service.imagen_portada)}" alt="${escapeHtml(service.name)}">` : '<div style="width:80px;height:60px;background:var(--bg);display:flex;align-items:center;justify-content:center;">📷</div>'}
-            </div>
-            <div class="listCard__body">
-              <div class="listCard__title">${escapeHtml(service.name)}</div>
-              <div class="listCard__meta">Slug: ${escapeHtml(service.slug)} | Orden: ${service.order_index || 0}</div>
-              <div class="listCard__badges">
-                <span class="miniTag">💰 ${escapeHtml(displayPrice)}</span>
-                ${offerPrice ? `<span class="miniTag">🎯 Oferta: ${escapeHtml(offerPrice)}</span>` : ''}
-                ${offerBadge ? `<span class="miniTag">🏷️ ${escapeHtml(offerBadge)}</span>` : ''}
-                ${service.active ? '<span class="miniTag" style="background:#22c55e20;color:#22c55e;">✓ Activo</span>' : '<span class="miniTag" style="background:#ef444420;color:#ef4444;">✗ Inactivo</span>'}
-              </div>
-            </div>
-            <div class="listCard__actions">
-              <button class="btn btn--small btn--ghost edit-service-btn" data-id="${service.id}" data-price-id="${price?.id || ''}">✏️ Editar</button>
-            </div>
-          </div>
-        `;
-      }).join('');
-      
-      // Eventos editar
-      document.querySelectorAll('.edit-service-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const serviceId = btn.getAttribute('data-id');
-          const priceId = btn.getAttribute('data-price-id');
-          openServiceModal(serviceId, priceId);
-        });
-      });
-      
-    } catch (err) {
-      console.error('Error loading services:', err);
-      container.innerHTML = '<div class="msg msg--error">Error al cargar servicios</div>';
-    }
+  services = data || [];
+  if (services.length === 0) {
+    container.innerHTML = '<div class="loading">No hay servicios. Creá uno nuevo.</div>';
+    return;
   }
   
-  async function openServiceModal(serviceId = null, priceId = null) {
-    const modal = document.getElementById('serviceModal');
-    const title = document.getElementById('serviceModalTitle');
-    const idField = document.getElementById('serviceId');
-    const priceIdField = document.getElementById('servicePriceId');
-    
-    // Limpiar campos
-    document.getElementById('serviceTitle').value = '';
-    document.getElementById('serviceSlug').value = '';
-    document.getElementById('serviceIcon').value = '';
-    document.getElementById('serviceImageUrl').value = '';
-    document.getElementById('serviceDescription').value = '';
-    document.getElementById('serviceIdealFor').value = '';
-    document.getElementById('serviceFeaturesInput').value = '';
-    document.getElementById('serviceWhatsappMessage').value = '';
-    document.getElementById('serviceOrder').value = '0';
-    document.getElementById('serviceActive').checked = true;
-    document.getElementById('servicePriceFrom').value = '$700.000';
-    document.getElementById('serviceOfferPrice').value = '';
-    document.getElementById('serviceOfferBadge').value = '';
-    
-    if (serviceId) {
-      title.textContent = '✏️ Editar Servicio';
-      idField.value = serviceId;
-      if (priceId) priceIdField.value = priceId;
-      
-      try {
-        // Cargar servicio
-        const { data: service, error: serviceError } = await sb
-          .from('service_types')
-          .select('*')
-          .eq('id', serviceId)
-          .single();
-        
-        if (serviceError) throw serviceError;
-        
-        if (service) {
-          document.getElementById('serviceTitle').value = service.name || '';
-          document.getElementById('serviceSlug').value = service.slug || '';
-          document.getElementById('serviceIcon').value = service.icon || '';
-          document.getElementById('serviceImageUrl').value = service.imagen_portada || '';
-          document.getElementById('serviceDescription').value = service.description || '';
-          document.getElementById('serviceIdealFor').value = service.ideal_for || '';
-          document.getElementById('serviceFeaturesInput').value = (service.features || []).join(', ');
-          document.getElementById('serviceWhatsappMessage').value = service.whatsapp_msg || '';
-          document.getElementById('serviceOrder').value = service.order_index || 0;
-          document.getElementById('serviceActive').checked = service.active !== false;
-        }
-        
-        // Cargar precio si existe
-        const { data: price, error: priceError } = await sb
-          .from('service_prices')
-          .select('*')
-          .eq('service_type_id', serviceId)
-          .eq('active', true)
-          .maybeSingle();
-        
-        if (price && !priceError) {
-          document.getElementById('servicePriceFrom').value = price.price_from || '$700.000';
-          document.getElementById('serviceOfferPrice').value = price.offer_price || '';
-          document.getElementById('serviceOfferBadge').value = price.offer_badge || '';
-          if (price.id) priceIdField.value = price.id;
-        }
-        
-      } catch (err) {
-        console.error('Error loading service:', err);
-      }
-    } else {
-      title.textContent = '➕ Nuevo Servicio';
-      idField.value = '';
-      priceIdField.value = '';
-    }
-    
-    modal.style.display = 'flex';
+  container.innerHTML = services.map(service => `
+    <div class="item-card">
+      ${service.image_url ? `<img src="${escapeHtml(service.image_url)}" class="item-preview" onerror="this.style.display='none'">` : ''}
+      <div class="item-info">
+        <div class="item-title">${escapeHtml(service.title)}</div>
+        <div class="item-meta">💰 ${escapeHtml(service.price || 'Sin precio')} · 🔗 ${escapeHtml(service.slug)} · ${service.active ? '🟢 Activo' : '🔴 Inactivo'}</div>
+      </div>
+      <div class="item-actions">
+        <button class="btn-edit" onclick="openServiceModal('${service.id}')">✏️ Editar</button>
+        <button class="btn-delete" onclick="deleteService('${service.id}')">🗑️ Eliminar</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function openServiceModal(id = null) {
+  const modal = document.getElementById('serviceModal');
+  const title = document.getElementById('serviceModalTitle');
+  const serviceId = document.getElementById('serviceId');
+  const serviceTitle = document.getElementById('serviceTitle');
+  const serviceSlug = document.getElementById('serviceSlug');
+  const servicePrice = document.getElementById('servicePrice');
+  const serviceImageUrl = document.getElementById('serviceImageUrl');
+  const serviceDescription = document.getElementById('serviceDescription');
+  const serviceFeatures = document.getElementById('serviceFeatures');
+  const serviceOrder = document.getElementById('serviceOrder');
+  const serviceActive = document.getElementById('serviceActive');
+  
+  if (id) {
+    const service = services.find(s => s.id === id);
+    if (!service) return;
+    title.textContent = '✏️ Editar Servicio';
+    serviceId.value = service.id;
+    serviceTitle.value = service.title || '';
+    serviceSlug.value = service.slug || '';
+    servicePrice.value = service.price || '';
+    serviceImageUrl.value = service.image_url || '';
+    serviceDescription.value = service.description || '';
+    serviceFeatures.value = (service.features || []).join(', ');
+    serviceOrder.value = service.order_index || 0;
+    serviceActive.checked = service.active !== false;
+  } else {
+    title.textContent = '➕ Nuevo Servicio';
+    serviceId.value = '';
+    serviceTitle.value = '';
+    serviceSlug.value = '';
+    servicePrice.value = '';
+    serviceImageUrl.value = '';
+    serviceDescription.value = '';
+    serviceFeatures.value = '';
+    serviceOrder.value = '0';
+    serviceActive.checked = true;
+  }
+  modal.style.display = 'flex';
+}
+
+async function saveService() {
+  const id = document.getElementById('serviceId').value;
+  const title = document.getElementById('serviceTitle').value.trim();
+  let slug = document.getElementById('serviceSlug').value.trim();
+  const price = document.getElementById('servicePrice').value.trim();
+  const image_url = document.getElementById('serviceImageUrl').value.trim();
+  const description = document.getElementById('serviceDescription').value.trim();
+  const featuresStr = document.getElementById('serviceFeatures').value;
+  const features = featuresStr.split(',').map(f => f.trim()).filter(f => f);
+  const order_index = parseInt(document.getElementById('serviceOrder').value) || 0;
+  const active = document.getElementById('serviceActive').checked;
+  
+  if (!title) {
+    alert('El título es obligatorio');
+    return;
+  }
+  if (!slug) slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  
+  const payload = { title, slug, price, image_url, description, features, order_index, active, updated_at: new Date().toISOString() };
+  
+  let result;
+  if (id) {
+    result = await sb.from('services').update(payload).eq('id', id);
+  } else {
+    result = await sb.from('services').insert([payload]);
   }
   
-  async function saveService() {
-    const serviceId = document.getElementById('serviceId').value;
-    const priceId = document.getElementById('servicePriceId').value;
-    
-    const serviceData = {
-      name: document.getElementById('serviceTitle').value,
-      slug: document.getElementById('serviceSlug').value,
-      icon: document.getElementById('serviceIcon').value || '📦',
-      imagen_portada: document.getElementById('serviceImageUrl').value,
-      description: document.getElementById('serviceDescription').value,
-      ideal_for: document.getElementById('serviceIdealFor').value,
-      features: document.getElementById('serviceFeaturesInput').value.split(',').map(f => f.trim()).filter(f => f),
-      whatsapp_msg: document.getElementById('serviceWhatsappMessage').value,
-      order_index: parseInt(document.getElementById('serviceOrder').value) || 0,
-      active: document.getElementById('serviceActive').checked
-    };
-    
-    const priceData = {
-      price_from: document.getElementById('servicePriceFrom').value,
-      offer_price: document.getElementById('serviceOfferPrice').value || null,
-      offer_badge: document.getElementById('serviceOfferBadge').value || null,
-      active: true
-    };
-    
-    try {
-      let savedServiceId = serviceId;
-      
-      if (serviceId) {
-        // Actualizar servicio existente
-        const { error } = await sb
-          .from('service_types')
-          .update(serviceData)
-          .eq('id', serviceId);
-        if (error) throw error;
-      } else {
-        // Crear nuevo servicio
-        const { data, error } = await sb
-          .from('service_types')
-          .insert([serviceData])
-          .select();
-        if (error) throw error;
-        savedServiceId = data[0].id;
-      }
-      
-      // Guardar o actualizar precio
-      if (priceId) {
-        await sb
-          .from('service_prices')
-          .update({ ...priceData, service_type_id: savedServiceId })
-          .eq('id', priceId);
-      } else {
-        await sb
-          .from('service_prices')
-          .insert([{ ...priceData, service_type_id: savedServiceId }]);
-      }
-      
-      document.getElementById('serviceModal').style.display = 'none';
-      loadServicesAdmin();
-      
-    } catch (err) {
-      console.error('Error saving service:', err);
-      alert('Error al guardar: ' + err.message);
-    }
-  }
-  
-  document.getElementById('servicesNewBtn')?.addEventListener('click', () => openServiceModal());
-  document.getElementById('servicesRefreshBtn')?.addEventListener('click', loadServicesAdmin);
-  document.getElementById('serviceSaveBtn')?.addEventListener('click', saveService);
-  document.getElementById('serviceCancelBtn')?.addEventListener('click', () => {
+  if (result.error) {
+    alert('Error: ' + result.error.message);
+  } else {
     document.getElementById('serviceModal').style.display = 'none';
-  });
+    loadServices();
+    loadDashboard();
+  }
+}
+
+async function deleteService(id) {
+  if (!confirm('¿Eliminar este servicio permanentemente?')) return;
+  const { error } = await sb.from('services').delete().eq('id', id);
+  if (error) {
+    alert('Error: ' + error.message);
+  } else {
+    loadServices();
+    loadDashboard();
+  }
+}
+
+// ============================================================
+// PROYECTOS (CRUD COMPLETO)
+// ============================================================
+async function loadProjects() {
+  const container = document.getElementById('projectsList');
+  if (!container) return;
+  container.innerHTML = '<div class="loading">Cargando proyectos...</div>';
   
-  // ========== FUNCIONES VACÍAS PARA EVITAR ERRORES ==========
-  async function loadPlansAdmin() { console.log('Plans admin loaded'); }
-  async function loadBrandsAdmin() { console.log('Brands loaded'); }
-  async function loadSuccessStoriesAdmin() { console.log('Success stories loaded'); }
-  async function loadAssistantQuestionsAdmin() { console.log('Assistant questions loaded'); }
-  async function loadGuideLeadsAdmin() { console.log('Guide leads loaded'); }
-  async function loadFaqsAdmin() { console.log('FAQs loaded'); }
-  async function loadCategoriesAdmin() { console.log('Categories loaded'); }
-  async function loadProjectsAdmin() { console.log('Projects loaded'); }
-  async function loadFeaturedProjects() { console.log('Featured projects loaded'); }
-  async function loadPendingReviews() { console.log('Pending reviews loaded'); }
+  const { data, error } = await sb.from('projects').select('*, categories(name)').order('order_index', { ascending: true });
+  if (error) {
+    container.innerHTML = `<div class="msg msg-error">Error: ${error.message}</div>`;
+    return;
+  }
   
-  // ========== INICIALIZAR ==========
-  setTimeout(() => {
-    if (typeof sb !== 'undefined') {
-      sb.auth.getSession().then(({ data: { session } }) => {
-        if (session?.user) {
-          currentUser = session.user;
-          document.getElementById('userEmail').textContent = currentUser.email;
-          document.getElementById('authBox').style.display = 'none';
-          document.getElementById('adminBox').style.display = 'grid';
-          loadServicesAdmin();
-          loadPlansAdmin();
-          loadBrandsAdmin();
-          loadSuccessStoriesAdmin();
-          loadAssistantQuestionsAdmin();
-          loadGuideLeadsAdmin();
-          loadFaqsAdmin();
-          loadCategoriesAdmin();
-          loadProjectsAdmin();
-          loadFeaturedProjects();
-          loadPendingReviews();
-        }
-      }).catch(err => console.error("Error de sesión:", err));
-    } else {
-      console.error("sb no está definido");
-    }
-  }, 500);
+  projects = data || [];
+  if (projects.length === 0) {
+    container.innerHTML = '<div class="loading">No hay proyectos. Creá uno nuevo.</div>';
+    return;
+  }
+  
+  container.innerHTML = projects.map(project => `
+    <div class="item-card">
+      ${project.image_url ? `<img src="${escapeHtml(project.image_url)}" class="item-preview" onerror="this.style.display='none'">` : ''}
+      <div class="item-info">
+        <div class="item-title">${escapeHtml(project.title)}</div>
+        <div class="item-meta">📁 ${escapeHtml(project.categories?.name || 'Sin categoría')} · ${project.status || 'published'} · ${project.active ? '🟢' : '🔴'}</div>
+      </div>
+      <div class="item-actions">
+        <button class="btn-edit" onclick="openProjectModal('${project.id}')">✏️ Editar</button>
+        <button class="btn-delete" onclick="deleteProject('${project.id}')">🗑️ Eliminar</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function openProjectModal(id = null) {
+  const modal = document.getElementById('projectModal');
+  const title = document.getElementById('projectModalTitle');
+  const projectId = document.getElementById('projectId');
+  const projectTitle = document.getElementById('projectTitle');
+  const projectDemoUrl = document.getElementById('projectDemoUrl');
+  const projectImageUrl = document.getElementById('projectImageUrl');
+  const projectCategoryId = document.getElementById('projectCategoryId');
+  const projectShortDesc = document.getElementById('projectShortDesc');
+  const projectStatus = document.getElementById('projectStatus');
+  const projectOrder = document.getElementById('projectOrder');
+  const projectActive = document.getElementById('projectActive');
+  
+  // Cargar categorías en el select
+  const loadCatOptions = async () => {
+    const { data: cats } = await sb.from('categories').select('id,name').eq('active', true);
+    projectCategoryId.innerHTML = '<option value="">Sin categoría</option>' + (cats || []).map(c => `<option value="${c.id}">${escapeHtml(c.name)}</option>`).join('');
+  };
+  loadCatOptions();
+  
+  if (id) {
+    const project = projects.find(p => p.id === id);
+    if (!project) return;
+    title.textContent = '✏️ Editar Proyecto';
+    projectId.value = project.id;
+    projectTitle.value = project.title || '';
+    projectDemoUrl.value = project.demo_url || '';
+    projectImageUrl.value = project.image_url || '';
+    projectCategoryId.value = project.category_id || '';
+    projectShortDesc.value = project.short_description || '';
+    projectStatus.value = project.status || 'published';
+    projectOrder.value = project.order_index || 0;
+    projectActive.checked = project.active !== false;
+  } else {
+    title.textContent = '➕ Nuevo Proyecto';
+    projectId.value = '';
+    projectTitle.value = '';
+    projectDemoUrl.value = '';
+    projectImageUrl.value = '';
+    projectCategoryId.value = '';
+    projectShortDesc.value = '';
+    projectStatus.value = 'published';
+    projectOrder.value = '0';
+    projectActive.checked = true;
+  }
+  modal.style.display = 'flex';
+}
+
+async function saveProject() {
+  const id = document.getElementById('projectId').value;
+  const title = document.getElementById('projectTitle').value.trim();
+  const demo_url = document.getElementById('projectDemoUrl').value.trim();
+  const image_url = document.getElementById('projectImageUrl').value.trim();
+  const category_id = document.getElementById('projectCategoryId').value || null;
+  const short_description = document.getElementById('projectShortDesc').value.trim();
+  const status = document.getElementById('projectStatus').value;
+  const order_index = parseInt(document.getElementById('projectOrder').value) || 0;
+  const active = document.getElementById('projectActive').checked;
+  
+  if (!title) {
+    alert('El título es obligatorio');
+    return;
+  }
+  
+  const payload = { title, demo_url, image_url, category_id, short_description, status, order_index, active, updated_at: new Date().toISOString() };
+  
+  let result;
+  if (id) {
+    result = await sb.from('projects').update(payload).eq('id', id);
+  } else {
+    result = await sb.from('projects').insert([payload]);
+  }
+  
+  if (result.error) {
+    alert('Error: ' + result.error.message);
+  } else {
+    document.getElementById('projectModal').style.display = 'none';
+    loadProjects();
+    loadDashboard();
+  }
+}
+
+async function deleteProject(id) {
+  if (!confirm('¿Eliminar este proyecto permanentemente?')) return;
+  const { error } = await sb.from('projects').delete().eq('id', id);
+  if (error) {
+    alert('Error: ' + error.message);
+  } else {
+    loadProjects();
+    loadDashboard();
+  }
+}
+
+// ============================================================
+// CATEGORÍAS (CRUD COMPLETO)
+// ============================================================
+async function loadCategories() {
+  const container = document.getElementById('categoriesList');
+  container.innerHTML = '<div class="loading">Cargando categorías...</div>';
+  
+  const { data, error } = await sb.from('categories').select('*').order('order_index', { ascending: true });
+  if (error) {
+    container.innerHTML = `<div class="msg msg-error">Error: ${error.message}</div>`;
+    return;
+  }
+  
+  categories = data || [];
+  if (categories.length === 0) {
+    container.innerHTML = '<div class="loading">No hay categorías. Creá una nueva.</div>';
+    return;
+  }
+  
+  container.innerHTML = categories.map(cat => `
+    <div class="item-card">
+      <div class="item-info">
+        <div class="item-title">📁 ${escapeHtml(cat.name)}</div>
+        <div class="item-meta">🔗 ${escapeHtml(cat.slug)} · Orden: ${cat.order_index || 0} · ${cat.active ? '🟢 Activa' : '🔴 Inactiva'}</div>
+      </div>
+      <div class="item-actions">
+        <button class="btn-edit" onclick="openCategoryModal('${cat.id}')">✏️ Editar</button>
+        <button class="btn-delete" onclick="deleteCategory('${cat.id}')">🗑️ Eliminar</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function openCategoryModal(id = null) {
+  const modal = document.getElementById('categoryModal');
+  const title = document.getElementById('categoryModalTitle');
+  const categoryId = document.getElementById('categoryId');
+  const categoryName = document.getElementById('categoryName');
+  const categorySlug = document.getElementById('categorySlug');
+  const categoryOrder = document.getElementById('categoryOrder');
+  const categoryActive = document.getElementById('categoryActive');
+  
+  if (id) {
+    const cat = categories.find(c => c.id === id);
+    if (!cat) return;
+    title.textContent = '✏️ Editar Categoría';
+    categoryId.value = cat.id;
+    categoryName.value = cat.name || '';
+    categorySlug.value = cat.slug || '';
+    categoryOrder.value = cat.order_index || 0;
+    categoryActive.checked = cat.active !== false;
+  } else {
+    title.textContent = '➕ Nueva Categoría';
+    categoryId.value = '';
+    categoryName.value = '';
+    categorySlug.value = '';
+    categoryOrder.value = '0';
+    categoryActive.checked = true;
+  }
+  modal.style.display = 'flex';
+}
+
+async function saveCategory() {
+  const id = document.getElementById('categoryId').value;
+  const name = document.getElementById('categoryName').value.trim();
+  let slug = document.getElementById('categorySlug').value.trim();
+  const order_index = parseInt(document.getElementById('categoryOrder').value) || 0;
+  const active = document.getElementById('categoryActive').checked;
+  
+  if (!name) {
+    alert('El nombre es obligatorio');
+    return;
+  }
+  if (!slug) slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  
+  const payload = { name, slug, order_index, active, updated_at: new Date().toISOString() };
+  
+  let result;
+  if (id) {
+    result = await sb.from('categories').update(payload).eq('id', id);
+  } else {
+    result = await sb.from('categories').insert([payload]);
+  }
+  
+  if (result.error) {
+    alert('Error: ' + result.error.message);
+  } else {
+    document.getElementById('categoryModal').style.display = 'none';
+    loadCategories();
+    loadDashboard();
+  }
+}
+
+async function deleteCategory(id) {
+  if (!confirm('¿Eliminar esta categoría? Los proyectos quedarán sin categoría.')) return;
+  const { error } = await sb.from('categories').delete().eq('id', id);
+  if (error) {
+    alert('Error: ' + error.message);
+  } else {
+    loadCategories();
+    loadDashboard();
+  }
+}
+
+// ============================================================
+// MARCAS (CRUD COMPLETO)
+// ============================================================
+async function loadBrands() {
+  const container = document.getElementById('brandsList');
+  container.innerHTML = '<div class="loading">Cargando marcas...</div>';
+  
+  const { data, error } = await sb.from('trusted_brands').select('*').order('order_index', { ascending: true });
+  if (error) {
+    container.innerHTML = `<div class="msg msg-error">Error: ${error.message}</div>`;
+    return;
+  }
+  
+  brands = data || [];
+  if (brands.length === 0) {
+    container.innerHTML = '<div class="loading">No hay marcas. Creá una nueva.</div>';
+    return;
+  }
+  
+  container.innerHTML = brands.map(brand => `
+    <div class="item-card">
+      ${brand.logo_url ? `<img src="${escapeHtml(brand.logo_url)}" class="item-preview" onerror="this.style.display='none'">` : ''}
+      <div class="item-info">
+        <div class="item-title">🏷️ ${escapeHtml(brand.name)}</div>
+        <div class="item-meta">${brand.website_url || 'Sin web'} · Orden: ${brand.order_index || 0} · ${brand.active ? '🟢' : '🔴'}</div>
+      </div>
+      <div class="item-actions">
+        <button class="btn-edit" onclick="openBrandModal('${brand.id}')">✏️ Editar</button>
+        <button class="btn-delete" onclick="deleteBrand('${brand.id}')">🗑️ Eliminar</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function openBrandModal(id = null) {
+  const modal = document.getElementById('brandModal');
+  const title = document.getElementById('brandModalTitle');
+  const brandId = document.getElementById('brandId');
+  const brandName = document.getElementById('brandName');
+  const brandLogo = document.getElementById('brandLogo');
+  const brandWebsite = document.getElementById('brandWebsite');
+  const brandOrder = document.getElementById('brandOrder');
+  const brandActive = document.getElementById('brandActive');
+  
+  if (id) {
+    const brand = brands.find(b => b.id === id);
+    if (!brand) return;
+    title.textContent = '✏️ Editar Marca';
+    brandId.value = brand.id;
+    brandName.value = brand.name || '';
+    brandLogo.value = brand.logo_url || '';
+    brandWebsite.value = brand.website_url || '';
+    brandOrder.value = brand.order_index || 0;
+    brandActive.checked = brand.active !== false;
+  } else {
+    title.textContent = '➕ Nueva Marca';
+    brandId.value = '';
+    brandName.value = '';
+    brandLogo.value = '';
+    brandWebsite.value = '';
+    brandOrder.value = '0';
+    brandActive.checked = true;
+  }
+  modal.style.display = 'flex';
+}
+
+async function saveBrand() {
+  const id = document.getElementById('brandId').value;
+  const name = document.getElementById('brandName').value.trim();
+  const logo_url = document.getElementById('brandLogo').value.trim();
+  const website_url = document.getElementById('brandWebsite').value.trim() || null;
+  const order_index = parseInt(document.getElementById('brandOrder').value) || 0;
+  const active = document.getElementById('brandActive').checked;
+  
+  if (!name) {
+    alert('El nombre es obligatorio');
+    return;
+  }
+  if (!logo_url) {
+    alert('La URL del logo es obligatoria');
+    return;
+  }
+  
+  const payload = { name, logo_url, website_url, order_index, active, updated_at: new Date().toISOString() };
+  
+  let result;
+  if (id) {
+    result = await sb.from('trusted_brands').update(payload).eq('id', id);
+  } else {
+    result = await sb.from('trusted_brands').insert([payload]);
+  }
+  
+  if (result.error) {
+    alert('Error: ' + result.error.message);
+  } else {
+    document.getElementById('brandModal').style.display = 'none';
+    loadBrands();
+    loadDashboard();
+  }
+}
+
+async function deleteBrand(id) {
+  if (!confirm('¿Eliminar esta marca?')) return;
+  const { error } = await sb.from('trusted_brands').delete().eq('id', id);
+  if (error) {
+    alert('Error: ' + error.message);
+  } else {
+    loadBrands();
+    loadDashboard();
+  }
+}
+
+// ============================================================
+// RESEÑAS
+// ============================================================
+async function loadReviews() {
+  const pendingContainer = document.getElementById('pendingReviewsList');
+  const approvedContainer = document.getElementById('approvedReviewsList');
+  
+  pendingContainer.innerHTML = '<div class="loading">Cargando reseñas...</div>';
+  approvedContainer.innerHTML = '<div class="loading">Cargando reseñas...</div>';
+  
+  const { data: pending, error: pendingError } = await sb.from('reviews').select('*').eq('status', 'pending').order('created_at', { ascending: false });
+  const { data: approved, error: approvedError } = await sb.from('reviews').select('*').eq('status', 'approved').order('created_at', { ascending: false });
+  
+  if (pendingError) pendingContainer.innerHTML = `<div class="msg msg-error">Error: ${pendingError.message}</div>`;
+  else if (!pending || pending.length === 0) pendingContainer.innerHTML = '<div class="loading">No hay reseñas pendientes</div>';
+  else {
+    pendingContainer.innerHTML = pending.map(r => `
+      <div class="item-card">
+        <div class="item-info">
+          <div class="item-title">⭐ ${'⭐'.repeat(r.rating)} - ${escapeHtml(r.user_name || 'Anónimo')}</div>
+          <div class="item-meta">${escapeHtml((r.comment || '').substring(0, 100))}${(r.comment || '').length > 100 ? '...' : ''}</div>
+        </div>
+        <div class="item-actions">
+          <button class="btn-edit" onclick="approveReview('${r.id}')">✅ Aprobar</button>
+          <button class="btn-delete" onclick="rejectReview('${r.id}')">❌ Rechazar</button>
+        </div>
+      </div>
+    `).join('');
+  }
+  
+  if (approvedError) approvedContainer.innerHTML = `<div class="msg msg-error">Error: ${approvedError.message}</div>`;
+  else if (!approved || approved.length === 0) approvedContainer.innerHTML = '<div class="loading">No hay reseñas aprobadas</div>';
+  else {
+    approvedContainer.innerHTML = approved.map(r => `
+      <div class="item-card">
+        <div class="item-info">
+          <div class="item-title">⭐ ${'⭐'.repeat(r.rating)} - ${escapeHtml(r.user_name || 'Anónimo')}</div>
+          <div class="item-meta">${escapeHtml((r.comment || '').substring(0, 100))}${(r.comment || '').length > 100 ? '...' : ''}</div>
+        </div>
+      </div>
+    `).join('');
+  }
+}
+
+async function approveReview(id) {
+  const { error } = await sb.from('reviews').update({ status: 'approved', approved_at: new Date().toISOString() }).eq('id', id);
+  if (error) alert('Error: ' + error.message);
+  else loadReviews();
+}
+
+async function rejectReview(id) {
+  if (!confirm('¿Rechazar y eliminar esta reseña?')) return;
+  const { error } = await sb.from('reviews').delete().eq('id', id);
+  if (error) alert('Error: ' + error.message);
+  else loadReviews();
+}
+
+// ============================================================
+// FAQS (CRUD COMPLETO)
+// ============================================================
+async function loadFaqs() {
+  const container = document.getElementById('faqsList');
+  container.innerHTML = '<div class="loading">Cargando FAQs...</div>';
+  
+  const { data, error } = await sb.from('faqs').select('*').order('order_index', { ascending: true });
+  if (error) {
+    container.innerHTML = `<div class="msg msg-error">Error: ${error.message}</div>`;
+    return;
+  }
+  
+  faqs = data || [];
+  if (faqs.length === 0) {
+    container.innerHTML = '<div class="loading">No hay FAQs. Creá una nueva.</div>';
+    return;
+  }
+  
+  container.innerHTML = faqs.map(faq => `
+    <div class="item-card">
+      <div class="item-info">
+        <div class="item-title">❓ ${escapeHtml(faq.question)}</div>
+        <div class="item-meta">${escapeHtml((faq.answer || '').substring(0, 80))}${(faq.answer || '').length > 80 ? '...' : ''} · Orden: ${faq.order_index || 0} · ${faq.active ? '🟢' : '🔴'}</div>
+      </div>
+      <div class="item-actions">
+        <button class="btn-edit" onclick="openFaqModal('${faq.id}')">✏️ Editar</button>
+        <button class="btn-delete" onclick="deleteFaq('${faq.id}')">🗑️ Eliminar</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function openFaqModal(id = null) {
+  const modal = document.getElementById('faqModal');
+  const title = document.getElementById('faqModalTitle');
+  const faqId = document.getElementById('faqId');
+  const faqQuestion = document.getElementById('faqQuestion');
+  const faqAnswer = document.getElementById('faqAnswer');
+  const faqOrder = document.getElementById('faqOrder');
+  const faqActive = document.getElementById('faqActive');
+  
+  if (id) {
+    const faq = faqs.find(f => f.id === id);
+    if (!faq) return;
+    title.textContent = '✏️ Editar FAQ';
+    faqId.value = faq.id;
+    faqQuestion.value = faq.question || '';
+    faqAnswer.value = faq.answer || '';
+    faqOrder.value = faq.order_index || 0;
+    faqActive.checked = faq.active !== false;
+  } else {
+    title.textContent = '➕ Nueva FAQ';
+    faqId.value = '';
+    faqQuestion.value = '';
+    faqAnswer.value = '';
+    faqOrder.value = '0';
+    faqActive.checked = true;
+  }
+  modal.style.display = 'flex';
+}
+
+async function saveFaq() {
+  const id = document.getElementById('faqId').value;
+  const question = document.getElementById('faqQuestion').value.trim();
+  const answer = document.getElementById('faqAnswer').value.trim();
+  const order_index = parseInt(document.getElementById('faqOrder').value) || 0;
+  const active = document.getElementById('faqActive').checked;
+  
+  if (!question || !answer) {
+    alert('Completá pregunta y respuesta');
+    return;
+  }
+  
+  const payload = { question, answer, order_index, active, updated_at: new Date().toISOString() };
+  
+  let result;
+  if (id) {
+    result = await sb.from('faqs').update(payload).eq('id', id);
+  } else {
+    result = await sb.from('faqs').insert([payload]);
+  }
+  
+  if (result.error) {
+    alert('Error: ' + result.error.message);
+  } else {
+    document.getElementById('faqModal').style.display = 'none';
+    loadFaqs();
+    loadDashboard();
+  }
+}
+
+async function deleteFaq(id) {
+  if (!confirm('¿Eliminar esta FAQ?')) return;
+  const { error } = await sb.from('faqs').delete().eq('id', id);
+  if (error) {
+    alert('Error: ' + error.message);
+  } else {
+    loadFaqs();
+    loadDashboard();
+  }
+}
+
+// ============================================================
+// SETTINGS
+// ============================================================
+async function loadSettings() {
+  const { data, error } = await sb.from('site_settings').select('*').eq('id', 'global').maybeSingle();
+  if (!error && data) {
+    settings = data;
+    document.getElementById('settingsEmail').value = data.email_contact || '';
+    document.getElementById('settingsWhatsapp').value = data.whatsapp_number || '';
+    document.getElementById('settingsLogo').value = data.logo_url || '';
+    document.getElementById('settingsInstagram').value = data.instagram_url || '';
+  }
+}
+
+async function saveSettings() {
+  const payload = {
+    id: 'global',
+    email_contact: document.getElementById('settingsEmail').value,
+    whatsapp_number: document.getElementById('settingsWhatsapp').value,
+    logo_url: document.getElementById('settingsLogo').value,
+    instagram_url: document.getElementById('settingsInstagram').value,
+    updated_at: new Date().toISOString()
+  };
+  
+  const { error } = await sb.from('site_settings').upsert([payload], { onConflict: 'id' });
+  if (error) {
+    document.getElementById('settingsMsg').innerHTML = `<div class="msg msg-error">❌ Error: ${error.message}</div>`;
+  } else {
+    document.getElementById('settingsMsg').innerHTML = `<div class="msg msg-success">✅ Configuración guardada</div>`;
+    setTimeout(() => document.getElementById('settingsMsg').innerHTML = '', 3000);
+  }
+}
+
+// ============================================================
+// CARGA INICIAL
+// ============================================================
+async function loadAllData() {
+  await loadDashboard();
+  await loadProjects();
+  await loadServices();
+  await loadCategories();
+  await loadBrands();
+  await loadFaqs();
+  await loadSettings();
+}
+
+// Exponer funciones globales para onclick
+window.openServiceModal = openServiceModal;
+window.deleteService = deleteService;
+window.openProjectModal = openProjectModal;
+window.deleteProject = deleteProject;
+window.openCategoryModal = openCategoryModal;
+window.deleteCategory = deleteCategory;
+window.openBrandModal = openBrandModal;
+window.deleteBrand = deleteBrand;
+window.openFaqModal = openFaqModal;
+window.deleteFaq = deleteFaq;
+window.approveReview = approveReview;
+window.rejectReview = rejectReview;
+window.editProject = (id) => openProjectModal(id);
+
+// Botones de modales
+document.getElementById('serviceSaveBtn').onclick = saveService;
+document.getElementById('serviceCancelBtn').onclick = () => document.getElementById('serviceModal').style.display = 'none';
+document.getElementById('projectSaveBtn').onclick = saveProject;
+document.getElementById('projectCancelBtn').onclick = () => document.getElementById('projectModal').style.display = 'none';
+document.getElementById('categorySaveBtn').onclick = saveCategory;
+document.getElementById('categoryCancelBtn').onclick = () => document.getElementById('categoryModal').style.display = 'none';
+document.getElementById('brandSaveBtn').onclick = saveBrand;
+document.getElementById('brandCancelBtn').onclick = () => document.getElementById('brandModal').style.display = 'none';
+document.getElementById('faqSaveBtn').onclick = saveFaq;
+document.getElementById('faqCancelBtn').onclick = () => document.getElementById('faqModal').style.display = 'none';
+document.getElementById('saveSettingsBtn').onclick = saveSettings;
+document.getElementById('newProjectBtn').onclick = () => openProjectModal();
+document.getElementById('newServiceBtn').onclick = () => openServiceModal();
+document.getElementById('newCategoryBtn').onclick = () => openCategoryModal();
+document.getElementById('newBrandBtn').onclick = () => openBrandModal();
+document.getElementById('newFaqBtn').onclick = () => openFaqModal();
+
+checkSession();
 </script>
 </body>
 </html>
