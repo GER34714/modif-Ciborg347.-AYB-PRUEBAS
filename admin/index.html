@@ -12,11 +12,37 @@
       box-sizing: border-box;
     }
 
+    :root {
+      --bg: #0a0a0f;
+      --bg2: #0f0f1a;
+      --bg3: #1a1a2e;
+      --border: rgba(0, 212, 255, 0.13);
+      --cyan: #00d4ff;
+      --violet: #8b5cf6;
+      --grad: linear-gradient(135deg, var(--cyan), var(--violet));
+      --text: #e0e6ff;
+      --text2: #9ca3ff;
+      --white: #ffffff;
+    }
+
+    [data-theme="light"] {
+      --bg: #f0f4f8;
+      --bg2: #ffffff;
+      --bg3: #e8edf5;
+      --border: rgba(0, 0, 0, 0.08);
+      --cyan: #0066cc;
+      --violet: #7c3aed;
+      --text: #1e293b;
+      --text2: #475569;
+      --white: #0f172a;
+    }
+
     body {
       font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-      background: #0a0a0f;
-      color: #e0e6ff;
+      background: var(--bg);
+      color: var(--text);
       padding: 20px;
+      transition: background 0.3s, color 0.2s;
     }
 
     .container {
@@ -28,26 +54,26 @@
     .login-box {
       max-width: 400px;
       margin: 100px auto;
-      background: #0f0f1a;
+      background: var(--bg2);
       padding: 30px;
       border-radius: 20px;
-      border: 1px solid #00d4ff33;
+      border: 1px solid var(--border);
     }
 
     .login-box input {
       width: 100%;
       padding: 12px;
       margin: 10px 0;
-      background: #1a1a2e;
-      border: 1px solid #00d4ff33;
+      background: var(--bg3);
+      border: 1px solid var(--border);
       border-radius: 10px;
-      color: white;
+      color: var(--text);
     }
 
     .login-box button {
       width: 100%;
       padding: 12px;
-      background: linear-gradient(135deg, #00d4ff, #8b5cf6);
+      background: var(--grad);
       border: none;
       border-radius: 10px;
       color: white;
@@ -60,15 +86,51 @@
       display: none;
     }
 
+    /* Topbar */
     .topbar {
-      background: #0f0f1a;
+      background: var(--bg2);
       padding: 15px 20px;
       border-radius: 12px;
       margin-bottom: 20px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border: 1px solid #00d4ff33;
+      flex-wrap: wrap;
+      gap: 12px;
+      border: 1px solid var(--border);
+    }
+
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .btn-home {
+      background: var(--grad);
+      color: white;
+      padding: 8px 16px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .theme-toggle {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 40px;
+      padding: 8px 16px;
+      cursor: pointer;
+      color: var(--text);
     }
 
     .logout-btn {
@@ -83,16 +145,16 @@
     /* Layout */
     .layout {
       display: grid;
-      grid-template-columns: 260px 1fr;
+      grid-template-columns: 280px 1fr;
       gap: 20px;
     }
 
     /* Sidebar */
     .sidebar {
-      background: #0f0f1a;
+      background: var(--bg2);
       border-radius: 16px;
       padding: 20px;
-      border: 1px solid #00d4ff33;
+      border: 1px solid var(--border);
       position: sticky;
       top: 20px;
       height: fit-content;
@@ -100,7 +162,7 @@
 
     .sidebar h3 {
       margin-bottom: 20px;
-      color: #00d4ff;
+      color: var(--cyan);
       font-size: 18px;
     }
 
@@ -113,28 +175,28 @@
       background: transparent;
       border: none;
       border-radius: 10px;
-      color: #9ca3ff;
+      color: var(--text2);
       cursor: pointer;
       font-size: 14px;
       transition: all 0.2s;
     }
 
     .nav-btn:hover {
-      background: #1a1a2e;
-      color: white;
+      background: var(--bg3);
+      color: var(--white);
     }
 
     .nav-btn.active {
-      background: linear-gradient(135deg, #00d4ff, #8b5cf6);
+      background: var(--grad);
       color: white;
     }
 
     /* Content */
     .content {
-      background: #0f0f1a;
+      background: var(--bg2);
       border-radius: 16px;
       padding: 24px;
-      border: 1px solid #00d4ff33;
+      border: 1px solid var(--border);
     }
 
     .panel {
@@ -145,7 +207,7 @@
       display: block;
     }
 
-    /* Stats grid */
+    /* Stats */
     .stats-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -154,7 +216,7 @@
     }
 
     .stat-card {
-      background: #1a1a2e;
+      background: var(--bg3);
       padding: 20px;
       border-radius: 12px;
       text-align: center;
@@ -162,13 +224,13 @@
 
     .stat-card h3 {
       font-size: 28px;
-      background: linear-gradient(135deg, #00d4ff, #8b5cf6);
+      background: var(--grad);
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
     }
 
-    /* Lista de servicios/proyectos */
+    /* Listas */
     .items-list {
       display: flex;
       flex-direction: column;
@@ -177,7 +239,7 @@
     }
 
     .item-card {
-      background: #1a1a2e;
+      background: var(--bg3);
       border-radius: 12px;
       padding: 16px;
       display: flex;
@@ -185,11 +247,11 @@
       align-items: center;
       flex-wrap: wrap;
       gap: 12px;
-      border: 1px solid #00d4ff33;
+      border: 1px solid var(--border);
     }
 
     .item-card:hover {
-      border-color: #00d4ff;
+      border-color: var(--cyan);
     }
 
     .item-info {
@@ -204,7 +266,7 @@
 
     .item-meta {
       font-size: 12px;
-      color: #9ca3ff;
+      color: var(--text2);
     }
 
     .item-preview {
@@ -212,7 +274,7 @@
       height: 60px;
       border-radius: 8px;
       object-fit: cover;
-      background: #2a2a4e;
+      background: var(--bg);
     }
 
     .item-actions {
@@ -220,6 +282,7 @@
       gap: 8px;
     }
 
+    /* Botones */
     button {
       padding: 8px 16px;
       border-radius: 8px;
@@ -230,20 +293,24 @@
     }
 
     .btn-edit {
-      background: #00d4ff20;
-      color: #00d4ff;
-      border: 1px solid #00d4ff;
+      background: var(--cyan);
+      color: var(--white);
     }
 
     .btn-delete {
-      background: #ef444420;
-      color: #ef4444;
-      border: 1px solid #ef4444;
+      background: #ef4444;
+      color: white;
     }
 
     .btn-primary {
-      background: linear-gradient(135deg, #00d4ff, #8b5cf6);
+      background: var(--grad);
       color: white;
+    }
+
+    .btn-secondary {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      color: var(--text);
     }
 
     /* Modal */
@@ -261,19 +328,19 @@
     }
 
     .modal-content {
-      background: #0f0f1a;
+      background: var(--bg2);
       border-radius: 20px;
       padding: 24px;
-      max-width: 600px;
+      max-width: 650px;
       width: 90%;
       max-height: 85vh;
       overflow-y: auto;
-      border: 1px solid #00d4ff;
+      border: 1px solid var(--cyan);
     }
 
     .modal-content h3 {
       margin-bottom: 20px;
-      color: #00d4ff;
+      color: var(--cyan);
     }
 
     .modal-content input,
@@ -281,24 +348,32 @@
     .modal-content select {
       width: 100%;
       padding: 10px;
-      margin: 8px 0;
-      background: #1a1a2e;
-      border: 1px solid #00d4ff33;
+      margin: 8px 0 16px 0;
+      background: var(--bg3);
+      border: 1px solid var(--border);
       border-radius: 8px;
-      color: white;
+      color: var(--text);
     }
 
     .modal-content label {
       display: block;
-      margin-top: 10px;
       font-size: 12px;
-      color: #9ca3ff;
+      color: var(--text2);
     }
 
     .form-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 12px;
+      gap: 16px;
+    }
+
+    .image-preview {
+      width: 100%;
+      max-height: 150px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin: 10px 0;
+      background: var(--bg3);
     }
 
     .modal-actions {
@@ -328,7 +403,27 @@
     .loading {
       text-align: center;
       padding: 40px;
-      color: #9ca3ff;
+      color: var(--text2);
+    }
+
+    /* Paginación */
+    .pagination {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+
+    .pagination button {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+
+    .pagination button.active {
+      background: var(--grad);
+      color: white;
     }
 
     @media (max-width: 768px) {
@@ -337,6 +432,16 @@
       }
       .sidebar {
         position: static;
+      }
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+      .topbar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .topbar-left, .topbar-right {
+        justify-content: space-between;
       }
     }
   </style>
@@ -355,9 +460,13 @@
   <!-- Panel Admin -->
   <div id="adminPanel" class="admin-panel">
     <div class="topbar">
-      <h2>🤖 CIBORG 347 | Admin</h2>
-      <div>
-        <span id="userEmailDisplay" style="margin-right: 15px;"></span>
+      <div class="topbar-left">
+        <h2>🤖 CIBORG 347 | Admin</h2>
+        <a href="https://ciborg347.onrender.com" target="_blank" class="btn-home">🔙 Volver al inicio</a>
+        <button id="themeToggleBtn" class="theme-toggle">🌙 Modo oscuro</button>
+      </div>
+      <div class="topbar-right">
+        <span id="userEmailDisplay" style="color: var(--text2);"></span>
         <button class="logout-btn" id="logoutBtn">Salir</button>
       </div>
     </div>
@@ -368,10 +477,15 @@
         <button class="nav-btn active" data-view="dashboard">📊 Dashboard</button>
         <button class="nav-btn" data-view="projects">📁 Proyectos</button>
         <button class="nav-btn" data-view="services">💰 Servicios</button>
+        <button class="nav-btn" data-view="success-stories">🏆 Casos de éxito</button>
+        <button class="nav-btn" data-view="featured">⭐ Destacados</button>
         <button class="nav-btn" data-view="categories">📂 Categorías</button>
         <button class="nav-btn" data-view="brands">🏷️ Marcas</button>
+        <button class="nav-btn" data-view="assistant">🤖 Asistente</button>
+        <button class="nav-btn" data-view="leads">📋 Leads</button>
         <button class="nav-btn" data-view="reviews">⭐ Reseñas</button>
         <button class="nav-btn" data-view="faqs">❓ FAQs</button>
+        <button class="nav-btn" data-view="history">📜 Historial</button>
         <button class="nav-btn" data-view="settings">⚙️ Settings</button>
       </aside>
 
@@ -386,25 +500,44 @@
 
         <!-- Proyectos -->
         <div id="projectsPanel" class="panel">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
             <h2>📁 Proyectos</h2>
             <button class="btn-primary" id="newProjectBtn">➕ Nuevo proyecto</button>
           </div>
           <div id="projectsList" class="items-list"></div>
+          <div id="projectsPagination" class="pagination"></div>
         </div>
 
         <!-- Servicios -->
         <div id="servicesPanel" class="panel">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
             <h2>💰 Servicios</h2>
             <button class="btn-primary" id="newServiceBtn">➕ Nuevo servicio</button>
           </div>
           <div id="servicesList" class="items-list"></div>
+          <div id="servicesPagination" class="pagination"></div>
+        </div>
+
+        <!-- Casos de éxito -->
+        <div id="successStoriesPanel" class="panel">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+            <h2>🏆 Casos de éxito</h2>
+            <button class="btn-primary" id="newStoryBtn">➕ Nuevo caso</button>
+          </div>
+          <div id="storiesList" class="items-list"></div>
+          <div id="storiesPagination" class="pagination"></div>
+        </div>
+
+        <!-- Destacados -->
+        <div id="featuredPanel" class="panel">
+          <h2>⭐ Proyectos destacados</h2>
+          <p>Seleccioná qué proyectos quieres destacar en el inicio.</p>
+          <div id="featuredList" class="items-list"></div>
         </div>
 
         <!-- Categorías -->
         <div id="categoriesPanel" class="panel">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
             <h2>📂 Categorías</h2>
             <button class="btn-primary" id="newCategoryBtn">➕ Nueva categoría</button>
           </div>
@@ -413,11 +546,30 @@
 
         <!-- Marcas -->
         <div id="brandsPanel" class="panel">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
             <h2>🏷️ Marcas que confían</h2>
             <button class="btn-primary" id="newBrandBtn">➕ Nueva marca</button>
           </div>
           <div id="brandsList" class="items-list"></div>
+        </div>
+
+        <!-- Asistente (preguntas) -->
+        <div id="assistantPanel" class="panel">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+            <h2>🤖 Preguntas del asistente</h2>
+            <button class="btn-primary" id="newQuestionBtn">➕ Nueva pregunta</button>
+          </div>
+          <div id="questionsList" class="items-list"></div>
+        </div>
+
+        <!-- Leads del asistente -->
+        <div id="leadsPanel" class="panel">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+            <h2>📋 Leads del asistente</h2>
+            <button class="btn-primary" id="exportLeadsBtn">📥 Exportar CSV</button>
+          </div>
+          <div id="leadsList" class="items-list"></div>
+          <div id="leadsPagination" class="pagination"></div>
         </div>
 
         <!-- Reseñas -->
@@ -430,11 +582,20 @@
 
         <!-- FAQs -->
         <div id="faqsPanel" class="panel">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
             <h2>❓ FAQs</h2>
             <button class="btn-primary" id="newFaqBtn">➕ Nueva FAQ</button>
           </div>
           <div id="faqsList" class="items-list"></div>
+        </div>
+
+        <!-- Historial -->
+        <div id="historyPanel" class="panel">
+          <h2>📜 Historial de cambios</h2>
+          <h3>📁 Proyectos</h3>
+          <div id="projectHistoryList" class="items-list"></div>
+          <h3 style="margin-top: 20px;">⚙️ Settings</h3>
+          <div id="settingsHistoryList" class="items-list"></div>
         </div>
 
         <!-- Settings -->
@@ -468,19 +629,20 @@
   </div>
 </div>
 
-<!-- Modal para editar/crear servicios -->
+<!-- Modal Servicios -->
 <div id="serviceModal" class="modal">
   <div class="modal-content">
     <h3 id="serviceModalTitle">💼 Nuevo Servicio</h3>
     <input type="hidden" id="serviceId">
-    <label>Título del servicio *</label>
+    <label>Título *</label>
     <input type="text" id="serviceTitle" placeholder="Ej: Tienda Online">
-    <label>Slug (URL amigable)</label>
+    <label>Slug</label>
     <input type="text" id="serviceSlug" placeholder="ej: tienda-online">
     <label>💰 Precio</label>
     <input type="text" id="servicePrice" placeholder="Ej: $700.000">
     <label>🖼️ URL de imagen (portada)</label>
-    <input type="url" id="serviceImageUrl" placeholder="https://...">
+    <input type="url" id="serviceImageUrl" placeholder="https://..." onchange="previewServiceImage()">
+    <img id="serviceImagePreview" class="image-preview" style="display: none;">
     <label>📝 Descripción</label>
     <textarea id="serviceDescription" rows="3" placeholder="Descripción del servicio..."></textarea>
     <label>✅ Características (separadas por coma)</label>
@@ -497,12 +659,74 @@
   </div>
 </div>
 
-<!-- Modal para editar/crear proyectos -->
+<!-- Modal Casos de éxito -->
+<div id="storyModal" class="modal">
+  <div class="modal-content">
+    <h3 id="storyModalTitle">🏆 Nuevo Caso de éxito</h3>
+    <input type="hidden" id="storyId">
+    <label>Título *</label>
+    <input type="text" id="storyTitle" placeholder="Ej: Pizzería El Italiano">
+    <label>Descripción corta</label>
+    <textarea id="storyDescription" rows="2" placeholder="Descripción breve..."></textarea>
+    <label>🖼️ URL de imagen</label>
+    <input type="url" id="storyImageUrl" placeholder="https://...">
+    <label>📊 Resultados (JSON)</label>
+    <textarea id="storyResults" rows="3" placeholder='{"ventas": "+40%", "clientes": "+120"}'></textarea>
+    <label>🔗 URL demo (opcional)</label>
+    <input type="url" id="storyDemoUrl" placeholder="https://...">
+    <label>🔢 Orden</label>
+    <input type="number" id="storyOrder" value="0">
+    <label style="display: flex; align-items: center; gap: 10px; margin-top: 10px;">
+      <input type="checkbox" id="storyActive" checked> Activo
+    </label>
+    <div class="modal-actions">
+      <button id="storySaveBtn" class="btn-primary">💾 Guardar</button>
+      <button id="storyCancelBtn">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Asistente (preguntas) -->
+<div id="questionModal" class="modal">
+  <div class="modal-content">
+    <h3 id="questionModalTitle">❓ Nueva Pregunta</h3>
+    <input type="hidden" id="questionId">
+    <label>Pregunta *</label>
+    <input type="text" id="questionText" placeholder="Ej: ¿Qué tipo de proyecto necesitas?">
+    <label>Tipo</label>
+    <select id="questionType">
+      <option value="options">Opciones múltiples</option>
+      <option value="text">Texto libre</option>
+    </select>
+    <div id="optionsField">
+      <label>Opciones (separadas por coma)</label>
+      <input type="text" id="questionOptions" placeholder="Ej: Tienda online, Web institucional, Panel admin">
+    </div>
+    <div id="placeholderField" style="display: none;">
+      <label>Placeholder</label>
+      <input type="text" id="questionPlaceholder" placeholder="Ej: Escribe tu respuesta...">
+    </div>
+    <label>🔢 Orden</label>
+    <input type="number" id="questionOrder" value="0">
+    <label style="display: flex; align-items: center; gap: 10px; margin-top: 10px;">
+      <input type="checkbox" id="questionRequired" checked> Requerido
+    </label>
+    <label style="display: flex; align-items: center; gap: 10px;">
+      <input type="checkbox" id="questionActive" checked> Activo
+    </label>
+    <div class="modal-actions">
+      <button id="questionSaveBtn" class="btn-primary">💾 Guardar</button>
+      <button id="questionCancelBtn">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Proyectos -->
 <div id="projectModal" class="modal">
   <div class="modal-content">
     <h3 id="projectModalTitle">📁 Nuevo Proyecto</h3>
     <input type="hidden" id="projectId">
-    <label>Título del proyecto *</label>
+    <label>Título *</label>
     <input type="text" id="projectTitle" placeholder="Ej: Web para Pizzería">
     <label>URL demo</label>
     <input type="url" id="projectDemoUrl" placeholder="https://...">
@@ -511,7 +735,7 @@
     <label>Categoría</label>
     <select id="projectCategoryId"></select>
     <label>Descripción corta</label>
-    <textarea id="projectShortDesc" rows="2" placeholder="Descripción breve..."></textarea>
+    <textarea id="projectShortDesc" rows="2"></textarea>
     <label>Estado</label>
     <select id="projectStatus">
       <option value="published">Publicado</option>
@@ -520,7 +744,7 @@
     </select>
     <label>🔢 Orden</label>
     <input type="number" id="projectOrder" value="0">
-    <label style="display: flex; align-items: center; gap: 10px; margin-top: 10px;">
+    <label style="display: flex; align-items: center; gap: 10px;">
       <input type="checkbox" id="projectActive" checked> Activo
     </label>
     <div class="modal-actions">
@@ -530,7 +754,7 @@
   </div>
 </div>
 
-<!-- Modal para editar/crear categorías -->
+<!-- Modal Categorías -->
 <div id="categoryModal" class="modal">
   <div class="modal-content">
     <h3 id="categoryModalTitle">📂 Nueva Categoría</h3>
@@ -541,7 +765,7 @@
     <input type="text" id="categorySlug" placeholder="ej: e-commerce">
     <label>🔢 Orden</label>
     <input type="number" id="categoryOrder" value="0">
-    <label style="display: flex; align-items: center; gap: 10px; margin-top: 10px;">
+    <label style="display: flex; align-items: center; gap: 10px;">
       <input type="checkbox" id="categoryActive" checked> Activa
     </label>
     <div class="modal-actions">
@@ -551,7 +775,7 @@
   </div>
 </div>
 
-<!-- Modal para editar/crear marcas -->
+<!-- Modal Marcas -->
 <div id="brandModal" class="modal">
   <div class="modal-content">
     <h3 id="brandModalTitle">🏷️ Nueva Marca</h3>
@@ -560,11 +784,11 @@
     <input type="text" id="brandName" placeholder="Ej: Google">
     <label>Logo URL *</label>
     <input type="url" id="brandLogo" placeholder="https://...">
-    <label>Sitio web (opcional)</label>
+    <label>Sitio web</label>
     <input type="url" id="brandWebsite" placeholder="https://...">
     <label>🔢 Orden</label>
     <input type="number" id="brandOrder" value="0">
-    <label style="display: flex; align-items: center; gap: 10px; margin-top: 10px;">
+    <label style="display: flex; align-items: center; gap: 10px;">
       <input type="checkbox" id="brandActive" checked> Activo
     </label>
     <div class="modal-actions">
@@ -574,7 +798,7 @@
   </div>
 </div>
 
-<!-- Modal para editar/crear FAQs -->
+<!-- Modal FAQs -->
 <div id="faqModal" class="modal">
   <div class="modal-content">
     <h3 id="faqModalTitle">❓ Nueva FAQ</h3>
@@ -585,7 +809,7 @@
     <textarea id="faqAnswer" rows="4" placeholder="Respuesta..."></textarea>
     <label>🔢 Orden</label>
     <input type="number" id="faqOrder" value="0">
-    <label style="display: flex; align-items: center; gap: 10px; margin-top: 10px;">
+    <label style="display: flex; align-items: center; gap: 10px;">
       <input type="checkbox" id="faqActive" checked> Activa
     </label>
     <div class="modal-actions">
@@ -597,7 +821,7 @@
 
 <script>
 // ============================================================
-// CONFIGURACIÓN SUPABASE
+// CONFIGURACIÓN
 // ============================================================
 const SUPABASE_URL = "https://fhxcumwhgtfirznnznjx.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZoeGN1bXdoZ3RmaXJ6bm56bmp4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc5OTYyNzEsImV4cCI6MjA4MzU3MjI3MX0.7z1B099L4yrA9k1JxwvYGCABzqiqYtkUClI3E8wQ2zA";
@@ -610,7 +834,40 @@ let projects = [];
 let categories = [];
 let brands = [];
 let faqs = [];
+let stories = [];
+let questions = [];
+let leads = [];
 let settings = {};
+
+// Paginación
+let projectsPage = 1;
+let servicesPage = 1;
+let storiesPage = 1;
+let leadsPage = 1;
+const ITEMS_PER_PAGE = 10;
+
+// ============================================================
+// TEMA CLARO/OSCURO
+// ============================================================
+function initTheme() {
+  const saved = localStorage.getItem('admin-theme');
+  const theme = saved || 'dark';
+  document.documentElement.setAttribute('data-theme', theme);
+  const btn = document.getElementById('themeToggleBtn');
+  if (btn) btn.textContent = theme === 'dark' ? '☀️ Modo claro' : '🌙 Modo oscuro';
+}
+
+function toggleTheme() {
+  const current = document.documentElement.getAttribute('data-theme');
+  const newTheme = current === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', newTheme);
+  localStorage.setItem('admin-theme', newTheme);
+  const btn = document.getElementById('themeToggleBtn');
+  if (btn) btn.textContent = newTheme === 'dark' ? '☀️ Modo claro' : '🌙 Modo oscuro';
+}
+
+document.getElementById('themeToggleBtn')?.addEventListener('click', toggleTheme);
+initTheme();
 
 // ============================================================
 // AUTENTICACIÓN
@@ -658,7 +915,7 @@ logoutBtn.addEventListener('click', async () => {
 // NAVEGACIÓN
 // ============================================================
 const navBtns = document.querySelectorAll('.nav-btn');
-const panels = ['dashboardPanel', 'projectsPanel', 'servicesPanel', 'categoriesPanel', 'brandsPanel', 'reviewsPanel', 'faqsPanel', 'settingsPanel'];
+const panels = ['dashboardPanel', 'projectsPanel', 'servicesPanel', 'successStoriesPanel', 'featuredPanel', 'categoriesPanel', 'brandsPanel', 'assistantPanel', 'leadsPanel', 'reviewsPanel', 'faqsPanel', 'historyPanel', 'settingsPanel'];
 
 navBtns.forEach(btn => {
   btn.addEventListener('click', () => {
@@ -668,15 +925,36 @@ navBtns.forEach(btn => {
       document.getElementById(panelId).classList.remove('active');
     });
     const view = btn.getAttribute('data-view');
-    document.getElementById(`${view}Panel`).classList.add('active');
+    const panelMap = {
+      dashboard: 'dashboardPanel',
+      projects: 'projectsPanel',
+      services: 'servicesPanel',
+      'success-stories': 'successStoriesPanel',
+      featured: 'featuredPanel',
+      categories: 'categoriesPanel',
+      brands: 'brandsPanel',
+      assistant: 'assistantPanel',
+      leads: 'leadsPanel',
+      reviews: 'reviewsPanel',
+      faqs: 'faqsPanel',
+      history: 'historyPanel',
+      settings: 'settingsPanel'
+    };
+    document.getElementById(panelMap[view]).classList.add('active');
     
     if (view === 'services') loadServices();
     if (view === 'projects') loadProjects();
+    if (view === 'success-stories') loadStories();
+    if (view === 'featured') loadFeaturedProjects();
     if (view === 'categories') loadCategories();
     if (view === 'brands') loadBrands();
+    if (view === 'assistant') loadQuestions();
+    if (view === 'leads') loadLeads();
     if (view === 'faqs') loadFaqs();
     if (view === 'reviews') loadReviews();
+    if (view === 'history') loadHistory();
     if (view === 'dashboard') loadDashboard();
+    if (view === 'settings') loadSettings();
   });
 });
 
@@ -693,6 +971,22 @@ function escapeHtml(str) {
   });
 }
 
+function formatDate(date) {
+  if (!date) return '';
+  return new Date(date).toLocaleString('es-AR');
+}
+
+function previewServiceImage() {
+  const url = document.getElementById('serviceImageUrl').value;
+  const preview = document.getElementById('serviceImagePreview');
+  if (url) {
+    preview.src = url;
+    preview.style.display = 'block';
+  } else {
+    preview.style.display = 'none';
+  }
+}
+
 // ============================================================
 // DASHBOARD
 // ============================================================
@@ -702,10 +996,10 @@ async function loadDashboard() {
   
   const statsGrid = document.getElementById('statsGrid');
   statsGrid.innerHTML = `
-    <div class="stat-card"><h3 id="statProjects">${projects.length}</h3><p>Proyectos</p></div>
-    <div class="stat-card"><h3 id="statServices">${services.length}</h3><p>Servicios</p></div>
-    <div class="stat-card"><h3 id="statCategories">${categories.length}</h3><p>Categorías</p></div>
-    <div class="stat-card"><h3 id="statBrands">${brands.length}</h3><p>Marcas</p></div>
+    <div class="stat-card"><h3>${projects.length}</h3><p>Proyectos</p></div>
+    <div class="stat-card"><h3>${services.length}</h3><p>Servicios</p></div>
+    <div class="stat-card"><h3>${categories.length}</h3><p>Categorías</p></div>
+    <div class="stat-card"><h3>${brands.length}</h3><p>Marcas</p></div>
   `;
   
   const recent = [...projects].sort((a,b) => new Date(b.created_at) - new Date(a.created_at)).slice(0,5);
@@ -717,7 +1011,7 @@ async function loadDashboard() {
       <div class="item-card">
         <div class="item-info">
           <div class="item-title">${escapeHtml(p.title)}</div>
-          <div class="item-meta">${p.status || 'published'} · ${p.created_at ? new Date(p.created_at).toLocaleDateString() : ''}</div>
+          <div class="item-meta">${p.status || 'published'} · ${p.created_at ? formatDate(p.created_at) : ''}</div>
         </div>
         <button class="btn-edit" onclick="editProject('${p.id}')">Editar</button>
       </div>
@@ -726,7 +1020,7 @@ async function loadDashboard() {
 }
 
 // ============================================================
-// SERVICIOS (CRUD COMPLETO)
+// SERVICIOS (con imagen de portada)
 // ============================================================
 async function loadServices() {
   const container = document.getElementById('servicesList');
@@ -739,12 +1033,15 @@ async function loadServices() {
   }
   
   services = data || [];
+  const start = (servicesPage - 1) * ITEMS_PER_PAGE;
+  const paginated = services.slice(start, start + ITEMS_PER_PAGE);
+  
   if (services.length === 0) {
     container.innerHTML = '<div class="loading">No hay servicios. Creá uno nuevo.</div>';
     return;
   }
   
-  container.innerHTML = services.map(service => `
+  container.innerHTML = paginated.map(service => `
     <div class="item-card">
       ${service.image_url ? `<img src="${escapeHtml(service.image_url)}" class="item-preview" onerror="this.style.display='none'">` : ''}
       <div class="item-info">
@@ -757,6 +1054,11 @@ async function loadServices() {
       </div>
     </div>
   `).join('');
+  
+  renderPagination('servicesPagination', services.length, servicesPage, (page) => {
+    servicesPage = page;
+    loadServices();
+  });
 }
 
 function openServiceModal(id = null) {
@@ -771,6 +1073,7 @@ function openServiceModal(id = null) {
   const serviceFeatures = document.getElementById('serviceFeatures');
   const serviceOrder = document.getElementById('serviceOrder');
   const serviceActive = document.getElementById('serviceActive');
+  const preview = document.getElementById('serviceImagePreview');
   
   if (id) {
     const service = services.find(s => s.id === id);
@@ -785,6 +1088,12 @@ function openServiceModal(id = null) {
     serviceFeatures.value = (service.features || []).join(', ');
     serviceOrder.value = service.order_index || 0;
     serviceActive.checked = service.active !== false;
+    if (service.image_url) {
+      preview.src = service.image_url;
+      preview.style.display = 'block';
+    } else {
+      preview.style.display = 'none';
+    }
   } else {
     title.textContent = '➕ Nuevo Servicio';
     serviceId.value = '';
@@ -796,6 +1105,7 @@ function openServiceModal(id = null) {
     serviceFeatures.value = '';
     serviceOrder.value = '0';
     serviceActive.checked = true;
+    preview.style.display = 'none';
   }
   modal.style.display = 'flex';
 }
@@ -848,11 +1158,186 @@ async function deleteService(id) {
 }
 
 // ============================================================
-// PROYECTOS (CRUD COMPLETO)
+// CASOS DE ÉXITO
+// ============================================================
+async function loadStories() {
+  const container = document.getElementById('storiesList');
+  container.innerHTML = '<div class="loading">Cargando casos de éxito...</div>';
+  
+  const { data, error } = await sb.from('success_stories').select('*').order('order_index', { ascending: true });
+  if (error) {
+    container.innerHTML = `<div class="msg msg-error">Error: ${error.message}</div>`;
+    return;
+  }
+  
+  stories = data || [];
+  const start = (storiesPage - 1) * ITEMS_PER_PAGE;
+  const paginated = stories.slice(start, start + ITEMS_PER_PAGE);
+  
+  if (stories.length === 0) {
+    container.innerHTML = '<div class="loading">No hay casos de éxito. Creá uno nuevo.</div>';
+    return;
+  }
+  
+  container.innerHTML = paginated.map(story => `
+    <div class="item-card">
+      ${story.image_url ? `<img src="${escapeHtml(story.image_url)}" class="item-preview" onerror="this.style.display='none'">` : ''}
+      <div class="item-info">
+        <div class="item-title">🏆 ${escapeHtml(story.title)}</div>
+        <div class="item-meta">${escapeHtml(story.short_description?.substring(0, 80) || '')}${story.short_description?.length > 80 ? '...' : ''} · ${story.active ? '🟢 Activo' : '🔴 Inactivo'}</div>
+      </div>
+      <div class="item-actions">
+        <button class="btn-edit" onclick="openStoryModal('${story.id}')">✏️ Editar</button>
+        <button class="btn-delete" onclick="deleteStory('${story.id}')">🗑️ Eliminar</button>
+      </div>
+    </div>
+  `).join('');
+  
+  renderPagination('storiesPagination', stories.length, storiesPage, (page) => {
+    storiesPage = page;
+    loadStories();
+  });
+}
+
+function openStoryModal(id = null) {
+  const modal = document.getElementById('storyModal');
+  const title = document.getElementById('storyModalTitle');
+  const storyId = document.getElementById('storyId');
+  const storyTitle = document.getElementById('storyTitle');
+  const storyDescription = document.getElementById('storyDescription');
+  const storyImageUrl = document.getElementById('storyImageUrl');
+  const storyResults = document.getElementById('storyResults');
+  const storyDemoUrl = document.getElementById('storyDemoUrl');
+  const storyOrder = document.getElementById('storyOrder');
+  const storyActive = document.getElementById('storyActive');
+  
+  if (id) {
+    const story = stories.find(s => s.id === id);
+    if (!story) return;
+    title.textContent = '✏️ Editar Caso de éxito';
+    storyId.value = story.id;
+    storyTitle.value = story.title || '';
+    storyDescription.value = story.short_description || '';
+    storyImageUrl.value = story.image_url || '';
+    storyResults.value = typeof story.results === 'string' ? story.results : JSON.stringify(story.results || {}, null, 2);
+    storyDemoUrl.value = story.demo_url || '';
+    storyOrder.value = story.order_index || 0;
+    storyActive.checked = story.active !== false;
+  } else {
+    title.textContent = '➕ Nuevo Caso de éxito';
+    storyId.value = '';
+    storyTitle.value = '';
+    storyDescription.value = '';
+    storyImageUrl.value = '';
+    storyResults.value = '';
+    storyDemoUrl.value = '';
+    storyOrder.value = '0';
+    storyActive.checked = true;
+  }
+  modal.style.display = 'flex';
+}
+
+async function saveStory() {
+  const id = document.getElementById('storyId').value;
+  const title = document.getElementById('storyTitle').value.trim();
+  const short_description = document.getElementById('storyDescription').value.trim();
+  const image_url = document.getElementById('storyImageUrl').value.trim();
+  let results = {};
+  try {
+    const resultsStr = document.getElementById('storyResults').value.trim();
+    if (resultsStr) results = JSON.parse(resultsStr);
+  } catch(e) {}
+  const demo_url = document.getElementById('storyDemoUrl').value.trim() || null;
+  const order_index = parseInt(document.getElementById('storyOrder').value) || 0;
+  const active = document.getElementById('storyActive').checked;
+  
+  if (!title) {
+    alert('El título es obligatorio');
+    return;
+  }
+  
+  const payload = { title, short_description, image_url, results, demo_url, order_index, active, updated_at: new Date().toISOString() };
+  
+  let result;
+  if (id) {
+    result = await sb.from('success_stories').update(payload).eq('id', id);
+  } else {
+    result = await sb.from('success_stories').insert([payload]);
+  }
+  
+  if (result.error) {
+    alert('Error: ' + result.error.message);
+  } else {
+    document.getElementById('storyModal').style.display = 'none';
+    loadStories();
+    loadDashboard();
+  }
+}
+
+async function deleteStory(id) {
+  if (!confirm('¿Eliminar este caso de éxito?')) return;
+  const { error } = await sb.from('success_stories').delete().eq('id', id);
+  if (error) {
+    alert('Error: ' + error.message);
+  } else {
+    loadStories();
+    loadDashboard();
+  }
+}
+
+// ============================================================
+// PROYECTOS DESTACADOS
+// ============================================================
+async function loadFeaturedProjects() {
+  const container = document.getElementById('featuredList');
+  container.innerHTML = '<div class="loading">Cargando proyectos...</div>';
+  
+  const { data, error } = await sb.from('projects').select('*').order('created_at', { ascending: false });
+  if (error) {
+    container.innerHTML = `<div class="msg msg-error">Error: ${error.message}</div>`;
+    return;
+  }
+  
+  if (!data || data.length === 0) {
+    container.innerHTML = '<div class="loading">No hay proyectos</div>';
+    return;
+  }
+  
+  container.innerHTML = data.map(project => `
+    <div class="item-card">
+      <div class="item-info">
+        <div class="item-title">${escapeHtml(project.title)}</div>
+        <div class="item-meta">${project.status || 'published'}</div>
+      </div>
+      <div class="item-actions">
+        <button class="btn-edit" onclick="toggleFeatured('${project.id}', ${!project.featured})">
+          ${project.featured ? '⭐ Quitar destacado' : '☆ Destacar'}
+        </button>
+      </div>
+    </div>
+  `).join('');
+}
+
+async function toggleFeatured(id, featured) {
+  const { error } = await sb.from('projects').update({ 
+    featured: featured,
+    status: featured ? 'featured' : 'published',
+    updated_at: new Date().toISOString()
+  }).eq('id', id);
+  
+  if (error) {
+    alert('Error: ' + error.message);
+  } else {
+    loadFeaturedProjects();
+    loadProjects();
+  }
+}
+
+// ============================================================
+// PROYECTOS (CRUD)
 // ============================================================
 async function loadProjects() {
   const container = document.getElementById('projectsList');
-  if (!container) return;
   container.innerHTML = '<div class="loading">Cargando proyectos...</div>';
   
   const { data, error } = await sb.from('projects').select('*, categories(name)').order('order_index', { ascending: true });
@@ -862,17 +1347,20 @@ async function loadProjects() {
   }
   
   projects = data || [];
+  const start = (projectsPage - 1) * ITEMS_PER_PAGE;
+  const paginated = projects.slice(start, start + ITEMS_PER_PAGE);
+  
   if (projects.length === 0) {
     container.innerHTML = '<div class="loading">No hay proyectos. Creá uno nuevo.</div>';
     return;
   }
   
-  container.innerHTML = projects.map(project => `
+  container.innerHTML = paginated.map(project => `
     <div class="item-card">
       ${project.image_url ? `<img src="${escapeHtml(project.image_url)}" class="item-preview" onerror="this.style.display='none'">` : ''}
       <div class="item-info">
         <div class="item-title">${escapeHtml(project.title)}</div>
-        <div class="item-meta">📁 ${escapeHtml(project.categories?.name || 'Sin categoría')} · ${project.status || 'published'} · ${project.active ? '🟢' : '🔴'}</div>
+        <div class="item-meta">📁 ${escapeHtml(project.categories?.name || 'Sin categoría')} · ${project.status || 'published'} · ${project.featured ? '⭐ Destacado' : ''}</div>
       </div>
       <div class="item-actions">
         <button class="btn-edit" onclick="openProjectModal('${project.id}')">✏️ Editar</button>
@@ -880,6 +1368,11 @@ async function loadProjects() {
       </div>
     </div>
   `).join('');
+  
+  renderPagination('projectsPagination', projects.length, projectsPage, (page) => {
+    projectsPage = page;
+    loadProjects();
+  });
 }
 
 function openProjectModal(id = null) {
@@ -895,7 +1388,6 @@ function openProjectModal(id = null) {
   const projectOrder = document.getElementById('projectOrder');
   const projectActive = document.getElementById('projectActive');
   
-  // Cargar categorías en el select
   const loadCatOptions = async () => {
     const { data: cats } = await sb.from('categories').select('id,name').eq('active', true);
     projectCategoryId.innerHTML = '<option value="">Sin categoría</option>' + (cats || []).map(c => `<option value="${c.id}">${escapeHtml(c.name)}</option>`).join('');
@@ -951,8 +1443,26 @@ async function saveProject() {
   let result;
   if (id) {
     result = await sb.from('projects').update(payload).eq('id', id);
+    if (!result.error) {
+      await sb.from('project_history').insert([{
+        project_id: id,
+        action_type: 'update',
+        snapshot: payload,
+        changed_by: currentUser?.email,
+        created_at: new Date().toISOString()
+      }]);
+    }
   } else {
     result = await sb.from('projects').insert([payload]);
+    if (!result.error && result.data) {
+      await sb.from('project_history').insert([{
+        project_id: result.data[0].id,
+        action_type: 'create',
+        snapshot: payload,
+        changed_by: currentUser?.email,
+        created_at: new Date().toISOString()
+      }]);
+    }
   }
   
   if (result.error) {
@@ -965,7 +1475,7 @@ async function saveProject() {
 }
 
 async function deleteProject(id) {
-  if (!confirm('¿Eliminar este proyecto permanentemente?')) return;
+  if (!confirm('¿Eliminar este proyecto?')) return;
   const { error } = await sb.from('projects').delete().eq('id', id);
   if (error) {
     alert('Error: ' + error.message);
@@ -976,7 +1486,7 @@ async function deleteProject(id) {
 }
 
 // ============================================================
-// CATEGORÍAS (CRUD COMPLETO)
+// CATEGORÍAS
 // ============================================================
 async function loadCategories() {
   const container = document.getElementById('categoriesList');
@@ -1069,7 +1579,7 @@ async function saveCategory() {
 }
 
 async function deleteCategory(id) {
-  if (!confirm('¿Eliminar esta categoría? Los proyectos quedarán sin categoría.')) return;
+  if (!confirm('¿Eliminar esta categoría?')) return;
   const { error } = await sb.from('categories').delete().eq('id', id);
   if (error) {
     alert('Error: ' + error.message);
@@ -1080,7 +1590,7 @@ async function deleteCategory(id) {
 }
 
 // ============================================================
-// MARCAS (CRUD COMPLETO)
+// MARCAS
 // ============================================================
 async function loadBrands() {
   const container = document.getElementById('brandsList');
@@ -1192,6 +1702,236 @@ async function deleteBrand(id) {
 }
 
 // ============================================================
+// ASISTENTE (PREGUNTAS)
+// ============================================================
+async function loadQuestions() {
+  const container = document.getElementById('questionsList');
+  container.innerHTML = '<div class="loading">Cargando preguntas...</div>';
+  
+  const { data, error } = await sb.from('assistant_questions').select('*').order('order_index', { ascending: true });
+  if (error) {
+    container.innerHTML = `<div class="msg msg-error">Error: ${error.message}</div>`;
+    return;
+  }
+  
+  questions = data || [];
+  if (questions.length === 0) {
+    container.innerHTML = '<div class="loading">No hay preguntas. Creá una nueva.</div>';
+    return;
+  }
+  
+  container.innerHTML = questions.map(q => {
+    let optionsPreview = '';
+    if (q.question_type === 'options' && q.options) {
+      try {
+        const opts = JSON.parse(q.options);
+        optionsPreview = `<div class="item-meta">📋 Opciones: ${opts.slice(0, 3).join(', ')}${opts.length > 3 ? '...' : ''}</div>`;
+      } catch(e) {}
+    }
+    return `
+      <div class="item-card">
+        <div class="item-info">
+          <div class="item-title">❓ ${escapeHtml(q.question)}</div>
+          <div class="item-meta">📝 Tipo: ${q.question_type === 'options' ? 'Opciones múltiples' : 'Texto libre'}</div>
+          ${optionsPreview}
+          <div class="item-meta">Orden: ${q.order_index || 0} · ${q.active ? '🟢 Activa' : '🔴 Inactiva'} · ${q.required ? '⚠️ Requerida' : 'Opcional'}</div>
+        </div>
+        <div class="item-actions">
+          <button class="btn-edit" onclick="openQuestionModal('${q.id}')">✏️ Editar</button>
+          <button class="btn-delete" onclick="deleteQuestion('${q.id}')">🗑️ Eliminar</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function openQuestionModal(id = null) {
+  const modal = document.getElementById('questionModal');
+  const title = document.getElementById('questionModalTitle');
+  const questionId = document.getElementById('questionId');
+  const questionText = document.getElementById('questionText');
+  const questionType = document.getElementById('questionType');
+  const optionsInput = document.getElementById('questionOptions');
+  const placeholder = document.getElementById('questionPlaceholder');
+  const order = document.getElementById('questionOrder');
+  const required = document.getElementById('questionRequired');
+  const active = document.getElementById('questionActive');
+  const optionsField = document.getElementById('optionsField');
+  const placeholderField = document.getElementById('placeholderField');
+  
+  const toggleFields = () => {
+    if (questionType.value === 'options') {
+      optionsField.style.display = 'block';
+      placeholderField.style.display = 'none';
+    } else {
+      optionsField.style.display = 'none';
+      placeholderField.style.display = 'block';
+    }
+  };
+  
+  questionType.addEventListener('change', toggleFields);
+  
+  if (id) {
+    const q = questions.find(q => q.id === id);
+    if (!q) return;
+    title.textContent = '✏️ Editar Pregunta';
+    questionId.value = q.id;
+    questionText.value = q.question || '';
+    questionType.value = q.question_type || 'options';
+    if (q.options) {
+      try {
+        const opts = JSON.parse(q.options);
+        optionsInput.value = opts.join(', ');
+      } catch(e) { optionsInput.value = ''; }
+    } else {
+      optionsInput.value = '';
+    }
+    placeholder.value = q.placeholder || '';
+    order.value = q.order_index || 0;
+    required.checked = q.required !== false;
+    active.checked = q.active !== false;
+    toggleFields();
+  } else {
+    title.textContent = '➕ Nueva Pregunta';
+    questionId.value = '';
+    questionText.value = '';
+    questionType.value = 'options';
+    optionsInput.value = '';
+    placeholder.value = '';
+    order.value = '0';
+    required.checked = true;
+    active.checked = true;
+    toggleFields();
+  }
+  modal.style.display = 'flex';
+}
+
+async function saveQuestion() {
+  const id = document.getElementById('questionId').value;
+  const question = document.getElementById('questionText').value.trim();
+  const question_type = document.getElementById('questionType').value;
+  const optionsValue = document.getElementById('questionOptions').value;
+  const placeholder = document.getElementById('questionPlaceholder').value.trim() || null;
+  const order_index = parseInt(document.getElementById('questionOrder').value) || 0;
+  const required = document.getElementById('questionRequired').checked;
+  const active = document.getElementById('questionActive').checked;
+  
+  if (!question) {
+    alert('La pregunta es obligatoria');
+    return;
+  }
+  
+  let options = null;
+  if (question_type === 'options' && optionsValue) {
+    const opts = optionsValue.split(',').map(o => o.trim()).filter(Boolean);
+    if (opts.length === 0) {
+      alert('Debes ingresar al menos una opción');
+      return;
+    }
+    options = JSON.stringify(opts);
+  }
+  
+  const payload = { question, question_type, options, placeholder, order_index, required, active, updated_at: new Date().toISOString() };
+  
+  let result;
+  if (id) {
+    result = await sb.from('assistant_questions').update(payload).eq('id', id);
+  } else {
+    result = await sb.from('assistant_questions').insert([payload]);
+  }
+  
+  if (result.error) {
+    alert('Error: ' + result.error.message);
+  } else {
+    document.getElementById('questionModal').style.display = 'none';
+    loadQuestions();
+  }
+}
+
+async function deleteQuestion(id) {
+  if (!confirm('¿Eliminar esta pregunta?')) return;
+  const { error } = await sb.from('assistant_questions').delete().eq('id', id);
+  if (error) {
+    alert('Error: ' + error.message);
+  } else {
+    loadQuestions();
+  }
+}
+
+// ============================================================
+// LEADS DEL ASISTENTE
+// ============================================================
+async function loadLeads() {
+  const container = document.getElementById('leadsList');
+  container.innerHTML = '<div class="loading">Cargando leads...</div>';
+  
+  const { data, error } = await sb.from('guide_leads').select('*').order('created_at', { ascending: false });
+  if (error) {
+    container.innerHTML = `<div class="msg msg-error">Error: ${error.message}</div>`;
+    return;
+  }
+  
+  leads = data || [];
+  const start = (leadsPage - 1) * ITEMS_PER_PAGE;
+  const paginated = leads.slice(start, start + ITEMS_PER_PAGE);
+  
+  if (leads.length === 0) {
+    container.innerHTML = '<div class="loading">No hay leads registrados todavía.</div>';
+    return;
+  }
+  
+  container.innerHTML = paginated.map(lead => `
+    <div class="item-card">
+      <div class="item-info">
+        <div class="item-title">👤 ${escapeHtml(lead.name || 'Anónimo')}</div>
+        <div class="item-meta">📱 ${lead.whatsapp ? escapeHtml(lead.whatsapp) : 'Sin WhatsApp'} · 📧 ${lead.email ? escapeHtml(lead.email) : 'Sin email'}</div>
+        <div class="item-meta">🏢 ${lead.company ? escapeHtml(lead.company) : 'Sin empresa'} · 🎯 ${lead.result_title ? escapeHtml(lead.result_title) : 'Sin resultado'}</div>
+        <div class="item-meta">📅 ${formatDate(lead.created_at)}</div>
+        ${lead.free_text ? `<div class="item-meta">💬 Consulta: ${escapeHtml(lead.free_text?.substring(0, 100))}${lead.free_text?.length > 100 ? '...' : ''}</div>` : ''}
+      </div>
+      <div class="item-actions">
+        ${lead.whatsapp ? `<button class="btn-edit" onclick="window.open('https://wa.me/${lead.whatsapp.replace(/[^0-9]/g, '')}?text=Hola ${encodeURIComponent(lead.name || '')}, soy de Ciborg 347. Recibimos tu consulta.', '_blank')">📱 WhatsApp</button>` : ''}
+      </div>
+    </div>
+  `).join('');
+  
+  renderPagination('leadsPagination', leads.length, leadsPage, (page) => {
+    leadsPage = page;
+    loadLeads();
+  });
+}
+
+function exportLeadsToCSV() {
+  if (!leads.length) {
+    alert('No hay leads para exportar');
+    return;
+  }
+  
+  const headers = ['ID', 'Nombre', 'WhatsApp', 'Email', 'Empresa', 'Resultado', 'Consulta', 'Fecha'];
+  const rows = leads.map(l => [
+    l.id,
+    l.name || '',
+    l.whatsapp || '',
+    l.email || '',
+    l.company || '',
+    l.result_title || '',
+    `"${(l.free_text || '').replace(/"/g, '""')}"`,
+    l.created_at
+  ]);
+  
+  const csvContent = [headers, ...rows].map(row => row.join(',')).join('\n');
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  const url = URL.createObjectURL(blob);
+  link.href = url;
+  link.setAttribute('download', `leads_${new Date().toISOString().split('T')[0]}.csv`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+}
+
+// ============================================================
 // RESEÑAS
 // ============================================================
 async function loadReviews() {
@@ -1201,12 +1941,12 @@ async function loadReviews() {
   pendingContainer.innerHTML = '<div class="loading">Cargando reseñas...</div>';
   approvedContainer.innerHTML = '<div class="loading">Cargando reseñas...</div>';
   
-  const { data: pending, error: pendingError } = await sb.from('reviews').select('*').eq('status', 'pending').order('created_at', { ascending: false });
-  const { data: approved, error: approvedError } = await sb.from('reviews').select('*').eq('status', 'approved').order('created_at', { ascending: false });
+  const { data: pending } = await sb.from('reviews').select('*').eq('status', 'pending').order('created_at', { ascending: false });
+  const { data: approved } = await sb.from('reviews').select('*').eq('status', 'approved').order('created_at', { ascending: false });
   
-  if (pendingError) pendingContainer.innerHTML = `<div class="msg msg-error">Error: ${pendingError.message}</div>`;
-  else if (!pending || pending.length === 0) pendingContainer.innerHTML = '<div class="loading">No hay reseñas pendientes</div>';
-  else {
+  if (!pending || pending.length === 0) {
+    pendingContainer.innerHTML = '<div class="loading">No hay reseñas pendientes</div>';
+  } else {
     pendingContainer.innerHTML = pending.map(r => `
       <div class="item-card">
         <div class="item-info">
@@ -1221,9 +1961,9 @@ async function loadReviews() {
     `).join('');
   }
   
-  if (approvedError) approvedContainer.innerHTML = `<div class="msg msg-error">Error: ${approvedError.message}</div>`;
-  else if (!approved || approved.length === 0) approvedContainer.innerHTML = '<div class="loading">No hay reseñas aprobadas</div>';
-  else {
+  if (!approved || approved.length === 0) {
+    approvedContainer.innerHTML = '<div class="loading">No hay reseñas aprobadas</div>';
+  } else {
     approvedContainer.innerHTML = approved.map(r => `
       <div class="item-card">
         <div class="item-info">
@@ -1242,14 +1982,14 @@ async function approveReview(id) {
 }
 
 async function rejectReview(id) {
-  if (!confirm('¿Rechazar y eliminar esta reseña?')) return;
+  if (!confirm('¿Rechazar esta reseña?')) return;
   const { error } = await sb.from('reviews').delete().eq('id', id);
   if (error) alert('Error: ' + error.message);
   else loadReviews();
 }
 
 // ============================================================
-// FAQS (CRUD COMPLETO)
+// FAQS
 // ============================================================
 async function loadFaqs() {
   const container = document.getElementById('faqsList');
@@ -1352,6 +2092,47 @@ async function deleteFaq(id) {
 }
 
 // ============================================================
+// HISTORIAL
+// ============================================================
+async function loadHistory() {
+  const projectContainer = document.getElementById('projectHistoryList');
+  const settingsContainer = document.getElementById('settingsHistoryList');
+  
+  projectContainer.innerHTML = '<div class="loading">Cargando historial...</div>';
+  settingsContainer.innerHTML = '<div class="loading">Cargando historial...</div>';
+  
+  const { data: projectHistory } = await sb.from('project_history').select('*').order('created_at', { ascending: false }).limit(20);
+  const { data: settingsHistory } = await sb.from('site_settings_history').select('*').order('created_at', { ascending: false }).limit(20);
+  
+  if (!projectHistory || projectHistory.length === 0) {
+    projectContainer.innerHTML = '<div class="loading">No hay historial de proyectos</div>';
+  } else {
+    projectContainer.innerHTML = projectHistory.map(h => `
+      <div class="item-card">
+        <div class="item-info">
+          <div class="item-title">📌 ${escapeHtml(h.action_type || 'Cambio')}</div>
+          <div class="item-meta">Proyecto ID: ${h.project_id} · ${formatDate(h.created_at)}</div>
+          <div class="item-meta">👤 Por: ${escapeHtml(h.changed_by || 'admin')}</div>
+        </div>
+      </div>
+    `).join('');
+  }
+  
+  if (!settingsHistory || settingsHistory.length === 0) {
+    settingsContainer.innerHTML = '<div class="loading">No hay historial de settings</div>';
+  } else {
+    settingsContainer.innerHTML = settingsHistory.map(h => `
+      <div class="item-card">
+        <div class="item-info">
+          <div class="item-title">⚙️ ${escapeHtml(h.action_type || 'Cambio')}</div>
+          <div class="item-meta">${formatDate(h.created_at)} · 👤 Por: ${escapeHtml(h.changed_by || 'admin')}</div>
+        </div>
+      </div>
+    `).join('');
+  }
+}
+
+// ============================================================
 // SETTINGS
 // ============================================================
 async function loadSettings() {
@@ -1379,40 +2160,75 @@ async function saveSettings() {
   if (error) {
     document.getElementById('settingsMsg').innerHTML = `<div class="msg msg-error">❌ Error: ${error.message}</div>`;
   } else {
+    await sb.from('site_settings_history').insert([{
+      settings_id: 'global',
+      action_type: 'update',
+      snapshot: payload,
+      changed_by: currentUser?.email,
+      created_at: new Date().toISOString()
+    }]);
     document.getElementById('settingsMsg').innerHTML = `<div class="msg msg-success">✅ Configuración guardada</div>`;
     setTimeout(() => document.getElementById('settingsMsg').innerHTML = '', 3000);
   }
 }
 
 // ============================================================
-// CARGA INICIAL
+// PAGINACIÓN
+// ============================================================
+function renderPagination(containerId, total, currentPage, onPageChange) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  
+  const totalPages = Math.ceil(total / ITEMS_PER_PAGE);
+  if (totalPages <= 1) {
+    container.innerHTML = '';
+    return;
+  }
+  
+  let html = '';
+  for (let i = 1; i <= totalPages; i++) {
+    html += `<button class="${i === currentPage ? 'active' : ''}" onclick="(() => { ${onPageChange.toString()})(${i})">${i}</button>`;
+  }
+  container.innerHTML = html;
+}
+
+// ============================================================
+// CARGA INICIAL Y EXPOSICIÓN GLOBAL
 // ============================================================
 async function loadAllData() {
   await loadDashboard();
   await loadProjects();
   await loadServices();
+  await loadStories();
   await loadCategories();
   await loadBrands();
+  await loadQuestions();
   await loadFaqs();
   await loadSettings();
 }
 
-// Exponer funciones globales para onclick
+// Exponer funciones globales
 window.openServiceModal = openServiceModal;
 window.deleteService = deleteService;
 window.openProjectModal = openProjectModal;
 window.deleteProject = deleteProject;
+window.editProject = (id) => openProjectModal(id);
 window.openCategoryModal = openCategoryModal;
 window.deleteCategory = deleteCategory;
 window.openBrandModal = openBrandModal;
 window.deleteBrand = deleteBrand;
+window.openStoryModal = openStoryModal;
+window.deleteStory = deleteStory;
+window.openQuestionModal = openQuestionModal;
+window.deleteQuestion = deleteQuestion;
 window.openFaqModal = openFaqModal;
 window.deleteFaq = deleteFaq;
 window.approveReview = approveReview;
 window.rejectReview = rejectReview;
-window.editProject = (id) => openProjectModal(id);
+window.toggleFeatured = toggleFeatured;
+window.previewServiceImage = previewServiceImage;
 
-// Botones de modales
+// Botones
 document.getElementById('serviceSaveBtn').onclick = saveService;
 document.getElementById('serviceCancelBtn').onclick = () => document.getElementById('serviceModal').style.display = 'none';
 document.getElementById('projectSaveBtn').onclick = saveProject;
@@ -1421,14 +2237,21 @@ document.getElementById('categorySaveBtn').onclick = saveCategory;
 document.getElementById('categoryCancelBtn').onclick = () => document.getElementById('categoryModal').style.display = 'none';
 document.getElementById('brandSaveBtn').onclick = saveBrand;
 document.getElementById('brandCancelBtn').onclick = () => document.getElementById('brandModal').style.display = 'none';
+document.getElementById('storySaveBtn').onclick = saveStory;
+document.getElementById('storyCancelBtn').onclick = () => document.getElementById('storyModal').style.display = 'none';
+document.getElementById('questionSaveBtn').onclick = saveQuestion;
+document.getElementById('questionCancelBtn').onclick = () => document.getElementById('questionModal').style.display = 'none';
 document.getElementById('faqSaveBtn').onclick = saveFaq;
 document.getElementById('faqCancelBtn').onclick = () => document.getElementById('faqModal').style.display = 'none';
 document.getElementById('saveSettingsBtn').onclick = saveSettings;
 document.getElementById('newProjectBtn').onclick = () => openProjectModal();
 document.getElementById('newServiceBtn').onclick = () => openServiceModal();
+document.getElementById('newStoryBtn').onclick = () => openStoryModal();
 document.getElementById('newCategoryBtn').onclick = () => openCategoryModal();
 document.getElementById('newBrandBtn').onclick = () => openBrandModal();
+document.getElementById('newQuestionBtn').onclick = () => openQuestionModal();
 document.getElementById('newFaqBtn').onclick = () => openFaqModal();
+document.getElementById('exportLeadsBtn').onclick = exportLeadsToCSV;
 
 checkSession();
 </script>
