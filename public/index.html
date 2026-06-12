@@ -27,7 +27,7 @@
   </script>
   
   <style>
-    /* ========== CSS ORIGINAL (se mantiene igual) ========== */
+    /* ========== CSS ORIGINAL ========== */
     :root {
       --bg: #0a0a0f;
       --bg2: #0f0f1a;
@@ -337,7 +337,56 @@
       .servicesGrid { grid-template-columns: 1fr; }
     }
     
-    /* ========== MARCAS QUE CONFÍAN EN NOSOTROS (RESPONSIVE) ========== */
+    /* ========== BENEFICIOS ========== */
+    .benefits-section {
+      padding: 60px 0;
+    }
+    .benefits-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+      margin-top: 2rem;
+    }
+    .benefit-card {
+      background: var(--bg2);
+      border-radius: 20px;
+      padding: 1.8rem 1.5rem;
+      transition: all 0.3s ease;
+      border: 1px solid var(--border);
+      text-align: center;
+    }
+    .benefit-card:hover {
+      transform: translateY(-6px);
+      border-color: var(--cyan);
+      box-shadow: 0 0 20px var(--cyan);
+    }
+    .benefit-card__icon {
+      font-size: 2.8rem;
+      margin-bottom: 1rem;
+      display: inline-block;
+    }
+    .benefit-card__title {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 0.8rem;
+    }
+    .benefit-card__desc {
+      font-size: 0.8rem;
+      color: var(--text2);
+      line-height: 1.5;
+    }
+    @media (max-width: 1024px) {
+      .benefits-grid { grid-template-columns: repeat(2, 1fr); gap: 20px; }
+    }
+    @media (max-width: 600px) {
+      .benefits-grid { grid-template-columns: 1fr; gap: 16px; }
+      .benefit-card { padding: 1.2rem; }
+      .benefit-card__icon { font-size: 2.2rem; }
+    }
+
+    /* ========== MARCAS QUE CONFÍAN EN NOSOTROS ========== */
     .brands-section {
       background: var(--bg2);
       border-radius: 24px;
@@ -349,17 +398,18 @@
       position: relative;
       overflow: hidden;
       margin-top: 1.5rem;
-      padding: 0 30px;
+      padding: 0 35px;
     }
     .brands-carousel {
       display: flex;
       transition: transform 0.5s ease;
-      gap: 1.5rem;
+      gap: 2rem;
       align-items: center;
+      justify-content: center;
     }
     .brand-item {
       flex: 0 0 auto;
-      width: 120px;
+      width: 130px;
       text-align: center;
       transition: all 0.3s ease;
       filter: grayscale(0.3);
@@ -371,15 +421,15 @@
       transform: translateY(-4px);
     }
     .brand-item img {
-      max-width: 80px;
-      max-height: 50px;
+      max-width: 90px;
+      max-height: 55px;
       object-fit: contain;
       margin: 0 auto 0.5rem auto;
       display: block;
     }
     .brand-item span {
       display: block;
-      font-size: 0.65rem;
+      font-size: 0.7rem;
       color: var(--text2);
       text-align: center;
     }
@@ -390,8 +440,8 @@
       background: var(--glass);
       border: 1px solid var(--border);
       border-radius: 50%;
-      width: 32px;
-      height: 32px;
+      width: 36px;
+      height: 36px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -404,21 +454,25 @@
       border-color: var(--cyan);
       background: rgba(0, 212, 255, 0.2);
     }
-    .brands-carousel-btn.prev { left: 0; }
-    .brands-carousel-btn.next { right: 0; }
-    @media (max-width: 768px) {
-      .brands-carousel-container { padding: 0 25px; }
-      .brand-item { width: 100px; }
-      .brand-item img { max-width: 60px; max-height: 40px; }
-      .brands-carousel-btn { width: 28px; height: 28px; font-size: 1rem; }
+    .brands-carousel-btn.prev { left: 5px; }
+    .brands-carousel-btn.next { right: 5px; }
+    
+    @media (max-width: 900px) {
+      .brands-carousel-container { padding: 0 30px; }
+      .brand-item { width: 110px; }
+      .brand-item img { max-width: 70px; max-height: 45px; }
+      .brands-carousel-btn { width: 32px; height: 32px; font-size: 1rem; }
     }
+    
     @media (max-width: 600px) {
-      .brand-item { width: 80px; }
-      .brand-item img { max-width: 50px; max-height: 35px; }
-      .brands-carousel-container { padding: 0 20px; }
+      .brands-carousel-container { padding: 0 25px; }
+      .brand-item { width: 90px; }
+      .brand-item img { max-width: 55px; max-height: 35px; }
+      .brand-item span { font-size: 0.6rem; }
+      .brands-carousel-btn { width: 28px; height: 28px; font-size: 0.9rem; }
     }
 
-    /* ========== CASOS DE ÉXITO (COMPACTO) ========== */
+    /* ========== CASOS DE ÉXITO ========== */
     .success-stories-section {
       padding: 2rem 0;
     }
@@ -502,6 +556,9 @@
     }
 
     /* ========== BANNERS PROMOCIONALES ========== */
+    .banners-section {
+      padding: 60px 0;
+    }
     .banners-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -1476,6 +1533,7 @@
       <a href="#servicios">Servicios</a>
       <a href="#casos-exito">Casos de éxito</a>
       <a href="#marcas">Marcas</a>
+      <a href="beneficios.html">Beneficios</a>
       <a href="#faq">FAQ</a>
       <a href="#contacto">Contacto</a>
     </nav>
@@ -1490,6 +1548,7 @@
   <a href="#servicios">Servicios</a>
   <a href="#casos-exito">Casos de éxito</a>
   <a href="#marcas">Marcas</a>
+  <a href="beneficios.html">Beneficios</a>
   <a href="#faq">FAQ</a>
   <a href="#contacto">Contacto</a>
   <a href="#" class="btn btn--wa" id="mobileWhatsAppBtn">WhatsApp</a>
@@ -1537,7 +1596,24 @@
   <div class="banner-controls" id="bannerControls"></div>
 </div>
 
-<!-- ========== 2. SERVICIOS ========== -->
+<!-- ========== 2. BENEFICIOS ========== -->
+<section class="section" id="beneficios">
+  <div class="wrap">
+    <div class="section__head center fade-in-up">
+      <span class="section__label">¿Por qué elegirnos?</span>
+      <h2>Beneficios de trabajar con <em>CIBORG 347</em></h2>
+      <p>Soluciones digitales que transforman tu negocio</p>
+    </div>
+    <div class="benefits-grid" id="benefitsGrid">
+      <div class="skeleton-card" style="height: 200px;"></div>
+      <div class="skeleton-card" style="height: 200px;"></div>
+      <div class="skeleton-card" style="height: 200px;"></div>
+      <div class="skeleton-card" style="height: 200px;"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== 3. SERVICIOS ========== -->
 <section class="section" id="servicios">
   <div class="wrap">
     <div class="section__head fade-in-left">
@@ -1552,7 +1628,7 @@
   </div>
 </section>
 
-<!-- ========== 3. PORTFOLIO ========== -->
+<!-- ========== 4. PORTFOLIO ========== -->
 <section class="section section--alt" id="portfolio">
   <div class="wrap">
     <div class="section__head fade-in-right">
@@ -1595,7 +1671,7 @@
   </div>
 </section>
 
-<!-- ========== 4. CASOS DE ÉXITO ========== -->
+<!-- ========== 5. CASOS DE ÉXITO ========== -->
 <section class="section" id="casos-exito">
   <div class="wrap">
     <div class="section__head center fade-in-up">
@@ -1611,7 +1687,7 @@
   </div>
 </section>
 
-<!-- ========== 5. TESTIMONIOS ========== -->
+<!-- ========== 6. TESTIMONIOS ========== -->
 <section class="section section--alt" id="resenas">
   <div class="wrap">
     <div class="section__head center fade-in-up">
@@ -1635,7 +1711,7 @@
   </div>
 </section>
 
-<!-- ========== 6. MARCAS QUE CONFÍAN ========== -->
+<!-- ========== 7. MARCAS QUE CONFÍAN ========== -->
 <section class="section" id="marcas">
   <div class="wrap">
     <div class="section__head center fade-in-up">
@@ -1653,7 +1729,7 @@
   </div>
 </section>
 
-<!-- ========== 6.5. BANNERS PROMOCIONALES ========== -->
+<!-- ========== 8. BANNERS PROMOCIONALES ========== -->
 <section class="section" id="banners">
   <div class="wrap">
     <div class="section__head center fade-in-up">
@@ -1662,14 +1738,13 @@
       <p>Aprovechá nuestras promociones por tiempo limitado</p>
     </div>
     <div class="banners-grid" id="bannersGrid">
-      <!-- Los banners se cargarán dinámicamente desde Supabase -->
       <div class="skeleton-card" style="height: 200px;"></div>
       <div class="skeleton-card" style="height: 200px;"></div>
     </div>
   </div>
 </section>
 
-<!-- ========== 7. FAQ ========== -->
+<!-- ========== 9. FAQ ========== -->
 <section class="section" id="faq">
   <div class="wrap">
     <div class="section__head center fade-in-up">
@@ -1680,7 +1755,7 @@
   </div>
 </section>
 
-<!-- ========== 8. DEJANOS TU OPINIÓN ========== -->
+<!-- ========== 10. DEJANOS TU OPINIÓN ========== -->
 <section class="section section--alt" id="opinion">
   <div class="wrap">
     <div class="section__head center fade-in-up">
@@ -1711,7 +1786,7 @@
   </div>
 </section>
 
-<!-- ========== 9. CONTACTO ========== -->
+<!-- ========== 11. CONTACTO ========== -->
 <section class="section" id="contacto">
   <div class="wrap">
     <div class="section__head center fade-in-up">
@@ -1732,7 +1807,7 @@
   </div>
 </section>
 
-<!-- ========== 10. FOOTER ========== -->
+<!-- ========== 12. FOOTER ========== -->
 <footer>
   <div class="wrap">
     <div class="footer__inner">
@@ -1745,6 +1820,7 @@
         <a href="#servicios">Servicios</a>
         <a href="#casos-exito">Casos de éxito</a>
         <a href="#marcas">Marcas</a>
+        <a href="beneficios.html">Beneficios</a>
         <a href="#faq">FAQ</a>
         <a href="#contacto">Contacto</a>
       </div>
@@ -1781,7 +1857,7 @@ const sb = window.supabase?.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 console.log("🔌 Conectando a Supabase...");
 
-// ========== NUEVA FUNCIÓN PARA CARGAR SERVICIOS CON PRECIOS REALES ==========
+// ========== FUNCIÓN PARA CARGAR SERVICIOS ==========
 async function loadServicesReal() {
   const container = document.getElementById('servicesGrid');
   if (!container) return;
@@ -1839,12 +1915,66 @@ async function loadServicesReal() {
   }
 }
 
-// ========== FUNCIÓN ORIGINAL (se mantiene por si acaso) ==========
-async function loadServices() {
-  console.log("Función loadServices original (no utilizada actualmente)");
+// ========== FUNCIÓN PARA CARGAR BENEFICIOS ==========
+async function loadBenefits() {
+  const container = document.getElementById('benefitsGrid');
+  if (!container) return;
+  
+  container.innerHTML = '<div class="skeleton-card" style="height: 200px;"></div><div class="skeleton-card" style="height: 200px;"></div><div class="skeleton-card" style="height: 200px;"></div><div class="skeleton-card" style="height: 200px;"></div>';
+  
+  try {
+    // Beneficios quemados mientras no exista la tabla en Supabase
+    const beneficios = [
+      { icon: "🚀", title: "Aumentá tus ventas", description: "Convertí visitantes en clientes con estrategias digitales efectivas." },
+      { icon: "⚡", title: "Ahorrá tiempo", description: "Automatizá procesos repetitivos y enfocate en lo que realmente importa." },
+      { icon: "📱", title: "Presencia 24/7", description: "Tu negocio siempre abierto, accesible desde cualquier dispositivo." },
+      { icon: "🔒", title: "Seguridad y respaldo", description: "Tus datos protegidos con las mejores prácticas del mercado." },
+      { icon: "🎯", title: "Llegá a más clientes", description: "Alcance global con estrategias de SEO y marketing digital." },
+      { icon: "💼", title: "Profesionalismo", description: "Imagen corporativa que genera confianza y credibilidad." },
+      { icon: "📈", title: "Escalabilidad", description: "Tu sitio crece junto a tu negocio, sin necesidad de reinventarlo." },
+      { icon: "🛡️", title: "Soporte dedicado", description: "Te acompañamos en cada paso, antes, durante y después del proyecto." }
+    ];
+    
+    container.innerHTML = beneficios.map(b => `
+      <div class="benefit-card fade-in-up">
+        <div class="benefit-card__icon">${b.icon}</div>
+        <div class="benefit-card__title">${b.title}</div>
+        <div class="benefit-card__desc">${b.description}</div>
+      </div>
+    `).join('');
+    
+    console.log("✅ Beneficios cargados");
+    
+  } catch(e) {
+    console.error("Error loading benefits:", e);
+    container.innerHTML = '<div style="grid-column:1/-1; text-align:center; color:var(--text2);">Error al cargar beneficios</div>';
+  }
 }
 
-// ========== RESTO DEL CÓDIGO (TOTALMENTE ORIGINAL) ==========
+// ========== FUNCIÓN PARA CARGAR BANNERS ==========
+async function loadBanners() {
+  const container = document.getElementById('bannersGrid');
+  if (!container) return;
+  
+  container.innerHTML = `
+    <div class="banner-card">
+      <div class="banner-card__content">
+        <div class="banner-card__title">🚀 Próximamente</div>
+        <div class="banner-card__desc">Los banners se cargarán desde Supabase. Creá la tabla "banners" para empezar.</div>
+        <a href="#contacto" class="banner-card__btn">Consultar</a>
+      </div>
+    </div>
+    <div class="banner-card">
+      <div class="banner-card__content">
+        <div class="banner-card__title">💡 ¿Tenés un proyecto?</div>
+        <div class="banner-card__desc">Contactanos y te asesoramos sin compromiso.</div>
+        <a href="#contacto" class="banner-card__btn">Hablar ahora</a>
+      </div>
+    </div>
+  `;
+}
+
+// ========== RESTO DEL CÓDIGO ORIGINAL ==========
 let brandsData = [];
 let currentBrandIndex = 0;
 let brandsPerPage = 4;
@@ -2467,41 +2597,16 @@ function setupWhatsAppVisibility() {
   observerFooter.observe(footer);
 }
 
-// Inicializar todo - USANDO LA NUEVA FUNCIÓN loadServicesReal()
+// Inicializar todo
 loadServicesReal();
+loadBenefits();
+loadBanners();
 loadProjects();
 loadFaqs();
 loadReviews();
 loadBrands();
 loadSuccessStories();
 setupWhatsAppVisibility();
-
-// ========== FUNCIÓN PARA CARGAR BANNERS (para después) ==========
-async function loadBanners() {
-  const container = document.getElementById('bannersGrid');
-  if (!container) return;
-  
-  // Placeholder mientras no exista la tabla banners
-  container.innerHTML = `
-    <div class="banner-card">
-      <div class="banner-card__content">
-        <div class="banner-card__title">🚀 Próximamente</div>
-        <div class="banner-card__desc">Los banners se cargarán desde Supabase. Creá la tabla "banners" para empezar.</div>
-        <a href="#contacto" class="banner-card__btn">Consultar</a>
-      </div>
-    </div>
-    <div class="banner-card">
-      <div class="banner-card__content">
-        <div class="banner-card__title">💡 ¿Tenés un proyecto?</div>
-        <div class="banner-card__desc">Contactanos y te asesoramos sin compromiso.</div>
-        <a href="#contacto" class="banner-card__btn">Hablar ahora</a>
-      </div>
-    </div>
-  `;
-}
-
-// Cargar banners al inicio
-loadBanners();
 
 // Matrix canvas
 (function() {
