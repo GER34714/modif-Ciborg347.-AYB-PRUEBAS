@@ -303,6 +303,7 @@
     <nav class="nav">
       <a href="index.html#portfolio">Portfolio</a>
       <a href="index.html#servicios">Servicios</a>
+      <a href="beneficios.html">Beneficios</a>
       <a href="index.html#faq">FAQ</a>
       <a href="index.html#contacto">Contacto</a>
     </nav>
@@ -317,6 +318,7 @@
 <nav class="mobileMenu" id="mobileMenu">
   <a href="index.html#portfolio">Portfolio</a>
   <a href="index.html#servicios">Servicios</a>
+  <a href="beneficios.html">Beneficios</a>
   <a href="index.html#faq">FAQ</a>
   <a href="index.html#contacto">Contacto</a>
   <a href="#" class="btn btn--wa" id="mobileWhatsAppBtn">WhatsApp</a>
@@ -338,6 +340,7 @@
       <div class="footer__links">
         <a href="index.html#portfolio">Proyectos</a>
         <a href="index.html#servicios">Servicios</a>
+        <a href="beneficios.html">Beneficios</a>
         <a href="index.html#faq">FAQ</a>
         <a href="index.html#contacto">Contacto</a>
       </div>
@@ -425,7 +428,7 @@
   }
 
   // ============================================================
-  // RENDERIZAR SERVICIO
+  // RENDERIZAR SERVICIO (con botón a beneficios)
   // ============================================================
   function renderService(service) {
     const container = document.getElementById('serviceContent');
@@ -459,6 +462,7 @@
       <div class="action-buttons">
         <a href="${waUrl(whatsappMsg)}" target="_blank" class="btn btn--wa">Consultar por WhatsApp → ${escapeHtml(service.price || '')}</a>
         <a href="index.html#servicios" class="btn btn-back">← Volver a servicios</a>
+        <a href="beneficios.html" class="btn btn--ghost">✨ Ver todos los beneficios</a>
       </div>
     `;
 
