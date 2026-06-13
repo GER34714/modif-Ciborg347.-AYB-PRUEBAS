@@ -182,12 +182,12 @@
     }
 
     .sidebar h3 {
-      margin-bottom: 20px;
+      margin-bottom: 15px;
       color: var(--cyan);
-      font-size: 18px;
+      font-size: 16px;
       border-bottom: 1px solid var(--border);
       padding-bottom: 8px;
-      margin-top: 15px;
+      margin-top: 20px;
     }
     .sidebar h3:first-of-type {
       margin-top: 0;
@@ -1022,7 +1022,7 @@
   </div>
 </div>
 
-<!-- Modal Banners -->
+<!-- Modal Banners (CORREGIDO) -->
 <div id="bannerModal" class="modal">
   <div class="modal-content">
     <h3 id="bannerModalTitle">📢 Nuevo Banner</h3>
@@ -1031,7 +1031,7 @@
       <div><label>Título</label><input type="text" id="bannerTitle" placeholder="Ej: Oferta especial"></div>
       <div><label>Orden</label><input type="number" id="bannerOrder" value="0"></div>
     </div>
-    <label>🖼️ Imagen del banner</label>
+    <label>🖼️ Imagen del banner *</label>
     <div style="display: flex; gap: 10px; margin-bottom: 10px;">
       <input type="url" id="bannerImageUrl" placeholder="https://..." style="flex:1;" onchange="previewBannerImage()">
       <button type="button" class="btn-upload" onclick="document.getElementById('bannerImageFile').click()">📁 Subir</button>
@@ -1043,6 +1043,14 @@
     <div class="form-row">
       <div><label>🔘 Texto del botón</label><input type="text" id="bannerBtnText" placeholder="Ej: Ver más"></div>
       <div><label>🔗 URL del botón</label><input type="url" id="bannerBtnUrl" placeholder="https://..."></div>
+    </div>
+    <div class="form-row">
+      <div><label>🎨 Color de fondo</label><input type="color" id="bannerBgColor" value="#1a1a2e"></div>
+      <div><label>📝 Color de texto</label><input type="color" id="bannerTextColor" value="#ffffff"></div>
+    </div>
+    <div class="form-row">
+      <div><label>⏱️ Duración (segundos)</label><input type="number" id="bannerDuracion" value="5" step="1"></div>
+      <div><label>📋 Tipo</label><select id="bannerType"><option value="text">Texto</option><option value="image">Imagen</option><option value="video">Video</option></select></div>
     </div>
     <label><input type="checkbox" id="bannerActive" checked> Activo</label>
     <div class="modal-actions">
@@ -1236,37 +1244,68 @@ let itemsPerPage = 10;
 let projectsPage = 1, servicesPage = 1, storiesPage = 1, leadsPage = 1, benefitsPage = 1, bannersPage = 1, approvedReviewsPage = 1, internalDataPage = 1, versionsPage = 1;
 
 // ============================================================
-// FUNCIÓN SUBIR IMAGEN A SUPABASE STORAGE
+// FUNCIÓN SUBIR IMAGEN A SUPABASE STORAGE (MEJORADA)
 // ============================================================
 async function uploadImage(inputId, file, previewId) {
-  if (!file) return;
-  
-  const fileExt = file.name.split('.').pop();
-  const fileName = `${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${fileExt}`;
-  const filePath = `${fileName}`;
-  
-  const { data, error } = await sb.storage.from(STORAGE_BUCKET).upload(filePath, file);
-  
-  if (error) {
-    console.error("Error subiendo imagen:", error);
-    alert("Error al subir la imagen: " + error.message);
+  if (!file) {
+    alert("No se seleccionó ningún archivo");
     return;
   }
   
-  const { data: urlData } = sb.storage.from(STORAGE_BUCKET).getPublicUrl(filePath);
-  const publicUrl = urlData.publicUrl;
-  
-  document.getElementById(inputId).value = publicUrl;
-  
-  if (previewId) {
-    const preview = document.getElementById(previewId);
-    if (preview) {
-      preview.src = publicUrl;
-      preview.style.display = 'block';
-    }
+  // Validar tipo de archivo
+  const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+  if (!allowedTypes.includes(file.type)) {
+    alert("❌ Solo se permiten imágenes (JPEG, PNG, WEBP, GIF)");
+    return;
   }
   
-  alert("✅ Imagen subida correctamente");
+  // Validar tamaño (máximo 5MB)
+  const maxSize = 5 * 1024 * 1024;
+  if (file.size > maxSize) {
+    alert("❌ La imagen no puede superar los 5MB");
+    return;
+  }
+  
+  const fileExt = file.name.split('.').pop();
+  const fileName = `${Date.now()}_${Math.random().toString(36).substring(2, 15)}.${fileExt}`;
+  const filePath = `${fileName}`;
+  
+  try {
+    const { data, error } = await sb.storage.from(STORAGE_BUCKET).upload(filePath, file, {
+      cacheControl: '3600',
+      upsert: false
+    });
+    
+    if (error) {
+      console.error("Error subiendo imagen:", error);
+      if (error.message.includes("row-level security policy")) {
+        alert("❌ Error de permisos en Storage.\n\nSolución: Ve a Supabase > Storage > Imagenes > Policies y agrega políticas de INSERT/SELECT para usuarios autenticados.");
+      } else if (error.message.includes("bucket not found")) {
+        alert("❌ El bucket 'Imagenes' no existe. Créalo en Supabase Storage.");
+      } else {
+        alert("Error al subir la imagen: " + error.message);
+      }
+      return;
+    }
+    
+    const { data: urlData } = sb.storage.from(STORAGE_BUCKET).getPublicUrl(filePath);
+    const publicUrl = urlData.publicUrl;
+    
+    document.getElementById(inputId).value = publicUrl;
+    
+    if (previewId) {
+      const preview = document.getElementById(previewId);
+      if (preview) {
+        preview.src = publicUrl;
+        preview.style.display = 'block';
+      }
+    }
+    
+    alert("✅ Imagen subida correctamente");
+  } catch (err) {
+    console.error("Error inesperado:", err);
+    alert("Error inesperado: " + err.message);
+  }
 }
 
 // ============================================================
@@ -1274,7 +1313,6 @@ async function uploadImage(inputId, file, previewId) {
 // ============================================================
 async function saveProjectVersion(projectId, actionType, snapshot, notes = '') {
   try {
-    // Obtener el último número de versión
     const { data: versions, error: countError } = await sb
       .from('project_versions')
       .select('version_number')
@@ -1317,7 +1355,6 @@ async function restoreProjectVersion(versionId) {
     
     const snapshot = version.snapshot;
     
-    // Restaurar los datos del proyecto
     const { error: updateError } = await sb
       .from('projects')
       .update({
@@ -1342,7 +1379,6 @@ async function restoreProjectVersion(versionId) {
     
     if (updateError) throw updateError;
     
-    // Guardar una nueva versión por la restauración
     await saveProjectVersion(version.project_id, 'restore', snapshot, `Restaurado desde versión ${version.version_number}`);
     
     alert('✅ Proyecto restaurado correctamente');
@@ -1682,7 +1718,6 @@ async function loadProjects() {
   const start = (projectsPage - 1) * itemsPerPage;
   const paginated = projects.slice(start, start + itemsPerPage);
   if (projects.length === 0) { container.innerHTML = '<div class="loading">No hay proyectos. Creá uno nuevo.</div>'; return; }
-  // Botón de versiones eliminado
   container.innerHTML = paginated.map(project => `<div class="item-card">${project.image_url ? `<img src="${escapeHtml(project.image_url)}" class="item-preview" onerror="this.style.display='none'">` : ''}<div class="item-info"><div class="item-title">${escapeHtml(project.title)}</div><div class="item-meta">📁 ${escapeHtml(project.categories?.name || 'Sin categoría')} · ${getStatusBadge(project.status)} ${project.featured ? '⭐ Destacado' : ''}</div></div><div class="item-actions"><button class="btn-edit" onclick="openProjectModal('${project.id}')">✏️ Editar</button><button class="btn-delete" onclick="deleteProject('${project.id}')">🗑️ Eliminar</button></div></div>`).join('');
   renderPagination('projectsPagination', projects.length, projectsPage, (page) => { projectsPage = page; loadProjects(); });
 }
@@ -1729,7 +1764,6 @@ window.openProjectModal = async function(id = null) {
 window.saveProject = async function() {
   const id = document.getElementById('projectId').value;
   
-  // Obtener el proyecto actual para el snapshot (si es edición)
   let oldProject = null;
   if (id) {
     const { data } = await sb.from('projects').select('*').eq('id', id).single();
@@ -1752,7 +1786,6 @@ window.saveProject = async function() {
   const result = id ? await sb.from('projects').update(payload).eq('id', id) : await sb.from('projects').insert([{ ...payload, created_at: new Date().toISOString() }]);
   if (result.error) { alert('Error: ' + result.error.message); return; }
   
-  // Guardar versión del proyecto
   const projectId = id || result.data[0].id;
   const snapshot = { ...payload, id: projectId };
   if (oldProject) {
@@ -1820,7 +1853,6 @@ window.openInternalDataModal = function(id, title) {
 window.saveInternalData = async function() {
   const id = document.getElementById('internalDataProjectId').value;
   
-  // Obtener el proyecto actual para el snapshot
   const { data: oldProject } = await sb.from('projects').select('*').eq('id', id).single();
   
   const payload = {
@@ -1847,7 +1879,7 @@ window.saveInternalData = async function() {
 }
 
 // ============================================================
-// BANNERS
+// BANNERS (CORREGIDO - Usa los nombres de columna correctos)
 // ============================================================
 async function loadBanners() {
   const container = document.getElementById('bannersList');
@@ -1858,33 +1890,156 @@ async function loadBanners() {
     if (error) throw error;
     banners = data || [];
     renderBannersList();
-  } catch(e) { container.innerHTML = '<div class="msg msg-error">Error al cargar banners</div>'; }
+  } catch(e) { 
+    console.error("Error cargando banners:", e);
+    container.innerHTML = '<div class="msg msg-error">Error al cargar banners: ' + e.message + '</div>'; 
+  }
 }
+
 function renderBannersList() {
   const container = document.getElementById('bannersList');
   if (!container) return;
-  if (banners.length === 0) { container.innerHTML = '<div class="loading">No hay banners. Creá uno nuevo.</div>'; return; }
+  if (banners.length === 0) { 
+    container.innerHTML = '<div class="loading">No hay banners. Creá uno nuevo.</div>'; 
+    return; 
+  }
   const start = (bannersPage - 1) * itemsPerPage;
   const paginated = banners.slice(start, start + itemsPerPage);
-  container.innerHTML = paginated.map(b => `<div class="item-card"><div class="item-info"><div class="item-title">📢 ${escapeHtml(b.title||'Sin título')}</div><div class="item-meta">${b.image_url?`🖼️ ${escapeHtml(b.image_url.substring(0,50))}...`:'Sin imagen'} · Orden: ${b.order_index||0} · ${b.active?'🟢 Activo':'🔴 Inactivo'}</div></div><div class="item-actions"><button class="btn-edit" onclick="openBannerModal('${b.id}')">✏️</button><button class="btn-delete" onclick="deleteBanner('${b.id}')">🗑️</button></div></div>`).join('');
-  renderPagination('bannersPagination', banners.length, bannersPage, (page) => { bannersPage = page; renderBannersList(); });
+  container.innerHTML = paginated.map(b => `
+    <div class="item-card">
+      ${b.image_url ? `<img src="${escapeHtml(b.image_url)}" class="item-preview" onerror="this.style.display='none'">` : ''}
+      <div class="item-info">
+        <div class="item-title">📢 ${escapeHtml(b.title || 'Sin título')}</div>
+        <div class="item-meta">
+          🖼️ ${b.image_url ? 'Con imagen' : 'Sin imagen'} · Orden: ${b.order_index || 0} · 
+          ${b.active !== false ? '🟢 Activo' : '🔴 Inactivo'}
+          ${b.type ? ` · Tipo: ${b.type}` : ''}
+        </div>
+        <div class="item-meta">
+          🔘 ${escapeHtml(b.button_text || b.btn_text || 'Ver más')} → ${escapeHtml(b.button_link || b.btn_url || '#')}
+        </div>
+        ${b.description ? `<div class="item-meta">📝 ${escapeHtml(b.description.substring(0, 80))}${b.description.length > 80 ? '...' : ''}</div>` : ''}
+      </div>
+      <div class="item-actions">
+        <button class="btn-edit" onclick="openBannerModal('${b.id}')">✏️</button>
+        <button class="btn-delete" onclick="deleteBanner('${b.id}')">🗑️</button>
+      </div>
+    </div>
+  `).join('');
+  renderPagination('bannersPagination', banners.length, bannersPage, (page) => { 
+    bannersPage = page; 
+    renderBannersList(); 
+  });
 }
+
 window.openBannerModal = function(id = null) {
   const modal = document.getElementById('bannerModal');
   document.getElementById('bannerModalTitle').textContent = id ? '✏️ Editar Banner' : '➕ Nuevo Banner';
   document.getElementById('bannerId').value = id || '';
-  if (id) { const b = banners.find(x=>x.id==id); if(b){ document.getElementById('bannerTitle').value = b.title||''; document.getElementById('bannerImageUrl').value = b.image_url||''; document.getElementById('bannerDescription').value = b.description||''; document.getElementById('bannerBtnText').value = b.btn_text||''; document.getElementById('bannerBtnUrl').value = b.btn_url||''; document.getElementById('bannerOrder').value = b.order_index||0; document.getElementById('bannerActive').checked = b.active!==false; if(b.image_url){ document.getElementById('bannerImagePreview').src = b.image_url; document.getElementById('bannerImagePreview').style.display = 'block'; } } }
-  else { document.getElementById('bannerTitle').value=''; document.getElementById('bannerImageUrl').value=''; document.getElementById('bannerDescription').value=''; document.getElementById('bannerBtnText').value='Ver más'; document.getElementById('bannerBtnUrl').value='#'; document.getElementById('bannerOrder').value='0'; document.getElementById('bannerActive').checked=true; document.getElementById('bannerImagePreview').style.display='none'; }
-  modal.style.display='flex';
+  
+  // Resetear valores por defecto
+  document.getElementById('bannerTitle').value = '';
+  document.getElementById('bannerImageUrl').value = '';
+  document.getElementById('bannerDescription').value = '';
+  document.getElementById('bannerBtnText').value = 'Ver más';
+  document.getElementById('bannerBtnUrl').value = '#';
+  document.getElementById('bannerOrder').value = '0';
+  document.getElementById('bannerActive').checked = true;
+  document.getElementById('bannerBgColor').value = '#1a1a2e';
+  document.getElementById('bannerTextColor').value = '#ffffff';
+  document.getElementById('bannerDuracion').value = '5';
+  document.getElementById('bannerType').value = 'image';
+  document.getElementById('bannerImagePreview').style.display = 'none';
+  
+  if (id) { 
+    const b = banners.find(x => x.id == id); 
+    if (b) { 
+      document.getElementById('bannerTitle').value = b.title || '';
+      document.getElementById('bannerImageUrl').value = b.image_url || '';
+      document.getElementById('bannerDescription').value = b.description || '';
+      // Usar button_text o btn_text como fallback
+      document.getElementById('bannerBtnText').value = b.button_text || b.btn_text || 'Ver más';
+      document.getElementById('bannerBtnUrl').value = b.button_link || b.btn_url || '#';
+      document.getElementById('bannerOrder').value = b.order_index || 0;
+      document.getElementById('bannerActive').checked = b.active !== false;
+      document.getElementById('bannerBgColor').value = b.bg_color || '#1a1a2e';
+      document.getElementById('bannerTextColor').value = b.text_color || '#ffffff';
+      document.getElementById('bannerDuracion').value = b.duracion_segundos || 5;
+      document.getElementById('bannerType').value = b.type || 'image';
+      if (b.image_url) {
+        document.getElementById('bannerImagePreview').src = b.image_url;
+        document.getElementById('bannerImagePreview').style.display = 'block';
+      }
+    } 
+  }
+  modal.style.display = 'flex';
 }
+
 window.saveBanner = async function() {
   const id = document.getElementById('bannerId').value;
-  const payload = { title:document.getElementById('bannerTitle').value, image_url:document.getElementById('bannerImageUrl').value, description:document.getElementById('bannerDescription').value, btn_text:document.getElementById('bannerBtnText').value, btn_url:document.getElementById('bannerBtnUrl').value, order_index:parseInt(document.getElementById('bannerOrder').value)||0, active:document.getElementById('bannerActive').checked, updated_at:new Date().toISOString() };
-  const result = id ? await sb.from('banners').update(payload).eq('id',id) : await sb.from('banners').insert([payload]);
-  if (result.error) alert('Error: '+result.error.message);
-  else { document.getElementById('bannerModal').style.display='none'; loadBanners(); loadDashboard(); }
+  
+  const imageUrl = document.getElementById('bannerImageUrl').value;
+  if (!imageUrl) {
+    alert("❌ La imagen del banner es obligatoria");
+    return;
+  }
+  
+  // Usar los nombres de columna correctos para tu base de datos
+  const payload = {
+    title: document.getElementById('bannerTitle').value || 'Sin título',
+    image_url: imageUrl,
+    description: document.getElementById('bannerDescription').value || '',
+    button_text: document.getElementById('bannerBtnText').value || 'Ver más',  // ← button_text
+    button_link: document.getElementById('bannerBtnUrl').value || '#',        // ← button_link
+    order_index: parseInt(document.getElementById('bannerOrder').value) || 0,
+    active: document.getElementById('bannerActive').checked,
+    bg_color: document.getElementById('bannerBgColor').value,
+    text_color: document.getElementById('bannerTextColor').value,
+    duracion_segundos: parseInt(document.getElementById('bannerDuracion').value) || 5,
+    type: document.getElementById('bannerType').value,
+    updated_at: new Date().toISOString()
+  };
+  
+  // También incluir btn_text y btn_url para compatibilidad con código existente
+  payload.btn_text = payload.button_text;
+  payload.btn_url = payload.button_link;
+  
+  try {
+    let result;
+    if (id) {
+      result = await sb.from('banners').update(payload).eq('id', id);
+    } else {
+      payload.created_at = new Date().toISOString();
+      result = await sb.from('banners').insert([payload]);
+    }
+    
+    if (result.error) {
+      console.error("Error guardando banner:", result.error);
+      alert("❌ Error: " + result.error.message);
+      return;
+    }
+    
+    document.getElementById('bannerModal').style.display = 'none';
+    loadBanners();
+    loadDashboard();
+    alert("✅ Banner guardado correctamente");
+    
+  } catch (err) {
+    console.error("Error:", err);
+    alert("❌ Error inesperado: " + err.message);
+  }
 }
-window.deleteBanner = async function(id) { if(confirm('¿Eliminar este banner?')){ const {error}=await sb.from('banners').delete().eq('id',id); if(error) alert('Error: '+error.message); else { loadBanners(); loadDashboard(); } } }
+
+window.deleteBanner = async function(id) { 
+  if (confirm('¿Eliminar este banner?')) { 
+    const { error } = await sb.from('banners').delete().eq('id', id); 
+    if (error) alert('Error: ' + error.message); 
+    else { 
+      loadBanners(); 
+      loadDashboard(); 
+    } 
+  } 
+}
 
 // ============================================================
 // VERSIONES
@@ -1940,7 +2095,6 @@ async function loadVersions(projectId) {
   
   renderPagination('versionsPagination', data.length, versionsPage, (page) => { versionsPage = page; loadVersions(projectId); });
   
-  // Actualizar el select también
   const select = document.getElementById('versionProjectSelect');
   if (select) select.value = projectId;
 }
