@@ -23,6 +23,9 @@
       --text: #e0e6ff;
       --text2: #9ca3ff;
       --white: #ffffff;
+      --success: #22c55e;
+      --warning: #f59e0b;
+      --danger: #ef4444;
     }
 
     [data-theme="light"] {
@@ -142,7 +145,7 @@
       cursor: pointer;
     }
 
-    /* Sidebar Toggle (hamburguesa) */
+    /* Sidebar Toggle */
     .sidebar-toggle {
       display: none;
       position: fixed;
@@ -300,6 +303,19 @@
       flex-wrap: wrap;
     }
 
+    /* Badges */
+    .badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .badge-active { background: var(--success); color: white; }
+    .badge-mensualidad { background: var(--cyan); color: white; }
+    .badge-unico { background: var(--violet); color: white; }
+    .badge-soporte { background: #f59e0b; color: white; }
+
     /* Botones */
     button {
       padding: 8px 16px;
@@ -329,6 +345,20 @@
       background: var(--bg3);
       border: 1px solid var(--border);
       color: var(--text);
+    }
+
+    .btn-upload {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 8px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+    .btn-upload:hover {
+      border-color: var(--cyan);
+      color: var(--cyan);
     }
 
     /* Modal */
@@ -388,7 +418,7 @@
     .image-preview {
       width: 100%;
       max-height: 150px;
-      object-fit: cover;
+      object-fit: contain;
       border-radius: 8px;
       margin: 10px 0;
       background: var(--bg3);
@@ -424,7 +454,7 @@
       color: var(--text2);
     }
 
-    /* Paginación mejorada */
+    /* Paginación */
     .pagination-container {
       display: flex;
       flex-wrap: wrap;
@@ -469,6 +499,21 @@
       border-radius: 8px;
       padding: 6px 10px;
       color: var(--text);
+    }
+
+    hr {
+      border-color: var(--border);
+      margin: 20px 0;
+    }
+
+    pre {
+      background: var(--bg3);
+      padding: 15px;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-size: 12px;
+      color: var(--text2);
+      font-family: monospace;
     }
 
     @media (max-width: 768px) {
@@ -541,6 +586,7 @@
         <h3>📋 Menú</h3>
         <button class="nav-btn active" data-view="dashboard">📊 Dashboard</button>
         <button class="nav-btn" data-view="projects">📁 Proyectos</button>
+        <button class="nav-btn" data-view="internalData">📋 Datos Internos</button>
         <button class="nav-btn" data-view="services">💰 Servicios</button>
         <button class="nav-btn" data-view="success-stories">🏆 Casos de éxito</button>
         <button class="nav-btn" data-view="featured">⭐ Destacados</button>
@@ -565,14 +611,24 @@
           <div id="recentProjects" class="items-list"></div>
         </div>
 
-        <!-- Proyectos -->
+        <!-- Proyectos (Frontend - SIN MODIFICAR) -->
         <div id="projectsPanel" class="panel">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
-            <h2>📁 Proyectos</h2>
+            <h2>📁 Proyectos (Frontend)</h2>
             <button class="btn-primary" id="newProjectBtn">➕ Nuevo proyecto</button>
           </div>
           <div id="projectsList" class="items-list"></div>
           <div id="projectsPagination" class="pagination-container"></div>
+        </div>
+
+        <!-- DATOS INTERNOS - NUEVA SECCIÓN -->
+        <div id="internalDataPanel" class="panel">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+            <h2>📋 Datos Internos de Proyectos</h2>
+            <p style="color: var(--text2); font-size: 12px;">⚠️ Esta información NO se muestra en el frontend</p>
+          </div>
+          <div id="internalDataList" class="items-list"></div>
+          <div id="internalDataPagination" class="pagination-container"></div>
         </div>
 
         <!-- Servicios -->
@@ -717,7 +773,7 @@
   </div>
 </div>
 
-<!-- MODALES COMPLETOS -->
+<!-- ==================== MODALES ==================== -->
 
 <!-- Modal Servicios -->
 <div id="serviceModal" class="modal">
@@ -731,7 +787,11 @@
     <label>💰 Precio</label>
     <input type="text" id="servicePrice" placeholder="Ej: $700.000">
     <label>🖼️ URL de imagen (portada)</label>
-    <input type="url" id="serviceImageUrl" placeholder="https://..." onchange="previewServiceImage()">
+    <div style="display: flex; gap: 10px; align-items: center;">
+      <input type="url" id="serviceImageUrl" placeholder="https://..." style="flex:1;" onchange="previewServiceImage()">
+      <button type="button" class="btn-upload" onclick="document.getElementById('serviceImageFile').click()">📁 Subir</button>
+      <input type="file" id="serviceImageFile" accept="image/*" style="display:none;" onchange="uploadImage('serviceImageUrl', this.files[0], 'serviceImagePreview')">
+    </div>
     <img id="serviceImagePreview" class="image-preview" style="display: none;">
     <label>📝 Descripción</label>
     <textarea id="serviceDescription" rows="3" placeholder="Descripción del servicio..."></textarea>
@@ -745,6 +805,110 @@
     <div class="modal-actions">
       <button id="serviceSaveBtn" class="btn-primary">💾 Guardar</button>
       <button id="serviceCancelBtn">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Proyectos (Frontend - SIN MODIFICAR) -->
+<div id="projectModal" class="modal">
+  <div class="modal-content">
+    <h3 id="projectModalTitle">📁 Nuevo Proyecto</h3>
+    <input type="hidden" id="projectId">
+    <label>Título *</label>
+    <input type="text" id="projectTitle" placeholder="Ej: Web para Pizzería">
+    <label>URL demo</label>
+    <input type="url" id="projectDemoUrl" placeholder="https://...">
+    <label>🖼️ URL de imagen</label>
+    <div style="display: flex; gap: 10px;">
+      <input type="url" id="projectImageUrl" placeholder="https://..." style="flex:1;" onchange="previewProjectImage()">
+      <button type="button" class="btn-upload" onclick="document.getElementById('projectImageFile').click()">📁 Subir</button>
+      <input type="file" id="projectImageFile" accept="image/*" style="display:none;" onchange="uploadImage('projectImageUrl', this.files[0], 'projectImagePreview')">
+    </div>
+    <img id="projectImagePreview" class="image-preview" style="display: none;">
+    <label>Categoría</label>
+    <select id="projectCategoryId"></select>
+    <label>Descripción corta</label>
+    <textarea id="projectShortDesc" rows="2"></textarea>
+    <label>Estado</label>
+    <select id="projectStatus">
+      <option value="published">Publicado</option>
+      <option value="draft">Borrador</option>
+      <option value="featured">Destacado</option>
+    </select>
+    <label>🔢 Orden</label>
+    <input type="number" id="projectOrder" value="0">
+    <label style="display: flex; align-items: center; gap: 10px;">
+      <input type="checkbox" id="projectActive" checked> Activo
+    </label>
+    <div class="modal-actions">
+      <button id="projectSaveBtn" class="btn-primary">💾 Guardar</button>
+      <button id="projectCancelBtn">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Datos Internos (NUEVO - SOLO CAMPOS INTERNOS) -->
+<div id="internalDataModal" class="modal">
+  <div class="modal-content">
+    <h3 id="internalDataModalTitle">📋 Editar Datos Internos</h3>
+    <input type="hidden" id="internalDataProjectId">
+    <p style="margin-bottom: 15px; color: var(--cyan); font-size: 13px;" id="internalDataProjectTitle"></p>
+    
+    <div class="form-row">
+      <div><label>👤 Cliente</label><input type="text" id="internalClientName" placeholder="Nombre del cliente"></div>
+      <div><label>⚙️ URL Panel Admin</label><input type="url" id="internalAdminPanelUrl" placeholder="https://admin..."></div>
+    </div>
+    <div class="form-row">
+      <div>
+        <label>Tipo de servicio</label>
+        <select id="internalServiceType">
+          <option value="unico">Pago único</option>
+          <option value="mensualidad">Mensualidad</option>
+          <option value="soporte">Soporte</option>
+        </select>
+      </div>
+      <div><label>💰 Monto</label><input type="number" id="internalAmount" placeholder="0" step="0.01"></div>
+    </div>
+    <div class="form-row">
+      <div><label>📅 Fecha inicio</label><input type="date" id="internalStartDate"></div>
+      <div><label>📅 Fecha fin</label><input type="date" id="internalEndDate"></div>
+    </div>
+    <label>📝 Observaciones / Notas</label>
+    <textarea id="internalNotes" rows="3" placeholder="Notas adicionales sobre el cliente o proyecto..."></textarea>
+    
+    <div class="modal-actions">
+      <button id="internalDataSaveBtn" class="btn-primary">💾 Guardar cambios</button>
+      <button id="internalDataCancelBtn">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Banners -->
+<div id="bannerModal" class="modal">
+  <div class="modal-content">
+    <h3 id="bannerModalTitle">📢 Nuevo Banner</h3>
+    <input type="hidden" id="bannerId">
+    <div class="form-row">
+      <div><label>Título</label><input type="text" id="bannerTitle" placeholder="Ej: Oferta especial"></div>
+      <div><label>Orden</label><input type="number" id="bannerOrder" value="0"></div>
+    </div>
+    <label>🖼️ URL de imagen</label>
+    <div style="display: flex; gap: 10px; align-items: center;">
+      <input type="url" id="bannerImageUrl" placeholder="https://..." style="flex:1;" onchange="previewBannerImage()">
+      <button type="button" class="btn-upload" onclick="document.getElementById('bannerImageFile').click()">📁 Subir</button>
+      <input type="file" id="bannerImageFile" accept="image/*" style="display:none;" onchange="uploadImage('bannerImageUrl', this.files[0], 'bannerImagePreview')">
+    </div>
+    <img id="bannerImagePreview" class="image-preview" style="display: none;">
+    <label>📝 Descripción</label>
+    <textarea id="bannerDescription" rows="2" placeholder="Descripción del banner..."></textarea>
+    <div class="form-row">
+      <div><label>🔘 Texto del botón</label><input type="text" id="bannerBtnText" placeholder="Ej: Ver más"></div>
+      <div><label>🔗 URL del botón</label><input type="url" id="bannerBtnUrl" placeholder="https://..."></div>
+    </div>
+    <label><input type="checkbox" id="bannerActive" checked> Activo</label>
+    <div class="modal-actions">
+      <button id="bannerSaveBtn" class="btn-primary">💾 Guardar</button>
+      <button id="bannerCancelBtn">Cancelar</button>
     </div>
   </div>
 </div>
@@ -807,39 +971,6 @@
     <div class="modal-actions">
       <button id="questionSaveBtn" class="btn-primary">💾 Guardar</button>
       <button id="questionCancelBtn">Cancelar</button>
-    </div>
-  </div>
-</div>
-
-<!-- Modal Proyectos -->
-<div id="projectModal" class="modal">
-  <div class="modal-content">
-    <h3 id="projectModalTitle">📁 Nuevo Proyecto</h3>
-    <input type="hidden" id="projectId">
-    <label>Título *</label>
-    <input type="text" id="projectTitle" placeholder="Ej: Web para Pizzería">
-    <label>URL demo</label>
-    <input type="url" id="projectDemoUrl" placeholder="https://...">
-    <label>🖼️ URL de imagen</label>
-    <input type="url" id="projectImageUrl" placeholder="https://...">
-    <label>Categoría</label>
-    <select id="projectCategoryId"></select>
-    <label>Descripción corta</label>
-    <textarea id="projectShortDesc" rows="2"></textarea>
-    <label>Estado</label>
-    <select id="projectStatus">
-      <option value="published">Publicado</option>
-      <option value="draft">Borrador</option>
-      <option value="featured">Destacado</option>
-    </select>
-    <label>🔢 Orden</label>
-    <input type="number" id="projectOrder" value="0">
-    <label style="display: flex; align-items: center; gap: 10px;">
-      <input type="checkbox" id="projectActive" checked> Activo
-    </label>
-    <div class="modal-actions">
-      <button id="projectSaveBtn" class="btn-primary">💾 Guardar</button>
-      <button id="projectCancelBtn">Cancelar</button>
     </div>
   </div>
 </div>
@@ -921,31 +1052,6 @@
   </div>
 </div>
 
-<!-- Modal Banners -->
-<div id="bannerModal" class="modal">
-  <div class="modal-content">
-    <h3 id="bannerModalTitle">📢 Nuevo Banner</h3>
-    <input type="hidden" id="bannerId">
-    <div class="form-row">
-      <div><label>Título</label><input type="text" id="bannerTitle" placeholder="Ej: Oferta especial"></div>
-      <div><label>Orden</label><input type="number" id="bannerOrder" value="0"></div>
-    </div>
-    <label>🖼️ URL de imagen</label>
-    <input type="url" id="bannerImageUrl" placeholder="https://...">
-    <label>📝 Descripción</label>
-    <textarea id="bannerDescription" rows="2" placeholder="Descripción del banner..."></textarea>
-    <div class="form-row">
-      <div><label>🔘 Texto del botón</label><input type="text" id="bannerBtnText" placeholder="Ej: Ver más"></div>
-      <div><label>🔗 URL del botón</label><input type="url" id="bannerBtnUrl" placeholder="https://..."></div>
-    </div>
-    <label><input type="checkbox" id="bannerActive" checked> Activo</label>
-    <div class="modal-actions">
-      <button id="bannerSaveBtn" class="btn-primary">💾 Guardar</button>
-      <button id="bannerCancelBtn">Cancelar</button>
-    </div>
-  </div>
-</div>
-
 <!-- Modal FAQs -->
 <div id="faqModal" class="modal">
   <div class="modal-content">
@@ -974,6 +1080,7 @@
 const SUPABASE_URL = "https://fhxcumwhgtfirznnznjx.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZoeGN1bXdoZ3RmaXJ6bm56bmp4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc5OTYyNzEsImV4cCI6MjA4MzU3MjI3MX0.7z1B099L4yrA9k1JxwvYGCABzqiqYtkUClI3E8wQ2zA";
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const STORAGE_BUCKET = "Imagenes";
 
 // Estado global
 let currentUser = null;
@@ -992,17 +1099,50 @@ let settings = {};
 
 // Paginación
 let itemsPerPage = 10;
-let projectsPage = 1, servicesPage = 1, storiesPage = 1, leadsPage = 1, benefitsPage = 1, bannersPage = 1, approvedReviewsPage = 1;
+let projectsPage = 1, servicesPage = 1, storiesPage = 1, leadsPage = 1, benefitsPage = 1, bannersPage = 1, approvedReviewsPage = 1, internalDataPage = 1;
 
 // ============================================================
-// TEMA CLARO/OSCURO
+// FUNCIÓN SUBIR IMAGEN A SUPABASE STORAGE
+// ============================================================
+async function uploadImage(inputId, file, previewId) {
+  if (!file) return;
+  
+  const fileExt = file.name.split('.').pop();
+  const fileName = `${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${fileExt}`;
+  const filePath = `${fileName}`;
+  
+  const { data, error } = await sb.storage.from(STORAGE_BUCKET).upload(filePath, file);
+  
+  if (error) {
+    console.error("Error subiendo imagen:", error);
+    alert("Error al subir la imagen: " + error.message);
+    return;
+  }
+  
+  const { data: urlData } = sb.storage.from(STORAGE_BUCKET).getPublicUrl(filePath);
+  const publicUrl = urlData.publicUrl;
+  
+  document.getElementById(inputId).value = publicUrl;
+  
+  if (previewId) {
+    const preview = document.getElementById(previewId);
+    if (preview) {
+      preview.src = publicUrl;
+      preview.style.display = 'block';
+    }
+  }
+  
+  alert("✅ Imagen subida correctamente");
+}
+
+// ============================================================
+// TEMA Y AUTENTICACIÓN
 // ============================================================
 function initTheme() {
-  const saved = localStorage.getItem('admin-theme');
-  const theme = saved || 'dark';
-  document.documentElement.setAttribute('data-theme', theme);
+  const saved = localStorage.getItem('admin-theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', saved);
   const btn = document.getElementById('themeToggleBtn');
-  if (btn) btn.textContent = theme === 'dark' ? '☀️ Modo claro' : '🌙 Modo oscuro';
+  if (btn) btn.textContent = saved === 'dark' ? '☀️ Modo claro' : '🌙 Modo oscuro';
 }
 function toggleTheme() {
   const current = document.documentElement.getAttribute('data-theme');
@@ -1015,15 +1155,10 @@ function toggleTheme() {
 document.getElementById('themeToggleBtn')?.addEventListener('click', toggleTheme);
 initTheme();
 
-// ============================================================
-// MENÚ HAMBURGUESA
-// ============================================================
 const sidebarToggleBtn = document.getElementById('sidebarToggleBtn');
 const sidebar = document.getElementById('sidebar');
 if (sidebarToggleBtn && sidebar) {
-  sidebarToggleBtn.addEventListener('click', () => {
-    sidebar.classList.toggle('open');
-  });
+  sidebarToggleBtn.addEventListener('click', () => sidebar.classList.toggle('open'));
   document.addEventListener('click', (e) => {
     if (window.innerWidth <= 768 && sidebar.classList.contains('open') && !sidebar.contains(e.target) && e.target !== sidebarToggleBtn) {
       sidebar.classList.remove('open');
@@ -1031,18 +1166,10 @@ if (sidebarToggleBtn && sidebar) {
   });
 }
 
-// ============================================================
-// CERRAR MODALES CLIC FUERA
-// ============================================================
 window.onclick = function(event) {
-  if (event.target.classList.contains('modal')) {
-    event.target.style.display = 'none';
-  }
+  if (event.target.classList.contains('modal')) event.target.style.display = 'none';
 }
 
-// ============================================================
-// AUTENTICACIÓN
-// ============================================================
 const loginBox = document.getElementById('loginBox');
 const adminPanel = document.getElementById('adminPanel');
 const loginBtn = document.getElementById('loginBtn');
@@ -1078,18 +1205,35 @@ logoutBtn.addEventListener('click', async () => { await sb.auth.signOut(); check
 // NAVEGACIÓN
 // ============================================================
 const navBtns = document.querySelectorAll('.nav-btn');
-const panels = ['dashboardPanel', 'projectsPanel', 'servicesPanel', 'successStoriesPanel', 'featuredPanel', 'categoriesPanel', 'brandsPanel', 'benefitsPanel', 'bannersPanel', 'assistantPanel', 'leadsPanel', 'reviewsPanel', 'faqsPanel', 'historyPanel', 'settingsPanel'];
+const panelMap = {
+  dashboard: 'dashboardPanel',
+  projects: 'projectsPanel',
+  internalData: 'internalDataPanel',
+  services: 'servicesPanel',
+  'success-stories': 'successStoriesPanel',
+  featured: 'featuredPanel',
+  categories: 'categoriesPanel',
+  brands: 'brandsPanel',
+  benefits: 'benefitsPanel',
+  banners: 'bannersPanel',
+  assistant: 'assistantPanel',
+  leads: 'leadsPanel',
+  reviews: 'reviewsPanel',
+  faqs: 'faqsPanel',
+  history: 'historyPanel',
+  settings: 'settingsPanel'
+};
 
 navBtns.forEach(btn => {
   btn.addEventListener('click', () => {
     navBtns.forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
-    panels.forEach(pid => document.getElementById(pid).classList.remove('active'));
+    Object.values(panelMap).forEach(pid => document.getElementById(pid).classList.remove('active'));
     const view = btn.dataset.view;
-    const map = { dashboard:'dashboardPanel', projects:'projectsPanel', services:'servicesPanel', 'success-stories':'successStoriesPanel', featured:'featuredPanel', categories:'categoriesPanel', brands:'brandsPanel', benefits:'benefitsPanel', banners:'bannersPanel', assistant:'assistantPanel', leads:'leadsPanel', reviews:'reviewsPanel', faqs:'faqsPanel', history:'historyPanel', settings:'settingsPanel' };
-    document.getElementById(map[view]).classList.add('active');
+    document.getElementById(panelMap[view]).classList.add('active');
     if (view === 'services') loadServices();
     if (view === 'projects') loadProjects();
+    if (view === 'internalData') loadInternalData();
     if (view === 'success-stories') loadStories();
     if (view === 'featured') loadFeaturedProjects();
     if (view === 'categories') loadCategories();
@@ -1111,11 +1255,34 @@ navBtns.forEach(btn => {
 // ============================================================
 function escapeHtml(s) { return String(s ?? '').replace(/[&<>]/g, m => m === '&' ? '&amp;' : m === '<' ? '&lt;' : '&gt;'); }
 function formatDate(d) { return d ? new Date(d).toLocaleString('es-AR') : ''; }
-function previewServiceImage() { const url = document.getElementById('serviceImageUrl').value; const preview = document.getElementById('serviceImagePreview'); if (url) { preview.src = url; preview.style.display = 'block'; } else preview.style.display = 'none'; }
+function formatDateOnly(d) { return d ? new Date(d).toLocaleDateString('es-AR') : ''; }
 
-// ============================================================
-// PAGINACIÓN
-// ============================================================
+function previewServiceImage() { 
+  const url = document.getElementById('serviceImageUrl').value; 
+  const preview = document.getElementById('serviceImagePreview'); 
+  if (url) { preview.src = url; preview.style.display = 'block'; } 
+  else preview.style.display = 'none'; 
+}
+function previewProjectImage() { 
+  const url = document.getElementById('projectImageUrl').value; 
+  const preview = document.getElementById('projectImagePreview'); 
+  if (url) { preview.src = url; preview.style.display = 'block'; } 
+  else preview.style.display = 'none'; 
+}
+function previewBannerImage() { 
+  const url = document.getElementById('bannerImageUrl').value; 
+  const preview = document.getElementById('bannerImagePreview'); 
+  if (url) { preview.src = url; preview.style.display = 'block'; } 
+  else preview.style.display = 'none'; 
+}
+
+function getServiceTypeBadge(type) {
+  if (type === 'mensualidad') return '<span class="badge badge-mensualidad">📅 Mensualidad</span>';
+  if (type === 'unico') return '<span class="badge badge-unico">💰 Pago único</span>';
+  if (type === 'soporte') return '<span class="badge badge-soporte">🛠️ Soporte</span>';
+  return '';
+}
+
 function renderPagination(containerId, total, currentPage, onPageChange) {
   const container = document.getElementById(containerId);
   if (!container) return;
@@ -1184,7 +1351,7 @@ async function loadDashboard() {
 }
 
 // ============================================================
-// SERVICIOS - COMPLETO
+// SERVICIOS
 // ============================================================
 async function loadServices() {
   const container = document.getElementById('servicesList');
@@ -1258,7 +1425,7 @@ window.saveService = async function() {
 window.deleteService = async function(id) { if(confirm('¿Eliminar este servicio?')){ await sb.from('services').delete().eq('id',id); loadServices(); loadDashboard(); } }
 
 // ============================================================
-// PROYECTOS - COMPLETO
+// PROYECTOS (Frontend - SIN MODIFICAR)
 // ============================================================
 async function loadProjects() {
   const container = document.getElementById('projectsList');
@@ -1294,6 +1461,10 @@ window.openProjectModal = async function(id = null) {
       document.getElementById('projectStatus').value = project.status || 'published';
       document.getElementById('projectOrder').value = project.order_index || 0;
       document.getElementById('projectActive').checked = project.active !== false;
+      if (project.image_url) {
+        document.getElementById('projectImagePreview').src = project.image_url;
+        document.getElementById('projectImagePreview').style.display = 'block';
+      }
     }
   } else {
     document.getElementById('projectTitle').value = '';
@@ -1303,6 +1474,7 @@ window.openProjectModal = async function(id = null) {
     document.getElementById('projectStatus').value = 'published';
     document.getElementById('projectOrder').value = '0';
     document.getElementById('projectActive').checked = true;
+    document.getElementById('projectImagePreview').style.display = 'none';
   }
   modal.style.display = 'flex';
 }
@@ -1329,7 +1501,65 @@ window.saveProject = async function() {
 window.deleteProject = async function(id) { if(confirm('¿Eliminar este proyecto?')){ await sb.from('projects').delete().eq('id',id); loadProjects(); loadDashboard(); } }
 
 // ============================================================
-// CASOS DE ÉXITO - COMPLETO
+// DATOS INTERNOS (NUEVA SECCIÓN)
+// ============================================================
+async function loadInternalData() {
+  const container = document.getElementById('internalDataList');
+  container.innerHTML = '<div class="loading">Cargando proyectos...</div>';
+  const { data, error } = await sb.from('projects').select('id, title, client_name, admin_panel_url, service_type, amount, start_date, end_date, client_notes').order('created_at', { ascending: false });
+  if (error) { container.innerHTML = `<div class="msg msg-error">Error: ${error.message}</div>`; return; }
+  projects = data || [];
+  const start = (internalDataPage - 1) * itemsPerPage;
+  const paginated = projects.slice(start, start + itemsPerPage);
+  if (projects.length === 0) { container.innerHTML = '<div class="loading">No hay proyectos. Creá uno nuevo en "Proyectos" primero.</div>'; return; }
+  container.innerHTML = paginated.map(project => `<div class="item-card"><div class="item-info"><div class="item-title">📋 ${escapeHtml(project.title)}</div><div class="item-meta">👤 Cliente: ${escapeHtml(project.client_name || 'No asignado')} · ${project.service_type ? getServiceTypeBadge(project.service_type) : ''} ${project.amount ? ` 💵 $${project.amount}` : ''}</div><div class="item-meta">${project.start_date ? `📅 Inicio: ${formatDateOnly(project.start_date)}` : ''} ${project.end_date ? ` · Fin: ${formatDateOnly(project.end_date)}` : ''}</div>${project.admin_panel_url ? `<div class="item-meta">⚙️ Panel: <a href="${escapeHtml(project.admin_panel_url)}" target="_blank" style="color: var(--cyan);">${escapeHtml(project.admin_panel_url.substring(0, 40))}...</a></div>` : ''}</div><div class="item-actions"><button class="btn-edit" onclick="openInternalDataModal('${project.id}', '${escapeHtml(project.title)}')">✏️ Editar datos internos</button></div></div>`).join('');
+  renderPagination('internalDataPagination', projects.length, internalDataPage, (page) => { internalDataPage = page; loadInternalData(); });
+}
+
+window.openInternalDataModal = function(id, title) {
+  const modal = document.getElementById('internalDataModal');
+  document.getElementById('internalDataModalTitle').textContent = `📋 Editar Datos Internos - ${title}`;
+  document.getElementById('internalDataProjectTitle').innerHTML = `📁 Proyecto: <strong>${title}</strong>`;
+  document.getElementById('internalDataProjectId').value = id;
+  
+  const project = projects.find(p => p.id == id);
+  if (project) {
+    document.getElementById('internalClientName').value = project.client_name || '';
+    document.getElementById('internalAdminPanelUrl').value = project.admin_panel_url || '';
+    document.getElementById('internalServiceType').value = project.service_type || 'unico';
+    document.getElementById('internalAmount').value = project.amount || '';
+    document.getElementById('internalStartDate').value = project.start_date || '';
+    document.getElementById('internalEndDate').value = project.end_date || '';
+    document.getElementById('internalNotes').value = project.client_notes || '';
+  }
+  modal.style.display = 'flex';
+}
+
+window.saveInternalData = async function() {
+  const id = document.getElementById('internalDataProjectId').value;
+  const payload = {
+    client_name: document.getElementById('internalClientName').value || null,
+    admin_panel_url: document.getElementById('internalAdminPanelUrl').value || null,
+    service_type: document.getElementById('internalServiceType').value,
+    amount: parseFloat(document.getElementById('internalAmount').value) || null,
+    start_date: document.getElementById('internalStartDate').value || null,
+    end_date: document.getElementById('internalEndDate').value || null,
+    client_notes: document.getElementById('internalNotes').value || null,
+    updated_at: new Date().toISOString()
+  };
+  
+  const { error } = await sb.from('projects').update(payload).eq('id', id);
+  if (error) alert('Error: ' + error.message);
+  else {
+    document.getElementById('internalDataModal').style.display = 'none';
+    loadInternalData();
+    loadDashboard();
+    alert('✅ Datos internos guardados correctamente');
+  }
+}
+
+// ============================================================
+// CASOS DE ÉXITO
 // ============================================================
 async function loadStories() {
   const container = document.getElementById('storiesList');
@@ -1394,7 +1624,7 @@ window.saveStory = async function() {
 window.deleteStory = async function(id) { if(confirm('¿Eliminar este caso de éxito?')){ await sb.from('success_stories').delete().eq('id',id); loadStories(); loadDashboard(); } }
 
 // ============================================================
-// CATEGORÍAS - COMPLETO
+// CATEGORÍAS
 // ============================================================
 async function loadCategories() {
   const container = document.getElementById('categoriesList');
@@ -1447,7 +1677,7 @@ window.saveCategory = async function() {
 window.deleteCategory = async function(id) { if(confirm('¿Eliminar esta categoría?')){ await sb.from('categories').delete().eq('id',id); loadCategories(); loadDashboard(); } }
 
 // ============================================================
-// MARCAS - COMPLETO
+// MARCAS
 // ============================================================
 async function loadBrands() {
   const container = document.getElementById('brandsList');
@@ -1502,7 +1732,7 @@ window.saveBrand = async function() {
 window.deleteBrand = async function(id) { if(confirm('¿Eliminar esta marca?')){ await sb.from('trusted_brands').delete().eq('id',id); loadBrands(); loadDashboard(); } }
 
 // ============================================================
-// BENEFICIOS - COMPLETO
+// BENEFICIOS
 // ============================================================
 async function loadBenefits() {
   const container = document.getElementById('benefitsList');
@@ -1543,7 +1773,7 @@ window.saveBenefit = async function() {
 window.deleteBenefit = async function(id) { if(confirm('¿Eliminar este beneficio?')){ const {error}=await sb.from('benefits').delete().eq('id',id); if(error) alert('Error: '+error.message); else { loadBenefits(); loadDashboard(); } } }
 
 // ============================================================
-// BANNERS - COMPLETO
+// BANNERS
 // ============================================================
 async function loadBanners() {
   const container = document.getElementById('bannersList');
@@ -1569,8 +1799,8 @@ window.openBannerModal = function(id = null) {
   const modal = document.getElementById('bannerModal');
   document.getElementById('bannerModalTitle').textContent = id ? '✏️ Editar Banner' : '➕ Nuevo Banner';
   document.getElementById('bannerId').value = id || '';
-  if (id) { const b = banners.find(x=>x.id==id); if(b){ document.getElementById('bannerTitle').value = b.title||''; document.getElementById('bannerImageUrl').value = b.image_url||''; document.getElementById('bannerDescription').value = b.description||''; document.getElementById('bannerBtnText').value = b.btn_text||''; document.getElementById('bannerBtnUrl').value = b.btn_url||''; document.getElementById('bannerOrder').value = b.order_index||0; document.getElementById('bannerActive').checked = b.active!==false; } }
-  else { document.getElementById('bannerTitle').value=''; document.getElementById('bannerImageUrl').value=''; document.getElementById('bannerDescription').value=''; document.getElementById('bannerBtnText').value='Ver más'; document.getElementById('bannerBtnUrl').value='#'; document.getElementById('bannerOrder').value='0'; document.getElementById('bannerActive').checked=true; }
+  if (id) { const b = banners.find(x=>x.id==id); if(b){ document.getElementById('bannerTitle').value = b.title||''; document.getElementById('bannerImageUrl').value = b.image_url||''; document.getElementById('bannerDescription').value = b.description||''; document.getElementById('bannerBtnText').value = b.btn_text||''; document.getElementById('bannerBtnUrl').value = b.btn_url||''; document.getElementById('bannerOrder').value = b.order_index||0; document.getElementById('bannerActive').checked = b.active!==false; if(b.image_url){ document.getElementById('bannerImagePreview').src = b.image_url; document.getElementById('bannerImagePreview').style.display = 'block'; } } }
+  else { document.getElementById('bannerTitle').value=''; document.getElementById('bannerImageUrl').value=''; document.getElementById('bannerDescription').value=''; document.getElementById('bannerBtnText').value='Ver más'; document.getElementById('bannerBtnUrl').value='#'; document.getElementById('bannerOrder').value='0'; document.getElementById('bannerActive').checked=true; document.getElementById('bannerImagePreview').style.display='none'; }
   modal.style.display='flex';
 }
 window.saveBanner = async function() {
@@ -1583,7 +1813,7 @@ window.saveBanner = async function() {
 window.deleteBanner = async function(id) { if(confirm('¿Eliminar este banner?')){ const {error}=await sb.from('banners').delete().eq('id',id); if(error) alert('Error: '+error.message); else { loadBanners(); loadDashboard(); } } }
 
 // ============================================================
-// ASISTENTE (PREGUNTAS) - COMPLETO
+// ASISTENTE (PREGUNTAS)
 // ============================================================
 async function loadQuestions() {
   const container = document.getElementById('questionsList');
@@ -1655,7 +1885,7 @@ window.saveQuestion = async function() {
 window.deleteQuestion = async function(id) { if(confirm('¿Eliminar esta pregunta?')){ await sb.from('assistant_questions').delete().eq('id',id); loadQuestions(); } }
 
 // ============================================================
-// LEADS - COMPLETO
+// LEADS
 // ============================================================
 async function loadLeads() {
   const container = document.getElementById('leadsList');
@@ -1684,7 +1914,7 @@ function exportLeadsToCSV() {
 }
 
 // ============================================================
-// RESEÑAS - COMPLETO
+// RESEÑAS
 // ============================================================
 async function loadReviews() {
   const pendingContainer = document.getElementById('pendingReviewsList');
@@ -1712,7 +1942,7 @@ async function rejectReview(id) { if(confirm('¿Rechazar/eliminar esta reseña?'
 async function deleteApprovedReview(id) { if(confirm('¿Eliminar esta reseña permanentemente?')){ const { error } = await sb.from('reviews').delete().eq('id', id); if(error) alert('Error: '+error.message); else loadReviews(); } }
 
 // ============================================================
-// FAQs - COMPLETO
+// FAQs
 // ============================================================
 async function loadFaqs() {
   const container = document.getElementById('faqsList');
@@ -1764,7 +1994,7 @@ window.saveFaq = async function() {
 window.deleteFaq = async function(id) { if(confirm('¿Eliminar esta FAQ?')){ await sb.from('faqs').delete().eq('id',id); loadFaqs(); loadDashboard(); } }
 
 // ============================================================
-// DESTACADOS - COMPLETO
+// DESTACADOS
 // ============================================================
 async function loadFeaturedProjects() {
   const container = document.getElementById('featuredList');
@@ -1782,7 +2012,7 @@ async function toggleFeatured(id, featured) {
 }
 
 // ============================================================
-// HISTORIAL - COMPLETO
+// HISTORIAL
 // ============================================================
 async function loadHistory() {
   const projectContainer = document.getElementById('projectHistoryList');
@@ -1798,7 +2028,7 @@ async function loadHistory() {
 }
 
 // ============================================================
-// SETTINGS - COMPLETO
+// SETTINGS
 // ============================================================
 async function loadSettings() {
   const { data, error } = await sb.from('site_settings').select('*').eq('id', 'global').maybeSingle();
@@ -1832,6 +2062,9 @@ document.getElementById('newQuestionBtn').onclick = () => openQuestionModal();
 document.getElementById('newFaqBtn').onclick = () => openFaqModal();
 document.getElementById('exportLeadsBtn').onclick = exportLeadsToCSV;
 document.getElementById('saveSettingsBtn').onclick = saveSettings;
+document.getElementById('internalDataSaveBtn').onclick = saveInternalData;
+document.getElementById('internalDataCancelBtn').onclick = () => document.getElementById('internalDataModal').style.display = 'none';
+
 document.getElementById('serviceSaveBtn').onclick = saveService;
 document.getElementById('serviceCancelBtn').onclick = () => document.getElementById('serviceModal').style.display = 'none';
 document.getElementById('projectSaveBtn').onclick = saveProject;
@@ -1852,14 +2085,19 @@ document.getElementById('bannerSaveBtn').onclick = saveBanner;
 document.getElementById('bannerCancelBtn').onclick = () => document.getElementById('bannerModal').style.display = 'none';
 
 window.previewServiceImage = previewServiceImage;
+window.previewProjectImage = previewProjectImage;
+window.previewBannerImage = previewBannerImage;
 window.approveReview = approveReview;
 window.rejectReview = rejectReview;
 window.deleteApprovedReview = deleteApprovedReview;
 window.toggleFeatured = toggleFeatured;
+window.uploadImage = uploadImage;
+window.openInternalDataModal = openInternalDataModal;
 
 async function loadAllData() {
   await loadDashboard();
   await loadProjects();
+  await loadInternalData();
   await loadServices();
   await loadStories();
   await loadCategories();
