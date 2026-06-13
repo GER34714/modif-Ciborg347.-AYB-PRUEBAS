@@ -27,7 +27,7 @@
   </script>
   
   <style>
-    /* ========== CSS ORIGINAL ========== */
+    /* ========== CSS ORIGINAL (sin cambios) ========== */
     :root {
       --bg: #0a0a0f;
       --bg2: #0f0f1a;
@@ -555,72 +555,128 @@
       .stories-grid { grid-template-columns: 1fr; }
     }
 
-    /* ========== BANNERS PROMOCIONALES ========== */
+    /* ========== CARRUSEL DE BANNERS PROMOCIONALES ========== */
     .banners-section {
       padding: 60px 0;
     }
-    .banners-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 24px;
-      margin-top: 2rem;
-    }
-    .banner-card {
-      background: var(--bg2);
-      border-radius: 20px;
+    .banner-carousel-container {
+      position: relative;
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
       overflow: hidden;
-      transition: all 0.3s ease;
+      border-radius: 24px;
+      background: var(--bg2);
       border: 1px solid var(--border);
+    }
+    .banner-carousel-slides {
+      display: flex;
+      transition: transform 0.5s ease-in-out;
+    }
+    .banner-carousel-slide {
+      flex: 0 0 100%;
       display: flex;
       flex-direction: column;
+      background: var(--bg2);
     }
-    .banner-card:hover {
-      transform: translateY(-4px);
-      border-color: var(--cyan);
-      box-shadow: 0 0 20px var(--cyan);
-    }
-    .banner-card__image {
+    .banner-carousel-image {
       width: 100%;
       aspect-ratio: 16/9;
       object-fit: cover;
+      display: block;
     }
-    .banner-card__content {
-      padding: 1.2rem;
+    .banner-carousel-content {
+      padding: 1.8rem 2rem;
+      text-align: center;
     }
-    .banner-card__title {
+    .banner-carousel-content h3 {
       font-family: 'Syne', sans-serif;
-      font-size: 1.1rem;
+      font-size: 1.5rem;
       font-weight: 700;
       color: var(--white);
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.8rem;
     }
-    .banner-card__desc {
-      font-size: 0.8rem;
+    .banner-carousel-content p {
+      font-size: 1rem;
       color: var(--text2);
-      margin-bottom: 1rem;
-      line-height: 1.4;
+      margin-bottom: 1.5rem;
+      line-height: 1.5;
     }
-    .banner-card__btn {
+    .banner-carousel-btn {
       display: inline-block;
       background: var(--grad);
       color: white;
-      padding: 8px 16px;
-      border-radius: 30px;
-      font-size: 0.7rem;
+      padding: 12px 28px;
+      border-radius: 40px;
+      font-size: 0.9rem;
       font-weight: 600;
       text-decoration: none;
-      transition: all 0.2s;
-      text-align: center;
+      transition: all 0.3s ease;
     }
-    .banner-card__btn:hover {
-      transform: scale(1.02);
-      box-shadow: 0 0 10px var(--cyan);
+    .banner-carousel-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 15px var(--cyan);
+    }
+    /* Botones de navegación */
+    .banner-carousel-prev, .banner-carousel-next {
+      position: absolute;
+      top: 45%;
+      transform: translateY(-50%);
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(5px);
+      color: white;
+      border: none;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      cursor: pointer;
+      z-index: 10;
+      font-size: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+    }
+    .banner-carousel-prev:hover, .banner-carousel-next:hover {
+      background: var(--cyan);
+      transform: translateY(-50%) scale(1.1);
+    }
+    .banner-carousel-prev { left: 15px; }
+    .banner-carousel-next { right: 15px; }
+    /* Dots */
+    .banner-carousel-dots {
+      position: absolute;
+      bottom: 15px;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      z-index: 10;
+    }
+    .banner-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.5);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .banner-dot.active {
+      background: var(--cyan);
+      width: 25px;
+      border-radius: 10px;
+    }
+    .banner-dot:hover {
+      background: white;
+      transform: scale(1.2);
     }
     @media (max-width: 768px) {
-      .banners-grid {
-        grid-template-columns: 1fr;
-        gap: 16px;
-      }
+      .banner-carousel-content { padding: 1rem; }
+      .banner-carousel-content h3 { font-size: 1.2rem; }
+      .banner-carousel-content p { font-size: 0.8rem; }
+      .banner-carousel-btn { padding: 8px 20px; font-size: 0.8rem; }
+      .banner-carousel-prev, .banner-carousel-next { width: 36px; height: 36px; font-size: 1.2rem; }
     }
 
     .reviews-section {
@@ -1064,85 +1120,6 @@
       100% { transform: translateX(-50%); }
     }
     
-    /* ========== CARRUSEL DE BANNERS ========== */
-    .banner-carousel {
-      position: relative;
-      width: 100%;
-      overflow: hidden;
-      background: rgba(0, 212, 255, 0.05);
-      border-bottom: 1px solid var(--border);
-    }
-    .banner-slides {
-      display: flex;
-      transition: transform 0.5s ease-in-out;
-    }
-    .banner-slide {
-      flex: 0 0 100%;
-      text-align: center;
-      padding: 16px 20px;
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: center;
-      gap: 20px;
-    }
-    .banner-slide-image img {
-      max-width: 100%;
-      max-height: 80px;
-      width: auto;
-      height: auto;
-      object-fit: contain;
-      border-radius: 12px;
-    }
-    .banner-slide-text {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.85rem;
-      color: var(--cyan);
-    }
-    .banner-slide-text a {
-      color: var(--white);
-      text-decoration: underline;
-      margin-left: 12px;
-    }
-    .banner-controls {
-      position: absolute;
-      bottom: 8px;
-      left: 0;
-      right: 0;
-      display: flex;
-      justify-content: center;
-      gap: 8px;
-    }
-    .banner-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: var(--text2);
-      opacity: 0.5;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-    .banner-dot.active {
-      opacity: 1;
-      background: var(--cyan);
-      transform: scale(1.2);
-    }
-    
-    @media (max-width: 768px) {
-      .banner-slide {
-        flex-direction: column;
-        padding: 12px;
-      }
-      .banner-slide-image img {
-        max-height: 60px;
-      }
-      .banner-slide-text {
-        font-size: 0.75rem;
-        text-align: center;
-      }
-    }
-    
-    /* ========== NUEVO DISEÑO FAQ ========== */
     .faqGrid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -1590,12 +1567,6 @@
   </div>
 </div>
 
-<!-- BANNERS -->
-<div id="bannerCarousel" class="banner-carousel" style="display: none;">
-  <div class="banner-slides" id="bannerSlides"></div>
-  <div class="banner-controls" id="bannerControls"></div>
-</div>
-
 <!-- ========== 2. BENEFICIOS ========== -->
 <section class="section" id="beneficios">
   <div class="wrap">
@@ -1729,7 +1700,7 @@
   </div>
 </section>
 
-<!-- ========== 8. BANNERS PROMOCIONALES ========== -->
+<!-- ========== 8. BANNERS PROMOCIONALES (CARRUSEL AUTOMÁTICO) ========== -->
 <section class="section" id="banners">
   <div class="wrap">
     <div class="section__head center fade-in-up">
@@ -1737,9 +1708,11 @@
       <h2>Ofertas <em>especiales</em></h2>
       <p>Aprovechá nuestras promociones por tiempo limitado</p>
     </div>
-    <div class="banners-grid" id="bannersGrid">
-      <div class="skeleton-card" style="height: 200px;"></div>
-      <div class="skeleton-card" style="height: 200px;"></div>
+    <div id="bannerCarouselContainer" class="banner-carousel-container">
+      <div class="banner-carousel-slides" id="bannerCarouselSlides"></div>
+      <button class="banner-carousel-prev" id="bannerCarouselPrev">❮</button>
+      <button class="banner-carousel-next" id="bannerCarouselNext">❯</button>
+      <div class="banner-carousel-dots" id="bannerCarouselDots"></div>
     </div>
   </div>
 </section>
@@ -1951,28 +1924,198 @@ async function loadBenefits() {
   }
 }
 
-// ========== FUNCIÓN PARA CARGAR BANNERS ==========
-async function loadBanners() {
-  const container = document.getElementById('bannersGrid');
+// ========== CARRUSEL DE BANNERS (AUTOMÁTICO) ==========
+let currentBannerIndex = 0;
+let bannersData = [];
+let bannerInterval = null;
+
+async function loadBannersCarousel() {
+  const container = document.getElementById('bannerCarouselSlides');
   if (!container) return;
   
-  container.innerHTML = `
-    <div class="banner-card">
-      <div class="banner-card__content">
-        <div class="banner-card__title">🚀 Próximamente</div>
-        <div class="banner-card__desc">Los banners se cargarán desde Supabase. Creá la tabla "banners" para empezar.</div>
-        <a href="#contacto" class="banner-card__btn">Consultar</a>
-      </div>
-    </div>
-    <div class="banner-card">
-      <div class="banner-card__content">
-        <div class="banner-card__title">💡 ¿Tenés un proyecto?</div>
-        <div class="banner-card__desc">Contactanos y te asesoramos sin compromiso.</div>
-        <a href="#contacto" class="banner-card__btn">Hablar ahora</a>
-      </div>
-    </div>
-  `;
+  container.innerHTML = '<div class="banner-carousel-slide" style="text-align:center; padding:40px;">Cargando banners...</div>';
+  
+  try {
+    if (!sb) {
+      console.error("❌ Supabase no inicializado");
+      mostrarBannersFallbackCarousel();
+      return;
+    }
+    
+    const { data: banners, error } = await sb
+      .from('banners')
+      .select('*')
+      .eq('active', true)
+      .order('order_index', { ascending: true });
+    
+    if (error) throw error;
+    
+    if (!banners || banners.length === 0) {
+      console.log("⚠️ No hay banners activos");
+      mostrarBannersFallbackCarousel();
+      return;
+    }
+    
+    bannersData = banners;
+    console.log(`✅ ${bannersData.length} banners cargados para el carrusel`);
+    
+    renderBannerCarousel();
+    iniciarCarruselAutomatico();
+    
+  } catch(e) {
+    console.error("❌ Error cargando banners:", e);
+    mostrarBannersFallbackCarousel();
+  }
 }
+
+function renderBannerCarousel() {
+  const slidesContainer = document.getElementById('bannerCarouselSlides');
+  const dotsContainer = document.getElementById('bannerCarouselDots');
+  if (!slidesContainer) return;
+  
+  if (!bannersData.length) {
+    mostrarBannersFallbackCarousel();
+    return;
+  }
+  
+  // Renderizar slides
+  slidesContainer.innerHTML = bannersData.map(banner => `
+    <div class="banner-carousel-slide">
+      <img class="banner-carousel-image" src="${escapeHtml(banner.image_url)}" alt="${escapeHtml(banner.title || 'Banner')}" loading="lazy" />
+      <div class="banner-carousel-content">
+        <h3>${escapeHtml(banner.title || 'Oferta especial')}</h3>
+        <p>${escapeHtml(banner.description || '')}</p>
+        ${banner.button_text ? `<a href="${escapeHtml(banner.button_link || '#')}" class="banner-carousel-btn" target="${banner.button_link?.startsWith('http') ? '_blank' : '_self'}">${escapeHtml(banner.button_text)} →</a>` : ''}
+      </div>
+    </div>
+  `).join('');
+  
+  // Renderizar dots
+  if (dotsContainer && bannersData.length > 1) {
+    dotsContainer.innerHTML = bannersData.map((_, i) => `
+      <span class="banner-dot ${i === currentBannerIndex ? 'active' : ''}" data-index="${i}"></span>
+    `).join('');
+    
+    // Evento click en dots
+    document.querySelectorAll('.banner-dot').forEach(dot => {
+      dot.addEventListener('click', (e) => {
+        const index = parseInt(dot.dataset.index);
+        if (!isNaN(index) && index !== currentBannerIndex) {
+          currentBannerIndex = index;
+          updateBannerCarousel();
+          resetearCarruselAutomatico();
+        }
+      });
+    });
+  }
+  
+  updateBannerCarousel();
+}
+
+function updateBannerCarousel() {
+  const slidesContainer = document.getElementById('bannerCarouselSlides');
+  const dots = document.querySelectorAll('.banner-dot');
+  
+  if (!slidesContainer) return;
+  
+  const slideWidth = slidesContainer.clientWidth;
+  slidesContainer.style.transform = `translateX(-${currentBannerIndex * 100}%)`;
+  
+  dots.forEach((dot, i) => {
+    if (i === currentBannerIndex) {
+      dot.classList.add('active');
+    } else {
+      dot.classList.remove('active');
+    }
+  });
+}
+
+function iniciarCarruselAutomatico() {
+  if (bannerInterval) clearInterval(bannerInterval);
+  
+  if (bannersData.length <= 1) return;
+  
+  bannerInterval = setInterval(() => {
+    currentBannerIndex = (currentBannerIndex + 1) % bannersData.length;
+    updateBannerCarousel();
+  }, 5000); // Cambia cada 5 segundos
+}
+
+function resetearCarruselAutomatico() {
+  if (bannerInterval) {
+    clearInterval(bannerInterval);
+    iniciarCarruselAutomatico();
+  }
+}
+
+function mostrarBannersFallbackCarousel() {
+  const slidesContainer = document.getElementById('bannerCarouselSlides');
+  const dotsContainer = document.getElementById('bannerCarouselDots');
+  
+  if (slidesContainer) {
+    slidesContainer.innerHTML = `
+      <div class="banner-carousel-slide">
+        <img class="banner-carousel-image" src="https://placehold.co/1200x600/1a1a2e/00d4ff?text=🚀+¿Tenés+una+idea?" alt="Banner" />
+        <div class="banner-carousel-content">
+          <h3>🚀 ¿Tenés una idea? ¡La hacemos realidad!</h3>
+          <p>Asesoría gratuita de 30 min sin compromiso.</p>
+          <a href="#contacto" class="banner-carousel-btn">AGENDAR AHORA →</a>
+        </div>
+      </div>
+      <div class="banner-carousel-slide">
+        <img class="banner-carousel-image" src="https://placehold.co/1200x600/1a1a2e/8b5cf6?text=💡+Proyecto+a+medida" alt="Banner" />
+        <div class="banner-carousel-content">
+          <h3>💡 Proyecto a medida</h3>
+          <p>Sin mensualidades. Primero trabajamos, después pagás.</p>
+          <a href="#contacto" class="banner-carousel-btn">Ver más →</a>
+        </div>
+      </div>
+    `;
+  }
+  
+  if (dotsContainer) {
+    dotsContainer.innerHTML = `
+      <span class="banner-dot active" data-index="0"></span>
+      <span class="banner-dot" data-index="1"></span>
+    `;
+    
+    document.querySelectorAll('.banner-dot').forEach(dot => {
+      dot.addEventListener('click', (e) => {
+        const index = parseInt(dot.dataset.index);
+        if (!isNaN(index) && index !== currentBannerIndex) {
+          currentBannerIndex = index;
+          updateBannerCarousel();
+          resetearCarruselAutomatico();
+        }
+      });
+    });
+  }
+  
+  bannersData = [];
+  currentBannerIndex = 0;
+  updateBannerCarousel();
+}
+
+// Eventos de navegación manual
+document.getElementById('bannerCarouselPrev')?.addEventListener('click', () => {
+  if (bannersData.length > 0) {
+    currentBannerIndex = (currentBannerIndex - 1 + bannersData.length) % bannersData.length;
+  } else {
+    currentBannerIndex = (currentBannerIndex - 1 + 2) % 2;
+  }
+  updateBannerCarousel();
+  resetearCarruselAutomatico();
+});
+
+document.getElementById('bannerCarouselNext')?.addEventListener('click', () => {
+  if (bannersData.length > 0) {
+    currentBannerIndex = (currentBannerIndex + 1) % bannersData.length;
+  } else {
+    currentBannerIndex = (currentBannerIndex + 1) % 2;
+  }
+  updateBannerCarousel();
+  resetearCarruselAutomatico();
+});
 
 // ========== RESTO DEL CÓDIGO ORIGINAL ==========
 let brandsData = [];
@@ -2600,7 +2743,7 @@ function setupWhatsAppVisibility() {
 // Inicializar todo
 loadServicesReal();
 loadBenefits();
-loadBanners();
+loadBannersCarousel(); // Ahora carga el carrusel de banners
 loadProjects();
 loadFaqs();
 loadReviews();
