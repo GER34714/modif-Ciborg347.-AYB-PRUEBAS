@@ -583,12 +583,13 @@
       flex-direction: column;
       background: var(--bg2);
     }
-    .banner-carousel-image {
-      width: 100%;
-      aspect-ratio: 16/9;
-      object-fit: cover;
-      display: block;
-    }
+   .banner-carousel-image {
+  width: 100%;
+  height: auto;        /* ← altura automática, no recorta */
+  object-fit: contain; /* ← muestra la imagen COMPLETA */
+  display: block;
+  background: var(--bg2);
+}
     .banner-carousel-content {
       padding: 1.8rem 2rem;
       text-align: center;
