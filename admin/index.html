@@ -185,6 +185,12 @@
       margin-bottom: 20px;
       color: var(--cyan);
       font-size: 18px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 8px;
+      margin-top: 15px;
+    }
+    .sidebar h3:first-of-type {
+      margin-top: 0;
     }
 
     .nav-btn {
@@ -685,21 +691,29 @@
 
     <div class="layout">
       <aside class="sidebar" id="sidebar">
-        <h3>📋 Menú</h3>
+        <h3>🏠 Principal</h3>
         <button class="nav-btn active" data-view="dashboard">📊 Dashboard</button>
+        
+        <h3>📁 Contenido</h3>
         <button class="nav-btn" data-view="projects">📁 Proyectos</button>
-        <button class="nav-btn" data-view="internalData">📋 Datos Internos</button>
-        <button class="nav-btn" data-view="services">💰 Servicios</button>
-        <button class="nav-btn" data-view="success-stories">🏆 Casos de éxito</button>
-        <button class="nav-btn" data-view="featured">⭐ Destacados</button>
         <button class="nav-btn" data-view="categories">📂 Categorías</button>
         <button class="nav-btn" data-view="brands">🏷️ Marcas</button>
-        <button class="nav-btn" data-view="benefits">✨ Beneficios</button>
         <button class="nav-btn" data-view="banners">📢 Banners</button>
-        <button class="nav-btn" data-view="assistant">🤖 Asistente</button>
+        <button class="nav-btn" data-view="featured">⭐ Destacados</button>
+
+        <h3>💼 Negocio</h3>
+        <button class="nav-btn" data-view="services">💰 Servicios</button>
+        <button class="nav-btn" data-view="success-stories">🏆 Casos de éxito</button>
+        <button class="nav-btn" data-view="benefits">✨ Beneficios</button>
+
+        <h3>👥 Clientes</h3>
         <button class="nav-btn" data-view="leads">📋 Leads</button>
         <button class="nav-btn" data-view="reviews">⭐ Reseñas</button>
         <button class="nav-btn" data-view="faqs">❓ FAQs</button>
+        <button class="nav-btn" data-view="assistant">🤖 Asistente</button>
+
+        <h3>⚙️ Sistema</h3>
+        <button class="nav-btn" data-view="internalData">📋 Datos Internos</button>
         <button class="nav-btn" data-view="history">📜 Historial</button>
         <button class="nav-btn" data-view="versions">🕐 Versiones</button>
         <button class="nav-btn" data-view="settings">⚙️ Settings</button>
@@ -714,17 +728,17 @@
           <div id="recentProjects" class="items-list"></div>
         </div>
 
-        <!-- Proyectos (Frontend - SIN MODIFICAR) -->
+        <!-- Proyectos -->
         <div id="projectsPanel" class="panel">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
-            <h2>📁 Proyectos (Frontend)</h2>
+            <h2>📁 Proyectos</h2>
             <button class="btn-primary" id="newProjectBtn">➕ Nuevo proyecto</button>
           </div>
           <div id="projectsList" class="items-list"></div>
           <div id="projectsPagination" class="pagination-container"></div>
         </div>
 
-        <!-- DATOS INTERNOS - NUEVA SECCIÓN -->
+        <!-- DATOS INTERNOS -->
         <div id="internalDataPanel" class="panel">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
             <h2>📋 Datos Internos de Proyectos</h2>
@@ -845,7 +859,7 @@
           <div id="settingsHistoryList" class="items-list"></div>
         </div>
 
-        <!-- VERSIONES (NUEVA SECCIÓN) -->
+        <!-- VERSIONES -->
         <div id="versionsPanel" class="panel">
           <h2>🕐 Versiones de Proyectos</h2>
           <p style="margin-bottom: 20px; color: var(--text2);">Aquí podés ver el historial de cambios de cada proyecto y revertir a versiones anteriores.</p>
@@ -928,7 +942,7 @@
   </div>
 </div>
 
-<!-- Modal Proyectos (Frontend - CON ESTADO PAUSADO) -->
+<!-- Modal Proyectos -->
 <div id="projectModal" class="modal">
   <div class="modal-content">
     <h3 id="projectModalTitle">📁 Nuevo Proyecto</h3>
@@ -972,7 +986,7 @@
   </div>
 </div>
 
-<!-- Modal Datos Internos (NUEVO - SOLO CAMPOS INTERNOS) -->
+<!-- Modal Datos Internos -->
 <div id="internalDataModal" class="modal">
   <div class="modal-content">
     <h3 id="internalDataModalTitle">📋 Editar Datos Internos</h3>
@@ -1439,6 +1453,12 @@ navBtns.forEach(btn => {
     Object.values(panelMap).forEach(pid => document.getElementById(pid).classList.remove('active'));
     const view = btn.dataset.view;
     document.getElementById(panelMap[view]).classList.add('active');
+    
+    // Cerrar sidebar en móvil después de seleccionar una opción
+    if (window.innerWidth <= 768 && sidebar.classList.contains('open')) {
+      sidebar.classList.remove('open');
+    }
+    
     if (view === 'services') loadServices();
     if (view === 'projects') loadProjects();
     if (view === 'internalData') loadInternalData();
@@ -1651,7 +1671,7 @@ window.saveService = async function() {
 window.deleteService = async function(id) { if(confirm('¿Eliminar este servicio?')){ await sb.from('services').delete().eq('id',id); loadServices(); loadDashboard(); } }
 
 // ============================================================
-// PROYECTOS (Frontend - CON ESTADO PAUSADO Y VERSIONES)
+// PROYECTOS (Frontend - SIN BOTON VERSIONES)
 // ============================================================
 async function loadProjects() {
   const container = document.getElementById('projectsList');
@@ -1662,7 +1682,8 @@ async function loadProjects() {
   const start = (projectsPage - 1) * itemsPerPage;
   const paginated = projects.slice(start, start + itemsPerPage);
   if (projects.length === 0) { container.innerHTML = '<div class="loading">No hay proyectos. Creá uno nuevo.</div>'; return; }
-  container.innerHTML = paginated.map(project => `<div class="item-card">${project.image_url ? `<img src="${escapeHtml(project.image_url)}" class="item-preview" onerror="this.style.display='none'">` : ''}<div class="item-info"><div class="item-title">${escapeHtml(project.title)}</div><div class="item-meta">📁 ${escapeHtml(project.categories?.name || 'Sin categoría')} · ${getStatusBadge(project.status)} ${project.featured ? '⭐ Destacado' : ''}</div></div><div class="item-actions"><button class="btn-edit" onclick="openProjectModal('${project.id}')">✏️ Editar</button><button class="btn-delete" onclick="deleteProject('${project.id}')">🗑️ Eliminar</button><button class="btn-history" onclick="loadVersions('${project.id}')">🕐 Versiones</button></div></div>`).join('');
+  // Botón de versiones eliminado
+  container.innerHTML = paginated.map(project => `<div class="item-card">${project.image_url ? `<img src="${escapeHtml(project.image_url)}" class="item-preview" onerror="this.style.display='none'">` : ''}<div class="item-info"><div class="item-title">${escapeHtml(project.title)}</div><div class="item-meta">📁 ${escapeHtml(project.categories?.name || 'Sin categoría')} · ${getStatusBadge(project.status)} ${project.featured ? '⭐ Destacado' : ''}</div></div><div class="item-actions"><button class="btn-edit" onclick="openProjectModal('${project.id}')">✏️ Editar</button><button class="btn-delete" onclick="deleteProject('${project.id}')">🗑️ Eliminar</button></div></div>`).join('');
   renderPagination('projectsPagination', projects.length, projectsPage, (page) => { projectsPage = page; loadProjects(); });
 }
 
@@ -1866,7 +1887,7 @@ window.saveBanner = async function() {
 window.deleteBanner = async function(id) { if(confirm('¿Eliminar este banner?')){ const {error}=await sb.from('banners').delete().eq('id',id); if(error) alert('Error: '+error.message); else { loadBanners(); loadDashboard(); } } }
 
 // ============================================================
-// VERSIONES (NUEVA SECCIÓN)
+// VERSIONES
 // ============================================================
 async function loadVersionsSelect() {
   const select = document.getElementById('versionProjectSelect');
